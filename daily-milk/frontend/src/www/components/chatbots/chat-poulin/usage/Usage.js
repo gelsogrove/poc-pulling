@@ -42,7 +42,6 @@ const Usage = ({ IdConversation }) => {
     getData()
   }, [])
 
-  // Dati statici per i grafici
   const lineData = {
     labels:
       usageData && usageData.currentWeek
@@ -104,7 +103,7 @@ const Usage = ({ IdConversation }) => {
         beginAtZero: true,
       },
     },
-    height: 400, // imposta l'altezza
+    height: 400,
   }
 
   const barOptions = {
@@ -125,15 +124,17 @@ const Usage = ({ IdConversation }) => {
         },
       },
     },
-    height: 800, // imposta l'altezza
+    height: 800,
   }
-
-  console.log("Bar data:", barData)
 
   return (
     <div className="usage-container">
       {usageData && usageData.error ? (
-        <div className="error-message">{usageData.error}</div>
+        <div className="error-message">
+          <b>Error:</b>
+          <br />
+          Request limit reached today :-(
+        </div>
       ) : usageData ? (
         <>
           <div className="title-usage"></div>
