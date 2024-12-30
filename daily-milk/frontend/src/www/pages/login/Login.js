@@ -1,3 +1,4 @@
+import Cookies from "js-cookie" // Importa la libreria per i cookie
 import React, { useContext, useState } from "react"
 import { useNavigate } from "react-router-dom" // Importa il navigatore
 import { AuthContext } from "../../../AuthContext"
@@ -30,7 +31,12 @@ function Login() {
       setOtpStep(true)
     } else {
       const isLoginSuccessful = handleLogin(username, password)
-      if (isLoginSuccessful) setOtpStep(true)
+      if (isLoginSuccessful) {
+        const userId = "user_id_example" // Sostituisci con il valore reale dell'ID utente
+        Cookies.set("username", username)
+        Cookies.set("userId", userId)
+        setOtpStep(true)
+      }
     }
   }
 

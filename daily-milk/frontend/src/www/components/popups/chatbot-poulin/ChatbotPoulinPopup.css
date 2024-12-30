@@ -33,22 +33,29 @@
 
 .visible-panel {
   position: relative;
-  left: 94%;
-  height: 30px;
-  top: 19px;
-  z-index: 99;
-  margin-bottom: 8px;
-  background-color: none;
-  margin-left: -10px;
-}
-
-.close-button-1 {
-  position: relative;
-  left: 94%;
+  left: 95%;
   height: 30px;
   top: 15px;
   z-index: 99;
-  margin-bottom: 8px;
   background-color: none;
-  margin-left: 10px;
+  margin-left: -80px;
+}
+
+.close-popup {
+  position: absolute;
+  left: 96%;
+  height: 30px;
+  top: 15px;
+  margin-bottom: 8px;
+  z-index: 9999999;
+  font-size: 22px;
+  background-color: none;
+}
+
+.hover-effect:hover {
+  background-color: rgb(
+    211,
+    204,
+    204
+  ) !important; /* Cambia il colore di sfondo come desiderato */
 }

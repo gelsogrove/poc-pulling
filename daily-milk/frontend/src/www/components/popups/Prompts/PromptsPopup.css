@@ -7,7 +7,6 @@
 
 .prompts-form-container .title {
   padding: 0px 0px 35px 0px;
-  margin-top: -30px;
 }
 .prompts-form-container h2 {
   text-align: center;
@@ -58,4 +57,36 @@
   width: 40px;
   background-color: transparent;
   color: black;
+}
+
+/* Personalizzazione della scrollbar per il ControlledEditor */
+.codemirror-editor {
+  height: 300px; /* Imposta un'altezza fissa per il contenitore */
+  overflow-y: scroll; /* Forza la scrollbar verticale a rimanere visibile */
+  /* Aggiungi queste proprietà per garantire la visibilità della scrollbar */
+  position: relative; /* Necessario per il posizionamento */
+}
+
+/* Personalizzazione della scrollbar per WebKit */
+.codemirror-editor::-webkit-scrollbar {
+  width: 8px; /* Larghezza della scrollbar */
+}
+
+.codemirror-editor::-webkit-scrollbar-track {
+  background: white; /* Colore dello sfondo della scrollbar */
+}
+
+.codemirror-editor::-webkit-scrollbar-thumb {
+  background: gray; /* Colore della parte mobile della scrollbar */
+  border-radius: 4px; /* Raggio degli angoli della scrollbar */
+}
+
+.codemirror-editor::-webkit-scrollbar-thumb:hover {
+  background: darkgray; /* Colore della parte mobile quando si passa il mouse */
+}
+
+/* Regole per Firefox */
+.codemirror-editor {
+  scrollbar-width: thin; /* Imposta la larghezza della scrollbar */
+  scrollbar-color: gray white; /* Colore della parte mobile e dello sfondo */
 }

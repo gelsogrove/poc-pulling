@@ -24,8 +24,9 @@
   padding: 20px;
   background-color: #fbf7f7;
   overflow-y: auto;
-  max-height: 78vh;
+  max-height: 79vh;
   margin-left: 10px;
+  margin-top: -20px;
 }
 
 /* Chat input */
