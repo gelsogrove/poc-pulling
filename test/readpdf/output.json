@@ -1,0 +1,1837 @@
+{
+    "customers": [
+        {
+            "customer_id": "BALL11",
+            "name": "Ballard Acres Farm",
+            "class": "KEYM4",
+            "salesperson": "GINGUE, D",
+            "items": [
+                {
+                    "item_number": "ALTBULK",
+                    "description": "BULK AL TRANS HEIF PELLET",
+                    "quantity": 4000,
+                    "price": 787.02,
+                    "page": 1
+                },
+                {
+                    "item_number": "BALL10",
+                    "description": "Ballard Protein Mash",
+                    "quantity": 101705,
+                    "price": 34536.04,
+                    "page": 1
+                },
+                {
+                    "item_number": "BALL11",
+                    "description": "Ballard Fresh Mash",
+                    "quantity": 2035,
+                    "price": 749.52,
+                    "page": 1
+                },
+                {
+                    "item_number": "BALL12D",
+                    "description": "Ballard CUD Mash",
+                    "quantity": 3975,
+                    "price": 1716.82,
+                    "page": 1
+                },
+                {
+                    "item_number": "BOV2420",
+                    "description": "OptiMilk 24-20 4 Seasons BOV Milk Replacer",
+                    "quantity": 1000,
+                    "price": 1497.1,
+                    "page": 1
+                },
+                {
+                    "item_number": "DRYII",
+                    "description": "DRY COW MINERAL II",
+                    "quantity": 850,
+                    "price": 790.68,
+                    "page": 1
+                },
+                {
+                    "item_number": "OPTICAF",
+                    "description": "Opti-C.A.F. Starter",
+                    "quantity": 1000,
+                    "price": 328.53,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 114565,
+            "total_price": 40405.71,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "BARN12",
+            "name": "Barnes Family Farm",
+            "class": "KEYM4",
+            "salesperson": "DOANE, M",
+            "items": [
+                {
+                    "item_number": "5004",
+                    "description": "Bulk Corn Meal",
+                    "quantity": 335205,
+                    "price": 35955.43,
+                    "page": 1
+                },
+                {
+                    "item_number": "ALTBULK",
+                    "description": "BULK AL TRANS HEIF PELLET",
+                    "quantity": 12135,
+                    "price": 2446.96,
+                    "page": 1
+                },
+                {
+                    "item_number": "AMBASE",
+                    "description": "Alpha Standard Bulk Heifer Min",
+                    "quantity": 11970,
+                    "price": 4207.56,
+                    "page": 1
+                },
+                {
+                    "item_number": "AUREO10",
+                    "description": "Aureomycin 10 GR/LB * VFD Required *",
+                    "quantity": 50,
+                    "price": 49.35,
+                    "page": 1
+                },
+                {
+                    "item_number": "BALANCER",
+                    "description": "AlphaLine BALANCER Heifer Mineral",
+                    "quantity": 300,
+                    "price": 227.85,
+                    "page": 1
+                },
+                {
+                    "item_number": "BARN10",
+                    "description": "Barnes (Addison) High Mash",
+                    "quantity": 32010,
+                    "price": 10153.4,
+                    "page": 1
+                },
+                {
+                    "item_number": "BARN11",
+                    "description": "Barnes (Shoreham) Robot Mash",
+                    "quantity": 105965,
+                    "price": 29163.54,
+                    "page": 1
+                },
+                {
+                    "item_number": "BARN12",
+                    "description": "Barnes Addison Low Mash",
+                    "quantity": 33785,
+                    "price": 8583.06,
+                    "page": 1
+                },
+                {
+                    "item_number": "BARN13D",
+                    "description": "Barnes CUD Mash",
+                    "quantity": 20035,
+                    "price": 7494.45,
+                    "page": 1
+                },
+                {
+                    "item_number": "BARN14",
+                    "description": "Barnes Fresh Mash",
+                    "quantity": 39835,
+                    "price": 13834.4,
+                    "page": 1
+                },
+                {
+                    "item_number": "LAYP50",
+                    "description": "Premium Layer Pellet 50 lb",
+                    "quantity": 250,
+                    "price": 77.63,
+                    "page": 1
+                },
+                {
+                    "item_number": "ROBO20P",
+                    "description": "PGI Robot Pellet",
+                    "quantity": 98775,
+                    "price": 17958.89,
+                    "page": 1
+                },
+                {
+                    "item_number": "RTD50",
+                    "description": "RUMENSIN TOP DRESS MINERAL",
+                    "quantity": 150,
+                    "price": 72.45,
+                    "page": 1
+                },
+                {
+                    "item_number": "VF25",
+                    "description": "Vitalfort Electrolyte 25 lb",
+                    "quantity": 25,
+                    "price": 75.99,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 690490,
+            "total_price": 130300.96,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "BARS10",
+            "name": "Barstow's Longview Farm LLC",
+            "class": "RETAIL",
+            "salesperson": "ST. ONGE, M",
+            "items": [
+                {
+                    "item_number": "451",
+                    "description": "INTREGRAL A+",
+                    "quantity": 220.46,
+                    "price": 758.8,
+                    "page": 1
+                },
+                {
+                    "item_number": "ALS50",
+                    "description": "AlphaLine Start Calf Starter 5",
+                    "quantity": 200,
+                    "price": 77.62,
+                    "page": 1
+                },
+                {
+                    "item_number": "BARS10",
+                    "description": "Long View (Barstow) Protein Ma",
+                    "quantity": 92915,
+                    "price": 22257,
+                    "page": 1
+                },
+                {
+                    "item_number": "BARS11CD",
+                    "description": "Long View (Barstow) CUD Mash",
+                    "quantity": 6000,
+                    "price": 2114.43,
+                    "page": 1
+                },
+                {
+                    "item_number": "BARS12P",
+                    "description": "Barstow Robot Pellet",
+                    "quantity": 85380,
+                    "price": 15501.9,
+                    "page": 1
+                },
+                {
+                    "item_number": "BARS13",
+                    "description": "Barstow Amino/Beet Blend",
+                    "quantity": 34250,
+                    "price": 7671.66,
+                    "page": 1
+                },
+                {
+                    "item_number": "BICARB",
+                    "description": "Sodium Bicarbonate",
+                    "quantity": 700,
+                    "price": 241.16,
+                    "page": 1
+                },
+                {
+                    "item_number": "BOV2424",
+                    "description": "Alphaline Advantage 24/24 Bov",
+                    "quantity": 1350,
+                    "price": 2094.95,
+                    "page": 1
+                },
+                {
+                    "item_number": "BTM50",
+                    "description": "ALPHALINE SURE TRAX HEIFER MINERAL",
+                    "quantity": 1600,
+                    "price": 1376.8,
+                    "page": 1
+                },
+                {
+                    "item_number": "HRP20S",
+                    "description": "20% Opti-Heif Rumensin Pellet",
+                    "quantity": 4005,
+                    "price": 724.72,
+                    "page": 1
+                },
+                {
+                    "item_number": "HRPS",
+                    "description": "BULK OPTI-HEIF 18% RUMENSIN PELLET",
+                    "quantity": 4030,
+                    "price": 710.19,
+                    "page": 1
+                },
+                {
+                    "item_number": "WB",
+                    "description": "Block - White Salt",
+                    "quantity": 150,
+                    "price": 34.14,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 230800.46,
+            "total_price": 53563.37,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "CONA13",
+            "name": "Conant's Riverside Farm LLC",
+            "class": "KEYM4",
+            "salesperson": "CARABEAU, M",
+            "items": [
+                {
+                    "item_number": "5013",
+                    "description": "Bulk Farm Molasses",
+                    "quantity": 32480,
+                    "price": 5489.12,
+                    "page": 1
+                },
+                {
+                    "item_number": "ALTBULK",
+                    "description": "BULK AL TRANS HEIF PELLET",
+                    "quantity": 8030,
+                    "price": 1624.27,
+                    "page": 1
+                },
+                {
+                    "item_number": "BICARB",
+                    "description": "Sodium Bicarbonate",
+                    "quantity": 500,
+                    "price": 165.75,
+                    "page": 1
+                },
+                {
+                    "item_number": "BOV2424",
+                    "description": "Alphaline Advantage 24/24 Bov",
+                    "quantity": 2000,
+                    "price": 3090.2,
+                    "page": 1
+                },
+                {
+                    "item_number": "CONA10",
+                    "description": "Conant High Mash",
+                    "quantity": 304765,
+                    "price": 76638.14,
+                    "page": 1
+                },
+                {
+                    "item_number": "CONA11",
+                    "description": "Conant Low Mash",
+                    "quantity": 17964.12,
+                    "price": 3079.79,
+                    "page": 1
+                },
+                {
+                    "item_number": "CONA12D",
+                    "description": "Conant CUD Mash",
+                    "quantity": 12095,
+                    "price": 4182.63,
+                    "page": 1
+                },
+                {
+                    "item_number": "CONA13",
+                    "description": "Conant Fresh Mash",
+                    "quantity": 17989.3,
+                    "price": 4731.51,
+                    "page": 1
+                },
+                {
+                    "item_number": "CONA14HM",
+                    "description": "Conant Heifer Mineral",
+                    "quantity": 2980,
+                    "price": 1208.85,
+                    "page": 1
+                },
+                {
+                    "item_number": "CONA16H",
+                    "description": "Conant Heifer Mash",
+                    "quantity": 6005,
+                    "price": 1161.58,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 404808.42,
+            "total_price": 101371.84,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "EAST10",
+            "name": "CTS Dairy",
+            "class": "RETAIL",
+            "salesperson": "PIERCE, R.",
+            "items": [
+                {
+                    "item_number": "5001",
+                    "description": "Bulk Soybean Meal",
+                    "quantity": 178560,
+                    "price": 37525.08,
+                    "page": 1
+                },
+                {
+                    "item_number": "BOV2420",
+                    "description": "OptiMilk 24-20 4 Seasons BOV Milk Replacer",
+                    "quantity": 8000,
+                    "price": 11976.8,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 186560,
+            "total_price": 49501.88,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "DIMO10",
+            "name": "Dimock Farms LLC",
+            "class": "KEYM4",
+            "salesperson": "MOLESKY, P",
+            "items": [
+                {
+                    "item_number": "DIMO10",
+                    "description": "Dimock High Mash",
+                    "quantity": 217680,
+                    "price": 48366.37,
+                    "page": 1
+                },
+                {
+                    "item_number": "DIMO11",
+                    "description": "Dimock Low Mash",
+                    "quantity": 41900,
+                    "price": 7553.52,
+                    "page": 1
+                },
+                {
+                    "item_number": "DIMO12",
+                    "description": "Dimock Fresh Mash",
+                    "quantity": 17900,
+                    "price": 4464.94,
+                    "page": 1
+                },
+                {
+                    "item_number": "DIMO15D",
+                    "description": "Dimock Dry Cow CUD Mash",
+                    "quantity": 5960,
+                    "price": 2238.78,
+                    "page": 1
+                },
+                {
+                    "item_number": "DIMO16HM",
+                    "description": "Dimock Farm Bulk Heifer Minera",
+                    "quantity": 1820,
+                    "price": 677.43,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 285260,
+            "total_price": 63301.04,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "DEVI11",
+            "name": "Devine Farms Inc.",
+            "class": "RETAIL",
+            "salesperson": "ST. ONGE, M",
+            "items": [
+                {
+                    "item_number": "451",
+                    "description": "INTREGRAL A+",
+                    "quantity": 220.46,
+                    "price": 759.28,
+                    "page": 1
+                },
+                {
+                    "item_number": "5005",
+                    "description": "Bulk Canola Meal",
+                    "quantity": 2060,
+                    "price": 334.75,
+                    "page": 1
+                },
+                {
+                    "item_number": "BICARB",
+                    "description": "Sodium Bicarbonate",
+                    "quantity": 400,
+                    "price": 138.6,
+                    "page": 1
+                },
+                {
+                    "item_number": "BOV2420",
+                    "description": "OptiMilk 24-20 4 Seasons BOV Milk Replacer",
+                    "quantity": 400,
+                    "price": 612.84,
+                    "page": 1
+                },
+                {
+                    "item_number": "BTM50",
+                    "description": "ALPHALINE SURE TRAX HEIFER MINERAL",
+                    "quantity": 300,
+                    "price": 258.76,
+                    "page": 1
+                },
+                {
+                    "item_number": "DEVI10",
+                    "description": "Devine High Mash",
+                    "quantity": 38740,
+                    "price": 10839.9,
+                    "page": 1
+                },
+                {
+                    "item_number": "DEVI11",
+                    "description": "Devine Low Mash",
+                    "quantity": 30660,
+                    "price": 7840.29,
+                    "page": 1
+                },
+                {
+                    "item_number": "DEVI13",
+                    "description": "Devine Corn Meal Mix",
+                    "quantity": 45320,
+                    "price": 5216.37,
+                    "page": 1
+                },
+                {
+                    "item_number": "DRYII",
+                    "description": "DRY COW MINERAL II",
+                    "quantity": 300,
+                    "price": 288.16,
+                    "page": 1
+                },
+                {
+                    "item_number": "HEIFRP50",
+                    "description": "Bag Opti-Heif RP Pellet",
+                    "quantity": 800,
+                    "price": 242.72,
+                    "page": 1
+                },
+                {
+                    "item_number": "OPTICAF",
+                    "description": "Opti-C.A.F. Starter",
+                    "quantity": 400,
+                    "price": 136.75,
+                    "page": 1
+                },
+                {
+                    "item_number": "TMB",
+                    "description": "Block - Trace Mineral Salt",
+                    "quantity": 400,
+                    "price": 99.76,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 120000.46,
+            "total_price": 26768.18,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "GERV10",
+            "name": "Gervais Family Farm",
+            "class": "KEYM4",
+            "salesperson": "GINGUE, D",
+            "items": [
+                {
+                    "item_number": "AMBASE",
+                    "description": "Alpha Standard Bulk Heifer Min",
+                    "quantity": 2025,
+                    "price": 703.27,
+                    "page": 1
+                },
+                {
+                    "item_number": "GERV12",
+                    "description": "Gervais Farm l High Mash",
+                    "quantity": 273560,
+                    "price": 77379.19,
+                    "page": 1
+                },
+                {
+                    "item_number": "GERV13",
+                    "description": "Gervais Farm l Lact 1 Mash",
+                    "quantity": 244760,
+                    "price": 67940.15,
+                    "page": 1
+                },
+                {
+                    "item_number": "GERV14CD",
+                    "description": "Gervais Farm I CUD Mash",
+                    "quantity": 16025,
+                    "price": 7206.72,
+                    "page": 1
+                },
+                {
+                    "item_number": "GERV15",
+                    "description": "Gervais Farm l Fresh Mash",
+                    "quantity": 50725,
+                    "price": 15634.59,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 587095,
+            "total_price": 168863.92,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "GERV13",
+            "name": "Gervais Family - Farm #2",
+            "class": "KEYM4",
+            "salesperson": "CARABEAU, M",
+            "items": [
+                {
+                    "item_number": "5004",
+                    "description": "Bulk Corn Meal",
+                    "quantity": 158390,
+                    "price": 16900.43,
+                    "page": 1
+                },
+                {
+                    "item_number": "GERV20",
+                    "description": "Gervais Farm lI High Mash",
+                    "quantity": 267105,
+                    "price": 69385.35,
+                    "page": 1
+                },
+                {
+                    "item_number": "GERV21D",
+                    "description": "Gervais Farm II CUD Mash",
+                    "quantity": 15870,
+                    "price": 5761.75,
+                    "page": 1
+                },
+                {
+                    "item_number": "GERV22",
+                    "description": "Gervais Farm 2 Lact1 High Mash",
+                    "quantity": 175615,
+                    "price": 44894.26,
+                    "page": 1
+                },
+                {
+                    "item_number": "GERV23",
+                    "description": "Gervais Farm lI Midd/Low Mash",
+                    "quantity": 38805,
+                    "price": 7918.37,
+                    "page": 1
+                },
+                {
+                    "item_number": "GERV24",
+                    "description": "Gervais Farm lI Fresh Mash",
+                    "quantity": 39745,
+                    "price": 11465.06,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 695530,
+            "total_price": 156325.22,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "GOTH10",
+            "name": "Gotham Family Farm LLC",
+            "class": "RETAIL",
+            "salesperson": "WHITTAKER, E",
+            "items": [
+                {
+                    "item_number": "991",
+                    "description": "CALCIUM SALT FAT",
+                    "quantity": 2000,
+                    "price": 1453,
+                    "page": 1
+                },
+                {
+                    "item_number": "BICARB",
+                    "description": "Sodium Bicarbonate",
+                    "quantity": 2000,
+                    "price": 663,
+                    "page": 1
+                },
+                {
+                    "item_number": "DRYII",
+                    "description": "DRY COW MINERAL II",
+                    "quantity": 1000,
+                    "price": 955.5,
+                    "page": 1
+                },
+                {
+                    "item_number": "GOTH10",
+                    "description": "Gotham Farm High Mash",
+                    "quantity": 53360,
+                    "price": 15015.43,
+                    "page": 1
+                },
+                {
+                    "item_number": "GOTH11",
+                    "description": "Gotham Low Mash",
+                    "quantity": 77680,
+                    "price": 15068.26,
+                    "page": 1
+                },
+                {
+                    "item_number": "GOTH12CD",
+                    "description": "Gotham Farm CUD Mash",
+                    "quantity": 11800,
+                    "price": 3936.66,
+                    "page": 1
+                },
+                {
+                    "item_number": "GOTH14P",
+                    "description": "Gotham Farm TMR Fresh Pellet",
+                    "quantity": 72400,
+                    "price": 16945.2,
+                    "page": 1
+                },
+                {
+                    "item_number": "HRP21C",
+                    "description": "Gotham 22% Heifer Pellet",
+                    "quantity": 6000,
+                    "price": 1031.19,
+                    "page": 1
+                },
+                {
+                    "item_number": "WSALT",
+                    "description": "BAGGED WHITE SALT",
+                    "quantity": 2000,
+                    "price": 418,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 228240,
+            "total_price": 55486.24,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "HIDD10",
+            "name": "Hidden View Farm",
+            "class": "KEYM4",
+            "salesperson": "WHITTAKER, E",
+            "items": [
+                {
+                    "item_number": "451",
+                    "description": "INTREGRAL A+",
+                    "quantity": 330.69,
+                    "price": 1137.24,
+                    "page": 1
+                },
+                {
+                    "item_number": "HIDD10",
+                    "description": "Hidden View High Mash",
+                    "quantity": 400080,
+                    "price": 88792.25,
+                    "page": 1
+                },
+                {
+                    "item_number": "HIDD12",
+                    "description": "Hidden View Fresh Mash",
+                    "quantity": 64440,
+                    "price": 15650.54,
+                    "page": 1
+                },
+                {
+                    "item_number": "HIDD13CD",
+                    "description": "Hidden View CUD Mash",
+                    "quantity": 16080,
+                    "price": 5534.87,
+                    "page": 1
+                },
+                {
+                    "item_number": "HIDD14",
+                    "description": "Hidden View Low Mash",
+                    "quantity": 120060,
+                    "price": 22656.81,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 600990.69,
+            "total_price": 133771.71,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "HIGH10",
+            "name": "Highway View Farm",
+            "class": "RETAIL",
+            "salesperson": "ST. ONGE, M",
+            "items": [
+                {
+                    "item_number": "ALTBULK",
+                    "description": "BULK AL TRANS HEIF PELLET",
+                    "quantity": 6060,
+                    "price": 1240.74,
+                    "page": 1
+                },
+                {
+                    "item_number": "BALANCER",
+                    "description": "AlphaLine BALANCER Heifer Mineral",
+                    "quantity": 900,
+                    "price": 688.95,
+                    "page": 1
+                },
+                {
+                    "item_number": "HIGH10",
+                    "description": "Highway View (Crete) Lactating",
+                    "quantity": 63555,
+                    "price": 17612.69,
+                    "page": 1
+                },
+                {
+                    "item_number": "HIGH11D",
+                    "description": "Highway View (Crete) Dry Cow M",
+                    "quantity": 5980,
+                    "price": 2128.3,
+                    "page": 1
+                },
+                {
+                    "item_number": "ROBO10P",
+                    "description": "PGI ROBOT PELLET",
+                    "quantity": 36065,
+                    "price": 6471.08,
+                    "page": 1
+                },
+                {
+                    "item_number": "TM",
+                    "description": "Bag - Trace Mineral Salt",
+                    "quantity": 150,
+                    "price": 38.25,
+                    "page": 1
+                },
+                {
+                    "item_number": "TMB",
+                    "description": "Block - Trace Mineral Salt",
+                    "quantity": 450,
+                    "price": 74.97,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 113160,
+            "total_price": 28254.98,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "HYTO10",
+            "name": "Hytone Farm LLC",
+            "class": "RETAIL",
+            "salesperson": "HALL,I",
+            "items": [
+                {
+                    "item_number": "BTM50",
+                    "description": "ALPHALINE SURE TRAX HEIFER MINERAL",
+                    "quantity": 1200,
+                    "price": 1038.6,
+                    "page": 1
+                },
+                {
+                    "item_number": "DRYII",
+                    "description": "DRY COW MINERAL II",
+                    "quantity": 600,
+                    "price": 578.12,
+                    "page": 1
+                },
+                {
+                    "item_number": "HRP20S",
+                    "description": "20% Opti-Heif Rumensin Pellet",
+                    "quantity": 8140,
+                    "price": 1548.23,
+                    "page": 1
+                },
+                {
+                    "item_number": "HYTO10",
+                    "description": "Hytone Farm High Mash",
+                    "quantity": 189340,
+                    "price": 40184.86,
+                    "page": 1
+                },
+                {
+                    "item_number": "HYTO11",
+                    "description": "Hytone Prefresh (CUD) Mash",
+                    "quantity": 4000,
+                    "price": 1457.15,
+                    "page": 1
+                },
+                {
+                    "item_number": "HYTO13",
+                    "description": "Hytone Low Mash",
+                    "quantity": 40160,
+                    "price": 7218.06,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 243440,
+            "total_price": 52025.02,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "JORD10",
+            "name": "Jordan Dairy Farms Inc.",
+            "class": "RETAIL",
+            "salesperson": "ST. ONGE, M",
+            "items": [
+                {
+                    "item_number": "430",
+                    "description": "REASHURE CHOLINE",
+                    "quantity": 165.34,
+                    "price": 481.89,
+                    "page": 1
+                },
+                {
+                    "item_number": "ALTBULK",
+                    "description": "BULK AL TRANS HEIF PELLET",
+                    "quantity": 6000,
+                    "price": 1308.87,
+                    "page": 1
+                },
+                {
+                    "item_number": "BTM50",
+                    "description": "ALPHALINE SURE TRAX HEIFER MINERAL",
+                    "quantity": 1500,
+                    "price": 1298.25,
+                    "page": 1
+                },
+                {
+                    "item_number": "DRYII",
+                    "description": "DRY COW MINERAL II",
+                    "quantity": 300,
+                    "price": 286.45,
+                    "page": 1
+                },
+                {
+                    "item_number": "JORD10",
+                    "description": "Jordan High Mash",
+                    "quantity": 147040,
+                    "price": 38173.96,
+                    "page": 1
+                },
+                {
+                    "item_number": "JORD11",
+                    "description": "Jordan Midd/ Low  Mash",
+                    "quantity": 29825,
+                    "price": 7255.2,
+                    "page": 1
+                },
+                {
+                    "item_number": "JORD12D",
+                    "description": "Jordan CUD Mash",
+                    "quantity": 4025,
+                    "price": 1357.46,
+                    "page": 1
+                },
+                {
+                    "item_number": "JORD14H",
+                    "description": "Jordan Farm 2 - Heifer Mash",
+                    "quantity": 12040,
+                    "price": 2131.98,
+                    "page": 1
+                },
+                {
+                    "item_number": "JORD21P",
+                    "description": "Jordan Turkey Gro/Fin Pellet",
+                    "quantity": 90395,
+                    "price": 20353.35,
+                    "page": 1
+                },
+                {
+                    "item_number": "LAYP50",
+                    "description": "Premium Layer Pellet 50 lb",
+                    "quantity": 100,
+                    "price": 31.86,
+                    "page": 1
+                },
+                {
+                    "item_number": "LIME",
+                    "description": "Calcium Carbonate",
+                    "quantity": 200,
+                    "price": 30.5,
+                    "page": 1
+                },
+                {
+                    "item_number": "RTD50",
+                    "description": "RUMENSIN TOP DRESS MINERAL",
+                    "quantity": 400,
+                    "price": 200.4,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 291990.34,
+            "total_price": 72910.17,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "KEEW10",
+            "name": "Keewaydin Farm",
+            "class": "RETAIL",
+            "salesperson": "FLINT, H",
+            "items": [
+                {
+                    "item_number": "2012",
+                    "description": "MAGNESIUM SULFATE (EPSOM SALTS)",
+                    "quantity": 50,
+                    "price": 31.33,
+                    "page": 1
+                },
+                {
+                    "item_number": "PIKE10",
+                    "description": "Keewaydin Protein Mash",
+                    "quantity": 16890,
+                    "price": 5034.49,
+                    "page": 1
+                },
+                {
+                    "item_number": "PIKE11P",
+                    "description": "Keewaydin Robot Pellet",
+                    "quantity": 23565,
+                    "price": 4189.97,
+                    "page": 1
+                },
+                {
+                    "item_number": "PIKE13HP",
+                    "description": "Keewaydin Calf Pellet w/16% SF",
+                    "quantity": 7180,
+                    "price": 1495.49,
+                    "page": 1
+                },
+                {
+                    "item_number": "PIKE14CD",
+                    "description": "Keewaydin CUD Mash",
+                    "quantity": 1980,
+                    "price": 704.12,
+                    "page": 1
+                },
+                {
+                    "item_number": "ZINCSUL",
+                    "description": "Zinc Sulfate 50 lb",
+                    "quantity": 150,
+                    "price": 200.85,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 49815,
+            "total_price": 11656.25,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "KELL14",
+            "name": "Kelly Dairy LLC",
+            "class": "RETAIL",
+            "salesperson": "WHITTAKER, E",
+            "items": [
+                {
+                    "item_number": "991",
+                    "description": "CALCIUM SALT FAT",
+                    "quantity": 4800,
+                    "price": 3375.2,
+                    "page": 1
+                },
+                {
+                    "item_number": "BICARB",
+                    "description": "Sodium Bicarbonate",
+                    "quantity": 4800,
+                    "price": 1599.2,
+                    "page": 1
+                },
+                {
+                    "item_number": "KELL10",
+                    "description": "Kelly Farm High Mash",
+                    "quantity": 427600,
+                    "price": 109518.08,
+                    "page": 1
+                },
+                {
+                    "item_number": "KELL11",
+                    "description": "Kelly Farm Fresh Mash",
+                    "quantity": 35540,
+                    "price": 11478.15,
+                    "page": 1
+                },
+                {
+                    "item_number": "KELL12CD",
+                    "description": "Kelly Farm CUD Mash",
+                    "quantity": 32140,
+                    "price": 12130.07,
+                    "page": 1
+                },
+                {
+                    "item_number": "KELL13",
+                    "description": "Kelly Farm Low Mash",
+                    "quantity": 282640,
+                    "price": 58852.18,
+                    "page": 1
+                },
+                {
+                    "item_number": "KELL14HP",
+                    "description": "Kelly Farm Heifer Pellet",
+                    "quantity": 51060,
+                    "price": 10852.56,
+                    "page": 1
+                },
+                {
+                    "item_number": "KELL15CP",
+                    "description": "Kelly AL Calf Starter Pellet",
+                    "quantity": 21660,
+                    "price": 5952.97,
+                    "page": 1
+                },
+                {
+                    "item_number": "KELL16H",
+                    "description": "Kelly Farm  Heifer Mineral Mas",
+                    "quantity": 36280,
+                    "price": 9484.94,
+                    "page": 1
+                },
+                {
+                    "item_number": "KELL18H",
+                    "description": "Kelly Farm Phillips Heifer Mas",
+                    "quantity": 23520,
+                    "price": 6213.78,
+                    "page": 1
+                },
+                {
+                    "item_number": "WSALT",
+                    "description": "BAGGED WHITE SALT",
+                    "quantity": 4800,
+                    "price": 1011.2,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 924840,
+            "total_price": 230468.33,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "MAPL14",
+            "name": "Mapleline Farm",
+            "class": "RETAIL",
+            "salesperson": "ST. ONGE, M",
+            "items": [
+                {
+                    "item_number": "5014",
+                    "description": "Heat Treated Soy - AP",
+                    "quantity": 1900,
+                    "price": 424.65,
+                    "page": 1
+                },
+                {
+                    "item_number": "991",
+                    "description": "CALCIUM SALT FAT",
+                    "quantity": 450,
+                    "price": 333.68,
+                    "page": 1
+                },
+                {
+                    "item_number": "ALS50",
+                    "description": "AlphaLine Start Calf Starter 5",
+                    "quantity": 550,
+                    "price": 214.1,
+                    "page": 1
+                },
+                {
+                    "item_number": "BALANCER",
+                    "description": "AlphaLine BALANCER Heifer Mineral",
+                    "quantity": 500,
+                    "price": 387.26,
+                    "page": 1
+                },
+                {
+                    "item_number": "BICARB",
+                    "description": "Sodium Bicarbonate",
+                    "quantity": 1400,
+                    "price": 485.1,
+                    "page": 1
+                },
+                {
+                    "item_number": "BOV2420",
+                    "description": "OptiMilk 24-20 4 Seasons BOV Milk Replacer",
+                    "quantity": 900,
+                    "price": 1369.9,
+                    "page": 1
+                },
+                {
+                    "item_number": "DRYII",
+                    "description": "DRY COW MINERAL II",
+                    "quantity": 450,
+                    "price": 432.23,
+                    "page": 1
+                },
+                {
+                    "item_number": "HRP20S",
+                    "description": "20% Opti-Heif Rumensin Pellet",
+                    "quantity": 2000,
+                    "price": 374.07,
+                    "page": 1
+                },
+                {
+                    "item_number": "MAPL20",
+                    "description": "Mapleline Complete Mash",
+                    "quantity": 45260,
+                    "price": 9097.32,
+                    "page": 1
+                },
+                {
+                    "item_number": "TMB",
+                    "description": "Block - Trace Mineral Salt",
+                    "quantity": 350,
+                    "price": 87.29,
+                    "page": 1
+                },
+                {
+                    "item_number": "TRANSC",
+                    "description": "Transition Complete Pellet",
+                    "quantity": 1200,
+                    "price": 382.87,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 54960,
+            "total_price": 13588.47,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "NOLA10",
+            "name": "Mike & Donna Nolan",
+            "class": "RETAIL",
+            "salesperson": "ANDREW, A",
+            "items": [
+                {
+                    "item_number": "5001",
+                    "description": "Bulk Soybean Meal",
+                    "quantity": 52340,
+                    "price": 10572.68,
+                    "page": 1
+                },
+                {
+                    "item_number": "5004",
+                    "description": "Bulk Corn Meal",
+                    "quantity": 91360,
+                    "price": 9574.1,
+                    "page": 1
+                },
+                {
+                    "item_number": "HRP20S",
+                    "description": "20% Opti-Heif Rumensin Pellet",
+                    "quantity": 12520,
+                    "price": 2250.72,
+                    "page": 1
+                },
+                {
+                    "item_number": "LAYC50",
+                    "description": "Layer Crumbles 50 lb",
+                    "quantity": 250,
+                    "price": 77.72,
+                    "page": 1
+                },
+                {
+                    "item_number": "MNOL",
+                    "description": "CMM              KENYON HILL PROTEIN MASH",
+                    "quantity": 178860,
+                    "price": 42841.54,
+                    "page": 1
+                },
+                {
+                    "item_number": "MNOL",
+                    "description": "RDC              MIKE NOLAN DRY COW   AA",
+                    "quantity": 8080,
+                    "price": 2570.93,
+                    "page": 1
+                },
+                {
+                    "item_number": "ROBO10P",
+                    "description": "PGI ROBOT PELLET",
+                    "quantity": 108055,
+                    "price": 19732.01,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 451465,
+            "total_price": 87619.7,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "NOLA11",
+            "name": "Nolan Family Farm LLC",
+            "class": "RETAIL",
+            "salesperson": "CARABEAU, M",
+            "items": [
+                {
+                    "item_number": "5013",
+                    "description": "Bulk Farm Molasses",
+                    "quantity": 30820,
+                    "price": 5208.58,
+                    "page": 1
+                },
+                {
+                    "item_number": "ACIDIF",
+                    "description": "Alphaline Acidified Calf Technology",
+                    "quantity": 1900,
+                    "price": 2822.45,
+                    "page": 1
+                },
+                {
+                    "item_number": "ALS50",
+                    "description": "AlphaLine Start Calf Starter 5",
+                    "quantity": 200,
+                    "price": 77.15,
+                    "page": 1
+                },
+                {
+                    "item_number": "ALTBULK",
+                    "description": "BULK AL TRANS HEIF PELLET",
+                    "quantity": 6225,
+                    "price": 1280.82,
+                    "page": 1
+                },
+                {
+                    "item_number": "NOLA10",
+                    "description": "A. Nolan High Mash",
+                    "quantity": 242017,
+                    "price": 46816.36,
+                    "page": 1
+                },
+                {
+                    "item_number": "NOLA11CD",
+                    "description": "A. Nolan CUD Mash",
+                    "quantity": 4005,
+                    "price": 1479.19,
+                    "page": 1
+                },
+                {
+                    "item_number": "NOLA15HM",
+                    "description": "Nolan Heifer Mash",
+                    "quantity": 9970,
+                    "price": 1846.95,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 295137,
+            "total_price": 59531.5,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "ODON11",
+            "name": "Patrick O'Donnell",
+            "class": "RETAIL",
+            "salesperson": "FLINT, H",
+            "items": [
+                {
+                    "item_number": "ARCTIC",
+                    "description": "OptiMilk 23-22 ARCTIC BOV Milk Replacer w/Bovatec",
+                    "quantity": 100,
+                    "price": 150.44,
+                    "page": 1
+                },
+                {
+                    "item_number": "HRPN",
+                    "description": "18% OPTI-HEIF BOVATEC PELLET",
+                    "quantity": 7500,
+                    "price": 1274.71,
+                    "page": 1
+                },
+                {
+                    "item_number": "ODON11",
+                    "description": "Pat Odonnell TMR Mash",
+                    "quantity": 23055,
+                    "price": 6038.53,
+                    "page": 1
+                },
+                {
+                    "item_number": "ODON12P",
+                    "description": "Pat O'Donnell Robot Pellet",
+                    "quantity": 9065,
+                    "price": 1684.59,
+                    "page": 1
+                },
+                {
+                    "item_number": "OPTICAF",
+                    "description": "Opti-C.A.F. Starter",
+                    "quantity": 100,
+                    "price": 33.85,
+                    "page": 1
+                },
+                {
+                    "item_number": "PFL35",
+                    "description": "Pro-Form Lamb & Rice Maint. Dog Food 35 lb",
+                    "quantity": 35,
+                    "price": 57.18,
+                    "page": 1
+                },
+                {
+                    "item_number": "TRANSC",
+                    "description": "Transition Complete Pellet",
+                    "quantity": 1350,
+                    "price": 424.8,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 41205,
+            "total_price": 9664.1,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "POUL96",
+            "name": "Joshua Poulin",
+            "class": "WHOLESALE",
+            "salesperson": "HOUSE",
+            "items": [
+                {
+                    "item_number": "ALS50",
+                    "description": "AlphaLine Start Calf Starter 5",
+                    "quantity": 4000,
+                    "price": 1503.2,
+                    "page": 1
+                },
+                {
+                    "item_number": "BOV2424",
+                    "description": "Alphaline Advantage 24/24 Bov",
+                    "quantity": 2000,
+                    "price": 3090.2,
+                    "page": 1
+                },
+                {
+                    "item_number": "CR20",
+                    "description": "Colostrum Replacer 20 lb Bucket (UltraStart)",
+                    "quantity": 40,
+                    "price": 890,
+                    "page": 1
+                },
+                {
+                    "item_number": "HEIFRP50",
+                    "description": "Bag Opti-Heif RP Pellet",
+                    "quantity": 8000,
+                    "price": 2293.17,
+                    "page": 1
+                },
+                {
+                    "item_number": "POUL10P",
+                    "description": "Poulin Farm Robot Pellet",
+                    "quantity": 65030,
+                    "price": 7794.11,
+                    "page": 1
+                },
+                {
+                    "item_number": "POUL12",
+                    "description": "Poulin Farm PMR Mash",
+                    "quantity": 139075,
+                    "price": 30471.99,
+                    "page": 1
+                },
+                {
+                    "item_number": "POUL13CD",
+                    "description": "Poulin Farm CUD Mash",
+                    "quantity": 7380,
+                    "price": 3058.78,
+                    "page": 1
+                },
+                {
+                    "item_number": "POUL16H",
+                    "description": "Poulin Farm Heifer Mash",
+                    "quantity": 16090,
+                    "price": 3496.79,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 241615,
+            "total_price": 52598.24,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "SMIT21",
+            "name": "Smith Dairy LLC",
+            "class": "RETAIL",
+            "salesperson": "ANDREW, A",
+            "items": [
+                {
+                    "item_number": "HRP20S",
+                    "description": "20% Opti-Heif Rumensin Pellet",
+                    "quantity": 10540,
+                    "price": 1913.2,
+                    "page": 1
+                },
+                {
+                    "item_number": "SMIT25",
+                    "description": "Ed Smith Dairy Mash",
+                    "quantity": 189720,
+                    "price": 40234.61,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 200260,
+            "total_price": 42147.81,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "SIZE10",
+            "name": "Sizen Dairy Farm",
+            "class": "RETAIL",
+            "salesperson": "DOANE, M",
+            "items": [
+                {
+                    "item_number": "ALTBULK",
+                    "description": "BULK AL TRANS HEIF PELLET",
+                    "quantity": 2005,
+                    "price": 400.49,
+                    "page": 1
+                },
+                {
+                    "item_number": "BOV2420",
+                    "description": "OptiMilk 24-20 4 Seasons BOV Milk Replacer",
+                    "quantity": 700,
+                    "price": 1078,
+                    "page": 1
+                },
+                {
+                    "item_number": "ROBO20P",
+                    "description": "PGI Robot Pellet",
+                    "quantity": 59560,
+                    "price": 11542.84,
+                    "page": 1
+                },
+                {
+                    "item_number": "SIZE10",
+                    "description": "Sizen PMR Mash",
+                    "quantity": 99910,
+                    "price": 22976.28,
+                    "page": 1
+                },
+                {
+                    "item_number": "SIZE13D",
+                    "description": "Sizen CUD Mash",
+                    "quantity": 2060,
+                    "price": 747.4,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 164235,
+            "total_price": 36745.01,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "TAFT11",
+            "name": "Bruce & Mary Taft",
+            "class": "KEYM4",
+            "salesperson": "CARABEAU, M",
+            "items": [
+                {
+                    "item_number": "ALTBULK",
+                    "description": "BULK AL TRANS HEIF PELLET",
+                    "quantity": 8035,
+                    "price": 1620.22,
+                    "page": 1
+                },
+                {
+                    "item_number": "DRYII",
+                    "description": "DRY COW MINERAL II",
+                    "quantity": 150,
+                    "price": 143.34,
+                    "page": 1
+                },
+                {
+                    "item_number": "LAYM50",
+                    "description": "Layer Mash 50 lb",
+                    "quantity": 100,
+                    "price": 31.26,
+                    "page": 1
+                },
+                {
+                    "item_number": "OPTICAF",
+                    "description": "Opti-C.A.F. Starter",
+                    "quantity": 100,
+                    "price": 33.81,
+                    "page": 1
+                },
+                {
+                    "item_number": "TAFT10",
+                    "description": "Taft High Mash",
+                    "quantity": 135435,
+                    "price": 31039.05,
+                    "page": 1
+                },
+                {
+                    "item_number": "TAFT11",
+                    "description": "Taft Mid Mash",
+                    "quantity": 73690,
+                    "price": 15171,
+                    "page": 1
+                },
+                {
+                    "item_number": "TAFT12CD",
+                    "description": "Taft CUD Mash",
+                    "quantity": 8070,
+                    "price": 3060.7,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 225580,
+            "total_price": 51099.38,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "VERN10",
+            "name": "Vern-Mont Farm LLC",
+            "class": "RETAIL",
+            "salesperson": "ST. ONGE, M",
+            "items": [
+                {
+                    "item_number": "5005",
+                    "description": "Bulk Canola Meal",
+                    "quantity": 23060,
+                    "price": 4286.61,
+                    "page": 1
+                },
+                {
+                    "item_number": "998",
+                    "description": "C-16 FAT BAGGED",
+                    "quantity": 5400,
+                    "price": 4971.1,
+                    "page": 1
+                },
+                {
+                    "item_number": "ALS50",
+                    "description": "AlphaLine Start Calf Starter 5",
+                    "quantity": 2400,
+                    "price": 923.35,
+                    "page": 1
+                },
+                {
+                    "item_number": "AUREO10",
+                    "description": "Aureomycin 10 GR/LB * VFD Required *",
+                    "quantity": 150,
+                    "price": 148.05,
+                    "page": 1
+                },
+                {
+                    "item_number": "BTM50",
+                    "description": "ALPHALINE SURE TRAX HEIFER MINERAL",
+                    "quantity": 800,
+                    "price": 686,
+                    "page": 1
+                },
+                {
+                    "item_number": "DRYII",
+                    "description": "DRY COW MINERAL II",
+                    "quantity": 600,
+                    "price": 573.3,
+                    "page": 1
+                },
+                {
+                    "item_number": "HRP20S",
+                    "description": "20% Opti-Heif Rumensin Pellet",
+                    "quantity": 6340,
+                    "price": 1149,
+                    "page": 1
+                },
+                {
+                    "item_number": "PMB50",
+                    "description": "AlphaLine 25/10 Milk Builder MOS BOV",
+                    "quantity": 200,
+                    "price": 306.08,
+                    "page": 1
+                },
+                {
+                    "item_number": "VERN10",
+                    "description": "Vern-Mont High Mash",
+                    "quantity": 303595,
+                    "price": 63683.69,
+                    "page": 1
+                },
+                {
+                    "item_number": "VERN11",
+                    "description": "Vern-Mont Fresh Mash",
+                    "quantity": 24020,
+                    "price": 5527.3,
+                    "page": 1
+                },
+                {
+                    "item_number": "VERN12D",
+                    "description": "Vern-Mont CUD Mash",
+                    "quantity": 12480,
+                    "price": 4650.72,
+                    "page": 1
+                },
+                {
+                    "item_number": "VERN13",
+                    "description": "Vern-Mont Midd/Low Mash",
+                    "quantity": 66322,
+                    "price": 11817.47,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 445367,
+            "total_price": 98722.67,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "WEST14",
+            "name": "Westminster Farms",
+            "class": "RETAIL",
+            "salesperson": "ST. ONGE, M",
+            "items": [
+                {
+                    "item_number": "5014",
+                    "description": "Amino Max - Bulk",
+                    "quantity": 95860,
+                    "price": 21153.03,
+                    "page": 1
+                },
+                {
+                    "item_number": "998",
+                    "description": "C-16 FAT BAGGED",
+                    "quantity": 5950,
+                    "price": 5512.68,
+                    "page": 1
+                },
+                {
+                    "item_number": "WEST10",
+                    "description": "Westminister Farms High Mash",
+                    "quantity": 528905,
+                    "price": 102437.91,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 630715,
+            "total_price": 129103.62,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": "MMills",
+            "page": 1
+        },
+        {
+            "customer_id": "WOOD10",
+            "name": "Wood Farm LLC",
+            "class": "RETAIL",
+            "salesperson": "PIERCE, R.",
+            "items": [
+                {
+                    "item_number": "ALTBULKC",
+                    "description": "Bulk AL Trans 18% Heif Pellet",
+                    "quantity": 19820,
+                    "price": 3906.68,
+                    "page": 1
+                },
+                {
+                    "item_number": "BOV2420",
+                    "description": "OptiMilk 24-20 4 Seasons BOV Milk Replacer",
+                    "quantity": 4000,
+                    "price": 6028.4,
+                    "page": 1
+                },
+                {
+                    "item_number": "MGA",
+                    "description": "MGA Medicated Mash",
+                    "quantity": 250,
+                    "price": 116.25,
+                    "page": 1
+                },
+                {
+                    "item_number": "WOOD11",
+                    "description": "Wood Farm High Mash",
+                    "quantity": 374560,
+                    "price": 81531.07,
+                    "page": 1
+                },
+                {
+                    "item_number": "WOOD12",
+                    "description": "Wood Farm Low Mash",
+                    "quantity": 147360,
+                    "price": 29592.83,
+                    "page": 1
+                },
+                {
+                    "item_number": "WOOD15CD",
+                    "description": "Woods Farm CUD Mash",
+                    "quantity": 11960,
+                    "price": 3199.24,
+                    "page": 1
+                }
+            ],
+            "total_quantity": 557950,
+            "total_price": 124374.47,
+            "order_date": {
+                "raw": "10/1/2024 - 10/31/2024"
+            },
+            "user_id": null,
+            "page": 1
+        }
+    ]
+}

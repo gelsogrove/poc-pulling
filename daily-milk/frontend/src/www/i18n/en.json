@@ -1,0 +1,98 @@
+{
+  "home": {
+    "logo": "Human in the Loop Solutions",
+    "service_heading": "AI Solutions",
+    "features": {
+      "custom_vision": {
+        "title": "Object Detection",
+        "subtitle": "Optimize quality control with advanced AI vision"
+      },
+      "chatbot": {
+        "title": "Custom Chatbots",
+        "subtitle": "Boost engagement with intelligent AI conversations"
+      },
+      "generativeAI": {
+        "title": "Generative AI",
+        "subtitle": "Create graphic and documents from a data source"
+      }
+    },
+    "technologies_heading": "Technologies We Use"
+  },
+  "navbar": {
+    "contact": "Contact us"
+  },
+  "info": {
+    "advanced_ai": "Advanced AI Optimization Approach We Use",
+    "human_in_the_loop": {
+      "title": "Human in the Loop (HITL)",
+      "description": "Human in the Loop (HITL) is an approach in artificial intelligence that integrates human intervention in the stages of training, fine-tuning, labelling, and data collection, ensuring optimal model accuracy. Beyond enhancing precision, HITL enables the handling of complex situations that are difficult to automate. It is essential that operators receive adequate training to effectively contribute to this continuous improvement process, providing the system with the flexibility needed to adapt quickly to unexpected changes or requirements."
+    },
+    "active_learning": {
+      "title": "Active Learning Loop",
+      "description": "Active Learning Loop is a technique that temporarily lowers the model's accuracy to find new datasets where it is unsure and needs human help to label data correctly. The model picks out these difficult datasets and sends them to human experts for re-labeling. This process improves the quality of the labeled data and helps the model learn from challenging cases, increasing its overall accuracy over time. By focusing on the hardest cases, the Active Learning loop helps the model handle complex situations that are difficult to automate."
+    },
+    "fine_tuning": {
+      "title": "Fine-tuning",
+      "description": "Fine-tuning is a machine learning technique that further trains a pre-trained model on a smaller, specialized dataset to improve its performance for a specific task or domain. This process starts with a base model that has already been trained on a large, general dataset. By training it further on data specific to the intended application—such as medical, legal, or customer service fields—the model becomes more attuned to the nuances and requirements of that context. This targeted approach enhances the model's accuracy and reliability for specialized applications."
+    },
+    "data_augmentation": {
+      "title": "Data Augmentation",
+      "description": "Data Augmentation is a technique used to increase the diversity and quantity of data by creating modified versions of the original dataset. This process includes transformations such as rotation, flipping, and scaling. Data Augmentation helps improve the model's ability to generalize, especially in scenarios with limited data, by providing a wider range of examples during training."
+    },
+    "pruning": {
+      "title": "Embedding",
+      "description": "Embedding is a technique used to represent high-dimensional data in a more compact and dense format, making it easier to process and analyze. By mapping input data (such as text, images, or other entities) to lower-dimensional vectors, embeddings capture meaningful relationships and structures within the data. This approach is often used to improve efficiency and accuracy in tasks like natural language processing, recommendation systems, and deep learning models. Embedding helps reduce computational requirements and is particularly beneficial for deployment in resource-constrained environments like mobile devices."
+    },
+    "hyperparameter_tuning": {
+      "title": "Hyperparameter Tuning",
+      "description": "Hyperparameter Tuning involves optimizing the parameters that control the learning process of a model, such as learning rate and batch size. Techniques like grid search and random search are used to find the best combination of hyperparameters, improving the model's performance and stability in specific applications."
+    }
+  },
+
+  "landing": {
+    "intro_text": "Our approach is focused on creating real-world impact. We offer advanced artificial intelligence solutions that help businesses operate more efficiently and make a meaningful difference. By continually seeking and selecting the best AI technologies and products, we ensure our clients have the most up-to-date tools that meet their needs.",
+    "process_intro": "Our process includes:",
+    "steps": {
+      "identify_areas": "Identifying areas for AI integration",
+      "research_trends": "Researching the latest trends",
+      "collect_data": "Collecting data",
+      "train_models": "Training models",
+      "continuous_improvement": "Continuous improvement",
+      "monitoring": "Monitoring"
+    }
+  },
+
+  "faq": {
+    "title": "Frequently Asked Questions (FAQ)",
+    "questions": [
+      {
+        "title": "What are the benefits of using AI in my business?",
+        "content": "Using artificial intelligence in your business can lead to significant improvements in efficiency, accuracy, and productivity..."
+      },
+      {
+        "title": "What advantages can a Custom Chatbot bring to my business?",
+        "content": "A custom chatbot offers many benefits, including enhanced customer support and improved operational efficiency..."
+      },
+      {
+        "title": "What benefits can Custom Vision bring to my business?",
+        "content": "Custom Vision technology can transform quality control processes, particularly in industries with complex production lines..."
+      },
+      {
+        "title": "What are the benefits of Predictive Maintenance?",
+        "content": "Predictive Maintenance (PdM) offers significant advantages by minimizing unplanned downtime, reducing maintenance costs, and extending equipment life..."
+      },
+      {
+        "title": "Is there a data security issue?",
+        "content": "Data security is paramount in all AI applications, and we take extensive measures to safeguard it..."
+      },
+      {
+        "title": "How do you ensure the quality of the AI models?",
+        "content": "Ensuring the quality of AI models involves a multi-step process that includes rigorous validation, testing, and continuous optimization..."
+      },
+      {
+        "title": "What technologies do we use?",
+        "content": "We leverage a variety of cutting-edge AI technologies, including machine learning, deep learning, computer vision, and natural language processing (NLP)..."
+      }
+    ]
+  }
+}

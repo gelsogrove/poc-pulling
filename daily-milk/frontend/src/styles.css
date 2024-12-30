@@ -1,0 +1,23 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  color: #343a40;
+}
+
+h1 {
+  color: #dc3545; /* Esempio di colore per titoli */
+}
+
+@media only screen and (max-width: 768px) {
+  body {
+    font-size: 14px; /* Riduci la dimensione del font per schermi più piccoli */
+  }
+
+  .app {
+    flex-direction: column; /* Cambia la direzione del flex per schermi piccoli */
+  }
+
+  .main {
+    padding: 10px; /* Aggiungi padding per una migliore spaziatura */
+  }
+}

@@ -1,0 +1,147 @@
+/* MessageList.css */
+
+.chat-messages {
+  flex-grow: 1;
+  overflow-y: scroll;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-right: 1px solid #ddd;
+  margin-bottom: 10px;
+  min-height: 540px;
+  -webkit-overflow-scrolling: touch;
+  background-color: white;
+  padding: 20px;
+}
+
+.chat-message {
+  max-width: 900px;
+  padding: 10px !important;
+  border-radius: 15px !important;
+  font-size: 1rem !important;
+
+  border: 2px solid #ccc !important;
+  word-wrap: break-word !important; /* Permette al testo di andare a capo */
+  white-space: normal !important; /* Consente il wrapping del testo */
+  overflow-wrap: auto !important; /* Consente il wrapping del testo */
+}
+
+.user-message pre {
+  align-self: flex-end;
+  background-color: #007bff;
+  color: white !important;
+  border-top-right-radius: 0;
+}
+
+.bot-message {
+  align-self: flex-start;
+  background-color: #e0e0e0;
+
+  border-top-left-radius: 0;
+}
+
+.message-text {
+  white-space: pre-wrap;
+}
+
+.table-container {
+  width: 100%; /* Larghezza al 100% del contenitore */
+  border-collapse: collapse; /* Unisce i bordi delle celle */
+  margin: 20px 0; /* Margine sopra e sotto la tabella */
+
+  margin-top: 30px;
+  margin-right: 0px;
+  font-size: 10px;
+  margin-left: 10px;
+  overflow-x: auto; /* Aggiunge lo scorrimento orizzontale */
+  display: block; /* Necessario per overflow */
+  white-space: nowrap; /* Evita che il contenuto vada a capo */
+}
+
+/* Intestazione della tabella */
+.table-header {
+  font-weight: bold; /* Testo in grassetto */
+  text-align: left; /* Allinea il testo a sinistra */
+}
+
+/* Corpo della tabella */
+.table-body {
+  text-align: left; /* Allinea il testo a sinistra */
+  font-weight: normal;
+  padding: 5px;
+}
+
+/* Stile per le celle della tabella */
+table tr td {
+  padding: 5px;
+  border: 1px solid black;
+  background-color: white !important;
+}
+.table-header th {
+  padding: 10px; /* Spaziatura interna delle celle */
+  border: 1px solid black; /* Bordo grigio chiaro per le celle */
+  background-color: #ccdd; /* Colore di sfondo grigio chiaro */
+}
+
+/* Stile per le righe della tabella */
+
+.total {
+  font-size: 17px;
+  font-weight: bold;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.like-unlike-icons {
+  display: inline-flex; /* Per centrare le icone */
+  align-items: center; /* Allinea verticalmente */
+  position: relative; /* Necessario per posizionare il testo sopra l'icona */
+}
+
+.like-unlike-icons span {
+  margin-right: 2px; /* Distanza tra le icone (ridotto di 3px) */
+  color: gray; /* Colore grigio per l'icona */
+  cursor: pointer; /* Cambia il cursore per indicare che sono cliccabili */
+  filter: grayscale(100%); /* Applica il filtro grigio */
+  padding: 8px; /* Spaziatura interna per il cerchio */
+  font-size: 16px; /* Dimensione del font */
+  border-radius: 50%; /* Rende il bordo rotondo */
+  transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s; /* Aggiunta di transizioni per un effetto più fluido */
+}
+
+/* Cambia il colore e ingrandisce l'icona al passaggio del mouse */
+.like-unlike-icons span:hover {
+  color: #808080; /* Colore grigio scuro al passaggio del mouse */
+  filter: none; /* Rimuove il filtro grigio al passaggio del mouse */
+  transform: scale(1.25); /* Ingrandisce l'icona al 125% */
+  background-color: rgba(
+    200,
+    200,
+    200,
+    0.3
+  ); /* Colore di sfondo leggero al passaggio del mouse */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombra per far risaltare l'icona */
+}
+
+/* Stile per il testo sopra l'icona */
+.like-unlike-icons .icon-label {
+  position: absolute; /* Posiziona il testo sopra l'icona */
+  bottom: 30px; /* Sposta il testo sopra l'icona */
+  left: 50%; /* Centra orizzontalmente */
+  transform: translateX(-50%); /* Centra il testo */
+  color: white; /* Colore del testo bianco */
+  font-size: 12px; /* Dimensione del font più piccola */
+  font-weight: bold; /* Grassetto per il testo */
+  text-align: center; /* Allinea il testo al centro */
+  background-color: black; /* Sfondo nero per il testo */
+  padding: 2px 5px; /* Spaziatura interna per il testo */
+  border-radius: 5px; /* Rende il bordo del testo arrotondato */
+  opacity: 0; /* Inizialmente invisibile */
+  transition: opacity 0.2s; /* Transizione per l'opacità */
+}
+
+/* Mostra il testo al passaggio del mouse */
+.like-unlike-icons span:hover .icon-label {
+  opacity: 1; /* Rende il testo visibile al passaggio del mouse */
+}

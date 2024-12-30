@@ -1,0 +1,192 @@
+/* Navbar.css */
+
+.navbar {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px;
+}
+
+.contact {
+  color: #fff;
+  margin-right: 30px;
+  font-size: 1.2rem;
+}
+.language-selector {
+  display: flex;
+  gap: 10px;
+  margin-right: 100px;
+}
+
+.language-selector button {
+  position: relative; /* Position relative for tooltip positioning */
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.language-selector button img {
+  width: 30px;
+  height: auto;
+  display: block;
+  height: auto;
+  margin-top: 0px;
+}
+
+/* Tooltip styling */
+.language-selector button[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out,
+    transform 0.2s ease-in-out;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+/* Show tooltip on hover */
+.language-selector button:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .language-selector button[data-tooltip]::after {
+    bottom: 50px; /* Adjust for mobile */
+  }
+}
+
+/* Desktop-specific styles */
+@media (min-width: 769px) {
+  .language-selector button[data-tooltip]::after {
+    top: -80px; /* Increase distance for desktop */
+  }
+}
+
+.language-selector button.selected img {
+  border-bottom: 2px solid #ffd700;
+}
+
+.language-selector button img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Tooltip styling for selected language */
+.language-selector button.selected[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  background-color: #333;
+  color: #fff;
+  padding: 8px 12px;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  opacity: 1;
+  visibility: visible;
+  font-size: 12px;
+  min-height: auto;
+  max-height: none;
+}
+
+/* Tooltip on hover for non-selected languages */
+.language-selector button:not(.selected):hover[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  background-color: #333;
+  color: #fff;
+  padding: 8px 12px;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  opacity: 1;
+  visibility: visible;
+  font-size: 12px;
+  min-height: auto;
+  max-height: none;
+}
+
+/* Nascondi il tooltip della lingua di default quando si passa il mouse su un'altra lingua */
+.language-selector
+  button:not(.selected):hover
+  ~ button.default-language::after {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.language-selector button:not(.selected)::after {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.calendly-badge {
+  display: none; /* Nascondi di default */
+  border: 1px solid #f3b808;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .calendly-badge {
+    display: block; /* Mostra solo su dispositivi mobili */
+  }
+
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .language-selector {
+    margin-right: 0;
+  }
+
+  .language-selector button {
+    padding: 10px;
+  }
+}
+
+/* Show the button only on mobile devices */
+@media (max-width: 768px) {
+  .calendly-button {
+    display: block; /* Show on mobile */
+  }
+}
+
+.calendly-button {
+  position: fixed; /* Fissa il pulsante in una posizione */
+  bottom: 10px; /* Distanza dal fondo */
+  right: 10px; /* Distanza dal lato destro */
+  background-color: #f3a304;
+  border: none;
+  color: black;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 10px; /* Aggiungi un border-radius di 10px */
+  z-index: 9999; /* Assicurati che sia sopra tutti gli altri elementi */
+  display: none; /* Nascondi il bottone di default */
+}
+
+@media (max-width: 768px) {
+  .calendly-button {
+    display: block; /* Mostra il bottone solo su schermi piccoli */
+  }
+}

@@ -1,0 +1,51 @@
+.chat-input {
+  display: flex;
+  align-items: flex-end; /* Allinea i bottoni e la textarea in basso */
+}
+
+.input-group {
+  display: flex; /* Disposizione in riga */
+  width: 100%; /* Occupa tutta la larghezza */
+  align-items: flex-end; /* Allinea i bottoni in basso */
+}
+
+.input-wide {
+  flex-grow: 1; /* L'input occupa tutto lo spazio disponibile */
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: vertical; /* Permette di ridimensionare il textarea in verticale */
+  min-height: 40px; /* Altezza minima del campo di input */
+  font-family: Arial, sans-serif;
+  min-width: 260px !important; /* Puoi regolare la larghezza */
+  box-sizing: border-box; /* Assicura che padding e border siano inclusi nelle dimensioni */
+}
+
+.input-group-append {
+  display: flex; /* Disposizione in riga */
+  flex-direction: row; /* Disposizione orizzontale */
+  gap: 8px; /* Spaziatura tra i bottoni */
+  align-items: center; /* Allinea verticalmente i bottoni */
+}
+
+.input-group-append .btn {
+  padding: 8px 12px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  height: 40px; /* Altezza coerente con la textarea */
+  text-align: center;
+  display: flex; /* Per centrare il testo */
+  justify-content: center; /* Centra il testo orizzontalmente */
+  align-items: center; /* Centra il testo verticalmente */
+}
+
+.input-group-append .btn-wide {
+  width: 80px; /* Larghezza fissa per i bottoni */
+}
+
+.input-group-append .btn-menu {
+  margin-left: 0 !important;
+}

@@ -1,0 +1,38 @@
+name: Deploy to Dailymilk
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-to-dailymilk:
+    name: Deploy to Dailymilk via SSH
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to Dailymilk via SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DAILYMILK_SSH_KEY }}
+          REMOTE_USER: ${{ secrets.DAILYMILK_USER }}
+          REMOTE_HOST: ${{ secrets.DAILYMILK_HOST }}
+          REMOTE_PATH: ${{ secrets.DAILYMILK_PATH }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $REMOTE_HOST >> ~/.ssh/known_hosts
+          ssh $REMOTE_USER@$REMOTE_HOST "cd $REMOTE_PATH && git pull && npm install && pm2 restart app"

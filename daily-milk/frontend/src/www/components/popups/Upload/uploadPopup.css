@@ -1,0 +1,52 @@
+/* daily-milk/frontend/src/www/components/popups/Upload/uploadPopup.css */
+
+.prompts-form-container {
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  max-width: 500px;
+  margin: auto;
+}
+
+.drop-area {
+  border: 2px dashed #4a90e2;
+  border-radius: 8px;
+  padding: 30px; /* Aumenta l'area di drag and drop */
+  margin-left: 15px;
+  /text-align: center;
+  color: #4a90e2;
+  transition: background-color 0.3s;
+  width: 95%;
+}
+
+.drop-area:hover {
+  background-color: #f0f8ff; /* Colore di sfondo al passaggio del mouse */
+}
+
+.close-button {
+  background-color: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+h3 {
+  color: #333;
+}
+
+h4 {
+  color: #666;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  background-color: #e7f3fe;
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 4px;
+}
