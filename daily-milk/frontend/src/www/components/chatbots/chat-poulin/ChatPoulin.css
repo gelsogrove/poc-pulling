@@ -1,0 +1,60 @@
+/* Contenitore principale della chat */
+.chat-poulin {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+}
+
+/* Sezione principale della chat */
+.chat-poulin-main {
+  width: 100%;
+}
+
+/* Contenitore dei messaggi, con overflow che attiva lo scroll solo quando necessario */
+.chat-poulin-main-messages {
+  overflow-y: auto;
+  max-height: 70vh;
+  scrollbar-width: thin; /* per Firefox, scrollbar sottile */
+  scrollbar-color: transparent transparent; /* per Firefox, scrollbar invisibile per default */
+}
+
+/* Sezione per il pannello laterale */
+.chat-poulin-right {
+  padding: 20px;
+  background-color: #fbf7f7;
+  overflow-y: auto;
+  max-height: 78vh;
+  margin-left: 10px;
+}
+
+/* Chat input */
+.chat-input {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.total {
+  margin-top: -35px;
+  font-size: 18px;
+}
+
+.title-usage {
+  font-size: 22px;
+  margin: 0 auto;
+  width: 100%;
+  text-align: center;
+  background-color: #ccc;
+}
+
+.chat-messages {
+  min-height: 70vh;
+}
+
+.user-message {
+  align-self: flex-end; /* Allinea messaggio utente a destra */
+  background-color: #007bff; /* Sfondo blu */
+  color: white; /* Testo bianco */
+  border-top-right-radius: 0; /* Rimuove angolo in alto a destra */
+}

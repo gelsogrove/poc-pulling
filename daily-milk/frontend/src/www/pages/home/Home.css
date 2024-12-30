@@ -1,0 +1,218 @@
+/* src/components/Home.css */
+
+.home-container {
+  text-align: center;
+  margin-top: 0px;
+  position: relative;
+}
+
+.header {
+  margin-bottom: 20px;
+}
+
+.footer {
+  background-color: white;
+}
+.header p {
+  color: rgb(241, 194, 107);
+  font-size: 2.7rem;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.techweuse {
+  font-size: 2.3rem;
+  color: #aaa;
+}
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 50px;
+  margin-top: 40px;
+}
+
+.feature-item {
+  padding: 1px;
+  border-radius: 10px;
+  max-width: 500px;
+  flex: 1 1 300px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  margin-top: 24px;
+}
+
+.image-container {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.feature-image {
+  width: 100%;
+  height: 330px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.feature-item:hover .feature-image {
+  transform: scale(1.1);
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 15px;
+  text-align: left;
+}
+
+.overlay h3 {
+  margin: 0;
+  color: rgb(241, 194, 107);
+  font-size: 1.5rem;
+}
+
+.subtitle {
+  color: white;
+  font-size: 1rem;
+}
+
+.tecnology {
+  background-color: white;
+  border: 1px solid white;
+  width: 100vw;
+}
+
+.ourservice {
+  margin-top: 80px;
+  margin-bottom: -40px;
+  font-size: 2.3rem;
+  color: rgba(241, 194, 107, 0.8);
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  padding: 14px;
+  height: 400px;
+}
+
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%; /* Rende il bottone rotondo */
+  background-color: white;
+  border: 2px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  cursor: pointer;
+  position: relative; /* Necessario per il posizionamento assoluto del tooltip */
+}
+
+.btn:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  transform: scale(1.1); /* Ingrandisce il bottone */
+}
+
+/* Icone nei bottoni */
+.btn i {
+  font-size: 36px; /* Aumenta la dimensione dell'icona */
+  color: #007bff; /* Colore dell'icona */
+}
+
+.btn:hover i {
+  color: #0056b3; /* Cambia colore dell'icona al passaggio del mouse */
+}
+
+/* Bottone con bordi rotondi */
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px; /* Aumenta la larghezza per adattarsi alle icone più grandi */
+  height: 60px; /* Aumenta l'altezza per adattarsi alle icone più grandi */
+  border-radius: 50%; /* Forma rotonda */
+  background-color: white;
+  border: 2px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  cursor: pointer;
+  position: relative;
+}
+
+/* Effetto al passaggio del mouse sui bottoni */
+.btn:hover {
+  background-color: #f0f0f0;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  transform: scale(1.1); /* Ingrandisce il bottone */
+}
+
+.hidden {
+  display: none;
+}
+
+.logout-link {
+  background-color: #ccc;
+  font-size: 18px;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 4px;
+  position: relative;
+  top: -510px;
+  left: 45vw;
+}
+
+.tooltip {
+  visibility: hidden; /* Nascosto di default */
+  background-color: rgba(0, 0, 0, 0.8); /* Sfondo nero traslucido */
+  color: white; /* Testo bianco */
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  top: 65px; /* Posizionato sotto il bottone */
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap; /* Evita che il testo vada a capo */
+  font-size: 12px;
+  opacity: 0; /* Invisibile inizialmente */
+  transition: opacity 0.3s ease-in-out;
+}
+
+.btn:hover .tooltip {
+  visibility: visible; /* Mostra il tooltip al passaggio del mouse */
+  opacity: 1; /* Applica un'animazione di dissolvenza */
+}
+
+.logout-btn i {
+  color: red; /* Rende l'icona rossa */
+  transition: color 0.3s ease; /* Transizione per il passaggio di colore */
+}
+
+.logout-btn i:hover {
+  color: darkred; /* Cambia il colore a rosso scuro al passaggio del mouse */
+}
+
+.logout-btn {
+  margin-left: auto; /* Spinge il pulsante completamente a destra */
+  display: flex; /* Assicura che l'icona e il testo siano ben posizionati */
+  align-items: center; /* Allinea verticalmente */
+  justify-content: flex-end; /* Posiziona il contenuto all'interno a destra */
+}
+
+.logout-btn i {
+  color: darkred;
+  transition: color 0.3s ease;
+}
+
+.logout-btn i:hover {
+  color: red;
+}

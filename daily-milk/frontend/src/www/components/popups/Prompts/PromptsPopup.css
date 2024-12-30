@@ -1,0 +1,61 @@
+.prompts-form-container {
+  min-width: 39vw;
+  margin: 20px auto;
+  padding: 50px;
+  border-radius: 8px;
+}
+
+.prompts-form-container .title {
+  padding: 0px 0px 35px 0px;
+  margin-top: -30px;
+}
+.prompts-form-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.prompts-form-container .form-section {
+  margin-bottom: 15px;
+}
+
+.prompts-form-container label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.prompts-form-container button {
+  width: 100%;
+  padding: 10px;
+  background-color: #4caf50;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Stili per gli editor */
+.prompts-form-container .codemirror-editor .CodeMirror {
+  height: 250px !important;
+  max-width: 800px;
+}
+
+.prompts-form-container .codemirror-editortext .CodeMirror {
+  height: 110px !important;
+  max-width: 800px;
+}
+
+.prompts-form-container .close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 10;
+  width: 40px;
+  background-color: transparent;
+  color: black;
+}

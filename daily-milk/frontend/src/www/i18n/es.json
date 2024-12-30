@@ -1,0 +1,98 @@
+{
+  "home": {
+    "logo": "Soluciones Human in the Loop",
+    "service_heading": "Soluciones de IA ",
+    "features": {
+      "custom_vision": {
+        "title": "Object Detection",
+        "subtitle": "Optimiza el control de calidad con visión avanzada de IA."
+      },
+      "chatbot": {
+        "title": "Chatbots Personalizados",
+        "subtitle": "Impulsa el compromiso con conversaciones de IA inteligentes."
+      },
+      "generativeAI": {
+        "title": "IA Generativa",
+        "subtitle": "Crea documentos gráficos a partir de tu una fuente de datos"
+      }
+    },
+    "technologies_heading": "Tecnologías que Usamos"
+  },
+  "navbar": {
+    "contact": "Contáctanos"
+  },
+  "info": {
+    "advanced_ai": "Enfoque de Optimización de IA Avanzada que Usamos",
+    "human_in_the_loop": {
+      "title": "Human in the Loop (HITL)",
+      "description": "El Humano en el Bucle (HITL) es un enfoque en inteligencia artificial que integra la intervención humana en las etapas de entrenamiento, ajuste fino, etiquetado y recopilación de datos, asegurando una precisión óptima del modelo. Más allá de mejorar la precisión, HITL permite manejar situaciones complejas que son difíciles de automatizar. Es esencial que los operadores reciban la capacitación adecuada para contribuir efectivamente a este proceso de mejora continua, proporcionando al sistema la flexibilidad necesaria para adaptarse rápidamente a cambios inesperados o requisitos."
+    },
+    "active_learning": {
+      "title": "Active Learning Loop",
+      "description": "El Bucle de Aprendizaje Activo es una técnica que reduce temporalmente la precisión del modelo para encontrar nuevos conjuntos de datos donde tiene dudas y necesita ayuda humana para etiquetar los datos correctamente. El modelo selecciona estos conjuntos de datos difíciles y los envía a expertos humanos para su reetiquetado. Este proceso mejora la calidad de los datos etiquetados y ayuda al modelo a aprender de casos desafiantes, aumentando su precisión general con el tiempo."
+    },
+    "fine_tuning": {
+      "title": "Fine-tuning",
+      "description": "El ajuste fino es una técnica de aprendizaje automático que entrena aún más un modelo previamente entrenado en un conjunto de datos especializado más pequeño para mejorar su rendimiento en una tarea o dominio específico. Este proceso comienza con un modelo base que ya ha sido entrenado en un conjunto de datos general. Al entrenarlo con datos específicos de la aplicación deseada, el modelo se adapta mejor a los matices y requisitos de ese contexto."
+    },
+    "data_augmentation": {
+      "title": "Data Augmentation",
+      "description": "El Aumento de Datos es una técnica utilizada para aumentar la diversidad y cantidad de datos mediante la creación de versiones modificadas del conjunto de datos original. Este proceso incluye transformaciones como rotación, volteo y escalado."
+    },
+    "pruning": {
+      "title": "Embedding",
+      "description": "Embedding es una técnica utilizada para representar datos de alta dimensionalidad en un formato más compacto y denso, lo que facilita su procesamiento y análisis. Al mapear los datos de entrada (como texto, imágenes u otras entidades) en vectores de menor dimensionalidad, los embeddings capturan relaciones significativas y estructuras dentro de los datos. Este enfoque se utiliza frecuentemente para mejorar la eficiencia y precisión en tareas como el procesamiento del lenguaje natural, los sistemas de recomendación y los modelos de aprendizaje profundo. Los embeddings ayudan a reducir los requisitos computacionales y son particularmente útiles para su implementación en entornos con recursos limitados, como dispositivos móviles.."
+    },
+    "hyperparameter_tuning": {
+      "title": "Hyperparameter Tuning",
+      "description": "El Ajuste de Hiperparámetros implica optimizar los parámetros que controlan el proceso de aprendizaje de un modelo, como la tasa de aprendizaje y el tamaño del lote. Técnicas como la búsqueda en cuadrícula y la búsqueda aleatoria se utilizan para encontrar la mejor combinación de hiperparámetros, mejorando el rendimiento del modelo."
+    },
+
+    "landing": {
+      "intro_text": "Nuestro enfoque está enfocado en crear un impacto real. Ofrecemos soluciones avanzadas de inteligencia artificial que ayudan a las empresas a operar de manera más eficiente y a marcar una diferencia significativa. Al buscar y seleccionar continuamente las mejores tecnologías y productos de IA, garantizamos que nuestros clientes tengan las herramientas más actualizadas que satisfacen sus necesidades.",
+      "process_intro": "Nuestro proceso incluye:",
+      "steps": {
+        "identify_areas": "Identificación de áreas para integración de IA",
+        "research_trends": "Investigación de las últimas tendencias",
+        "collect_data": "Recopilación de datos",
+        "train_models": "Entrenamiento de modelos",
+        "continuous_improvement": "Mejora continua",
+        "monitoring": "Monitoreo"
+      }
+    }
+  },
+
+  "faq": {
+    "title": "Preguntas Frecuentes (FAQ)",
+    "questions": [
+      {
+        "title": "¿Cuáles son los beneficios de usar IA en mi negocio?",
+        "content": "El uso de inteligencia artificial en su empresa puede llevar a mejoras significativas en eficiencia, precisión y productividad. La IA puede automatizar tareas repetitivas, permitiendo que los empleados se centren en actividades estratégicas de mayor nivel..."
+      },
+      {
+        "title": "¿Qué ventajas puede ofrecer un chatbot personalizado a mi negocio?",
+        "content": "Un chatbot personalizado ofrece muchos beneficios, incluyendo un mejor soporte al cliente y una mayor eficiencia operativa. Al automatizar las respuestas a preguntas frecuentes y proporcionar asistencia 24/7, un chatbot puede ayudar a los clientes a resolver problemas rápidamente..."
+      },
+      {
+        "title": "¿Qué beneficios puede aportar Custom Vision a mi negocio?",
+        "content": "La tecnología Custom Vision puede transformar los procesos de control de calidad, especialmente en industrias con líneas de producción complejas. Al utilizar IA para monitorear visualmente los productos, Custom Vision puede detectar automáticamente defectos, anomalías o incongruencias..."
+      },
+      {
+        "title": "¿Cuáles son los beneficios del Mantenimiento Predictivo?",
+        "content": "El Mantenimiento Predictivo (PdM) ofrece ventajas significativas al minimizar el tiempo de inactividad no planificado, reducir los costos de mantenimiento y prolongar la vida útil del equipo. Al aprovechar los datos de sensores y análisis avanzados, PdM puede predecir fallos potenciales antes de que ocurran..."
+      },
+      {
+        "title": "¿Hay problemas de seguridad de los datos?",
+        "content": "La seguridad de los datos es fundamental en todas las aplicaciones de IA, y tomamos medidas extensas para protegerlos. Nuestro equipo sigue las mejores prácticas para la protección de datos, incluyendo protocolos de cifrado, auditorías de seguridad regulares y acceso restringido a datos sensibles..."
+      },
+      {
+        "title": "¿Cómo garantizan la calidad de los modelos de IA?",
+        "content": "Garantizar la calidad de los modelos de IA implica un proceso de múltiples pasos que incluye validación rigurosa, pruebas y optimización continua. Inicialmente, usamos grandes conjuntos de datos diversificados para entrenar los modelos, estableciendo una sólida base de conocimientos..."
+      },
+      {
+        "title": "¿Qué tecnologías utilizamos?",
+        "content": "Utilizamos una variedad de tecnologías avanzadas de IA, incluyendo aprendizaje automático, aprendizaje profundo, visión por computadora y procesamiento del lenguaje natural (NLP). Nuestros proyectos a menudo involucran modelos personalizados diseñados para satisfacer las necesidades específicas del cliente..."
+      }
+    ]
+  }
+}
