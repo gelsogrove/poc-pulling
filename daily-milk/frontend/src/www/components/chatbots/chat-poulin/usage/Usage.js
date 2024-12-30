@@ -44,39 +44,47 @@ const Usage = ({ IdConversation }) => {
 
   // Dati statici per i grafici
   const lineData = {
-    labels: usageData ? usageData.currentWeek.map((item) => item.day) : [],
+    labels:
+      usageData && usageData.currentWeek
+        ? usageData.currentWeek.map((item) => item.day)
+        : [],
     datasets: [
       {
         label: "",
-        data: usageData
-          ? usageData.currentWeek.map((item) => parseFloat(item.total))
-          : [],
+        data:
+          usageData && usageData.currentWeek
+            ? usageData.currentWeek.map((item) => parseFloat(item.total))
+            : [],
         backgroundColor: "rgba(75,192,192,0.4)",
         borderColor: "rgba(75,192,192,1)",
         borderWidth: 2,
-
         fill: true,
       },
     ],
   }
 
   const barData = {
-    labels: usageData
-      ? usageData.lastmonths.slice(-6).map((item) => item.month)
-      : [],
+    labels:
+      usageData && usageData.lastmonths
+        ? usageData.lastmonths.slice(-6).map((item) => item.month)
+        : [],
     datasets: [
       {
         label: "",
-        data: usageData
-          ? usageData.lastmonths.slice(-6).map((item) => parseFloat(item.total))
-          : [],
-        backgroundColor: usageData
-          ? usageData.lastmonths
-              .slice(-6)
-              .map((_, index) =>
-                index === 5 ? "rgba(255,0,0,0.6)" : "rgba(153,102,255,0.6)"
-              )
-          : [],
+        data:
+          usageData && usageData.lastmonths
+            ? usageData.lastmonths
+                .slice(-6)
+                .map((item) => parseFloat(item.total))
+            : [],
+        backgroundColor:
+          usageData && usageData.lastmonths
+            ? usageData.lastmonths
+                .slice(-6)
+                .map((_, index) =>
+                  index === 5 ? "rgba(255,0,0,0.6)" : "rgba(153,102,255,0.6)"
+                )
+            : [],
         borderColor: "rgba(153,102,255,1)",
         borderWidth: 2,
       },
