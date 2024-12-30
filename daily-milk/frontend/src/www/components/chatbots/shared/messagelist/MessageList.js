@@ -1,7 +1,7 @@
 import React from "react"
 import "./MessageList.css"
 
-const MessageList = ({ messages, IsReturnTable }) => {
+const MessageList = ({ messages }) => {
   return (
     <div className="chat-messages">
       {messages
@@ -14,30 +14,15 @@ const MessageList = ({ messages, IsReturnTable }) => {
             }`}
           >
             <span className="message-text">
-              {/* Logica per gestire IsReturnTable */}
-              {IsReturnTable
-                ? // Se IsReturnTable è true, controlla se msg.text è HTML
-                  (() => {
-                    // Aggiungi un controllo per verificare se msg.text è HTML
-                    const isHTML = /<\/?[a-z][\s\S]*>/i.test(msg.text)
-                    return isHTML ? (
-                      <span dangerouslySetInnerHTML={{ __html: msg.text }} />
-                    ) : (
-                      <pre className="message-text">{msg.text}</pre>
-                    )
-                  })()
-                : // Caso quando IsReturnTable è false
-                  (() => {
-                    try {
-                      const parsedText = JSON.parse(msg.text)
-                      return JSON.stringify(parsedText, null, 2)
-                    } catch (e) {
-                      console.log(msg.text)
-                      return (
-                        <span dangerouslySetInnerHTML={{ __html: msg.text }} />
-                      ) //ritorna HTML
-                    }
-                  })()}
+              {(() => {
+                try {
+                  const parsedText = JSON.parse(msg.text)
+                  return JSON.stringify(parsedText, null, 2)
+                } catch (e) {
+                  console.log(msg.text)
+                  return <pre className="message-text">{msg.text}</pre> // Ritorna solo testo
+                }
+              })()}
             </span>
             {msg.sender === "bot" && index !== 0 && msg.text !== "..." && (
               <div className="like-unlike-icons" style={{ float: "right" }}>

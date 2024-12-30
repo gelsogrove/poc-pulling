@@ -175,7 +175,6 @@ const ChatPoulin = ({
             setInputValue={setInputValue}
             isLoading={isLoading}
             handleSend={handleSend}
-            isMenuVisible={false}
             onClickMicro={handleMicrophoneClick}
           />
         </div>

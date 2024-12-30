@@ -46,6 +46,10 @@
   width: 80px; /* Larghezza fissa per i bottoni */
 }
 
+.input-group-append .btn-wide:hover {
+  color: black;
+}
+
 .input-group-append .btn-menu {
   margin-left: 0 !important;
 }

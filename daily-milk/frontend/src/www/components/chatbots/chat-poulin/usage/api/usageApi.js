@@ -10,6 +10,6 @@ export const fetchUsageData = async () => {
     return data
   } catch (error) {
     console.error("Error fetching usage data:", error)
-    return null
+    return { error: "Request limit reached today. Try again tomorrow." }
   }
 }

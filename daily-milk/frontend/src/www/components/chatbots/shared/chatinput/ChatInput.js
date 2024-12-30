@@ -89,7 +89,7 @@ const ChatInput = ({
       />
       <div className="input-group-append">
         <button
-          className="btn btn-primary"
+          className="btn btn-primary btn-wide"
           onClick={handleSendClick}
           disabled={isLoading}
         >
@@ -113,15 +113,6 @@ const ChatInput = ({
             )}
           </button>
         </div>
-
-        {isMenuVisible && (
-          <button
-            className="btn btn-primary btn-wide btn-menu"
-            onClick={() => handleQuickReply("Menu")}
-          >
-            Menu
-          </button>
-        )}
       </div>
     </div>
   )

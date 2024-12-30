@@ -79,17 +79,24 @@ When asked for clients, respond with their full details, including names and rel
   return (
     <div>
       <div className="chatbot-popup-poulin">
-        <button className="visible-panel" onClick={onTogglePanel}>
-          {openPanel ? ">>" : "<<"}
+        <button
+          className="visible-panel btn hover-effect"
+          onClick={onTogglePanel}
+        >
+          {openPanel ? (
+            <i class="fa-solid fa-arrow-right"></i>
+          ) : (
+            <i class="fa-solid fa-arrow-left"></i>
+          )}
         </button>
 
-        <button className="close-button" onClick={onClose}>
-          ×
+        <button onClick={onClose} className="close-popup btn hover-effect">
+          <i class="fa-solid fa-close"></i>
         </button>
 
         {/* Sezione Chat */}
         <div className="chat-section-source">
-          <h3>Sales reader Chatbot</h3>
+          <h3>Sales reader chatbot</h3>
           <ChatPoulin {...config} openPanel={openPanel} />
         </div>
       </div>

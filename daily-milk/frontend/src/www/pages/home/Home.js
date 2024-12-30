@@ -2,20 +2,14 @@
 import React, { useState } from "react"
 import { Helmet } from "react-helmet"
 import { useTranslation } from "react-i18next"
+import Navbar from "../../components/Navbar/navbar"
 import ChatbotSource from "../../components/popups/chatbot-poulin/ChatbotPoulinPopup"
+import InvoicePopup from "../../components/popups/Invoices/invoicePopup.js"
 import Popup from "../../components/popups/Popup"
 import PromptsPopup from "../../components/popups/Prompts/promptsPopup"
 import UnlikePopup from "../../components/popups/Unlike/unlikePopup.js"
 import UploadPopup from "../../components/popups/Upload/uploadPopup"
 import "./Home.css"
-
-const clearAllCookies = () => {
-  document.cookie.split(";").forEach((cookie) => {
-    const name = cookie.split("=")[0].trim()
-    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`
-  })
-  window.location.href = "/login"
-}
 
 const Home = () => {
   const { t } = useTranslation()
@@ -38,6 +32,8 @@ const Home = () => {
         />
       </Helmet>
 
+      <Navbar />
+
       <Popup isOpen={activePopup === "chatbotsource"}>
         <ChatbotSource onClose={closePopup} />
       </Popup>
@@ -54,6 +50,10 @@ const Home = () => {
         <UploadPopup onClose={closePopup} />
       </Popup>
 
+      <Popup isOpen={activePopup === "invoices"}>
+        <InvoicePopup onClose={closePopup} />
+      </Popup>
+
       <div className="home-container">
         <h1 className="ourservice">Poulin Grain</h1>
         <section className="features">
@@ -68,7 +68,7 @@ const Home = () => {
                 className="feature-image"
               />
               <div className="overlay">
-                <h3>Sales Reader</h3>
+                <h3>Sales Reader chatbot</h3>
                 <div className="subtitle"> </div>
               </div>
             </div>
@@ -91,11 +91,6 @@ const Home = () => {
               <button className="btn" onClick={() => openPopup("invoices")}>
                 <i class="fas fa-file-invoice"></i>
                 <div className="tooltip">Invoices</div>
-              </button>
-
-              <button onClick={clearAllCookies} className="btn logout-btn">
-                <i className="fa-solid fa-right-from-bracket"></i>
-                <div className="tooltip">Logout</div>
               </button>
             </div>
           </div>

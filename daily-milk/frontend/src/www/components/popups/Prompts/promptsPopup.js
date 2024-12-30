@@ -31,44 +31,18 @@ const PromptsForm = ({ onClose }) => {
       <h3 className="title">Prompt composer</h3>
       <div className="form-section">
         <label htmlFor="introduzione">Your role is to:</label>
-        <ControlledEditor
-          className="codemirror-editortext"
-          value={formData.introduzione}
-          onBeforeChange={handleEditorChange("introduzione")}
-          options={{
-            lineNumbers: true,
-            mode: "text", // Modifica in base al linguaggio
-            theme: "dracula", // Puoi scegliere il tema che preferisci
-          }}
-        />
-      </div>
-
-      <div className="form-section">
-        <label htmlFor="introduzione">Capabilities:</label>
-        <ControlledEditor
-          className="codemirror-editortext"
-          value={formData.capabilities}
-          onBeforeChange={handleEditorChange("capabilities")}
-          options={{
-            lineNumbers: true,
-            mode: "text",
-            theme: "dracula",
-          }}
-        />
-      </div>
-
-      <div className="form-section">
-        <label htmlFor="output">Output</label>
-        <ControlledEditor
-          className="codemirror-editortext"
-          value={formData.output}
-          onBeforeChange={handleEditorChange("output")}
-          options={{
-            lineNumbers: true,
-            mode: "text",
-            theme: "dracula",
-          }}
-        />
+        <div className="editor-wrapper">
+          <ControlledEditor
+            className="codemirror-editor"
+            value={formData.introduzione}
+            onBeforeChange={handleEditorChange("introduzione")}
+            options={{
+              lineNumbers: true,
+              mode: "text", // Modifica in base al linguaggio
+              theme: "dracula", // Puoi scegliere il tema che preferisci
+            }}
+          />
+        </div>
       </div>
 
       <div className="form-section">

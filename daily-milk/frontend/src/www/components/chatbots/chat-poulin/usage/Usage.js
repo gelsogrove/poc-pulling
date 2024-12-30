@@ -12,6 +12,7 @@ import {
 } from "chart.js"
 import React, { useEffect, useState } from "react"
 import { Bar, Line } from "react-chartjs-2"
+import "./Usage.css"
 import { fetchUsageData } from "./api/usageApi"
 
 ChartJS.register(
@@ -27,11 +28,16 @@ ChartJS.register(
 
 const Usage = ({ IdConversation }) => {
   const [usageData, setUsageData] = useState(null)
+  const [initialTotalCurrentMonth, setInitialTotalCurrentMonth] = useState(0)
 
   useEffect(() => {
     const getData = async () => {
       const data = await fetchUsageData()
+
       setUsageData(data)
+      if (data && data.totalCurrentMonth) {
+        setInitialTotalCurrentMonth(data.totalCurrentMonth)
+      }
     }
     getData()
   }, [])
@@ -41,35 +47,45 @@ const Usage = ({ IdConversation }) => {
     labels: usageData ? usageData.currentWeek.map((item) => item.day) : [],
     datasets: [
       {
-        label: "Spese settimanali ($)",
+        label: "",
         data: usageData
           ? usageData.currentWeek.map((item) => parseFloat(item.total))
           : [],
         backgroundColor: "rgba(75,192,192,0.4)",
         borderColor: "rgba(75,192,192,1)",
         borderWidth: 2,
+
         fill: true,
       },
     ],
   }
 
   const barData = {
-    labels: usageData ? usageData.lastmonths.map((item) => item.month) : [],
+    labels: usageData
+      ? usageData.lastmonths.slice(-6).map((item) => item.month)
+      : [],
     datasets: [
       {
-        label: "Spese mensili ($)",
+        label: "",
         data: usageData
-          ? usageData.lastmonths.map((item) => parseFloat(item.total))
+          ? usageData.lastmonths.slice(-6).map((item) => parseFloat(item.total))
           : [],
-        backgroundColor: "rgba(153,102,255,0.6)",
+        backgroundColor: usageData
+          ? usageData.lastmonths
+              .slice(-6)
+              .map((_, index) =>
+                index === 5 ? "rgba(255,0,0,0.6)" : "rgba(153,102,255,0.6)"
+              )
+          : [],
         borderColor: "rgba(153,102,255,1)",
-        borderWidth: 1,
+        borderWidth: 2,
       },
     ],
   }
 
   const lineOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         display: false,
@@ -80,10 +96,12 @@ const Usage = ({ IdConversation }) => {
         beginAtZero: true,
       },
     },
+    height: 400, // imposta l'altezza
   }
 
   const barOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         display: false,
@@ -93,17 +111,58 @@ const Usage = ({ IdConversation }) => {
       y: {
         beginAtZero: true,
       },
+      x: {
+        ticks: {
+          autoSkip: false,
+        },
+      },
     },
+    height: 800, // imposta l'altezza
   }
+
+  console.log("Bar data:", barData)
 
   return (
     <div className="usage-container">
-      <div className="title-usage"></div>
-      Conversation: <h2>0.40 $</h2>
-      <br />
-      <Line data={lineData} options={lineOptions} />
-      <br />
-      <Bar data={barData} options={barOptions} style={{ marginTop: "20px" }} />
+      {usageData && usageData.error ? (
+        <div className="error-message">{usageData.error}</div>
+      ) : usageData ? (
+        <>
+          <div className="title-usage"></div>
+          Current chat:
+          <h3>
+            {(initialTotalCurrentMonth - usageData.totalCurrentMonth).toFixed(
+              2
+            )}{" "}
+            $
+          </h3>
+          <hr></hr>
+          <br />
+          <div className="subtitle">
+            Weekly usage:{" "}
+            <b>{parseFloat(usageData.totalCurrentWeek).toFixed(2)} $</b>
+          </div>
+          <div style={{ height: "240px", width: "100%" }}>
+            <Line data={lineData} options={lineOptions} />
+          </div>
+          <br />
+          <hr></hr>
+          <br />
+          <div className="subtitle">
+            Monthly usage:{" "}
+            <b>{parseFloat(usageData.totalCurrentMonth).toFixed(2)} $</b>
+          </div>
+          <div style={{ height: "240px", width: "100%" }}>
+            <Bar
+              data={barData}
+              options={barOptions}
+              style={{ marginTop: "0px" }}
+            />
+          </div>
+        </>
+      ) : (
+        <div className="loading-message">Loading...</div>
+      )}
     </div>
   )
 }
