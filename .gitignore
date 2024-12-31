@@ -1,4 +1,7 @@
-frontend/node_modules
-heroku/
 node_modules/
+.cache/
 test/
+.env
+frontend/node_modules/
+frontend/.cache/
+frontend/dist
