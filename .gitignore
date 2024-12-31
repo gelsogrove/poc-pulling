@@ -1,3 +1,4 @@
 frontend/node_modules
 heroku/
 node_modules/
+test/
