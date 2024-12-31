@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 import i18n from "../../../i18n"
-import "./navbar.css"
+import "./Navbar.css"
 
 const Navbar = () => {
   useEffect(() => {

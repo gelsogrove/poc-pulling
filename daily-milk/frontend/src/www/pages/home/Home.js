@@ -2,7 +2,7 @@
 import React, { useState } from "react"
 import { Helmet } from "react-helmet"
 import { useTranslation } from "react-i18next"
-import Navbar from "../../components/Navbar/navbar"
+import Navbar from "../../components/navbar/Navbar"
 import ChatbotSource from "../../components/popups/chatbot-poulin/ChatbotPoulinPopup"
 import InvoicePopup from "../../components/popups/Invoices/invoicePopup.js"
 import Popup from "../../components/popups/Popup"
