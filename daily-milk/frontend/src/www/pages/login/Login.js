@@ -1,12 +1,12 @@
 import Cookies from "js-cookie" // Importa la libreria per i cookie
-import React, { useContext, useState } from "react"
+import React, { useState } from "react"
 import { useNavigate } from "react-router-dom" // Importa il navigatore
-import { AuthContext } from "../../../AuthContext"
+import { login } from "./api/LoginApi" // Importa la funzione di login
+import { register } from "./api/RegisterApi" // Importa la funzione di registrazione
+import { verifyOtp } from "./api/VerifyOtp" // Importa la funzione di verifica OTP
 import "./Login.css"
 
 function Login() {
-  const { handleLogin, handleRegister, handleOtpVerify } =
-    useContext(AuthContext) // Usa AuthContext
   const [isRegistering, setIsRegistering] = useState(false)
   const [isRegistered, setIsRegistered] = useState(false)
   const [otpStep, setOtpStep] = useState(false)
@@ -18,7 +18,7 @@ function Login() {
   const [otpCode, setOtpCode] = useState("")
   const navigate = useNavigate() // Inizializza il navigatore
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (isRegistering) {
       if (password !== confirmPassword) {
@@ -26,25 +26,41 @@ function Login() {
         return
       }
 
-      handleRegister({ username, password, name, surname })
-      setIsRegistered(true)
-      setOtpStep(true)
-    } else {
-      const isLoginSuccessful = handleLogin(username, password)
-      if (isLoginSuccessful) {
-        const userId = "user_id_example" // Sostituisci con il valore reale dell'ID utente
-        Cookies.set("username", username)
-        Cookies.set("userId", userId)
+      try {
+        await register({ username, password, name, surname })
+        setIsRegistered(true)
         setOtpStep(true)
+      } catch (error) {
+        alert("Registration failed! Please try again.")
+      }
+    } else {
+      try {
+        const response = await login(username, password)
+        if (response.userId) {
+          Cookies.set("username", response.username)
+          Cookies.set("userId", response.userId)
+          Cookies.set("name", response.name)
+          Cookies.set("role", response.role)
+          setOtpStep(true)
+        }
+      } catch (error) {
+        alert("Login failed! Please check your credentials.")
       }
     }
   }
 
-  const handleOtpSubmit = (e) => {
+  const handleOtpSubmit = async (e) => {
     e.preventDefault()
-    const isOtpValid = handleOtpVerify(otpCode)
-    if (isOtpValid) {
-      navigate("/home") // Reindirizza alla home
+    try {
+      const isOtpValid = await verifyOtp(otpCode)
+      if (isOtpValid) {
+        // CHIAMATA API se e' valido nella tabella utenti aggiungiamo 30 minuti all'expired
+        navigate("/home")
+      } else {
+        alert("Invalid OTP! Please try again.")
+      }
+    } catch (error) {
+      alert(error.message)
     }
   }
 

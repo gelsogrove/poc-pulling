@@ -14,6 +14,7 @@
     "js-cookie": "^3.0.5",
     "natural": "^8.0.1",
     "path": "^0.12.7",
+    "qrcode": "^1.5.4",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-code-blocks": "^0.1.6",
@@ -25,6 +26,7 @@
     "react-router-dom": "^6.14.1",
     "react-scripts": "^5.0.1",
     "react-speech-recognition": "^3.10.0",
+    "speakeasy": "^2.0.0",
     "tree-cli": "^0.6.7",
     "uuid": "^11.0.3"
   },
