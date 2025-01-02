@@ -1,7 +1,17 @@
-export const fetchUsageData = async (userId) => {
+import { getCookie } from "./utils_api"
+
+export const fetchUsageData = async () => {
+  const userId = getCookie("userId")
   try {
     const response = await fetch(
-      `https://poulin-bd075425a92c.herokuapp.com/usage?userId=${userId}`
+      `https://poulin-bd075425a92c.herokuapp.com/usage`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }),
+      }
     )
     if (!response.ok) {
       throw new Error("Network response was not ok")

@@ -1,24 +1,47 @@
-import "codemirror/lib/codemirror.css" // CSS per l'editor
-import "codemirror/mode/javascript/javascript" // Puoi usare un altro linguaggio se necessario
-import "codemirror/theme/dracula.css" // Tema dell'editor
-import React from "react"
-import "./invoicePopup.css"
+// daily-milk/frontend/src/www/components/UsageTable.js
+import React, { useEffect, useState } from "react"
+import monthlyData from "./api/monthlyData"
 
-const InvoicePopup = ({ onClose }) => {
+const InvoicePopup = () => {
+  const [data, setData] = useState([])
+
+  useEffect(() => {
+    const getData = async () => {
+      const usageData = await monthlyData()
+      setData(usageData)
+    }
+    getData()
+  }, [])
+
   return (
     <div className="prompts-form-container">
-      <button className="close-button" onClick={onClose}>
-        ×
-      </button>
-      <h3>InvoicePopup </h3>
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
+      <h3>Monthly Usage</h3>
+      <table border="0">
+        <thead>
+          <tr>
+            <th>Year</th>
+            <th>Month</th>
+            <th>Total</th>
+            <th>Service</th>
+            <th>Paid</th>
+            <th> </th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((item, index) => (
+            <tr key={index}>
+              <td>{item.year}</td>
+              <td>{item.month}</td>
+              <td>{item.total}</td>
+              <td>{item.service}</td>
+              <td>{item.paid ? "Yes" : "No"}</td>
+              <td>
+                <button>Download Invoice</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }

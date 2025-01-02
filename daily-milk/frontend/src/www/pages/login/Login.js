@@ -9,7 +9,7 @@ import "./Login.css"
 
 function Login() {
   const [isRegistering, setIsRegistering] = useState(false)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [, setIsAuthenticated] = useState(false)
   const [isRegistered, setIsRegistered] = useState(false)
   const [otpStep, setOtpStep] = useState(false)
   const [username, setUsername] = useState("")

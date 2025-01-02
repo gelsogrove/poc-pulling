@@ -5,13 +5,16 @@ import ChatInput from "../shared/chatinput/ChatInput"
 import MessageList from "../shared/messagelist/MessageList"
 import "./ChatPoulin.css"
 import {
+  generateResponseWithContext,
+  initializeData,
+} from "./usage/api/utils_api.js"
+import {
   addBotLoadingMessage,
   cleanText,
   formatBoldText,
   formatText,
   replaceBotMessageWithError,
 } from "./utils"
-import { generateResponseWithContext, initializeData } from "./utils_api"
 
 import {
   BarElement,
