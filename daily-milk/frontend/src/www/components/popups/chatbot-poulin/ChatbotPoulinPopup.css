@@ -34,18 +34,22 @@
 .visible-panel {
   position: relative;
   left: 95%;
-  height: 30px;
-  top: 15px;
+  height: 20px;
+  top: 20px;
   z-index: 99;
   background-color: none;
   margin-left: -80px;
 }
 
+.icon {
+  font-size: 25px !important;
+}
+
 .close-popup {
   position: absolute;
   left: 96%;
-  height: 30px;
-  top: 15px;
+  height: 20px;
+  top: 20px;
   margin-bottom: 8px;
   z-index: 9999999;
   font-size: 22px;

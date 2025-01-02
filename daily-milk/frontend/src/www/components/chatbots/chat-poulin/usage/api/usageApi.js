@@ -1,7 +1,7 @@
 import { getCookie } from "./utils_api"
 
 export const fetchUsageData = async () => {
-  const userId = getCookie("userId")
+  const token = getCookie("token")
   try {
     const response = await fetch(
       `https://poulin-bd075425a92c.herokuapp.com/usage`,
@@ -10,7 +10,7 @@ export const fetchUsageData = async () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify({ token }),
       }
     )
     if (!response.ok) {
@@ -19,7 +19,6 @@ export const fetchUsageData = async () => {
     const data = await response.json()
     return data
   } catch (error) {
-    console.error("Error fetching usage data:", error)
     return { error: "Request limit reached today. Try again tomorrow." }
   }
 }

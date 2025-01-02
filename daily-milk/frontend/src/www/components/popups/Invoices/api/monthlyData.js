@@ -1,17 +1,14 @@
 // daily-milk/frontend/src/www/components/api/fetchUsage.js
 import axios from "axios"
+import Cookies from "js-cookie"
 
 const monthyData = async () => {
-  // Recupera l'userId dai cookie
-  const userId = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("userId="))
-    .split("=")[1]
+  const token = Cookies.get("token")
 
   try {
     const response = await axios.post(
       `https://poulin-bd075425a92c.herokuapp.com/usage/monthly-totals`,
-      { userId } // Passa userId nel corpo della richiesta
+      { token } // Passa userId nel corpo della richiesta
     )
     return response.data // Restituisce l'array di dati
   } catch (error) {

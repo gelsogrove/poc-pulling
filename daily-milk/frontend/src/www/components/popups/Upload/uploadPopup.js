@@ -2,7 +2,7 @@ import "codemirror/lib/codemirror.css" // CSS per l'editor
 import "codemirror/mode/javascript/javascript" // Puoi usare un altro linguaggio se necessario
 import "codemirror/theme/dracula.css" // Tema dell'editor
 import React from "react"
-import "./uploadPopup.css"
+import "./UploadPopup.css"
 
 const UploadPopup = ({ onClose }) => {
   const [, setFileNames] = React.useState([]) // Stato per memorizzare i nomi dei file

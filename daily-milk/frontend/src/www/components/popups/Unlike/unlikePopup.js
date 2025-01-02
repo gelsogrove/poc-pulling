@@ -2,7 +2,7 @@ import "codemirror/lib/codemirror.css" // CSS per l'editor
 import "codemirror/mode/javascript/javascript" // Puoi usare un altro linguaggio se necessario
 import "codemirror/theme/dracula.css" // Tema dell'editor
 import React from "react"
-import "./unlikePopup.css"
+import "./UnlikePopup.css"
 
 const UnlikePopup = ({ onClose }) => {
   return (

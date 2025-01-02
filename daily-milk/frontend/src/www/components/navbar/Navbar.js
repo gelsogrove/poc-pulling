@@ -1,8 +1,12 @@
 import React, { useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { LogOut } from "./api/LogoutApi"
 import i18n from "../../../i18n"
 import "./Navbar.css"
 
 const Navbar = () => {
+  const navigate = useNavigate()
+
   useEffect(() => {
     const supportedLanguages = ["it", "es", "en"]
     let language = "en"
@@ -18,11 +22,17 @@ const Navbar = () => {
   }, [])
 
   const clearAllCookies = () => {
-    document.cookie.split(";").forEach((cookie) => {
-      const name = cookie.split("=")[0].trim()
-      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`
-    })
-    window.location.href = "/login"
+    LogOut()
+
+    setTimeout(() => {
+      //clear all
+      document.cookie.split(";").forEach((cookie) => {
+        const name = cookie.split("=")[0].trim()
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`
+      })
+
+      navigate("/login")
+    }, 500)
   }
 
   return (

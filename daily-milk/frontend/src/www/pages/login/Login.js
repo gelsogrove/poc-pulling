@@ -1,10 +1,10 @@
 import Cookies from "js-cookie" // Importa la libreria per i cookie
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom" // Importa il navigatore
-import { setExpire } from "./api/ExpireApi"
 import { login } from "./api/LoginApi" // Importa la funzione di login
 import { register } from "./api/RegisterApi" // Importa la funzione di registrazione
-import { verifyOtp } from "./api/VerifyOtp" // Importa la funzione di verifica OTP
+import { setExpire } from "./api/SetExpireApi"
+import { verifyOtp } from "./api/VerifyOtpApi" // Importa la funzione di verifica OTP
 import "./Login.css"
 
 function Login() {
@@ -21,11 +21,20 @@ function Login() {
   const [qrCode, setQrCode] = useState("")
   const navigate = useNavigate() // Inizializza il navigatore
 
+  useEffect(() => {
+    const expire = Cookies.get("expire")
+
+    if (expire && new Date(expire) > new Date()) {
+      navigate("/home") // Redirect to home if the expire date is in the past
+    }
+  }, [navigate]) // Aggiungi navigate come dipendenza
+
   const setUserCookies = (user) => {
     Cookies.set("username", user.username)
     Cookies.set("userId", user.userId)
     Cookies.set("name", user.name)
     Cookies.set("role", user.role)
+    Cookies.set("expire", user.expire)
   }
 
   const handleSubmit = async (e) => {
@@ -82,7 +91,9 @@ function Login() {
       if (isOtpValid) {
         const expireTimestamp = new Date(Date.now() + 30 * 60000).toISOString()
         if (expireTimestamp !== null) {
-          await setExpire(userId, expireTimestamp)
+          const { token, expire } = await setExpire(userId)
+          Cookies.set("token", token)
+          Cookies.set("expire", expire)
           setTimeout(() => navigate("/home"), 1000)
         }
       } else {

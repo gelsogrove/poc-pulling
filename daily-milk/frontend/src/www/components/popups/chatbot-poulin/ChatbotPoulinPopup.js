@@ -84,14 +84,14 @@ When asked for clients, respond with their full details, including names and rel
           onClick={onTogglePanel}
         >
           {openPanel ? (
-            <i class="fa-solid fa-arrow-right"></i>
+            <i class="fa-solid fa-arrow-right icon"></i>
           ) : (
-            <i class="fa-solid fa-arrow-left"></i>
+            <i class="fa-solid fa-arrow-left icon"></i>
           )}
         </button>
 
         <button onClick={onClose} className="close-popup btn hover-effect">
-          <i class="fa-solid fa-close"></i>
+          <i class="fa-solid fa-close icon"></i>
         </button>
 
         {/* Sezione Chat */}

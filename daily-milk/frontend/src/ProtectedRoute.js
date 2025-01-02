@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
-import { isExpired } from "./www/components/navbar/api/isExpireApi"
+import { IsExpired } from "./www/pages/login/api/isExpireApi"
 
 // ProtectedRoute.js
 const ProtectedRoute = ({ children, userId }) => {
@@ -9,7 +9,7 @@ const ProtectedRoute = ({ children, userId }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const response = await isExpired(userId)
+      const response = await IsExpired(userId)
       setIsAuthenticated(!response)
       setLoading(false) // Imposta loading a false dopo il controllo
     }
