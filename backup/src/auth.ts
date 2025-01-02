@@ -36,9 +36,12 @@ const loginHandler: RequestHandler = async (req, res) => {
     return
   }
 
-  // Non inviare la password nel response
-  delete user.password
-  res.status(200).json(user) // Restituisce i dettagli dell'utente
+  res.status(200).json({
+    username: user.username,
+    userId: user.userid,
+    name: user.name,
+    role: user.role,
+  })
 }
 
 // Handler per la registrazione
@@ -65,23 +68,23 @@ const registerHandler: RequestHandler = async (req, res) => {
 
   // Inserisci utente con il segreto OTP nel database
   const result = await pool.query(
-    "INSERT INTO users (username, name, surname, password, expire_date, role, otp_secret) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
-    [username, name, surname, hashedPassword, new Date(), null, secret.base32]
+    "INSERT INTO users (username, name, surname, password, expire_date, role, otp_secret) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING userId, username, name, role",
+    [username, name, surname, hashedPassword, null, null, secret.base32]
   )
 
   // Genera QR code per il segreto OTP
   const qrCode = await qrcode.toDataURL(otpauthUrl)
 
-  // Restituisce i dettagli dell'utente e il QR code in formato Base64
+  // Restituisce i dettagli dell'utente richiesti
   res.status(201).json({
-    user: result.rows[0],
-    qrCode, // L'URL del QR code è già in formato Base64
+    userId: result.rows[0].userid,
+    qrCode,
   })
 }
 
 // Handler per la verifica dell'OTP
 const verifyOtpHandler: RequestHandler = async (req, res) => {
-  const { userId, otp } = req.body // Estrae username e OTP dal corpo della richiesta
+  const { userId, otpCode } = req.body // Estrae username e OTP dal corpo della richiesta
 
   // Esegui una query per cercare l'utente nel database
   const { rows } = await pool.query("SELECT * FROM users WHERE userId = $1", [
@@ -99,7 +102,7 @@ const verifyOtpHandler: RequestHandler = async (req, res) => {
   const verified = speakeasy.totp.verify({
     secret: user.otp_secret,
     encoding: "base32",
-    token: otp,
+    token: otpCode,
   })
 
   // Se l'OTP non è valido, restituisci un errore 400
@@ -145,7 +148,7 @@ const updateExpire: RequestHandler = async (req, res) => {
 
 // Handler per verificare se l'utente è scaduto
 const isExpired: RequestHandler = async (req, res) => {
-  const { userId } = req.params // Estrae userId dai parametri della richiesta
+  const { userId } = req.params // Esstrae userId dai parametri della richiesta
 
   const { rows } = await pool.query(
     "SELECT expire_date FROM users WHERE userId = $1",
@@ -158,7 +161,7 @@ const isExpired: RequestHandler = async (req, res) => {
   }
 
   const { expire_date } = rows[0]
-  const isExpired = new Date(expire_date) < new Date() // Confronta la data di scadenza con l'ora attuale
+  const isExpired = new Date(expire_date) > new Date() // Confronta la data di scadenza con l'ora attuale
 
   res.status(200).json({ isExpired }) // Restituisce true o false
 }

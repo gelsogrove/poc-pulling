@@ -1,4 +1,4 @@
-import { Router } from "express"
+import { ErrorRequestHandler, Router } from "express"
 import { pool } from "../server.js" // Importa il pool dal file principale
 
 const usageRouter = Router()
@@ -173,5 +173,15 @@ usageRouter.delete("/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error" })
   }
 })
+
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  if (err && err.status === 429) {
+    res.status(429).json({ error: "Request limit reached. Try again later." })
+  } else {
+    next(err)
+  }
+}
+
+usageRouter.use(errorHandler)
 
 export default usageRouter
