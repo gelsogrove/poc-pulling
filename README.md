@@ -5,11 +5,14 @@ deploy: 0 %
 
 NEXT
 
-- Fatture (basta anche un riepilogo)
+- si e' rotto ma non ho voglio ora di guarda cosa fa dopo il login non va PUT path="/auth/expire/" oppure POST path="/auth/is-expired" (questo e' il problema)
+- Usage make it works con update
+- Fatture emttere la x per chieudere
+- Mettere il grafico al posto che di lasciarlo nella chat
+
 - Prompt
 - Implementare OpenRouter
 - Togliersi da OpenAI
-- Usage make it works con update
 - codice del BE come mai non viene salvato nel repository di github ?
 - Upload e mapper
 - ChatBot mi piacerebbe table ASCII
@@ -19,6 +22,8 @@ NEXT
 - MICRO
 - UNLIKED
 - SCROLBAR NON SI VEDE nel ChatBot
+- no sorprese dentro heroku ? come si fa
+- staccarsi da main alla pr5ima version
 
 COMANDI
 

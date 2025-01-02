@@ -1,7 +1,6 @@
 node_modules/
 .cache/
 test/
-heroku
 heroku/.git
 heroku/.github
 heroku/.gitignore
