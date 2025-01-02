@@ -4,6 +4,9 @@ test/
 heroku/.git
 heroku/.github
 heroku/.gitignore
+heroku/.dist
+heroku/node_modules
+heroku/.env
 
 .env
 daily-milk/frontend/node_modules/

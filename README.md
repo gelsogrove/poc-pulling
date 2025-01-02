@@ -24,6 +24,7 @@ NEXT
 - SCROLBAR NON SI VEDE nel ChatBot
 - no sorprese dentro heroku ? come si fa
 - staccarsi da main alla pr5ima version
+- env dentro heroku alla fine ?
 
 COMANDI
 
