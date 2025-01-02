@@ -1,3 +1,4 @@
+import Cookies from "js-cookie"
 import React, { useEffect, useRef, useState } from "react"
 import { v4 as uuidv4 } from "uuid"
 import ChatInput from "../shared/chatinput/ChatInput"
@@ -57,11 +58,15 @@ const ChatPoulin = ({
   const [isVoiceInput, setIsVoiceInput] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
+  const first_message1 = `Hello ${
+    (Cookies.get("name") || "Guest").charAt(0).toUpperCase() +
+    (Cookies.get("name") || "Guest").slice(1)
+  }, how can I help you today?`
   const [messages, setMessages] = useState([
-    { id: uuidv4(), sender: "bot", text: first_message },
+    { id: uuidv4(), sender: "bot", text: first_message1 },
   ])
   const [conversationHistory, setConversationHistory] = useState([
-    { role: "assistant", content: first_message },
+    { role: "assistant", content: first_message1 },
   ])
 
   const messagesEndRef = useRef(null)

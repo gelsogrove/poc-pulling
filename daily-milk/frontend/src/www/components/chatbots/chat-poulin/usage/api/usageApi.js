@@ -1,7 +1,7 @@
-export const fetchUsageData = async () => {
+export const fetchUsageData = async (userId) => {
   try {
     const response = await fetch(
-      "https://poulin-bd075425a92c.herokuapp.com/usage"
+      `https://poulin-bd075425a92c.herokuapp.com/usage?userId=${userId}`
     )
     if (!response.ok) {
       throw new Error("Network response was not ok")

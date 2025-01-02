@@ -1,15 +1,28 @@
-import React, { useContext } from "react"
+import React, { useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
-import { AuthContext } from "./AuthContext"
+import { isExpired } from "./www/components/navbar/api/isExpireApi"
 
 // ProtectedRoute.js
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = useContext(AuthContext)
+const ProtectedRoute = ({ children, userId }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(null) // Stato per autenticazione
+  const [loading, setLoading] = useState(true) // Stato di caricamento
 
-  console.log("ProtectedRoute - isAuthenticated:", isAuthenticated) // Debug
+  useEffect(() => {
+    const checkAuth = async () => {
+      const response = await isExpired(userId)
+      setIsAuthenticated(!response)
+      setLoading(false) // Imposta loading a false dopo il controllo
+    }
 
-  if (isLoading) {
-    return <div>Loading...</div> // Mostra un loader finché il caricamento non è completato
+    checkAuth()
+    const intervalId = setInterval(checkAuth, 60000) // Esegui checkAuth ogni 30 secondi
+
+    return () => clearInterval(intervalId) // Pulisci l'intervallo al dismount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId])
+
+  if (loading) {
+    return <div></div> // Mostra un messaggio di caricamento
   }
 
   if (!isAuthenticated) {

@@ -1,6 +1,7 @@
 import Cookies from "js-cookie" // Importa la libreria per i cookie
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom" // Importa il navigatore
+import { setExpire } from "./api/ExpireApi"
 import { login } from "./api/LoginApi" // Importa la funzione di login
 import { register } from "./api/RegisterApi" // Importa la funzione di registrazione
 import { verifyOtp } from "./api/VerifyOtp" // Importa la funzione di verifica OTP
@@ -8,6 +9,7 @@ import "./Login.css"
 
 function Login() {
   const [isRegistering, setIsRegistering] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isRegistered, setIsRegistered] = useState(false)
   const [otpStep, setOtpStep] = useState(false)
   const [username, setUsername] = useState("")
@@ -16,7 +18,15 @@ function Login() {
   const [name, setName] = useState("")
   const [surname, setSurname] = useState("")
   const [otpCode, setOtpCode] = useState("")
+  const [qrCode, setQrCode] = useState("")
   const navigate = useNavigate() // Inizializza il navigatore
+
+  const setUserCookies = (user) => {
+    Cookies.set("username", user.username)
+    Cookies.set("userId", user.userId)
+    Cookies.set("name", user.name)
+    Cookies.set("role", user.role)
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -27,9 +37,16 @@ function Login() {
       }
 
       try {
-        await register({ username, password, name, surname })
-        setIsRegistered(true)
-        setOtpStep(true)
+        const response = await register({ username, password, name, surname })
+
+        if (response.userId) {
+          setUserCookies(response) // Use the utility function
+          setIsRegistered(true)
+          setQrCode(response.qrCode)
+          setOtpStep(true)
+        } else {
+          alert("Registration failed! Please try again.")
+        }
       } catch (error) {
         alert("Registration failed! Please try again.")
       }
@@ -37,30 +54,46 @@ function Login() {
       try {
         const response = await login(username, password)
         if (response.userId) {
-          Cookies.set("username", response.username)
-          Cookies.set("userId", response.userId)
-          Cookies.set("name", response.name)
-          Cookies.set("role", response.role)
+          setIsAuthenticated(true)
+          setUserCookies(response)
           setOtpStep(true)
+        } else {
+          setIsAuthenticated(false)
         }
       } catch (error) {
-        alert("Login failed! Please check your credentials.")
+        alert("Login failed! Please check your credentials...")
       }
     }
   }
 
   const handleOtpSubmit = async (e) => {
     e.preventDefault()
+
+    const userId = Cookies.get("userId")
+
     try {
-      const isOtpValid = await verifyOtp(otpCode)
+      const param = {
+        otpCode,
+        userId,
+      }
+
+      const isOtpValid = await verifyOtp(param)
+
       if (isOtpValid) {
-        // CHIAMATA API se e' valido nella tabella utenti aggiungiamo 30 minuti all'expired
-        navigate("/home")
+        const expireTimestamp = new Date(Date.now() + 30 * 60000).toISOString()
+        if (expireTimestamp !== null) {
+          await setExpire(userId, expireTimestamp)
+          setTimeout(() => navigate("/home"), 1000)
+        }
       } else {
+        setOtpCode("") // Ripulisci il campo OTP
         alert("Invalid OTP! Please try again.")
+
+        console.log("OTP code has been cleared.") // Debugging line
       }
     } catch (error) {
       alert(error.message)
+      setOtpCode("")
     }
   }
 
@@ -153,11 +186,7 @@ function Login() {
                 Scan the QR Code with your authentication app (e.g., Google
                 Authenticator) to generate OTP codes.
               </p>
-              <img
-                src="/images/qrcode.png"
-                alt="QR Code"
-                style={{ width: "200px" }}
-              />
+              <img src={qrCode} alt="QR Code" style={{ width: "200px" }} />
             </>
           )}
           <h2>Enter OTP</h2>
