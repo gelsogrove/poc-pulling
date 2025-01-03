@@ -11,5 +11,5 @@
     "rootDir": "./heroku" // Directory sorgente dei file TypeScript
   },
   "include": ["./heroku/**/*.ts"], // Includi tutti i file .ts in heroku/
-  "exclude": ["node_modules", "./heroku/dist"] // Escludi moduli e output compilato
+  "exclude": ["node_modules", "./heroku/dist"] // Escludi moduli e output compilatorr
 }
