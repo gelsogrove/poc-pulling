@@ -39,8 +39,16 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
     }
 
     await ensureDirectoryExists(PROMPT_FILE)
+
     const backupFile = `${PROMPT_FILE}.backup`
-    await fs.copyFile(PROMPT_FILE, backupFile)
+    try {
+      await fs.access(PROMPT_FILE)
+      await fs.copyFile(PROMPT_FILE, backupFile)
+    } catch {
+      console.warn(
+        `Il file originale ${PROMPT_FILE} non esiste, non può essere copiato nel backup.`
+      )
+    }
 
     const tempFile = `${PROMPT_FILE}.temp`
     await fs.writeFile(tempFile, content, { flag: "w" })
