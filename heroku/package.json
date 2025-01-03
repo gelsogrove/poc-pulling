@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "nodemon --exec node --loader ts-node/esm ./server.ts",
-    "start": "node dist/server.js",
+    "start": "npm run build && node dist/server.js",
     "build": "tsc && cp -R ./heroku/assets ./heroku/dist/assets"
   },
   "dependencies": {
