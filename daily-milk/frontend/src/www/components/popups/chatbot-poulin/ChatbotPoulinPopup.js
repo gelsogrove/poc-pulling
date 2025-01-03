@@ -76,6 +76,8 @@ When asked for clients, respond with their full details, including names and rel
     local: "http://localhost:4999",
   }
 
+  console.log(config)
+
   return (
     <div>
       <div className="chatbot-popup-poulin">
@@ -97,7 +99,7 @@ When asked for clients, respond with their full details, including names and rel
         {/* Sezione Chat */}
         <div className="chat-section-source">
           <h3>Sales reader chatbot</h3>
-          <ChatPoulin {...config} openPanel={openPanel} />
+          <ChatPoulin openPanel={openPanel} />
         </div>
       </div>
     </div>

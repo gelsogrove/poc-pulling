@@ -5,7 +5,6 @@ deploy: 0 %
 
 NEXT
 
-- codice del BE ?
 - pulire il prompt nel FE
 - Prompt
 - SCROLBAR NON SI VEDE nel ChatBot
@@ -19,8 +18,7 @@ NEXT
 - LOGIN WITH DAILIYMILK
 - DEPLOY TO DAILIYMILK
 - no sorprese dentro heroku ? come si fa
-- staccarsi da main alla pr5ima version
-- env dentro heroku alla fine che si fa ?
+- staccarsi da main alla prima version
 
 IDEEE
 
