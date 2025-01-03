@@ -31,6 +31,7 @@ COMANDI
 
 heroku pg:psql HEROKU_POSTGRESQL_AMBER_URL -a poulin
 % heroku logs --tail
+heroku logs --tail --app poulin
 heroku restart -a poulin
 
 COSTI

@@ -1,19 +1,30 @@
-import { RequestHandler, Router } from "express"
+import { RequestHandler, Response, Router } from "express"
 import fs from "fs/promises"
-import { register } from "node:module"
-import { pathToFileURL } from "node:url"
 import path from "path"
-register("ts-node/esm", pathToFileURL("./"))
+import { getUserIdByToken } from "./validateUser.js"
 
-// Define __dirname for ES module
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
 
 const promptRouter = Router()
 const PROMPT_FILE = path.join(__dirname, "assets", "prompt.txt")
 
+const validateToken = async (
+  token: string,
+  res: Response
+): Promise<string | null> => {
+  const userId = await getUserIdByToken(token)
+  if (!userId) {
+    res.status(400).json({ message: "Token non valido" })
+    return null
+  }
+  return userId
+}
+
 const UpdatePromptHandler: RequestHandler = async (req, res) => {
   try {
     const { content, token } = req.body
+
+    if (!(await validateToken(token, res))) return
 
     if (content.length > 10000) {
       res.status(400).json({ message: "Il contenuto è troppo lungo" })
@@ -38,6 +49,8 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
 
 const GetPromptHandler: RequestHandler = async (req, res) => {
   const { token } = req.body
+
+  if (!(await validateToken(token, res))) return
 
   try {
     const content = await fs.readFile(PROMPT_FILE, "utf-8")

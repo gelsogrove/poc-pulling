@@ -1,5 +1,6 @@
 import cors from "cors"
 import dotenv from "dotenv"
+import { EventEmitter } from "events"
 import express from "express"
 import rateLimit from "express-rate-limit"
 import helmet from "helmet"
@@ -8,6 +9,7 @@ import authRouter from "./src/auth.js"
 import promptRouter from "./src/prompts.js"
 import usageRouter from "./src/usage.js" // Aggiungi .js
 import welcomeRouter from "./src/welcome.js" // Aggiungi .js
+
 const { Pool } = pkg
 
 dotenv.config()
@@ -90,3 +92,6 @@ if (process.env.NODE_ENV === "production") {
 // Porta per avviare il server
 const PORT = process.env.PORT || 4999
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+
+const bus = new EventEmitter()
+bus.setMaxListeners(20)

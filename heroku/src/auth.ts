@@ -4,6 +4,7 @@ import qrcode from "qrcode"
 import speakeasy from "speakeasy"
 import { v4 as uuidv4 } from "uuid" // Importa uuid
 import { pool } from "../server.js" // Importa il pool dal file principale
+
 import { getUserIdByToken } from "./validateUser.js"
 
 const authRouter = Router()
@@ -162,6 +163,7 @@ const isExpired: RequestHandler = async (req, res) => {
     return
   }
 
+  // Esegui una query per cercare la data di scadenza
   const { rows } = await pool.query(
     "SELECT expire_date FROM users WHERE userId = $1",
     [userId]
