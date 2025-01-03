@@ -1,15 +1,23 @@
+# Node.js e dipendenze
 node_modules/
 .cache/
-test/
-heroku/.git
-heroku/.github
-heroku/.gitignore
-heroku/.dist
-heroku/node_modules
-heroku/.env
-heroku/tsconfig.json
-
 .env
-daily-milk/frontend/node_modules/
-daily-milk/frontend/.cache/
-daily-milk/frontend/dist
+
+# File temporanei e di log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+
+# Output di compilazione TypeScript
+heroku/dist/
+heroku/node_modules/
+heroku/.env
+ 
+
+# Progetto principale
+dairy-milk/frontend/node_modules/
+dairy-milk/frontend/.cache/
+dairy-milk/frontend/dist/
+dairy-milk/frontend/build/

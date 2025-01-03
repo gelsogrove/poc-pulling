@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist",
-    "rootDir": "./"
+    "target": "ESNext", // Moderno target JavaScript
+    "module": "ESNext", // Supporta moduli ESNext
+    "moduleResolution": "node", // Risoluzione dei moduli per Node.js
+    "strict": true, // Abilita controlli TypeScript rigorosi
+    "esModuleInterop": true, // Migliora l'importazione di moduli CommonJS
+    "skipLibCheck": true, // Salta i controlli sui tipi nelle librerie
+    "forceConsistentCasingInFileNames": true, // Consistenza nei nomi dei file
+    "outDir": "./heroku/dist", // Output dei file compilati
+    "rootDir": "./heroku" // Directory sorgente dei file TypeScript
   },
-  "include": ["./**/*.ts", "./server.ts"],
-  "exclude": ["node_modules"]
+  "include": ["./heroku/**/*.ts"], // Includi tutti i file .ts in heroku/
+  "exclude": ["node_modules", "./heroku/dist"] // Escludi moduli e output compilato
 }

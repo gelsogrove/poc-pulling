@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon --exec node --loader ts-node/esm ./server.ts",
-    "start": "node dist/server.js",
+    "dev": "nodemon --exec node --loader ts-node/esm ./heroku/server.ts",
+    "start": "node heroku/dist/server.js",
     "build": "tsc"
   },
   "dependencies": {
@@ -29,6 +29,9 @@
     "@types/speakeasy": "^2.0.10",
     "ts-node": "^10.9.2",
     "typescript": "^4.9.5"
+  },
+  "engines": {
+    "node": ">=18.x"
   },
   "author": "Il tuo nome",
   "license": "ISC",
