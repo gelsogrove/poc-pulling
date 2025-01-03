@@ -1,13 +1,20 @@
 .prompts-form-container {
-  min-width: 39vw;
-  margin: 20px auto;
+  min-width: 64vw; /* Larghezza aumentata */
+  max-width: 80vw; /* Limita la larghezza massima */
+  margin: 20px auto; /* Centra il contenitore */
   padding: 50px;
   border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .prompts-form-container .title {
-  padding: 0px 0px 35px 0px;
+  padding: 0 0 35px;
+  text-align: center;
+  font-size: 1.8rem; /* Aumenta la dimensione del titolo */
+  color: #333;
 }
+
 .prompts-form-container h2 {
   text-align: center;
   margin-bottom: 20px;
@@ -23,7 +30,7 @@
   margin-bottom: 5px;
 }
 
-.prompts-form-container button {
+.submit-button {
   width: 100%;
   padding: 10px;
   background-color: #4caf50;
@@ -34,15 +41,8 @@
   cursor: pointer;
 }
 
-/* Stili per gli editor */
-.prompts-form-container .codemirror-editor .CodeMirror {
-  height: 250px !important;
-  max-width: 800px;
-}
-
-.prompts-form-container .codemirror-editortext .CodeMirror {
-  height: 110px !important;
-  max-width: 800px;
+.submit-button :hover {
+  background-color: #45a049;
 }
 
 .prompts-form-container .close-button {
@@ -54,39 +54,48 @@
   font-size: 24px;
   cursor: pointer;
   z-index: 10;
-  width: 40px;
-  background-color: transparent;
   color: black;
 }
 
-/* Personalizzazione della scrollbar per il ControlledEditor */
-.codemirror-editor {
-  height: 300px; /* Imposta un'altezza fissa per il contenitore */
-  overflow-y: scroll; /* Forza la scrollbar verticale a rimanere visibile */
-  /* Aggiungi queste proprietà per garantire la visibilità della scrollbar */
-  position: relative; /* Necessario per il posizionamento */
+.prompts-form-container .editor-height {
+  height: 600px;
 }
 
-/* Personalizzazione della scrollbar per WebKit */
+.codemirror-editor .CodeMirror {
+  height: 600px !important; /* Altezza dell'editor */
+  max-width: 100%; /* Larghezza al massimo dello spazio disponibile */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #f8f8f8;
+}
+
+.codemirror-editor {
+  overflow-y: auto; /* Abilita lo scrolling verticale */
+  width: 100%; /* Usa tutto lo spazio disponibile */
+  max-width: 100%; /* Assicura l'adattamento */
+}
+
+/* Personalizzazione della scrollbar */
 .codemirror-editor::-webkit-scrollbar {
-  width: 8px; /* Larghezza della scrollbar */
+  width: 8px;
 }
 
 .codemirror-editor::-webkit-scrollbar-track {
-  background: white; /* Colore dello sfondo della scrollbar */
+  background: white;
 }
 
 .codemirror-editor::-webkit-scrollbar-thumb {
-  background: gray; /* Colore della parte mobile della scrollbar */
-  border-radius: 4px; /* Raggio degli angoli della scrollbar */
+  background: gray;
+  border-radius: 4px;
 }
 
 .codemirror-editor::-webkit-scrollbar-thumb:hover {
-  background: darkgray; /* Colore della parte mobile quando si passa il mouse */
+  background: darkgray;
 }
 
 /* Regole per Firefox */
 .codemirror-editor {
-  scrollbar-width: thin; /* Imposta la larghezza della scrollbar */
-  scrollbar-color: gray white; /* Colore della parte mobile e dello sfondo */
+  scrollbar-width: thin;
+  scrollbar-color: gray white;
 }
