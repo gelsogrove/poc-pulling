@@ -4,7 +4,7 @@ const API_URL = "https://poulin-bd075425a92c.herokuapp.com/prompt"
 
 export const getPrompt = async (token) => {
   try {
-    const response = await axios.put(API_URL, { token })
+    const response = await axios.get(API_URL)
     return response.data
   } catch (error) {
     console.error("Errore durante il recupero del prompt:", error)

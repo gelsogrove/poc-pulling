@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "nodemon --exec node --loader ts-node/esm ./server.ts",
     "start": "node dist/server.js",
-    "build": "tsc"
+    "build": "tsc && cp -R ./heroku/assets ./heroku/dist/assets"
   },
   "dependencies": {
     "axios": "^1.7.9",
