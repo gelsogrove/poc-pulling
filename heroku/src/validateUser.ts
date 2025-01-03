@@ -45,22 +45,3 @@ export const getUserIdByToken = async (
     return null
   }
 }
-
-export const getAdminUserIdByToken = async (
-  token: string
-): Promise<string | null> => {
-  try {
-    const result = (await pool.query(
-      `SELECT userid FROM users WHERE token = $1 AND role = 'Admin'`,
-      [token]
-    )) as QueryResult<{ userid: string }>
-
-    if ((result.rowCount ?? 0) > 0) {
-      return result.rows[0].userid
-    } else {
-      return null
-    }
-  } catch (error) {
-    return null
-  }
-}
