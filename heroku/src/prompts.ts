@@ -4,7 +4,6 @@ import path from "path"
 import { getUserIdByToken } from "./validateUser.js"
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
-
 const promptRouter = Router()
 const PROMPT_FILE = path.join(__dirname, "assets", "prompt.txt")
 
