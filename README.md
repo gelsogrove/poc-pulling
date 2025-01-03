@@ -6,6 +6,7 @@ deploy: 0 %
 NEXT
 
 - codice del BE ?
+- pulire il prompt nel FE
 - Prompt
 - SCROLBAR NON SI VEDE nel ChatBot
 - Implementare OpenRouter
@@ -13,12 +14,20 @@ NEXT
 - Upload e mapper
 - ChatBot mi piacerebbe table ASCII
 - UNLIKED
+- NLP ? per filtrare i nomi ?
 - COMPLETARE TUTTO BENE IN LOCALE
 - LOGIN WITH DAILIYMILK
 - DEPLOY TO DAILIYMILK
 - no sorprese dentro heroku ? come si fa
 - staccarsi da main alla pr5ima version
 - env dentro heroku alla fine che si fa ?
+
+IDEEE
+
+- pandasAI test
+- danfojs-node"
+- Genera un informe sobre el rendimiento de ventas en el último trimestre
+- graficare tutto.
 
 COMANDI
 
