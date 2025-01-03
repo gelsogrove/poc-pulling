@@ -93,7 +93,7 @@ const InvoicePopup = ({ onClose }) => {
   }
 
   return (
-    <div className="prompts-form-container">
+    <div className="invoices-container">
       <button className="close-button" onClick={onClose}>
         ×
       </button>
@@ -104,13 +104,12 @@ const InvoicePopup = ({ onClose }) => {
         <Bar data={barData} options={barOptions} style={{ marginTop: "0px" }} />
       </div>
       <br />
-      <table border="0" width="100%">
+      <table border="0" width="97%">
         <thead>
           <tr>
             <th>Year</th>
             <th>Month</th>
             <th>Total</th>
-
             <th>Paid</th>
             <th>Invoice </th>
           </tr>
@@ -124,7 +123,7 @@ const InvoicePopup = ({ onClose }) => {
 
               <td>{item.paid ? "Yes" : "No"}</td>
               <td>
-                <button>Download</button>
+                <button class="btnInvoice">Download</button>
               </td>
             </tr>
           ))}

@@ -1,28 +1,34 @@
 /* daily-milk/frontend/src/www/components/popups/invoices/invoicePopup.css */
-.invoices-container-container table {
-  width: 100%;
+.invoices-container {
+  width: 60vw;
   border-collapse: collapse;
-  margin-top: 20px;
+  padding: 30px;
 }
 
-.invoices-container-container th,
-.invoices-container-container td {
+.invoices-container table {
+  border-collapse: collapse;
+  padding: 10px;
+  margin: 10px;
+}
+
+.invoices-container th,
+.invoices-container td {
   padding: 12px;
   text-align: left;
   border: 1px solid #ddd;
 }
 
-.invoices-container-container th {
+.invoices-container th {
   background-color: #ccc; /* Colore di sfondo per l'intestazione */
   color: black; /* Colore del testo per l'intestazione */
   border: 1px solid grey;
 }
 
-.invoices-container-container tr:nth-child(even) {
+.invoices-container tr:nth-child(even) {
   background-color: #f2f2f2; /* Colore di sfondo per le righe pari */
 }
 
-.invoices-container-container tr:hover {
+.invoices-container tr:hover {
   background-color: #ddd; /* Colore di sfondo al passaggio del mouse */
 }
 
@@ -32,7 +38,7 @@
   display: block; /* Rende il contenitore un blocco */
 }
 
-.invoices-container-container button {
+.btnInvoice {
   background-color: #008cba; /* Colore di sfondo per il pulsante */
   color: white; /* Colore del testo per il pulsante */
   border: none;
@@ -45,6 +51,6 @@
   border-radius: 4px; /* Angoli arrotondati per il pulsante */
 }
 
-.invoices-container-container button:hover {
+.btnInvoice :hover {
   background-color: #005f73; /* Colore di sfondo al passaggio del mouse per il pulsante */
 }

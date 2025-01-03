@@ -190,7 +190,7 @@ const ChatPoulin = ({
       <div
         className="chat-poulin-right"
         style={{
-          width: openPanel ? "30%" : "0%",
+          width: openPanel ? "50%" : "0%",
           transition: "width 0.3s ease",
           padding: openPanel ? "20px" : "0px",
         }}
