@@ -50,7 +50,7 @@ const GetPromptHandler: RequestHandler = async (req, res) => {
     const content = await fs.readFile(PROMPT_FILE, "utf-8")
     res.status(200).json({ content })
   } catch (error) {
-    res.status(500).json("Errore durante la lettura del prompt")
+    res.status(500).json("Errore durante la scrittura del prompt" + error)
   }
 }
 
