@@ -1,5 +1,6 @@
 import { RequestHandler, Response, Router } from "express"
 import fs from "fs/promises"
+import path from "path"
 import { getUserIdByToken } from "./validateUser.js"
 
 const promptRouter = Router()
@@ -17,6 +18,15 @@ const validateToken = async (
   return userId
 }
 
+const ensureDirectoryExists = async (filePath: string) => {
+  const dir = path.dirname(filePath)
+  try {
+    await fs.access(dir)
+  } catch {
+    await fs.mkdir(dir, { recursive: true })
+  }
+}
+
 const UpdatePromptHandler: RequestHandler = async (req, res) => {
   try {
     const { content, token } = req.body
@@ -28,6 +38,7 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
       return
     }
 
+    await ensureDirectoryExists(PROMPT_FILE)
     await fs.copyFile(PROMPT_FILE, `${PROMPT_FILE}.backup`)
 
     const tempFile = `${PROMPT_FILE}.temp`
@@ -47,10 +58,18 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
 const GetPromptHandler: RequestHandler = async (req, res) => {
   try {
     console.log(PROMPT_FILE)
+    await ensureDirectoryExists(PROMPT_FILE)
+
+    try {
+      await fs.access(PROMPT_FILE)
+    } catch {
+      await fs.writeFile(PROMPT_FILE, "", { flag: "w" })
+    }
+
     const content = await fs.readFile(PROMPT_FILE, "utf-8")
     res.status(200).json({ content })
   } catch (error) {
-    res.status(500).json("Errore durante la scrittura del prompt" + error)
+    res.status(500).json("Errore durante la lettura del prompt" + error)
   }
 }
 
