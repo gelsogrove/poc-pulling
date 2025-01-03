@@ -47,11 +47,8 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
 }
 
 const GetPromptHandler: RequestHandler = async (req, res) => {
-  const { token } = req.body
-
-  if (!(await validateToken(token, res))) return
-
   try {
+    console.log(PROMPT_FILE)
     const content = await fs.readFile(PROMPT_FILE, "utf-8")
     res.status(200).json({ content })
   } catch (error) {
@@ -60,6 +57,6 @@ const GetPromptHandler: RequestHandler = async (req, res) => {
 }
 
 promptRouter.put("/", UpdatePromptHandler)
-promptRouter.post("/", GetPromptHandler)
+promptRouter.get("/", GetPromptHandler)
 
 export default promptRouter
