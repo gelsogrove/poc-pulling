@@ -123,7 +123,7 @@ const setExpire: RequestHandler = async (req, res) => {
   const { userId } = req.body
 
   // Calcola la nuova data di scadenza (30 minuti da ora)
-  const newExpireDate = new Date(Date.now() + 30 * 60 * 1000) // Aggiungi 30 minuti
+  const newExpireDate = new Date(Date.now() + 59 * 60 * 1000) // Aggiungi 30 minuti
 
   // Genera un nuovo token
   const token = uuidv4() // Genera un token unico

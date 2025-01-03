@@ -74,6 +74,7 @@ const limiter = rateLimit({
 app.use("/", welcomeRouter) // Router di benvenuto
 app.use("/auth", authRouter) // Router di autenticazione
 app.use("/usage", limiter, usageRouter) // Router per utilizzo con limiter
+app.use("/prompt", limiter, usageRouter) // Router per utilizzo con limiter
 
 // Forza HTTPS in produzione
 if (process.env.NODE_ENV === "production") {
