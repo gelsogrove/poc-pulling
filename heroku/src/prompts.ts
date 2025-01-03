@@ -59,6 +59,6 @@ const GetPromptHandler: RequestHandler = async (req, res) => {
 }
 
 promptRouter.put("/", UpdatePromptHandler)
-promptRouter.get("/", GetPromptHandler)
+promptRouter.post("/", GetPromptHandler)
 
 export default promptRouter

@@ -2,9 +2,9 @@ import axios from "axios"
 
 const API_URL = "https://poulin-bd075425a92c.herokuapp.com/prompt"
 
-export const getPrompt = async () => {
+export const getPrompt = async (token) => {
   try {
-    const response = await axios.get(API_URL)
+    const response = await axios.put(API_URL, { token })
     return response.data
   } catch (error) {
     console.error("Errore durante il recupero del prompt:", error)
@@ -12,9 +12,16 @@ export const getPrompt = async () => {
   }
 }
 
-export const postPrompt = async (content) => {
+export const postPrompt = async (content, token) => {
+  console.log("Content:", content)
+  console.log("Token:", token)
   try {
-    const response = await axios.post(API_URL, { content })
+    const response = await axios.post(
+      API_URL,
+      { content, token },
+      { headers: { "Content-Type": "application/json" } }
+    )
+    console.log("Response:", response.data)
     return response.data
   } catch (error) {
     console.error("Errore durante il salvataggio del prompt:", error)

@@ -5,6 +5,7 @@ import rateLimit from "express-rate-limit"
 import helmet from "helmet"
 import pkg from "pg"
 import authRouter from "./src/auth.js"
+import promptRouter from "./src/prompts.js"
 import usageRouter from "./src/usage.js" // Aggiungi .js
 import welcomeRouter from "./src/welcome.js" // Aggiungi .js
 const { Pool } = pkg
@@ -74,7 +75,7 @@ const limiter = rateLimit({
 app.use("/", welcomeRouter) // Router di benvenuto
 app.use("/auth", authRouter) // Router di autenticazione
 app.use("/usage", limiter, usageRouter) // Router per utilizzo con limiter
-app.use("/prompt", limiter, usageRouter) // Router per utilizzo con limiter
+app.use("/prompt", limiter, promptRouter) // Router per utilizzo con limiter
 
 // Forza HTTPS in produzione
 if (process.env.NODE_ENV === "production") {
