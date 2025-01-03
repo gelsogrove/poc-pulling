@@ -16,7 +16,7 @@ export const postPrompt = async (content, token) => {
   console.log("Content:", content)
   console.log("Token:", token)
   try {
-    const response = await axios.post(
+    const response = await axios.put(
       API_URL,
       { content, token },
       { headers: { "Content-Type": "application/json" } }
