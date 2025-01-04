@@ -7,7 +7,8 @@ import { getUserIdByToken } from "./validateUser.js"
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const promptRouter = Router()
-const PROMPT_FILE = path.join(__dirname, "../data/prompt.txt")
+const PROMPT_DIR = process.env.PROMPT_DIR || "/app/data"
+const PROMPT_FILE = path.join(PROMPT_DIR, "prompt.txt")
 
 const validateToken = async (
   token: string,
@@ -85,7 +86,6 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
 
 const GetPromptHandler: RequestHandler = async (req, res) => {
   try {
-    console.log(PROMPT_FILE)
     await ensureDirectoryExists(PROMPT_FILE)
 
     try {
