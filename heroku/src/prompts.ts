@@ -1,8 +1,11 @@
 import { RequestHandler, Response, Router } from "express"
 import fs from "fs/promises"
 import path from "path"
+import { fileURLToPath } from "url"
 import { getUserIdByToken } from "./validateUser.js"
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 const promptRouter = Router()
 const PROMPT_FILE = path.join(__dirname, "../data/prompt.txt")
 
