@@ -29,7 +29,7 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
 
     const result = await pool.query(
       "UPDATE prompts SET prompt = $1 WHERE idPrompt = $2 RETURNING *",
-      [content, 2]
+      [content, "a2c502db-9425-4c66-9d92-acd3521b38b5"]
     )
 
     if (result.rowCount === 0) {
