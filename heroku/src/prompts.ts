@@ -48,7 +48,7 @@ const GetPromptHandler: RequestHandler = async (req, res) => {
   try {
     const result = await pool.query(
       "SELECT prompt FROM prompts WHERE idPrompt = $1",
-      [2]
+      ["a2c502db-9425-4c66-9d92-acd3521b38b5"]
     )
 
     if (result.rows.length === 0) {
