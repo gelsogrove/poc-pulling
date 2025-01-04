@@ -40,7 +40,7 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
     res.status(200).json(result.rows[0])
   } catch (error) {
     console.error(error)
-    res.status(500).json("Errore durante l'aggiornamento del prompt" + error)
+    res.status(500).json("Errore  l'aggiornamento del prompt" + error)
   }
 }
 

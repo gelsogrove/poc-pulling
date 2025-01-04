@@ -8,7 +8,6 @@ NEXT
 - NLP ? per filtrare i nomi ?
 - Implementare OpenRouter
 - Upload e mapper
-
 - ChatBot mi piacerebbe table ASCII
 - COMPLETARE TUTTO BENE IN LOCALE
 - LOGIN WITH DAILIYMILK
