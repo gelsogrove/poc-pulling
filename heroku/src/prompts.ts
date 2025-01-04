@@ -1,14 +1,8 @@
 import { RequestHandler, Response, Router } from "express"
-import fs from "fs/promises"
-import path from "path"
-import { fileURLToPath } from "url"
+import { pool } from "../server.js"
 import { getUserIdByToken } from "./validateUser.js"
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 const promptRouter = Router()
-const PROMPT_DIR = process.env.PROMPT_DIR || "/app/data"
-const PROMPT_FILE = path.join(PROMPT_DIR, "prompt.txt")
 
 const validateToken = async (
   token: string,
@@ -22,19 +16,10 @@ const validateToken = async (
   return userId
 }
 
-const ensureDirectoryExists = async (filePath: string) => {
-  const dir = path.dirname(filePath)
-  try {
-    await fs.access(dir)
-  } catch {
-    await fs.mkdir(dir, { recursive: true })
-  }
-}
-
 const UpdatePromptHandler: RequestHandler = async (req, res) => {
-  try {
-    const { content, token } = req.body
+  const { content, token } = req.body
 
+  try {
     if (!(await validateToken(token, res))) return
 
     if (content.length > 10000) {
@@ -42,59 +27,36 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
       return
     }
 
-    await ensureDirectoryExists(PROMPT_FILE)
+    const result = await pool.query(
+      "UPDATE prompts SET prompt = $1 WHERE idPrompt = $2 RETURNING *",
+      [content, "a2c502db-9425-4c66-9d92-acd3521b38b5"]
+    )
 
-    const backupFile = `${PROMPT_FILE}.backup`
-    try {
-      await fs.access(PROMPT_FILE)
-      await fs.copyFile(PROMPT_FILE, backupFile)
-    } catch {
-      console.warn(
-        `Il file originale ${PROMPT_FILE} non esiste, non può essere copiato nel backup.`
-      )
+    if (result.rowCount === 0) {
+      res.status(404).json({ message: "Prompt non trovato" })
+      return
     }
 
-    const tempFile = `${PROMPT_FILE}.temp`
-    await fs.writeFile(tempFile, content, { flag: "w" })
-
-    await fs.rename(tempFile, PROMPT_FILE)
-
-    try {
-      await fs.access(tempFile)
-      await fs.unlink(tempFile)
-    } catch {
-      console.warn(
-        `Il file temporaneo ${tempFile} non esiste, non può essere eliminato.`
-      )
-    }
-
-    try {
-      await fs.access(backupFile)
-      await fs.unlink(backupFile)
-    } catch {
-      console.warn(
-        `Il file di backup ${backupFile} non esiste, non può essere eliminato.`
-      )
-    }
-
-    res.status(200).json("ok")
+    res.status(200).json(result.rows[0])
   } catch (error) {
     console.error(error)
-    res.status(500).json("Errore durante la scrittura del prompt" + error)
+    res.status(500).json("Errore durante l'aggiornamento del prompt" + error)
   }
 }
 
 const GetPromptHandler: RequestHandler = async (req, res) => {
   try {
-    await ensureDirectoryExists(PROMPT_FILE)
+    const result = await pool.query(
+      "SELECT prompt FROM prompts WHERE idPrompt = $1",
+      [1]
+    )
 
-    try {
-      await fs.access(PROMPT_FILE)
-    } catch {
-      await fs.writeFile(PROMPT_FILE, "", { flag: "w" })
+    if (result.rows.length === 0) {
+      res.status(404).json({ message: "Prompt non trovato" })
+      return
     }
 
-    const content = await fs.readFile(PROMPT_FILE, "utf-8")
+    const content = result.rows[0].prompt
     res.status(200).json({ content })
   } catch (error) {
     res.status(500).json("Errore durante la lettura del prompt" + error)
