@@ -4,7 +4,7 @@ import path from "path"
 import { getUserIdByToken } from "./validateUser.js"
 
 const promptRouter = Router()
-const PROMPT_FILE = "/app/heroku/dist/src/assets/prompt.txt"
+const PROMPT_FILE = path.join(__dirname, "../data/prompt.txt")
 
 const validateToken = async (
   token: string,

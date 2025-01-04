@@ -5,20 +5,22 @@ deploy: 0 %
 
 NEXT
 
-- pulire il prompt nel FE
-- Prompt
-- SCROLBAR NON SI VEDE nel ChatBot
-- Implementare OpenRouter
-- Togliersi da OpenAI
-- Upload e mapper
-- ChatBot mi piacerebbe table ASCII
-- UNLIKED
 - NLP ? per filtrare i nomi ?
+- Implementare OpenRouter
+- Upload e mapper
+
+- ChatBot mi piacerebbe table ASCII
 - COMPLETARE TUTTO BENE IN LOCALE
 - LOGIN WITH DAILIYMILK
 - DEPLOY TO DAILIYMILK
+
+VERS 2
+
+- Togliersi da OpenAI
 - no sorprese dentro heroku ? come si fa
 - staccarsi da main alla prima version
+- SCROLBAR NON SI VEDE nel ChatBot
+- UNLIKED
 
 IDEEE
 
@@ -30,7 +32,6 @@ IDEEE
 COMANDI
 
 heroku pg:psql HEROKU_POSTGRESQL_AMBER_URL -a poulin
-% heroku logs --tail
 heroku logs --tail --app poulin
 heroku restart -a poulin
 
