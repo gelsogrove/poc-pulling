@@ -13,8 +13,6 @@ export const getPrompt = async (token) => {
 }
 
 export const postPrompt = async (content, token) => {
-  console.log("Content:", content)
-  console.log("Token:", token)
   try {
     const response = await axios.put(
       API_URL,

@@ -4,8 +4,10 @@ import { EventEmitter } from "events"
 import express from "express"
 import rateLimit from "express-rate-limit"
 import helmet from "helmet"
+import cron from "node-cron"
 import pkg from "pg"
 import authRouter from "./src/auth.js"
+import chatbotRouter from "./src/chatbots.js"
 import promptRouter from "./src/prompts.js"
 import usageRouter from "./src/usage.js" // Aggiungi .js
 import welcomeRouter from "./src/welcome.js" // Aggiungi .js
@@ -69,15 +71,22 @@ app.use(express.json())
 // Limite di richieste
 const limiter = rateLimit({
   windowMs: 24 * 60 * 60 * 1000, // 24 ore
-  max: 150, // 100 richieste al giorno
+  max: 200, //  richieste al giorno
   message: { error: "Request limit reached today. Try again tomorrow." },
+})
+
+// Aggiungi questa parte per resettare il contatore a mezzanotte
+cron.schedule("0 0 * * *", () => {
+  limiter.resetKey("") // Reset del contatore
+  console.log("Request limit has been reset.")
 })
 
 // Usa i vari router
 app.use("/", welcomeRouter) // Router di benvenuto
-app.use("/auth", authRouter) // Router di autenticazione
+app.use("/auth", limiter, authRouter) // Router di autenticazione
 app.use("/usage", limiter, usageRouter) // Router per utilizzo con limiter
 app.use("/prompt", limiter, promptRouter) // Router per utilizzo con limiter
+app.use("/chatbot", limiter, chatbotRouter)
 
 // Forza HTTPS in produzione
 if (process.env.NODE_ENV === "production") {
