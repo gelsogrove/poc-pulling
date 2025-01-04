@@ -47,13 +47,8 @@ const ChatPoulin = ({
   max_tokens,
   temperature,
   model,
-  error_message,
-  goodbye_message,
-  ispay,
   filename,
   systemPrompt,
-  local,
-  server,
   openPanel,
 }) => {
   const [inputValue, setInputValue] = useState("")
@@ -74,7 +69,7 @@ const ChatPoulin = ({
 
   const messagesEndRef = useRef(null)
 
-  const apiUrl = window.location.hostname === "localhost" ? local : server
+  const apiUrl = "https://poulin-bd075425a92c.herokuapp.com"
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -153,11 +148,11 @@ const ChatPoulin = ({
         { role: "assistant", content: botResponse },
       ])
     } catch (error) {
-      replaceBotMessageWithError(setMessages, error_message)
+      replaceBotMessageWithError(setMessages, error)
       setConversationHistory((prev) => [
         ...prev,
         { role: "user", content: message },
-        { role: "assistant", content: error_message },
+        { role: "assistant", content: error },
       ])
     } finally {
       setIsLoading(false)

@@ -1,7 +1,7 @@
 export const initializeData = async (apiUrl, systemPrompt, filename, model) => {
   const userId = getCookie("userId")
   try {
-    const response = await fetch(`${apiUrl}/poulin/initialize`, {
+    const response = await fetch(`${apiUrl}/chatbot/initialize`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -37,7 +37,7 @@ export const generateResponseWithContext = async (
 ) => {
   const userId = getCookie("userId")
   try {
-    const response = await fetch(apiUrl + "/poulin/resp", {
+    const response = await fetch(apiUrl + "/chatbot/resp", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

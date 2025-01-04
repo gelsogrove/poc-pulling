@@ -44,8 +44,12 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
   }
 }
 
-const GetPromptHandler: RequestHandler = async (req, res) => {
+const PostGetPromptHandler: RequestHandler = async (req, res) => {
+  const { token } = req.body
+
   try {
+    if (!(await validateToken(token, res))) return
+
     const result = await pool.query(
       "SELECT prompt FROM prompts WHERE idPrompt = $1",
       ["a2c502db-9425-4c66-9d92-acd3521b38b5"]
@@ -64,6 +68,6 @@ const GetPromptHandler: RequestHandler = async (req, res) => {
 }
 
 promptRouter.put("/", UpdatePromptHandler)
-promptRouter.get("/", GetPromptHandler)
+promptRouter.post("/", PostGetPromptHandler)
 
 export default promptRouter
