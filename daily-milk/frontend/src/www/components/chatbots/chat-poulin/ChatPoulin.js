@@ -4,17 +4,7 @@ import { v4 as uuidv4 } from "uuid"
 import ChatInput from "../shared/chatinput/ChatInput"
 import MessageList from "../shared/messagelist/MessageList"
 import "./ChatPoulin.css"
-import {
-  generateResponseWithContext,
-  initializeData,
-} from "./usage/api/utils_api.js"
-import {
-  addBotLoadingMessage,
-  cleanText,
-  formatBoldText,
-  formatText,
-  replaceBotMessageWithError,
-} from "./utils"
+import { response } from "./usage/api/utils_api.js"
 
 import {
   BarElement,
@@ -41,30 +31,20 @@ ChartJS.register(
   Legend
 )
 
-const ChatPoulin = ({
-  first_message,
-  first_options,
-  max_tokens,
-  temperature,
-  model,
-  filename,
-  systemPrompt,
-  openPanel,
-}) => {
+const ChatPoulin = ({ openPanel }) => {
   const [inputValue, setInputValue] = useState("")
-  const [, setVoiceMessage] = useState(null)
-  const [isVoiceInput, setIsVoiceInput] = useState(false)
+
   const [isLoading, setIsLoading] = useState(false)
 
-  const first_message1 = `Hello ${
+  const first_message = `Hello ${
     (Cookies.get("name") || "Guest").charAt(0).toUpperCase() +
     (Cookies.get("name") || "Guest").slice(1)
   }, how can I help you today?`
   const [messages, setMessages] = useState([
-    { id: uuidv4(), sender: "bot", text: first_message1 },
+    { id: uuidv4(), sender: "bot", text: first_message },
   ])
   const [conversationHistory, setConversationHistory] = useState([
-    { role: "assistant", content: first_message1 },
+    { role: "assistant", content: first_message },
   ])
 
   const messagesEndRef = useRef(null)
@@ -87,89 +67,59 @@ const ChatPoulin = ({
   }, [messages])
 
   const handleSend = async (message) => {
-    if (typeof message !== "string" || !message.trim()) return
-
-    if (conversationHistory.length === 1) {
-      try {
-        const data = await initializeData(
-          apiUrl,
-          Cookies.get("token"),
-          IdConversation
-        )
-
-        console.log(JSON.stringify(data))
-
-        setConversationHistory((prev) => [
-          {
-            role: "system",
-            content: `data: ${JSON.stringify(data)}`,
-          },
-          ...prev,
-        ])
-      } catch (error) {
-        console.error("Error loading initial data:", error)
-      }
+    if (typeof message !== "string" || !message.trim()) {
+      return
     }
-
-    const userMessage = {
-      id: uuidv4(),
-      sender: "user",
-      text: message,
-    }
-
-    setMessages((prevMessages) => [...prevMessages, userMessage])
-    setInputValue("")
-    setIsLoading(true)
-
-    addBotLoadingMessage(setMessages)
 
     try {
-      const botResponse = await generateResponseWithContext(
+      // LOADING
+      setInputValue("")
+      setIsLoading(true)
+
+      // GET USER MESSAGE
+      const userMessage = {
+        id: uuidv4(),
+        sender: "user",
+        text: message,
+      }
+      setMessages((prevMessages) => [...prevMessages, userMessage])
+
+      // BOT ANSWER
+      const botResponse = await response(
         apiUrl,
-        message,
-        conversationHistory,
-        systemPrompt,
-        max_tokens,
-        temperature,
-        model
+        Cookies.get("token"),
+        Cookies.get("name"),
+        IdConversation,
+        conversationHistory
       )
 
-      const formattedResponse = formatText(botResponse)
-      let cleanedResponse = cleanText(formattedResponse)
-      cleanedResponse = formatBoldText(cleanedResponse)
-
+      // SET ANSWER
       setMessages((prevMessages) =>
-        prevMessages.slice(0, -1).concat({
+        prevMessages.concat({
           id: uuidv4(),
           sender: "bot",
-          text: cleanedResponse,
+          text: botResponse,
         })
       )
 
-      setVoiceMessage(cleanedResponse.replace(/<[^>]+>/g, ""))
-
+      // SET HISTORY
       setConversationHistory((prev) => [
         ...prev,
         { role: "user", content: message },
         { role: "assistant", content: botResponse },
       ])
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error)
-      replaceBotMessageWithError(setMessages, errorMessage)
       setConversationHistory((prev) => [
         ...prev,
         { role: "user", content: message },
-        { role: "assistant", content: errorMessage },
+        {
+          role: "assistant",
+          content: error.message || "Si è verificato un errore.",
+        },
       ])
     } finally {
       setIsLoading(false)
     }
-  }
-
-  const handleMicrophoneClick = () => {
-    setIsVoiceInput((prev) => !prev)
-    console.log(isVoiceInput ? "Microfono disattivato" : "Microfono attivato")
   }
 
   return (
@@ -186,7 +136,6 @@ const ChatPoulin = ({
             setInputValue={setInputValue}
             isLoading={isLoading}
             handleSend={handleSend}
-            onClickMicro={handleMicrophoneClick}
           />
         </div>
       </div>

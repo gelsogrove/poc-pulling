@@ -1,21 +1,23 @@
-heroku : 40%
-daily-milk FE: 40%
+heroku : 50%
+daily-milk FE: 45%
 daily-milk BE: 0%
-deploy: 0 %
+deploy: 40 %
 
 NEXT
 
-- NLP ? per filtrare i nomi ?
-- Implementare OpenRouter
+- ChatBot con debug
+- ChatBot basic e test NlP
+- Togliersi da OpenAI
+- ChatBot con prompt
 - Upload e mapper
-- ChatBot mi piacerebbe table ASCII
+- ChatBot con sql
+
 - COMPLETARE TUTTO BENE IN LOCALE
 - LOGIN WITH DAILIYMILK
 - DEPLOY TO DAILIYMILK
 
 VERS 2
 
-- Togliersi da OpenAI
 - no sorprese dentro heroku ? come si fa
 - staccarsi da main alla prima version
 - SCROLBAR NON SI VEDE nel ChatBot
@@ -37,7 +39,7 @@ heroku restart -a poulin
 COSTI
 
 20 euro di openAI
+5 euro di Openrouter
 10 github copilot
 8 euroku
 5 database
-19 + usage.

@@ -1,4 +1,10 @@
-export const response = async (apiUrl, token, conversationId) => {
+export const response = async (
+  apiUrl,
+  token,
+  name,
+  conversationId,
+  messages
+) => {
   try {
     const response = await fetch(`${apiUrl}/chatbot/response`, {
       method: "POST",
@@ -7,7 +13,9 @@ export const response = async (apiUrl, token, conversationId) => {
       },
       body: JSON.stringify({
         token,
+        name,
         conversationId,
+        messages,
       }),
     })
 
@@ -21,4 +29,10 @@ export const response = async (apiUrl, token, conversationId) => {
     console.error("Error during initialize data fetch:", error)
     throw error
   }
+}
+
+export const getCookie = (name) => {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(";").shift()
 }

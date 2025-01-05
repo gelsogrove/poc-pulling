@@ -8,7 +8,10 @@ import { getUserIdByToken } from "./validateUser.js"
 dotenv.config() // Carica le variabili d'ambiente
 
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-const OPENROUTER_MODEL = "openai/gpt-3.5-turbo"
+//const OPENROUTER_MODEL = "openai/gpt-3.5-turbo"
+//const OPENROUTER_MODEL = "anthropic/claude-instant-v1"
+
+const OPENROUTER_MODEL = "google/gemini-2.0-flash-exp:free"
 const OPENROUTER_HEADERS = {
   Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
   "Content-Type": "application/json",
@@ -51,7 +54,7 @@ const getPrompt = async (idPrompt: string): Promise<string | null> => {
 }
 
 const handleChat: RequestHandler = async (req, res) => {
-  const { conversationId, token, messages } = req.body
+  const { conversationId, token, name, messages } = req.body
 
   if (!conversationId || !token || !Array.isArray(messages)) {
     res.status(400).json({
@@ -76,6 +79,8 @@ const handleChat: RequestHandler = async (req, res) => {
       const { fakeText, formattedEntities } = processText(content)
       return { role, content: fakeText, formattedEntities }
     })
+
+    console.log(processedMessages)
 
     // Aggiunge il messaggio di sistema (prompt) all'inizio
     const apiMessages = [
