@@ -91,7 +91,11 @@ const ChatPoulin = ({
 
     if (conversationHistory.length === 1) {
       try {
-        const data = await initializeData(apiUrl, systemPrompt, filename, model)
+        const data = await initializeData(
+          apiUrl,
+          Cookies.get("token"),
+          IdConversation
+        )
 
         setConversationHistory((prev) => [
           {

@@ -1,5 +1,4 @@
-export const initializeData = async (apiUrl, systemPrompt, filename, model) => {
-  const userId = getCookie("userId")
+export const initializeData = async (apiUrl, token, conversationId) => {
   try {
     const response = await fetch(`${apiUrl}/chatbot/initialize`, {
       method: "POST",
@@ -7,10 +6,8 @@ export const initializeData = async (apiUrl, systemPrompt, filename, model) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        filename,
-        model,
-        systemPrompt,
-        userId,
+        token,
+        conversationId,
       }),
     })
 
