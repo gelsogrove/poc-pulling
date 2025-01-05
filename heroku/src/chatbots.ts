@@ -1,6 +1,6 @@
 import axios from "axios"
 import dotenv from "dotenv"
-import { RequestHandler, Response, Router } from "express"
+import { RequestHandler, Router } from "express"
 import { pool } from "../server.js"
 import { processText, restoreOriginalText } from "./utils/extract-entities.js"
 import { getUserIdByToken } from "./validateUser.js"
@@ -10,7 +10,7 @@ dotenv.config() // Carica le variabili d'ambiente
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 const OPENROUTER_MODEL = "openai/gpt-3.5-turbo"
 const OPENROUTER_HEADERS = {
-  Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`, // Usa la chiave API dall'ambiente
+  Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
   "Content-Type": "application/json",
 }
 const MAX_TOKENS = 350
@@ -22,16 +22,7 @@ if (!process.env.OPENROUTER_API_KEY) {
   throw new Error("OPENROUTER_API_KEY is not set in the environment variables.")
 }
 
-interface InitializeRequest {
-  conversationId: string
-  token: string
-}
-
-interface RespRequest extends InitializeRequest {
-  message: string
-}
-
-const validateToken = async (token: string, res: Response) => {
+const validateToken = async (token: string, res: any) => {
   try {
     const userId = await getUserIdByToken(token)
     if (!userId) {
@@ -59,29 +50,45 @@ const getPrompt = async (idPrompt: string): Promise<string | null> => {
   }
 }
 
-const initializeHandler: RequestHandler = async (req, res) => {
-  const { conversationId, token } = req.body as InitializeRequest
+const handleChat: RequestHandler = async (req, res) => {
+  const { conversationId, token, messages } = req.body
 
-  if (!conversationId || !token) {
-    res.status(400).json({ message: "conversationId and token are required." })
+  if (!conversationId || !token || !Array.isArray(messages)) {
+    res.status(400).json({
+      message: "conversationId, token, and messages array are required.",
+    })
     return
   }
 
   try {
-    if (!(await validateToken(token, res))) return
+    const userId = await validateToken(token, res)
+    if (!userId) return
 
+    // Recupera il prompt e aggiungilo come primo messaggio
     const prompt = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
     if (!prompt) {
       res.status(404).json({ message: "Prompt not found." })
       return
     }
 
-    // CHIAMATA ALL'API DI OPENROUTER CON IL PROMPT
+    // Preprocesso i messaggi dell'utente
+    const processedMessages = messages.map(({ role, content }) => {
+      const { fakeText, formattedEntities } = processText(content)
+      return { role, content: fakeText, formattedEntities }
+    })
+
+    // Aggiunge il messaggio di sistema (prompt) all'inizio
+    const apiMessages = [
+      { role: "system", content: prompt },
+      ...processedMessages.map(({ role, content }) => ({ role, content })),
+    ]
+
+    // Chiamata all'API OpenRouter
     const openRouterResponse = await axios.post(
       OPENROUTER_API_URL,
       {
         model: OPENROUTER_MODEL,
-        messages: [{ role: "system", content: prompt }],
+        messages: apiMessages,
         max_tokens: MAX_TOKENS,
         temperature: TEMPERATURE,
       },
@@ -90,58 +97,14 @@ const initializeHandler: RequestHandler = async (req, res) => {
       }
     )
 
-    // Invia la risposta dell'API al client
-    res.status(200).json(openRouterResponse.data.choices[0].message.content)
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error("Axios error:", error.response?.data || error.message)
-      res
-        .status(error.response?.status || 500)
-        .json(error.response?.data || { message: error.message })
-    } else {
-      console.error("Unexpected error:", error)
-      res.status(500).json({ message: "Unexpected error occurred" })
-    }
-  }
-}
-
-const respHandler: RequestHandler = async (req, res) => {
-  const { conversationId, token, message } = req.body as RespRequest
-
-  if (!conversationId || !token || !message) {
-    res
-      .status(400)
-      .json({ message: "conversationId, token, and message are required." })
-    return
-  }
-
-  try {
-    // CHECK TOKEN
-    if (!(await validateToken(token, res))) return
-
-    // PROCESSED MESSAGE NPL
-    const { fakeText, formattedEntities } = processText(message)
-
-    // CHIAMATA ALL'API DI OPENROUTER
-    const openRouterResponse = await axios.post(
-      OPENROUTER_API_URL,
-      {
-        model: OPENROUTER_MODEL,
-        messages: [{ role: "user", content: fakeText }],
-        max_tokens: MAX_TOKENS,
-        temperature: TEMPERATURE,
-      },
-      {
-        headers: OPENROUTER_HEADERS,
-      }
-    )
-
-    // REVERT MESSAGE NLP
+    // Postprocesso la risposta
     const resp = openRouterResponse.data.choices[0].message.content
-    const originalResponseText = restoreOriginalText(resp, formattedEntities)
+    const finalResponse = restoreOriginalText(
+      resp,
+      processedMessages[0]?.formattedEntities || []
+    )
 
-    // SEND
-    res.status(200).json(originalResponseText)
+    res.status(200).json(finalResponse)
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error("Axios error:", error.response?.data || error.message)
@@ -155,7 +118,6 @@ const respHandler: RequestHandler = async (req, res) => {
   }
 }
 
-chatbotRouter.post("/initialize", initializeHandler)
-chatbotRouter.post("/resp", respHandler)
+chatbotRouter.post("/response", handleChat)
 
 export default chatbotRouter

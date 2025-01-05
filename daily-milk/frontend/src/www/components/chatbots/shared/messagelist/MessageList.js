@@ -16,8 +16,12 @@ const MessageList = ({ messages }) => {
             <span className="message-text">
               {(() => {
                 try {
+                  console.log(msg.text)
+
                   const parsedText = JSON.parse(msg.text)
-                  return JSON.stringify(parsedText, null, 2)
+                  return typeof parsedText === "object"
+                    ? JSON.stringify(parsedText, null, 2)
+                    : parsedText // Restituisce il testo se non è un oggetto
                 } catch (e) {
                   console.log(msg.text)
                   return <pre className="message-text">{msg.text}</pre> // Ritorna solo testo

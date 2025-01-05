@@ -97,10 +97,12 @@ const ChatPoulin = ({
           IdConversation
         )
 
+        console.log(JSON.stringify(data))
+
         setConversationHistory((prev) => [
           {
             role: "system",
-            content: `data: ${JSON.stringify(data.customers)}`,
+            content: `data: ${JSON.stringify(data)}`,
           },
           ...prev,
         ])
