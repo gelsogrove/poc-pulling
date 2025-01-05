@@ -13,7 +13,7 @@ const OPENROUTER_HEADERS = {
   Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`, // Usa la chiave API dall'ambiente
   "Content-Type": "application/json",
 }
-const MAX_TOKENS = 250
+const MAX_TOKENS = 350
 const TEMPERATURE = 0.2
 const chatbotRouter = Router()
 

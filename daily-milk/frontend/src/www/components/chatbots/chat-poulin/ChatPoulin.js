@@ -152,11 +152,13 @@ const ChatPoulin = ({
         { role: "assistant", content: botResponse },
       ])
     } catch (error) {
-      replaceBotMessageWithError(setMessages, error)
+      const errorMessage =
+        error instanceof Error ? error.message : String(error)
+      replaceBotMessageWithError(setMessages, errorMessage)
       setConversationHistory((prev) => [
         ...prev,
         { role: "user", content: message },
-        { role: "assistant", content: error },
+        { role: "assistant", content: errorMessage },
       ])
     } finally {
       setIsLoading(false)

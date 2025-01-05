@@ -22,8 +22,10 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
   try {
     if (!(await validateToken(token, res))) return
 
-    if (content.length > 10000) {
-      res.status(400).json({ message: "Il contenuto è troppo lungo" })
+    if (content.length > 15000) {
+      res
+        .status(400)
+        .json({ message: "Il contenuto è troppo lungo" + content.length })
       return
     }
 
