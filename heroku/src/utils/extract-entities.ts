@@ -1,5 +1,5 @@
-const nlp = require("compromise")
-const { faker } = require("@faker-js/faker")
+import { faker } from "@faker-js/faker"
+import nlp from "compromise"
 
 // Plugin per aggiungere termini specifici a compromise
 nlp.plugin({
@@ -115,14 +115,14 @@ const replaceValuesInText = (
 }
 
 // Funzione principale
-const processText = (
+export const processText = (
   inputText: string
 ): { fakeText: string; formattedEntities: FormattedEntity[] } => {
   const rawEntities = extractEntities(inputText)
 
   let formattedEntities = Object.entries(rawEntities).flatMap(
     ([entity, values]) =>
-      (values || []).map((value) => ({
+      (values || []).map((value: string) => ({
         entity,
         value: value.trim(),
         fakevalue: generateFakeValue(entity, value),
@@ -135,17 +135,11 @@ const processText = (
 }
 
 // Funzione per ripristinare la frase originale
-const restoreOriginalText = (
+export const restoreOriginalText = (
   fakeText: string,
   formattedEntities: FormattedEntity[]
 ): string => {
   return replaceValuesInText(fakeText, formattedEntities, true)
-}
-
-// Esportazione delle funzioni
-module.exports = {
-  processText,
-  restoreOriginalText,
 }
 
 /* Esempio di utilizzo
