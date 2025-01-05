@@ -80,8 +80,6 @@ const handleChat: RequestHandler = async (req, res) => {
       return { role, content: fakeText, formattedEntities }
     })
 
-    console.log(processedMessages)
-
     // Aggiunge il messaggio di sistema (prompt) all'inizio
     const apiMessages = [
       { role: "system", content: prompt },
