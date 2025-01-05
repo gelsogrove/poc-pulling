@@ -6,6 +6,10 @@ export const response = async (
   messages
 ) => {
   try {
+    if (!Array.isArray(messages)) {
+      throw new Error("Messages must be an array")
+    }
+
     const response = await fetch(`${apiUrl}/chatbot/response`, {
       method: "POST",
       headers: {
