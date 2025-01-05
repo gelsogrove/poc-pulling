@@ -1,4 +1,4 @@
-import { faker } from "@faker-js/faker"
+const { faker } = require("@faker-js/faker")
 import nlp from "compromise"
 
 // Plugin per aggiungere termini specifici a compromise

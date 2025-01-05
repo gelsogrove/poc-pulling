@@ -8,7 +8,7 @@ import { getUserIdByToken } from "./validateUser.js"
 dotenv.config() // Carica le variabili d'ambiente
 
 const OPENROUTER_API_URL = "https://api.openrouter.com/v1/chat/completions"
-const OPENROUTER_MODEL = "gpt-3.5-turbo"
+const OPENROUTER_MODEL = "openai/gpt-4"
 const OPENROUTER_HEADERS = {
   Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`, // Usa la chiave API dall'ambiente
   "Content-Type": "application/json",
