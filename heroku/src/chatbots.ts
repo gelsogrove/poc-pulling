@@ -88,8 +88,15 @@ const handleChat: RequestHandler = async (req, res) => {
         content:
           "Respond in JSON format. Include these keys: 'triggerAction', 'response', 'data', and 'sql'. Use PostgreSQL syntax for SQL queries.",
       },
+      {
+        role: "system",
+        content:
+          "Respond strictly in JSON. Do not include any text outside of JSON.",
+      },
       ...processedMessages.map(({ role, content }) => ({ role, content })),
     ]
+
+    console.log(apiMessages)
 
     // Chiamata all'API OpenRouter
     const openRouterResponse = await axios.post(
