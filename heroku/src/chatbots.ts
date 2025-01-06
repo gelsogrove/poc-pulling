@@ -100,15 +100,6 @@ const handleChat: RequestHandler = async (req, res) => {
       }
     )
 
-    // Controlla se ci sono scelte nella risposta
-    if (
-      !openRouterResponse.data.choices ||
-      openRouterResponse.data.choices.length === 0
-    ) {
-      res.status(500).json({ message: "No choices returned from OpenRouter." })
-      return
-    }
-
     const resp = openRouterResponse.data.choices[0].message.content
     const formattedEntities =
       processedMessages.length > 0 ? processedMessages[0].formattedEntities : []
