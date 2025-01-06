@@ -45,7 +45,7 @@ const getPrompt = async (idPrompt: string): Promise<string | null> => {
 }
 
 const handleChat: RequestHandler = async (req, res) => {
-  const { conversationId, token, name, messages } = req.body
+  const { conversationId, token, name, messages, model } = req.body
 
   if (!conversationId || !token || !Array.isArray(messages)) {
     res.status(400).json({
@@ -81,10 +81,9 @@ const handleChat: RequestHandler = async (req, res) => {
 
     // Chiamata all'API OpenAI
     const openaiResponse = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model,
       messages: apiMessages,
       max_tokens: MAX_TOKENS,
-      temperature: TEMPERATURE,
     })
 
     // Postprocesso la risposta
