@@ -8,7 +8,7 @@ const openai = new OpenAI({
 })
 
 const MAX_TOKENS = 350
-const TEMPERATURE = 0
+const TEMPERATURE = 0.3
 const chatbotRouter = Router()
 
 // Assicurati che la chiave API sia fornita

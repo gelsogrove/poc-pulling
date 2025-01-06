@@ -33,19 +33,9 @@ ChartJS.register(
 
 const ChatPoulin = ({ openPanel }) => {
   const [inputValue, setInputValue] = useState("")
-
   const [isLoading, setIsLoading] = useState(false)
-
-  const first_message = `Hello ${
-    (Cookies.get("name") || "Guest").charAt(0).toUpperCase() +
-    (Cookies.get("name") || "Guest").slice(1)
-  }, how can I help you today?`
-  const [messages, setMessages] = useState([
-    { id: uuidv4(), sender: "bot", text: first_message },
-  ])
-  const [conversationHistory, setConversationHistory] = useState([
-    { role: "assistant", content: first_message },
-  ])
+  const [messages, setMessages] = useState([])
+  const [conversationHistory, setConversationHistory] = useState([])
 
   const messagesEndRef = useRef(null)
 
