@@ -17,7 +17,7 @@ const OPENROUTER_HEADERS = {
   "Content-Type": "application/json",
 }
 const MAX_TOKENS = 350
-const TEMPERATURE = 0
+const TEMPERATURE = 0.2
 const chatbotRouter = Router()
 
 // Assicurati che la chiave API sia fornita
