@@ -90,6 +90,8 @@ const handleChat: RequestHandler = async (req, res) => {
     )
 
     // Postprocesso la risposta
+    console.log("API Response:", openRouterResponse.data)
+
     const resp = openRouterResponse.data.choices[0].message.content
     const finalResponse = resp
 
