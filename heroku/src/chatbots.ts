@@ -1,7 +1,6 @@
 import { RequestHandler, Router } from "express"
 import { OpenAI } from "openai"
 import { pool } from "../server.js"
-import { processText, restoreOriginalText } from "./utils/extract-entities.js"
 import { getUserIdByToken } from "./validateUser.js"
 
 const openai = new OpenAI({
@@ -66,12 +65,6 @@ const handleChat: RequestHandler = async (req, res) => {
       return
     }
 
-    // Preprocesso i messaggi dell'utente
-    const processedMessages = messages.map(({ role, content }) => {
-      const { fakeText, formattedEntities } = processText(content)
-      return { role, content: fakeText, formattedEntities }
-    })
-
     // Aggiunge il messaggio di sistema (prompt) all'inizio
     const apiMessages = [
       { role: "system", content: prompt },
@@ -81,7 +74,7 @@ const handleChat: RequestHandler = async (req, res) => {
           "You are a sales data analyst at Poulin Grain. Your role is to analyze client sales data and generate SQL queries or JSON responses strictly based on user input. Follow these rules:\n\n1. Always respond in JSON format with the following keys:\n   - 'triggerAction': A concise action identifier (e.g., 'getTopClients').\n   - 'response': A clear and concise explanation of the action.\n   - 'data': An array, which can be empty if no additional data is available.\n   - 'sql': A PostgreSQL query matching the user's request, or null if SQL is not applicable.\n\n2. If the request is unclear, set 'triggerAction' to 'generic' and provide a helpful response.\n\n3. Use the provided examples as guidelines:\n   - 'dammi i 5 clienti che hanno venduto di più' → Generate a SQL query to list the top 5 clients by total sales.\n   - 'ciao' → Respond with a generic response asking for clarification.",
       },
 
-      ...processedMessages.map(({ role, content }) => ({ role, content })),
+      ...messages.map(({ role, content }) => ({ role, content })),
     ]
 
     console.log(apiMessages)
@@ -100,12 +93,7 @@ const handleChat: RequestHandler = async (req, res) => {
     console.log("*************************")
     console.log(resp)
 
-    const finalResponse = restoreOriginalText(
-      resp || "",
-      processedMessages[0]?.formattedEntities || []
-    )
-
-    res.status(200).json(finalResponse)
+    res.status(200).json(resp)
   } catch (error) {
     console.error("Unexpected error:", error)
     if (error instanceof Error) {
