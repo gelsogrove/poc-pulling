@@ -9,7 +9,7 @@ dotenv.config() // Carica le variabili d'ambiente
 
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 //const OPENROUTER_MODEL = "openai/gpt-3.5-turbo"
-const OPENROUTER_MODEL = "anthropic/claude-instant-v1"
+const OPENROUTER_MODEL = "google/gemini-2.0-flash-exp:free"
 
 const OPENROUTER_HEADERS = {
   Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
