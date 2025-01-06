@@ -74,14 +74,26 @@ const ChatPoulin = ({ openPanel }) => {
       }
       setMessages((prevMessages) => [...prevMessages, userMessage])
 
+      // SET HISTORY
+      setConversationHistory((prev) => [
+        ...prev,
+        { role: "user", content: message },
+      ])
+
       // BOT ANSWER
       const botResponse = await response(
         apiUrl,
         Cookies.get("token"),
         Cookies.get("name"),
         IdConversation,
-        conversationHistory
+        [...conversationHistory, { role: "user", content: message }]
       )
+
+      setConversationHistory((prev) => [
+        ...prev,
+
+        { role: "assistant", content: botResponse },
+      ])
 
       // SET ANSWER
       setMessages((prevMessages) =>
@@ -91,13 +103,6 @@ const ChatPoulin = ({ openPanel }) => {
           text: botResponse,
         })
       )
-
-      // SET HISTORY
-      setConversationHistory((prev) => [
-        ...prev,
-        { role: "user", content: message },
-        { role: "assistant", content: botResponse },
-      ])
     } catch (error) {
       setConversationHistory((prev) => [
         ...prev,
