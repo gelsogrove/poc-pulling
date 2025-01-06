@@ -13,7 +13,6 @@ NEXT
 - ChatBot con debug
 - Upload e mapper
 - ChatBot con sql
-
 - COMPLETARE TUTTO BENE IN LOCALE
 - LOGIN WITH DAILIYMILK
 - DEPLOY TO DAILIYMILK
@@ -27,10 +26,8 @@ VERS 2
 
 IDEEE
 
-- pandasAI test
-- danfojs-node"
 - Genera un informe sobre el rendimiento de ventas en el último trimestre
-- graficare tutto.
+- Analisi ?
 
 COMANDI
 
