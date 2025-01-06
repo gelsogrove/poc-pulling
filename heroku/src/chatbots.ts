@@ -81,7 +81,7 @@ const handleChat: RequestHandler = async (req, res) => {
 
     // Chiamata all'API OpenAI
     const openaiResponse = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-3.5-turbo",
       messages: apiMessages,
       max_tokens: MAX_TOKENS,
       temperature: TEMPERATURE,
