@@ -1,20 +1,28 @@
+import axios from "axios"
+import dotenv from "dotenv"
 import { RequestHandler, Router } from "express"
-import { OpenAI } from "openai"
 import { pool } from "../server.js"
 import { processText, restoreOriginalText } from "./utils/extract-entities.js"
 import { getUserIdByToken } from "./validateUser.js"
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+dotenv.config() // Carica le variabili d'ambiente
 
+const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+const OPENROUTER_MODEL = "openai/gpt-4"
+
+//const OPENROUTER_MODEL = "meta-llama/llama-3.2-1b-instruct"
+
+const OPENROUTER_HEADERS = {
+  Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+  "Content-Type": "application/json",
+}
 const MAX_TOKENS = 350
 const TEMPERATURE = 0
 const chatbotRouter = Router()
 
 // Assicurati che la chiave API sia fornita
-if (!process.env.OPENAI_API_KEY) {
-  throw new Error("OPENAI_API_KEY is not set in the environment variables.")
+if (!process.env.OPENROUTER_API_KEY) {
+  throw new Error("OPENROUTER_API_KEY is not set in the environment variables.")
 }
 
 const validateToken = async (token: string, res: any) => {
@@ -90,33 +98,42 @@ const handleChat: RequestHandler = async (req, res) => {
 
     console.log(apiMessages)
 
-    // Chiamata all'API OpenAI
-    const openaiResponse = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: apiMessages,
-      max_tokens: MAX_TOKENS,
-      temperature: TEMPERATURE,
-    })
+    // Chiamata all'API OpenRouter
+    const openRouterResponse = await axios.post(
+      OPENROUTER_API_URL,
+      {
+        model: OPENROUTER_MODEL,
+        messages: apiMessages,
+        max_tokens: MAX_TOKENS,
+        temperature: TEMPERATURE,
+      },
+      {
+        headers: OPENROUTER_HEADERS,
+      }
+    )
 
     // Postprocesso la risposta
-    const resp = openaiResponse.choices[0].message?.content
+    const resp = openRouterResponse.data.choices[0].message.content
 
     console.log("*************************")
     console.log(resp)
 
     const finalResponse = restoreOriginalText(
-      resp || "",
+      resp,
       processedMessages[0]?.formattedEntities || []
     )
 
     res.status(200).json(finalResponse)
   } catch (error) {
-    console.error("Unexpected error:", error)
-    if (error instanceof Error) {
-      console.error("Error message:", error.message)
-      console.error("Stack trace:", error.stack)
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error:", error.response?.data || error.message)
+      res
+        .status(error.response?.status || 500)
+        .json(error.response?.data || { message: error.message })
+    } else {
+      console.error("Unexpected error:", error)
+      res.status(500).json({ message: "Unexpected error occurred" })
     }
-    res.status(500).json({ message: "Unexpected error occurred" })
   }
 }
 
