@@ -114,6 +114,10 @@ const handleChat: RequestHandler = async (req, res) => {
 
     // Postprocesso la risposta
     const resp = openRouterResponse.data.choices[0].message.content
+
+    console.log("*************************")
+    console.log(resp)
+
     const finalResponse = restoreOriginalText(
       resp,
       processedMessages[0]?.formattedEntities || []
