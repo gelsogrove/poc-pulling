@@ -2,13 +2,16 @@ import axios from "axios"
 import dotenv from "dotenv"
 import { RequestHandler, Router } from "express"
 import { pool } from "../server.js"
+import { processText, restoreOriginalText } from "./utils/extract-entities.js"
 import { getUserIdByToken } from "./validateUser.js"
 
 dotenv.config() // Carica le variabili d'ambiente
 
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-const OPENROUTER_MODEL = "openai/gpt-3.5-turbo"
-//const OPENROUTER_MODEL = "google/gemini-2.0-flash-exp:free"
+//const OPENROUTER_MODEL = "openai/gpt-3.5-turbo"
+
+const OPENROUTER_MODEL = "meta-llama/llama-3.2-1b-instruct"
+//const OPENROUTER_MODEL = "anthropic/claude-instant-v1"
 
 const OPENROUTER_HEADERS = {
   Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
@@ -72,8 +75,17 @@ const handleChat: RequestHandler = async (req, res) => {
       return
     }
 
+    // Preprocesso i messaggi dell'utente
+    const processedMessages = messages.map(({ role, content }) => {
+      const { fakeText, formattedEntities } = processText(content)
+      return { role, content: fakeText, formattedEntities }
+    })
+
     // Aggiunge il messaggio di sistema (prompt) all'inizio
-    const apiMessages = [{ role: "system", content: prompt }, ...messages]
+    const apiMessages = [
+      { role: "system", content: prompt },
+      ...processedMessages.map(({ role, content }) => ({ role, content })),
+    ]
 
     // Chiamata all'API OpenRouter
     const openRouterResponse = await axios.post(
@@ -90,10 +102,11 @@ const handleChat: RequestHandler = async (req, res) => {
     )
 
     // Postprocesso la risposta
-    console.log("API Response:", openRouterResponse.data)
-
     const resp = openRouterResponse.data.choices[0].message.content
-    const finalResponse = resp
+    const finalResponse = restoreOriginalText(
+      resp,
+      processedMessages[0]?.formattedEntities || []
+    )
 
     res.status(200).json(finalResponse)
   } catch (error) {

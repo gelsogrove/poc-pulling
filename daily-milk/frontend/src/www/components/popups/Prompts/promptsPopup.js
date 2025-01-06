@@ -1,11 +1,11 @@
 import "codemirror/lib/codemirror.css" // CSS per l'editor
 import "codemirror/mode/javascript/javascript" // Modalità per il linguaggio
 import "codemirror/theme/dracula.css" // Tema dell'editor
-import Cookies from "js-cookie" // Per gestire i cookie
+import Cookies from "js-cookie"
 import React, { useEffect, useState } from "react"
 import { Controlled as ControlledEditor } from "react-codemirror2"
-import "./PromptsPopup.css" // Stili personalizzati
-import { getPrompt, postPrompt } from "./api/PromptsApi" // Funzioni API
+import "./PromptsPopup.css"
+import { getPrompt, postPrompt } from "./api/PromptsApi"
 
 const PromptsForm = ({ onClose }) => {
   const [formData, setFormData] = useState({

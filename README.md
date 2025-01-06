@@ -5,10 +5,12 @@ deploy: 40 %
 
 NEXT
 
-- ChatBot con debug
+- NLP
+- loading
 - ChatBot basic e test NlP
 - Togliersi da OpenAI
 - ChatBot con prompt
+- ChatBot con debug
 - Upload e mapper
 - ChatBot con sql
 
