@@ -78,13 +78,9 @@ const handleChat: RequestHandler = async (req, res) => {
       {
         role: "system",
         content:
-          "Respond in JSON format. Include these keys: 'triggerAction', 'response', 'data', and 'sql'. Use PostgreSQL syntax for SQL queries.",
+          "You are a sales data analyst at Poulin Grain. Your role is to analyze client sales data and generate SQL queries or JSON responses strictly based on user input. Follow these rules:\n\n1. Always respond in JSON format with the following keys:\n   - 'triggerAction': A concise action identifier (e.g., 'getTopClients').\n   - 'response': A clear and concise explanation of the action.\n   - 'data': An array, which can be empty if no additional data is available.\n   - 'sql': A PostgreSQL query matching the user's request, or null if SQL is not applicable.\n\n2. If the request is unclear, set 'triggerAction' to 'generic' and provide a helpful response.\n\n3. Use the provided examples as guidelines:\n   - 'dammi i 5 clienti che hanno venduto di più' → Generate a SQL query to list the top 5 clients by total sales.\n   - 'ciao' → Respond with a generic response asking for clarification.",
       },
-      {
-        role: "system",
-        content:
-          "Respond strictly in JSON. Do not include any text outside of JSON.",
-      },
+
       ...processedMessages.map(({ role, content }) => ({ role, content })),
     ]
 
