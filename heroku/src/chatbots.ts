@@ -83,6 +83,11 @@ const handleChat: RequestHandler = async (req, res) => {
     // Aggiunge il messaggio di sistema (prompt) all'inizio
     const apiMessages = [
       { role: "system", content: prompt },
+      {
+        role: "system",
+        content:
+          "Respond in JSON format. Include these keys: 'triggerAction', 'response', 'data', and 'sql'. Use PostgreSQL syntax for SQL queries.",
+      },
       ...processedMessages.map(({ role, content }) => ({ role, content })),
     ]
 
