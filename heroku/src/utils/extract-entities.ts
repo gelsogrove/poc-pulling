@@ -1,4 +1,29 @@
+import { faker } from "@faker-js/faker"
 import nlp from "compromise"
+
+// Lista di città italiane (aggiungere altre città se necessario)
+const italianCities = [
+  "Roma",
+  "Milano",
+  "Napoli",
+  "Torino",
+  "Palermo",
+  "Genova",
+  "Bologna",
+  "Firenze",
+  "Bari",
+  "Catania",
+  "Verona",
+  "Venezia",
+  "Messina",
+  "Padova",
+  "Trieste",
+  "Brescia",
+  "Prato",
+  "Parma",
+  "Modena",
+  "Reggio Calabria",
+]
 
 // Funzione per processare i messaggi dinamicamente
 export const processMessages = (
@@ -7,26 +32,27 @@ export const processMessages = (
   const formattedEntities: any[] = []
   const fakeMessages: any[] = []
 
-  // Elabora ciascun messaggio
   messages.forEach((message) => {
-    // Estrazione dinamica delle entità dal contenuto del messaggio
     const { fakevalue, entity, value } = processEntities(message.content)
 
-    formattedEntities.push({
-      entity,
-      value: value, // Salviamo il valore originale
-      fakevalue: fakevalue,
-    })
+    if (value && fakevalue) {
+      // Verifica che i valori siano validi
+      formattedEntities.push({
+        entity,
+        value: value, // Salviamo il valore originale
+        fakevalue: fakevalue,
+      })
 
-    // Sostituisce solo l'entità con il fakevalue, non l'intero messaggio
-    const modifiedContent = replaceValuesInText(message.content, [
-      { value: value, fakevalue: fakevalue },
-    ])
+      // Sostituire solo l'entità con il fakevalue, non l'intero messaggio
+      const modifiedContent = replaceValuesInText(message.content, [
+        { value: value, fakevalue: fakevalue },
+      ])
 
-    fakeMessages.push({
-      role: message.role,
-      content: modifiedContent,
-    })
+      fakeMessages.push({
+        role: message.role,
+        content: modifiedContent,
+      })
+    }
   })
 
   return { fakeMessages, formattedEntities }
@@ -47,7 +73,7 @@ export const processEntities = (
   if (people.length > 0) {
     entity = "people"
     value = people[0] // Impostiamo il valore originale come il primo risultato trovato
-    fakevalue = getFakeHeroName() // Genera un nome di supereroe
+    fakevalue = faker.person.fullName() // Genera un nome falso
   }
 
   // Riconoscimento dinamico di entità come luoghi (città)
@@ -55,51 +81,24 @@ export const processEntities = (
   if (places.length > 0) {
     entity = "places"
     value = places[0] // Impostiamo il valore originale come il primo risultato trovato
-    fakevalue = getFakeCity() // Genera una città finta
+    fakevalue = faker.location.city() // Genera una città finta
+  } else {
+    // Se non riconosciamo la città con compromise, cerchiamo tra le città italiane predefinite
+    const matchedCity = italianCities.find((city) => content.includes(city))
+    if (matchedCity) {
+      entity = "places"
+      value = matchedCity
+      fakevalue = faker.location.city() // Genera una città finta
+    }
   }
 
   return { entity, value, fakevalue } // Restituiamo entità, valore originale e valore falso
 }
 
-// Funzione per generare un nome di supereroe falso
-const getFakeHeroName = () => {
-  const heroes = [
-    "Spider-Man",
-    "Iron Man",
-    "Wonder Woman",
-    "Thor",
-    "The Flash",
-    "Black Panther",
-    "Captain America",
-    "Hulk",
-    "Aquaman",
-    "Doctor Strange",
-  ]
-  return heroes[Math.floor(Math.random() * heroes.length)] // Scegli un supereroe casuale
-}
-
-// Funzione per generare una città finta
-const getFakeCity = () => {
-  const cities = [
-    "Roma",
-    "Milano",
-    "Napoli",
-    "Torino",
-    "Palermo",
-    "Genova",
-    "Bologna",
-    "Firenze",
-    "Venezia",
-    "Verona",
-  ]
-  return cities[Math.floor(Math.random() * cities.length)] // Scegli una città casuale
-}
-
 // Funzione per generare la mappa per la sostituzione dei nomi e città
 export const generateNameMap = (value: string, fakevalue: string) => {
-  // Verifica che 'value' e 'fakevalue' siano stringhe
-  value = String(value)
-  fakevalue = String(fakevalue)
+  // Verifica se value o fakevalue sono vuoti o non validi
+  if (!value || !fakevalue) return {}
 
   const valueParts = value.split(" ") // Dividiamo il valore originale (es. "Andrea Gelsomino")
   const fakeParts = fakevalue.split(" ") // Dividiamo il valore finto (es. "Jasmine Hintz")
@@ -130,12 +129,14 @@ export const replaceValuesInText = (
       const original = reverse ? nameMap[key] : key
       const replacement = reverse ? key : nameMap[key]
 
-      // Regex migliorata per gestire punteggiatura opzionale e interi nomi
-      const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-      const regex = new RegExp(`\\b${escapedOriginal}\\b`, "g")
+      // Controlla che original e replacement siano stringhe valide
+      if (typeof original === "string" && typeof replacement === "string") {
+        // Regex migliorata per gestire punteggiatura opzionale e interi nomi
+        const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+        const regex = new RegExp(`\\b${escapedOriginal}\\b`, "g")
 
-      console.log(`Sostituendo ${original} con ${replacement}`)
-      modifiedText = modifiedText.replace(regex, replacement)
+        modifiedText = modifiedText.replace(regex, replacement)
+      }
     })
   })
 
