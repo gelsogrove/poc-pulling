@@ -53,7 +53,6 @@ export const processEntities = (
 
   // Riconoscimento dinamico di entità come luoghi (città)
   const places = doc.places().out("array")
-  console.log("***", places)
   if (places.length > 0) {
     entity = "places"
     value = places[0] // Impostiamo il valore originale come il primo risultato trovato
@@ -65,6 +64,10 @@ export const processEntities = (
 
 // Funzione per generare la mappa per la sostituzione dei nomi e città
 export const generateNameMap = (value: string, fakevalue: string) => {
+  // Verifica che 'value' e 'fakevalue' siano stringhe
+  value = String(value)
+  fakevalue = String(fakevalue)
+
   const valueParts = value.split(" ") // Dividiamo il valore originale (es. "Andrea Gelsomino")
   const fakeParts = fakevalue.split(" ") // Dividiamo il valore finto (es. "Jasmine Hintz")
 
