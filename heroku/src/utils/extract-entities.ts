@@ -102,11 +102,11 @@ export const replaceValuesInText = (
     const original = reverse ? String(fakevalue) : String(value).trim()
     const replacement = reverse ? String(value) : String(fakevalue)
 
-    // Regex migliorata per gestire punteggiatura opzionale
+    // Regex migliorata per gestire punteggiatura opzionale e interi nomi
     const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
     const regex = new RegExp(`\\b${escapedOriginal}\\b`, "g")
 
-    // Se "reverse" è true, sostituisci il nome falso con quello originale
+    // Sostituire il nome falso con quello originale quando reverse è true
     modifiedText = modifiedText.replace(regex, replacement)
   })
 
