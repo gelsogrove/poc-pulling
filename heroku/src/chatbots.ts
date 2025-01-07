@@ -74,29 +74,20 @@ const handleChat: RequestHandler = async (req, res) => {
       return
     }
 
-    // Estrazione delle entità dai messaggi dell'utente
+    // Estrazione delle entità dai soli messaggi dell'utente
     const { fakeMessages, formattedEntities } = processMessages(messages)
-
-    // Applica la sostituzione prima di inviare i messaggi
-    const fakeMessagesWithEntities = fakeMessages.map((message) => ({
-      ...message,
-      content: replaceValuesInText(message.content, formattedEntities), // Sostituisci entità con i valori finti
-    }))
 
     console.log("**********ENTITY**********")
     console.log(formattedEntities)
     console.log("**********fakeMessages**************")
-    console.log(fakeMessagesWithEntities)
+    console.log(fakeMessages)
     console.log("**********END**************")
 
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
       {
         model,
-        messages: [
-          { role: "system", content: prompt },
-          ...fakeMessagesWithEntities,
-        ], // Usa il prompt originale
+        messages: [{ role: "system", content: prompt }, ...fakeMessages], // Usa il prompt originale
         max_tokens: MAX_TOKENS,
         temperature,
       },
@@ -112,7 +103,6 @@ const handleChat: RequestHandler = async (req, res) => {
 
     const fakeAnswer = openaiResponse.data.choices[0]?.message?.content
 
-    // Ripristina il testo originale (sostituendo i valori fake con quelli veri)
     const restoredAnswer = replaceValuesInText(
       fakeAnswer,
       formattedEntities,
@@ -124,7 +114,7 @@ const handleChat: RequestHandler = async (req, res) => {
     res.status(200).json({ message: restoredAnswer })
   } catch (error) {
     console.error("Error during chat handling:", error)
-    res.status(500).json({ message: "Unexpected error occurred" })
+    res.status(200).json({ message: "Unexpected error occurred" })
   }
 }
 
