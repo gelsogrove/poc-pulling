@@ -1,93 +1,102 @@
 import { faker } from "@faker-js/faker"
 
-// Tipo delle entità da estrarre
-interface Entity {
-  entity: string
-  value: string
-  fakevalue: string
-}
+// Funzione per estrarre le entità da una stringa di testo
+const extractEntities = (text: string): { [key: string]: string[] } => {
+  const entities: { [key: string]: string[] } = {
+    people: [],
+    dates: [],
+    numbers: [],
+    places: [], // Aggiunto il campo per le città/nazioni
+  }
 
-// Funzione per estrarre le entità dai messaggi
-export const extractEntities = (messages: string[]): Entity[] => {
-  const entities: Entity[] = []
+  // Regex per riconoscere entità comuni
+  const namePattern = /\b[A-Z][a-z]+ [A-Z][a-z]+\b/g
+  const datePattern =
+    /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s\d{1,2},\s\d{4}\b/g
+  const numberPattern = /\b\d+\b/g
+  const placePattern = /\b(?:[A-Z][a-z]+(?: [A-Z][a-z]+)*)\b/g // Regex per città o nazioni
 
-  messages.forEach((message) => {
-    // Esegui una ricerca per entità comuni (es. persone, numeri, date, luoghi)
-    // Queste sono entità predefinite, ma puoi aggiungere altre logiche dinamiche
-    // Per esempio, usando regex o altre librerie
-    const people = message.match(/\b[A-Z][a-z]+ [A-Z][a-z]+\b/g) // Per esempio, per estrarre nomi
-    const numbers = message.match(/\b\d+\b/g) // Per estrarre numeri
-
-    // Aggiungi le entità trovate
-    if (people) {
-      people.forEach((person) => {
-        entities.push({
-          entity: "people",
-          value: person,
-          fakevalue: faker.name.fullName(),
-        })
-      })
-    }
-
-    if (numbers) {
-      numbers.forEach((number) => {
-        entities.push({
-          entity: "numbers",
-          value: number,
-          fakevalue: faker.datatype.number({ min: 1000, max: 9999 }).toString(),
-        })
-      })
-    }
-  })
+  // Estrazione delle entità
+  entities.people = text.match(namePattern) || []
+  entities.dates = text.match(datePattern) || []
+  entities.numbers = text.match(numberPattern) || []
+  entities.places = text.match(placePattern) || [] // Estrazione delle città/nazioni
 
   return entities
 }
 
-/**
- * Funzione per ripristinare i valori originali nel testo,
- * sostituendo i "fake values" con quelli reali.
- *
- * @param content Il testo da modificare
- * @param formattedEntities Le entità con i valori originali e fake
- * @param reverse Flag per decidere se sostituire i fake values con quelli reali
- * @returns Il testo modificato
- */
+// Funzione per generare valori fake per le entità
+const generateFakeValue = (entity: string, value: string): string => {
+  switch (entity) {
+    case "people":
+      return faker.name.fullName() // Genera un nome falso
+    case "dates":
+      return faker.date.future().toLocaleDateString("en-US") // Genera una data futura
+    case "numbers":
+      return faker.datatype.number().toString() // Genera un numero casuale
+    case "places":
+      return faker.address.city() // Genera una città falsa
+    default:
+      return value
+  }
+}
+
+// Funzione per processare i messaggi e sostituire le entità con valori fake
+export const processMessages = (messages: any[]) => {
+  const formattedEntities: any[] = [] // Qui memorizziamo le entità estratte
+  const fakeMessages = messages.map((message) => {
+    let content = message.content
+
+    // Estrazione entità (per esempio persone, numeri, date, città/nazioni)
+    const entities = extractEntities(content)
+
+    // Aggiungi le entità al nostro array per successivo uso
+    Object.entries(entities).forEach(([entity, values]) => {
+      values.forEach((value) => {
+        formattedEntities.push({
+          entity,
+          value,
+          fakevalue: generateFakeValue(entity, value),
+        })
+      })
+    })
+
+    // Sostituire i valori reali con quelli fake
+    formattedEntities.forEach(({ value, fakevalue }) => {
+      content = content.replace(new RegExp(value, "g"), fakevalue)
+    })
+
+    // Restituisci il messaggio modificato
+    return { ...message, content }
+  })
+
+  return { fakeMessages, formattedEntities }
+}
+
+// Aggiungi questa export per `replaceValuesInText` al termine del file
 export const replaceValuesInText = (
   content: string,
-  formattedEntities: { entity: string; value: string; fakevalue: string }[],
+  formattedEntities: any[],
   reverse = false
 ): string => {
   let modifiedText = content
 
-  // Loop su tutte le entità per fare la sostituzione
   formattedEntities.forEach(({ value, fakevalue }) => {
-    const original = reverse ? String(fakevalue) : String(value).trim() // Se reverse, usa il fake value
-    const replacement = reverse ? String(value) : String(fakevalue) // Se reverse, sostituisci con il valore originale
+    const original = reverse ? String(fakevalue) : String(value).trim()
+    const replacement = reverse ? String(value) : String(fakevalue)
 
-    // Escapes i caratteri speciali per uso in regex
+    // Regex migliorata per gestire punteggiatura opzionale
     const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-    const regex = new RegExp(`\\b${escapedOriginal}\\b`, "g")
+    const regex = new RegExp(`\\b${escapedOriginal}[.,!?;:]*`, "g")
 
-    // Sostituisci i valori nel testo
+    if (!regex.test(modifiedText)) {
+      console.warn(`Entità non trovata per sostituzione: ${original}`)
+    } else {
+      console.info(`Entità sostituita: ${original} con ${replacement}`)
+    }
+
     modifiedText = modifiedText.replace(regex, replacement)
   })
 
   return modifiedText
-}
-
-// Funzione per elaborare i messaggi e restituire sia i messaggi "falsi" che le entità formattate
-export const processMessages = (
-  messages: { role: string; content: string }[]
-) => {
-  const fakeMessages = messages.map((message) => ({
-    role: message.role,
-    content: message.content,
-  }))
-
-  const formattedEntities = extractEntities(messages.map((msg) => msg.content))
-
-  return {
-    fakeMessages,
-    formattedEntities,
-  }
 }
