@@ -68,11 +68,11 @@ export const processMessages = (
   // Elabora ciascun messaggio
   messages.forEach((message) => {
     // Estrazione dinamica delle entità dal contenuto del messaggio
-    const { fakevalue, entity } = processEntities(message.content)
+    const { fakevalue, value, entity } = processEntities(message.content)
 
     formattedEntities.push({
       entity,
-      value: message.content,
+      value,
       fakevalue: fakevalue,
     })
 
