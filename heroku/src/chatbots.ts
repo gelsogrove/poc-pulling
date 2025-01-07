@@ -74,12 +74,14 @@ const handleChat: RequestHandler = async (req, res) => {
       return
     }
 
+    // Aggiunge il prompt solo come sistema, senza passarlo a `processMessages`
     const apiMessages = [
       { role: "system", content: prompt },
       ...messages.map(({ role, content }) => ({ role, content })),
     ]
 
-    const { fakeMessages, formattedEntities } = processMessages(apiMessages)
+    // Estrazione delle entità dai soli messaggi dell'utente
+    const { fakeMessages, formattedEntities } = processMessages(messages)
 
     console.log("**********Messages*********")
     console.log(messages)
@@ -91,7 +93,7 @@ const handleChat: RequestHandler = async (req, res) => {
       OPENROUTER_API_URL,
       {
         model,
-        messages: fakeMessages,
+        messages: [{ role: "system", content: prompt }, ...fakeMessages], // Usa il prompt originale
         max_tokens: MAX_TOKENS,
         temperature,
       },
@@ -112,6 +114,7 @@ const handleChat: RequestHandler = async (req, res) => {
       formattedEntities,
       true
     )
+    console.log("Risposta Originale:", fakeAnswer)
     console.log("Risposta Ripristinata:", restoredAnswer)
 
     res.status(200).json({ message: restoredAnswer })
