@@ -61,9 +61,8 @@ const cleanAndParseJSON = (response: any) => {
       return response // Se è già un oggetto, restituiamo direttamente
     }
 
-    // Sostituiamo gli apostrofi (') con virgolette doppie (") se necessari
-    // Questo è utile per gestire il parsing di stringhe con apostrofi
-    let cleanedResponse = response.replace(/'/g, '"') // Sostituisce apostrofi con virgolette doppie
+    // Gestiamo gli apostrofi singoli (') nel contenuto della risposta
+    let cleanedResponse = response.replace(/'/g, "\\'") // Escape degli apostrofi
 
     // Parsing del JSON
     const parsedResponse = JSON.parse(cleanedResponse)
@@ -82,7 +81,7 @@ const cleanAndParseJSON = (response: any) => {
     return parsedResponse // Restituiamo la risposta parsata
   } catch (error) {
     console.error("Errore durante il parsing del JSON:", error)
-    return null // Restituiamo null in caso di errore
+    return error // Restituiamo null in caso di errore
   }
 }
 
