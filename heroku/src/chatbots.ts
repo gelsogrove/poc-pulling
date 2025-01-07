@@ -56,25 +56,33 @@ const getPrompt = async (idPrompt: string): Promise<string | null> => {
 
 const cleanAndParseJSON = (response: any) => {
   try {
-    // Parsing del primo livello
-    const parsedResponse = JSON.parse(response)
+    // Se la risposta è già un oggetto, non fare il parsing
+    if (typeof response === "object") {
+      return response // Se è già un oggetto, restituiamo direttamente
+    }
 
-    // Controlla se "message" è presente e contiene una stringa JSON
+    // Sostituiamo gli apostrofi (') con virgolette doppie (") se necessari
+    // Questo è utile per gestire il parsing di stringhe con apostrofi
+    let cleanedResponse = response.replace(/'/g, '"') // Sostituisce apostrofi con virgolette doppie
+
+    // Parsing del JSON
+    const parsedResponse = JSON.parse(cleanedResponse)
+
+    // Controllo se "message" è presente e contiene una stringa JSON
     if (parsedResponse.message && typeof parsedResponse.message === "string") {
       const cleanedMessage = parsedResponse.message
-        .replace(/\\n/g, "")
-        .replace(/\\"/g, '"')
+        .replace(/\\n/g, "") // Rimuove eventuali newline escape
+        .replace(/\\"/g, '"') // Sostituisce le virgolette escape con quelle normali
 
       // Parsing del JSON annidato
       const nestedParsed = JSON.parse(cleanedMessage)
       return nestedParsed // Restituisce il JSON finale pulito
     }
 
-    // Se "message" non è presente o non è un JSON annidato, restituisci il primo livello parsato
-    return parsedResponse
+    return parsedResponse // Restituiamo la risposta parsata
   } catch (error) {
     console.error("Errore durante il parsing del JSON:", error)
-    return error
+    return null // Restituiamo null in caso di errore
   }
 }
 
