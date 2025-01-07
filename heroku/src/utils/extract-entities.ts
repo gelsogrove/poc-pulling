@@ -51,7 +51,7 @@ export const processEntities = (
     fakevalue = faker.person.fullName() // Genera un nome falso
   }
 
-  // Riconoscimento dinamico di entità come luoghi
+  // Riconoscimento dinamico di entità come luoghi (città)
   const places = doc.places().out("array")
   if (places.length > 0) {
     entity = "places"
@@ -62,13 +62,8 @@ export const processEntities = (
   return { entity, value, fakevalue } // Restituiamo entità, valore originale e valore falso
 }
 
+// Funzione per generare la mappa per la sostituzione dei nomi e città
 export const generateNameMap = (value: string, fakevalue: string) => {
-  // Controlla se 'value' e 'fakevalue' sono effettivamente stringhe
-  if (typeof value !== "string" || typeof fakevalue !== "string") {
-    console.error("Il valore o fakevalue non sono stringhe:", value, fakevalue)
-    return {}
-  }
-
   const valueParts = value.split(" ") // Dividiamo il valore originale (es. "Andrea Gelsomino")
   const fakeParts = fakevalue.split(" ") // Dividiamo il valore finto (es. "Jasmine Hintz")
 
@@ -102,7 +97,7 @@ export const replaceValuesInText = (
       const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
       const regex = new RegExp(`\\b${escapedOriginal}\\b`, "g")
 
-      //console.log(`Sostituendo ${original} con ${replacement}`)
+      console.log(`Sostituendo ${original} con ${replacement}`)
       modifiedText = modifiedText.replace(regex, replacement)
     })
   })
