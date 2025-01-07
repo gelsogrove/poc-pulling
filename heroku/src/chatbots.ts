@@ -54,6 +54,28 @@ const getPrompt = async (idPrompt: string): Promise<string | null> => {
   }
 }
 
+const cleanAndParseJSON = (response: any) => {
+  try {
+    // Parsing del primo livello
+    const parsedResponse = JSON.parse(response)
+
+    // Parsing del JSON annidato nella chiave "message", rimuovendo escape characters
+    if (parsedResponse.message && typeof parsedResponse.message === "string") {
+      const cleanedMessage = parsedResponse.message
+        .replace(/\\n/g, "")
+        .replace(/\\"/g, '"')
+      const nestedParsed = JSON.parse(cleanedMessage) // Parsing del JSON annidato
+      return nestedParsed // Restituisce il JSON finale
+    }
+
+    // Se non c'è "message", ritorna l'oggetto parsato del primo livello
+    return parsedResponse
+  } catch (error) {
+    console.error("Errore durante il parsing del JSON:", error)
+    return null // Restituisce null in caso di errore
+  }
+}
+
 // Gestione principale della richiesta chatbot
 const handleChat: RequestHandler = async (req, res) => {
   const { conversationId, token, messages, model, temperature } = req.body
@@ -102,7 +124,9 @@ const handleChat: RequestHandler = async (req, res) => {
       return
     }
 
-    const fakeAnswer = openaiResponse.data.choices[0]?.message?.content
+    const fakeAnswer = cleanAndParseJSON(
+      openaiResponse.data.choices[0]?.message?.content
+    )
 
     // Ripristina la risposta con i valori originali
     const restoredAnswer = replaceValuesInText(
