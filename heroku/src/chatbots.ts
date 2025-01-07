@@ -50,9 +50,35 @@ const getPrompt = async (idPrompt: string): Promise<string | null> => {
   }
 }
 
+// Funzione per estrarre valori da un prompt
+const extractValuesFromPrompt = (
+  prompt: string
+): { temperature: number | null; model: string | null } => {
+  try {
+    const temperatureMatch = prompt.match(/TEMPERATURE:\s*([0-9.]+)/i)
+    const modelMatch = prompt.match(/MODEL:\s*([a-zA-Z0-9\-_]+)/i)
+
+    const temperature = temperatureMatch
+      ? parseFloat(temperatureMatch[1])
+      : null
+    const model = modelMatch ? modelMatch[1] : null
+
+    return { temperature, model }
+  } catch (error) {
+    console.error("Error extracting values from prompt:", error)
+    return { temperature: null, model: null }
+  }
+}
+
 // Gestione principale della richiesta chatbot
 const handleChat: RequestHandler = async (req, res) => {
-  const { conversationId, token, messages, model, temperature } = req.body
+  const {
+    conversationId,
+    token,
+    messages,
+    model: userModel,
+    temperature: userTemperature,
+  } = req.body
 
   if (!conversationId || !token || !Array.isArray(messages)) {
     res.status(400).json({
@@ -66,18 +92,28 @@ const handleChat: RequestHandler = async (req, res) => {
     if (!userId) return
 
     const prompt = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
+
     if (!prompt) {
       res.status(200).json({ message: "Prompt not found." })
       return
     }
 
+    // Estrai TEMPERATURE e MODEL dal prompt
+    const { temperature: extractedTemperature, model: extractedModel } =
+      extractValuesFromPrompt(prompt)
+
+    // Determina i valori finali di temperatura e modello
+    const finalTemperature = extractedTemperature ?? userTemperature ?? 0.7 // Default 0.7
+    const finalModel = extractedModel ?? userModel ?? "gpt-3.5-turbo" // Default "gpt-3.5-turbo"
+
+    // Richiesta a OpenAI
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
       {
-        model,
-        messages: [{ role: "system", content: prompt }, ...messages], // Usa il prompt originale
+        model: finalModel,
+        messages: [{ role: "system", content: prompt }, ...messages],
         max_tokens: MAX_TOKENS,
-        temperature,
+        temperature: finalTemperature,
       },
       {
         headers: OPENROUTER_HEADERS,
