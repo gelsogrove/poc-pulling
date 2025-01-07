@@ -67,21 +67,13 @@ export const replaceValuesInText = (
 ): string => {
   let modifiedText = content
 
-  formattedEntities.forEach(({ value, fakevalue, entity }) => {
-    if (entity) {
-      // Sostituisce solo l'entità con il fakevalue
-      const original = reverse ? String(fakevalue) : String(value).trim()
-      const replacement = reverse ? String(value) : String(fakevalue)
+  // Per ogni entità da sostituire, sostituiamo solo l'entità con il fakevalue
+  formattedEntities.forEach(({ value, fakevalue }) => {
+    const original = reverse ? String(fakevalue) : String(value).trim()
+    const replacement = reverse ? String(value) : String(fakevalue)
 
-      // Escaping per i caratteri speciali
-      const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-
-      // Regex che cerca l'intera entità nel testo
-      const regex = new RegExp(`\\b${escapedOriginal}\\b`, "g")
-
-      // Sostituisce solo l'entità nel testo
-      modifiedText = modifiedText.replace(regex, replacement)
-    }
+    // Sostituzione diretta senza complicazioni di regex
+    modifiedText = modifiedText.replace(original, replacement)
   })
 
   return modifiedText
