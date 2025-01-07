@@ -129,6 +129,7 @@ export const processEntities = (
   if (people.length > 0) {
     entity = "people"
     value = people[0] // Imposta il valore originale come il primo risultato trovato
+    console.log("***", people)
     fakevalue = faker.person.fullName() // Genera un nome falso
   }
 
