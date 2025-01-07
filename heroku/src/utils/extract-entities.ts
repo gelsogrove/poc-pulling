@@ -28,6 +28,13 @@ interface Entities {
   places: string[]
 }
 
+// Definizione del tipo per le entità formattate
+interface FormattedEntity {
+  entity: string
+  value: string
+  fakevalue: string
+}
+
 // Funzione per estrarre entità generiche
 const extractEntities = (text: string): Entities => {
   const doc = nlp(text)
@@ -79,15 +86,8 @@ const generateFakeValue = (entity: string, value: string): string => {
   }
 }
 
-// Definizione del tipo per le entità formattate
-interface FormattedEntity {
-  entity: string
-  value: string
-  fakevalue: string
-}
-
 // Funzione per sostituire i valori fake nella frase
-const replaceValuesInText = (
+export const replaceValuesInText = (
   text: string,
   formattedEntities: FormattedEntity[],
   reverse = false
@@ -114,38 +114,58 @@ const replaceValuesInText = (
   return modifiedText
 }
 
-// Funzione principale
-export const processText = (
-  inputText: string
-): { fakeText: string; formattedEntities: FormattedEntity[] } => {
-  const rawEntities = extractEntities(inputText)
+// Funzione per elaborare un array di messaggi e sostituire i valori con quelli fake
+export const processMessages = (
+  apiMessages: { role: string; content: string }[]
+): {
+  fakeMessages: { role: string; content: string }[]
+  formattedEntities: FormattedEntity[]
+} => {
+  let formattedEntities: FormattedEntity[] = []
 
-  let formattedEntities = Object.entries(rawEntities).flatMap(
-    ([entity, values]) =>
+  // Itera su ogni messaggio per estrarre entità e generare valori fake
+  const fakeMessages = apiMessages.map((message) => {
+    if (!message.content) return message
+
+    // Estrai le entità dal messaggio corrente
+    const rawEntities = extractEntities(message.content)
+
+    // Formatta le entità estratte
+    const entities = Object.entries(rawEntities).flatMap(([entity, values]) =>
       (values || []).map((value: string) => ({
         entity,
         value: value.trim(),
         fakevalue: generateFakeValue(entity, value),
       }))
-  )
+    )
 
-  const fakeText = replaceValuesInText(inputText, formattedEntities)
+    // Aggiungi le entità estratte alla lista globale
+    formattedEntities = [...formattedEntities, ...entities]
 
-  return { fakeText, formattedEntities }
+    // Genera il messaggio con valori fake
+    const fakeContent = replaceValuesInText(message.content, entities)
+
+    return { ...message, content: fakeContent }
+  })
+
+  return { fakeMessages, formattedEntities }
 }
 
-// Funzione per ripristinare la frase originale
-export const restoreOriginalText = (
-  fakeText: string,
+// Funzione per ripristinare i valori originali in un array di messaggi
+export const restoreOriginalMessages = (
+  fakeMessages: { role: string; content: string }[],
   formattedEntities: FormattedEntity[]
-): string => {
-  return replaceValuesInText(fakeText, formattedEntities, true)
+): { role: string; content: string }[] => {
+  return fakeMessages.map((message) => {
+    if (!message.content) return message
+
+    // Ripristina il contenuto originale usando le entità formattate
+    const originalContent = replaceValuesInText(
+      message.content,
+      formattedEntities,
+      true
+    )
+
+    return { ...message, content: originalContent }
+  })
 }
-
-/* Esempio di utilizzo
-const input =
-  "Give me Andrea Gelsomino that levas in Milan with orders  from 2024 who purchased the product POULING with a total order of 5,000 EUR."
-
-const { fakeText, formattedEntities } = processText(input)
-const originalText = restoreOriginalText(fakeText, formattedEntities)
-*/

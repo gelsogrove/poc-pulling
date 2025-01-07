@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon --trace-warnings --exec node --loader ts-node/esm ./heroku/server.ts",
+    "dev": "nodemon   --exec node --loader ts-node/esm ./heroku/server.ts",
     "start": "node heroku/dist/server.js",
     "build": "tsc"
   },
