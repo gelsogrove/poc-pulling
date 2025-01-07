@@ -52,15 +52,6 @@ export const processEntities = (
     fakevalue = faker.location.city() // Genera una città finta
   }
 
-  // Gestione delle date con regex (puoi usare chrono-node o regex)
-  const datePattern =
-    /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s\d{1,2},\s\d{4}\b/g
-  const dates = content.match(datePattern)
-  if (dates && dates.length > 0) {
-    entity = "dates"
-    fakevalue = faker.date.future().toLocaleDateString() // Genera una data futura
-  }
-
   return { entity, fakevalue }
 }
 
