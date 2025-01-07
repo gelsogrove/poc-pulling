@@ -1,79 +1,70 @@
 import { faker } from "@faker-js/faker"
+import nlp from "compromise"
 
-// Funzione per estrarre le entità da una stringa di testo
-const extractEntities = (text: string): { [key: string]: string[] } => {
-  const entities: { [key: string]: string[] } = {
-    people: [],
-    dates: [],
-    numbers: [],
-    places: [], // Aggiunto il campo per le città/nazioni
-  }
+// Funzione per processare i messaggi dinamicamente
+export const processMessages = (
+  messages: { role: string; content: string }[]
+): { fakeMessages: any[]; formattedEntities: any[] } => {
+  const formattedEntities: any[] = []
+  const fakeMessages: any[] = []
 
-  // Regex per riconoscere entità comuni
-  const namePattern = /\b[A-Z][a-z]+ [A-Z][a-z]+\b/g
-  const datePattern =
-    /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s\d{1,2},\s\d{4}\b/g
-  const numberPattern = /\b\d+\b/g
-  const placePattern = /\b(?:[A-Z][a-z]+(?: [A-Z][a-z]+)*)\b/g // Regex per città o nazioni
+  // Elabora ciascun messaggio
+  messages.forEach((message) => {
+    // Estrazione dinamica delle entità dal contenuto del messaggio
+    const { fakevalue, entity } = processEntities(message.content)
 
-  // Estrazione delle entità
-  entities.people = text.match(namePattern) || []
-  entities.dates = text.match(datePattern) || []
-  entities.numbers = text.match(numberPattern) || []
-  entities.places = text.match(placePattern) || [] // Estrazione delle città/nazioni
-
-  return entities
-}
-
-// Funzione per generare valori fake per le entità
-const generateFakeValue = (entity: string, value: string): string => {
-  switch (entity) {
-    case "people":
-      return faker.name.fullName() // Genera un nome falso
-    case "dates":
-      return faker.date.future().toLocaleDateString("en-US") // Genera una data futura
-    case "numbers":
-      return faker.datatype.number().toString() // Genera un numero casuale
-    case "places":
-      return faker.address.city() // Genera una città falsa
-    default:
-      return value
-  }
-}
-
-// Funzione per processare i messaggi e sostituire le entità con valori fake
-export const processMessages = (messages: any[]) => {
-  const formattedEntities: any[] = [] // Qui memorizziamo le entità estratte
-  const fakeMessages = messages.map((message) => {
-    let content = message.content
-
-    // Estrazione entità (per esempio persone, numeri, date, città/nazioni)
-    const entities = extractEntities(content)
-
-    // Aggiungi le entità al nostro array per successivo uso
-    Object.entries(entities).forEach(([entity, values]) => {
-      values.forEach((value) => {
-        formattedEntities.push({
-          entity,
-          value,
-          fakevalue: generateFakeValue(entity, value),
-        })
-      })
+    formattedEntities.push({
+      entity,
+      value: message.content,
+      fakevalue: fakevalue,
     })
 
-    // Sostituire i valori reali con quelli fake
-    formattedEntities.forEach(({ value, fakevalue }) => {
-      content = content.replace(new RegExp(value, "g"), fakevalue)
+    fakeMessages.push({
+      role: message.role,
+      content: message.content.replace(message.content, fakevalue), // Sostituisce con il valore fake
     })
-
-    // Restituisci il messaggio modificato
-    return { ...message, content }
   })
 
   return { fakeMessages, formattedEntities }
 }
 
-// Aggiungi questa export per `replaceValuesInText` al termine del file
+// Funzione per processare le entità nel contenuto dinamicamente
+export const processEntities = (
+  content: string
+): { entity: string; fakevalue: string } => {
+  let entity = ""
+  let fakevalue = content // Se non c'è un'entità, restituisci il contenuto originale
+
+  // Uso di compromise per riconoscere entità nel testo
+  const doc = nlp(content)
+
+  // Riconoscimento dinamico di entità come persone
+  const people = doc.people().out("array")
+  if (people.length > 0) {
+    entity = "people"
+    fakevalue = faker.person.fullName() // Genera un nome finto
+  }
+
+  // Riconoscimento dinamico di entità come luoghi
+  const places = doc.places().out("array")
+  if (places.length > 0) {
+    entity = "places"
+    fakevalue = faker.location.city() // Genera una città finta
+  }
+
+  // Gestione delle date con regex (puoi usare chrono-node o regex)
+  const datePattern =
+    /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s\d{1,2},\s\d{4}\b/g
+  const dates = content.match(datePattern)
+  if (dates && dates.length > 0) {
+    entity = "dates"
+    fakevalue = faker.date.future().toLocaleDateString() // Genera una data futura
+  }
+
+  return { entity, fakevalue }
+}
+
+// Esportiamo anche replaceValuesInText
 export const replaceValuesInText = (
   content: string,
   formattedEntities: any[],
@@ -88,12 +79,6 @@ export const replaceValuesInText = (
     // Regex migliorata per gestire punteggiatura opzionale
     const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
     const regex = new RegExp(`\\b${escapedOriginal}[.,!?;:]*`, "g")
-
-    if (!regex.test(modifiedText)) {
-      console.warn(`Entità non trovata per sostituzione: ${original}`)
-    } else {
-      console.info(`Entità sostituita: ${original} con ${replacement}`)
-    }
 
     modifiedText = modifiedText.replace(regex, replacement)
   })
