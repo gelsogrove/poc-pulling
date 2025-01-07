@@ -8,105 +8,138 @@ nlp.plugin({
   },
 })
 
-// Funzione per normalizzare il testo
-const normalizeText = (text: string): string => {
-  return text
-    .replace(/[\s,.!?;:"'`]+/g, " ")
-    .trim()
-    .toLowerCase()
+// Regex per riconoscere valori specifici
+const phonePattern =
+  /\+?[0-9]{1,3}[-.\s]?[0-9]{1,3}[-.\s]?[0-9]{3,4}[-.\s]?[0-9]{4,}(?:\s?[xX]\d+)?/g
+const emailPattern = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g
+const datePattern =
+  /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s\d{1,2},\s\d{4}\b/g
+const namePattern = /\b[A-Z][a-z]+ [A-Z][a-z]+\b/g // Regex per identificare manualmente nomi completi
+
+// Definizione del tipo per le entità
+interface Entities {
+  people: string[]
+  dates: string[] | null
+  email: string[] | null
+  phone: string[] | null
+  iban: string[] | null
+  money: string[] | null
+  numbers: string[]
+  places: string[]
 }
 
-// Funzione per generare valori fake normalizzati
+// Funzione per estrarre entità generiche
+const extractEntities = (text: string): Entities => {
+  const doc = nlp(text)
+
+  const entities: Entities = {
+    people: doc.people().out("array"), // Estrazione delle persone
+    dates: text.match(datePattern) || [],
+    email: text.match(emailPattern) || [],
+    phone: text.match(phonePattern) || [],
+    iban: text.match(/\b[A-Z]{2}\d{2}[A-Za-z0-9]{1,30}\b/g) || [],
+    money: text.match(/\b\d+(?:\.\d{1,2})?\s?[A-Z]{3}\b/g) || [],
+    numbers: doc.match("#Value").out("array"),
+    places: doc.match("#Place").out("array"),
+  }
+
+  // Filtra le entità 'people' per cercare solo nomi propri (escludendo frasi lunghe)
+  entities.people = entities.people.filter((person) => {
+    // Filtra solo i nomi propri, escludendo eventuali frasi più lunghe
+    return person.split(" ").length === 2 // Ad esempio, "Andrea Gelsomino" è considerato valido
+  })
+
+  console.log("Entità estratte:", entities) // Debug
+  return entities
+}
+
+// Generazione migliorata di valori fake
 const generateFakeValue = (entity: string, value: string): string => {
   switch (entity) {
+    case "people":
+      return faker.person.fullName() // Nome fake generato
+    case "dates":
+      return faker.date.future().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    case "email":
+      return faker.internet.email()
+    case "phone":
+      return faker.phone.number()
+    case "iban":
+      return faker.finance.iban()
+    case "money":
+      return `${faker.finance.amount()} ${faker.finance.currencyCode()}`
     case "numbers":
       return faker.number.int({ min: 1, max: 9999 }).toString()
-    case "people":
-      return faker.person.fullName()
+    case "places":
+      return faker.location.city()
     default:
-      return faker.word.sample()
+      return value
   }
 }
 
-// Funzione per rimuovere duplicati, basandosi sul valore dell'entità
-const removeDuplicates = (
-  entities: { entity: string; value: string; fakevalue: string }[]
-): { entity: string; value: string; fakevalue: string }[] => {
-  const seen = new Set()
-  return entities.filter((entity) => {
-    const normalizedValue = normalizeText(entity.value) // Usa una funzione per normalizzare e confrontare i valori
-    if (seen.has(normalizedValue)) return false
-    seen.add(normalizedValue)
-    return true
-  })
+// Definizione del tipo per le entità formattate
+interface FormattedEntity {
+  entity: string
+  value: string
+  fakevalue: string
 }
 
-// Funzione per processare i messaggi ed estrarre entità
-export const processMessages = (
-  messages: { role: string; content: string }[]
-) => {
-  let formattedEntities: {
-    entity: string
-    value: string
-    fakevalue: string
-  }[] = []
-
-  // Filtra i messaggi non validi o non rilevanti
-  const filteredMessages = messages.filter((message) => {
-    const lowerContent = message.content.toLowerCase()
-    if (
-      lowerContent.includes("http error") ||
-      lowerContent.includes("status:")
-    ) {
-      console.warn("Messaggio escluso:", message.content)
-      return false
-    }
-    return true
-  })
-
-  // Processa solo i messaggi filtrati
-  const fakeMessages = filteredMessages.map((message) => {
-    const text = message.content
-    const entities = [
-      {
-        entity: "people",
-        value: text,
-        fakevalue: generateFakeValue("people", text),
-      },
-    ]
-
-    // Rimuove duplicati
-    formattedEntities = removeDuplicates([...formattedEntities, ...entities])
-
-    return { ...message, content: text }
-  })
-
-  return { fakeMessages, formattedEntities }
-}
-
-// Funzione per sostituire valori fake con originali
-export const replaceValuesInText = (
+// Funzione per sostituire i valori fake nella frase
+const replaceValuesInText = (
   text: string,
-  formattedEntities: { entity: string; value: string; fakevalue: string }[],
+  formattedEntities: FormattedEntity[],
   reverse = false
 ): string => {
   let modifiedText = text
 
   formattedEntities.forEach(({ value, fakevalue }) => {
-    const original = reverse ? fakevalue : value
-    const replacement = reverse ? value : fakevalue
+    const original = reverse ? String(fakevalue) : String(value).trim()
+    const replacement = reverse ? String(value) : String(fakevalue)
 
-    const normalizedOriginal = normalizeText(original)
-    const regex = new RegExp(`\\b${normalizedOriginal}\\b`, "gi")
+    // Regex migliorata per gestire punteggiatura opzionale
+    const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+    const regex = new RegExp(`\\b${escapedOriginal}[.,!?;:]*`, "g")
 
-    if (!regex.test(normalizeText(modifiedText))) {
-      console.warn(
-        `Entità non trovata per sostituzione: "${original}". Testo corrente: "${modifiedText}"`
-      )
+    if (!regex.test(modifiedText)) {
+      console.warn(`Entità non trovata per sostituzione: ${original}`)
+    } else {
+      console.info(`Entità sostituita: ${original} con ${replacement}`)
     }
 
     modifiedText = modifiedText.replace(regex, replacement)
   })
 
   return modifiedText
+}
+
+// Funzione principale
+export const processText = (
+  inputText: string
+): { fakeText: string; formattedEntities: FormattedEntity[] } => {
+  const rawEntities = extractEntities(inputText)
+
+  let formattedEntities = Object.entries(rawEntities).flatMap(
+    ([entity, values]) =>
+      (values || []).map((value: string) => ({
+        entity,
+        value: value.trim(),
+        fakevalue: generateFakeValue(entity, value),
+      }))
+  )
+
+  const fakeText = replaceValuesInText(inputText, formattedEntities)
+
+  return { fakeText, formattedEntities }
+}
+
+// Funzione per ripristinare la frase originale
+export const restoreOriginalText = (
+  fakeText: string,
+  formattedEntities: FormattedEntity[]
+): string => {
+  return replaceValuesInText(fakeText, formattedEntities, true)
 }
