@@ -60,7 +60,6 @@ export const processEntities = (
   return { entity, fakevalue }
 }
 
-// Funzione per sostituire i valori nel testo
 export const replaceValuesInText = (
   content: string,
   formattedEntities: any[],
@@ -68,15 +67,19 @@ export const replaceValuesInText = (
 ): string => {
   let modifiedText = content
 
-  formattedEntities.forEach(({ value, fakevalue }) => {
-    const original = reverse ? String(fakevalue) : String(value).trim()
-    const replacement = reverse ? String(value) : String(fakevalue)
+  formattedEntities.forEach(({ value, fakevalue, entity }) => {
+    // Sostituisce solo l'entità con il fakevalue
+    if (entity) {
+      const original = reverse ? String(fakevalue) : String(value).trim()
+      const replacement = reverse ? String(value) : String(fakevalue)
 
-    // Regex migliorata per gestire punteggiatura opzionale
-    const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-    const regex = new RegExp(`\\b${escapedOriginal}[.,!?;:]*`, "g")
+      // Regex migliorata per gestire punteggiatura opzionale
+      const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+      const regex = new RegExp(`\\b${escapedOriginal}[.,!?;:]*`, "g")
 
-    modifiedText = modifiedText.replace(regex, replacement)
+      // Sostituzione solo dell'entità
+      modifiedText = modifiedText.replace(regex, replacement)
+    }
   })
 
   return modifiedText
