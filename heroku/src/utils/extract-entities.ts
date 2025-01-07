@@ -1,10 +1,11 @@
 import { faker } from "@faker-js/faker"
 import nlp from "compromise"
 
-// Funzione per estrarre entità generiche
+// Funzione per estrarre entità generiche dal testo
 export const extractEntities = (text: string) => {
   const doc = nlp(text)
 
+  // Estrazione delle entità
   const entities: { [key: string]: string[] | null } = {
     people: doc.people().out("array"),
     dates: text.match(
@@ -30,11 +31,11 @@ export const extractEntities = (text: string) => {
   return entities
 }
 
-// Generazione migliorata di valori fake
-export const generateFakeValue = (entity: string, value: string) => {
+// Funzione per generare valori fake per le entità
+export const generateFakeValue = (entity: string, value: string): string => {
   switch (entity) {
     case "people":
-      return faker.person.fullName() // Nome fake generato
+      return faker.person.fullName() // Genera un nome falso
     case "dates":
       return faker.date.future().toLocaleDateString("en-US", {
         year: "numeric",
@@ -49,8 +50,7 @@ export const generateFakeValue = (entity: string, value: string) => {
       return faker.finance.iban()
     case "money":
       return `${faker.finance.amount()} ${faker.finance.currencyCode()}`
-    case "numbers":
-      return faker.number.int({ min: 1, max: 9999 })
+
     case "places":
       return faker.location.city()
     default:
@@ -58,6 +58,7 @@ export const generateFakeValue = (entity: string, value: string) => {
   }
 }
 
+// Funzione per sostituire le entità nel testo con i valori fake
 export const replaceValuesInText = (
   content: string,
   formattedEntities: any[],
@@ -65,13 +66,13 @@ export const replaceValuesInText = (
 ): string => {
   let modifiedText = content
 
-  // Per ogni entità da sostituire, sostituiamo solo l'entità con il fakevalue
   formattedEntities.forEach(({ value, fakevalue }) => {
     const original = reverse ? String(fakevalue) : String(value).trim()
     const replacement = reverse ? String(value) : String(fakevalue)
 
-    // Sostituire solo l'entità nel testo (e non l'intero messaggio)
-    modifiedText = modifiedText.replace(new RegExp(original, "g"), replacement)
+    // Sostituire il valore nel testo usando regex
+    const regex = new RegExp(`\\b${original}\\b`, "g")
+    modifiedText = modifiedText.replace(regex, replacement)
   })
 
   return modifiedText
@@ -86,7 +87,7 @@ export const processMessages = (
 
   // Elabora ciascun messaggio
   messages.forEach((message) => {
-    // Estrazione dinamica delle entità dal contenuto del messaggio
+    // Estrazione delle entità dal contenuto
     const { fakevalue, entity } = processEntities(message.content)
 
     formattedEntities.push({
@@ -95,7 +96,7 @@ export const processMessages = (
       fakevalue: fakevalue,
     })
 
-    // Sostituisce solo l'entità con il fakevalue, non l'intero messaggio
+    // Sostituire solo l'entità con il fakevalue
     const modifiedContent = replaceValuesInText(message.content, [
       { value: message.content, fakevalue: fakevalue },
     ])
@@ -109,21 +110,20 @@ export const processMessages = (
   return { fakeMessages, formattedEntities }
 }
 
-// Funzione per processare le entità nel contenuto dinamicamente
+// Funzione per processare le entità (persone, luoghi, etc.)
 export const processEntities = (
   content: string
 ): { entity: string; fakevalue: string } => {
   let entity = ""
   let fakevalue = content // Se non c'è un'entità, restituisci il contenuto originale
 
-  // Uso di compromise per riconoscere entità nel testo
   const doc = nlp(content)
 
   // Riconoscimento dinamico di entità come persone
   const people = doc.people().out("array")
   if (people.length > 0) {
     entity = "people"
-    fakevalue = faker.person.fullName() // Genera un nome finto
+    fakevalue = faker.person.fullName() // Genera un nome falso
   }
 
   // Riconoscimento dinamico di entità come luoghi
