@@ -92,7 +92,7 @@ const ChatPoulin = ({ openPanel }) => {
       setConversationHistory((prev) => [
         ...prev,
 
-        { role: "assistant", content: botResponse },
+        { role: "assistant", content: botResponse.message?.response },
       ])
 
       // SET ANSWER
