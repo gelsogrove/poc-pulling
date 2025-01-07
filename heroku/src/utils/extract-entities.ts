@@ -58,34 +58,16 @@ export const generateFakeValue = (entity: string, value: string): string => {
   }
 }
 
-// Funzione per sostituire le entità nel testo con i valori fake
-export const replaceValuesInText = (
-  content: string,
-  formattedEntities: any[],
-  reverse = false
-): string => {
-  let modifiedText = content
-
-  formattedEntities.forEach(({ value, fakevalue }) => {
-    const original = reverse ? String(fakevalue) : String(value).trim()
-    const replacement = reverse ? String(value) : String(fakevalue)
-
-    // Sostituzione globale di tutte le occorrenze nel testo
-    const regex = new RegExp(`\\b${original}\\b`, "g")
-    modifiedText = modifiedText.replace(regex, replacement)
-  })
-
-  return modifiedText
-}
-
+// Funzione per processare i messaggi dinamicamente
 export const processMessages = (
   messages: { role: string; content: string }[]
 ): { fakeMessages: any[]; formattedEntities: any[] } => {
   const formattedEntities: any[] = []
   const fakeMessages: any[] = []
 
+  // Elabora ciascun messaggio
   messages.forEach((message) => {
-    // Estrazione delle entità dal contenuto
+    // Estrazione dinamica delle entità dal contenuto del messaggio
     const { fakevalue, entity } = processEntities(message.content)
 
     formattedEntities.push({
@@ -94,7 +76,7 @@ export const processMessages = (
       fakevalue: fakevalue,
     })
 
-    // Sostituzione di tutte le entità nel messaggio con il fakevalue
+    // Sostituisce tutte le entità con i fake values
     const modifiedContent = replaceValuesInText(
       message.content,
       formattedEntities
@@ -107,6 +89,29 @@ export const processMessages = (
   })
 
   return { fakeMessages, formattedEntities }
+}
+
+// Funzione per sostituire i valori nel testo
+export const replaceValuesInText = (
+  content: string,
+  formattedEntities: any[],
+  reverse = false
+): string => {
+  let modifiedText = content
+
+  formattedEntities.forEach(({ value, fakevalue }) => {
+    const original = reverse ? String(fakevalue) : String(value).trim()
+    const replacement = reverse ? String(value) : String(fakevalue)
+
+    // Regex migliorata per gestire punteggiatura opzionale
+    const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+    const regex = new RegExp(`\\b${escapedOriginal}\\b`, "g")
+
+    // Applica la sostituzione
+    modifiedText = modifiedText.replace(regex, replacement)
+  })
+
+  return modifiedText
 }
 
 // Funzione per processare le entità (persone, luoghi, etc.)
