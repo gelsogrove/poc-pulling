@@ -1,15 +1,13 @@
-heroku : 55%
+heroku : 60%
 daily-milk FE: 55%
 daily-milk BE: 0%
 deploy: 50 %
 
 NEXT
 
-- ChatBot con prompt temperatura e modello
-- NLP (wip)
+- ENTITIES (thinking)
 - ChatBot con debug
 - PRESENTARE
-- debug
 
 - Upload e mapper
 - ChatBot con sql
@@ -18,9 +16,12 @@ NEXT
 - LOGIN WITH DAILIYMILK
 - UNLIKED SU DAILIY MILK
 - DEPLOY TO DAILIYMILK
+- USAGE
+- METTERE SPESA DEL MESE
 
 VERS 2
 
+- tooltips icons
 - loading
 - Togliersi da OpenAI
 - no sorprese dentro heroku ? come si fa
@@ -32,6 +33,7 @@ IDEEE
 
 - Genera un informe sobre el rendimiento de ventas en el último trimestre
 - Analisi ?
+- sicurezza
 
 COMANDI
 
