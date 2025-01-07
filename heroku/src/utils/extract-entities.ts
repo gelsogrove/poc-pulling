@@ -62,13 +62,12 @@ export const processEntities = (
   return { entity, value, fakevalue } // Restituiamo entità, valore originale e valore falso
 }
 
-// Funzione per sostituire i valori nel testo
 export const replaceValuesInText = (
   content: string,
   formattedEntities: any[],
   reverse = false
 ): string => {
-  let modifiedText = content
+  let modifiedText = String(content) // Assicuriamoci che content sia sempre una stringa.
 
   // Mantenere un mapping tra i valori finti e quelli originali
   const nameMapping = formattedEntities.reduce((acc, { value, fakevalue }) => {
