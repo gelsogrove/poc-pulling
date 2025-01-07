@@ -78,8 +78,8 @@ const handleChat: RequestHandler = async (req, res) => {
     // Estrazione delle entità dai soli messaggi dell'utente
     const { fakeMessages, formattedEntities } = processMessages(messages)
 
-    console.log("**********ENTITY**********")
-    console.log(formattedEntities)
+    //console.log("**********ENTITY**********")
+    //console.log(formattedEntities)
     console.log("**********fakeMessages**************")
     console.log(fakeMessages)
     console.log("**********END**************")
@@ -111,8 +111,15 @@ const handleChat: RequestHandler = async (req, res) => {
       true // Sostituisce i "fake values" con i valori originali
     )
 
-    console.log("Risposta fake:", fakeAnswer)
-    console.log("Risposta Ripristinata:", restoredAnswer)
+    console.log("**********formattedEntities**************")
+    console.log(formattedEntities)
+
+    console.log("**********FAKE MESSAGES**************")
+    console.log(fakeMessages)
+    console.log("**********FAKE ANSWER**************")
+    console.log(fakeAnswer)
+    console.log("**********REVERT ANSWER**************")
+    console.log(restoredAnswer)
 
     res.status(200).json({ message: restoredAnswer })
   } catch (error) {

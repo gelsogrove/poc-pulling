@@ -32,39 +32,39 @@ const MessageList = ({ messages }) => {
   )
 }
 
-// Funzione aggiornata per gestire i messaggi JSON e rimuovere i caratteri di escape
+// Funzione aggiornata per gestire JSON annidato
 const renderMessageText = (text) => {
   try {
-    // Se il testo è una stringa JSON valida
+    // Controlla se il testo è una stringa JSON
     if (typeof text === "string") {
-      const parsedText = JSON.parse(text)
+      const parsedText = JSON.parse(text) // Primo livello di parsing
 
-      // Controlla se il JSON ha una proprietà "message" che è un'altra stringa JSON
+      // Controlla se "message" è un'altra stringa JSON
       if (parsedText.message && typeof parsedText.message === "string") {
-        const nestedParsed = JSON.parse(parsedText.message)
+        try {
+          const nestedParsed = JSON.parse(parsedText.message) // Parsing del livello annidato
 
-        // Mostra il JSON annidato ben formattato
-        return <pre>{JSON.stringify(nestedParsed, null, 2)}</pre>
+          // Mostra il JSON annidato ben formattato
+          return <pre>{JSON.stringify(nestedParsed, null, 2)}</pre>
+        } catch {
+          // Se il parsing del livello annidato fallisce, mostra il valore grezzo
+          return <pre>{parsedText.message.replace(/\\n/g, "\n")}</pre>
+        }
       }
 
-      // Mostra il JSON principale ben formattato
-      if (typeof parsedText === "object") {
-        return <pre>{JSON.stringify(parsedText, null, 2)}</pre>
-      }
-
-      // Restituisci il testo semplice se non è un oggetto JSON
-      return parsedText
+      // Se non c'è "message", mostra il JSON principale
+      return <pre>{JSON.stringify(parsedText, null, 2)}</pre>
     }
 
-    // Se il testo è già un oggetto
+    // Se il testo è già un oggetto, lo stringifichiamo e formattiamo
     if (typeof text === "object") {
       return <pre>{JSON.stringify(text, null, 2)}</pre>
     }
 
-    // Restituisci come stringa se è un altro tipo
+    // Per altri tipi di dati, restituiamo il valore come stringa
     return String(text)
   } catch (error) {
-    // Restituisci il testo grezzo senza escape
+    // In caso di errore, restituisce il testo originale senza escape
     return <pre>{text.replace(/\\n/g, "\n")}</pre>
   }
 }
