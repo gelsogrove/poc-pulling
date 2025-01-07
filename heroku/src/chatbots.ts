@@ -2,10 +2,6 @@ import axios from "axios"
 import dotenv from "dotenv"
 import { RequestHandler, Router } from "express"
 import { pool } from "../server.js"
-import {
-  processMessages,
-  replaceValuesInText,
-} from "./utils/extract-entities.js" // Ensure correct path
 
 import { getUserIdByToken } from "./validateUser.js"
 
@@ -71,24 +67,15 @@ const handleChat: RequestHandler = async (req, res) => {
 
     const prompt = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
     if (!prompt) {
-      res.status(404).json({ message: "Prompt not found." })
+      res.status(200).json({ message: "Prompt not found." })
       return
     }
-
-    // Estrazione delle entità dai soli messaggi dell'utente
-    const { fakeMessages, formattedEntities } = processMessages(messages)
-
-    //console.log("**********ENTITY**********")
-    //console.log(formattedEntities)
-    console.log("**********fakeMessages**************")
-    console.log(fakeMessages)
-    console.log("**********END**************")
 
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
       {
         model,
-        messages: [{ role: "system", content: prompt }, ...fakeMessages], // Usa il prompt originale
+        messages: [{ role: "system", content: prompt }, ...messages], // Usa il prompt originale
         max_tokens: MAX_TOKENS,
         temperature,
       },
@@ -98,31 +85,13 @@ const handleChat: RequestHandler = async (req, res) => {
     )
 
     if (!openaiResponse.data.choices[0]?.message?.content) {
-      res.status(500).json({ message: "Empty response from OpenAI" })
+      res.status(200).json({ message: "Empty response from OpenAI" })
       return
     }
 
-    const fakeAnswer = openaiResponse.data.choices[0]?.message?.content
+    const content = openaiResponse.data.choices[0]?.message?.content
 
-    console.log(fakeAnswer)
-
-    // Ripristina la risposta con i valori originali
-    const restoredAnswer = replaceValuesInText(
-      fakeAnswer,
-      formattedEntities,
-      true // Sostituisce i "fake values" con i valori originali
-    )
-
-    console.log("**********formattedEntities**************")
-    console.log(formattedEntities)
-    console.log("**********SEND TO OPENROUTER**************")
-    console.log(fakeMessages)
-    console.log("**********FAKE ANSWER**************")
-    console.log(fakeAnswer)
-    console.log("**********RESTORE ANSWER **************")
-    console.log(restoredAnswer)
-
-    res.status(200).json({ message: restoredAnswer })
+    res.status(200).json({ message: content })
   } catch (error) {
     console.error("Error during chat handling:", error)
     res.status(500).json({ message: "Unexpected error occurred" })

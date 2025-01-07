@@ -89,10 +89,20 @@ const ChatPoulin = ({ openPanel }) => {
         [...conversationHistory, { role: "user", content: message }]
       )
 
+      let content
+      try {
+        content = JSON.parse(botResponse.message).response
+      } catch {
+        content = botResponse.message
+      }
+
       setConversationHistory((prev) => [
         ...prev,
 
-        { role: "assistant", content: botResponse.message?.response },
+        {
+          role: "assistant",
+          content,
+        },
       ])
 
       // SET ANSWER
