@@ -70,7 +70,7 @@ export const replaceValuesInText = (
     const original = reverse ? String(fakevalue) : String(value).trim()
     const replacement = reverse ? String(value) : String(fakevalue)
 
-    // Sostituire il valore nel testo usando regex
+    // Sostituzione globale di tutte le occorrenze nel testo
     const regex = new RegExp(`\\b${original}\\b`, "g")
     modifiedText = modifiedText.replace(regex, replacement)
   })
@@ -78,14 +78,12 @@ export const replaceValuesInText = (
   return modifiedText
 }
 
-// Funzione principale per processare i messaggi
 export const processMessages = (
   messages: { role: string; content: string }[]
 ): { fakeMessages: any[]; formattedEntities: any[] } => {
   const formattedEntities: any[] = []
   const fakeMessages: any[] = []
 
-  // Elabora ciascun messaggio
   messages.forEach((message) => {
     // Estrazione delle entità dal contenuto
     const { fakevalue, entity } = processEntities(message.content)
@@ -96,10 +94,11 @@ export const processMessages = (
       fakevalue: fakevalue,
     })
 
-    // Sostituire solo l'entità con il fakevalue
-    const modifiedContent = replaceValuesInText(message.content, [
-      { value: message.content, fakevalue: fakevalue },
-    ])
+    // Sostituzione di tutte le entità nel messaggio con il fakevalue
+    const modifiedContent = replaceValuesInText(
+      message.content,
+      formattedEntities
+    )
 
     fakeMessages.push({
       role: message.role,
