@@ -1,36 +1,56 @@
-import { faker } from "@faker-js/faker"
 import nlp from "compromise"
 
-// Funzione per processare i messaggi dinamicamente
-export const processMessages = (
-  messages: { role: string; content: string }[]
-): { fakeMessages: any[]; formattedEntities: any[] } => {
-  const formattedEntities: any[] = []
-  const fakeMessages: any[] = []
+// Funzione per generare un valore fittizio (nome di supereroe o città italiana)
+export const generateFakeValue = (entity: string, value: string): string => {
+  const superheroNames = [
+    "Superman",
+    "Batman",
+    "Spider-Man",
+    "Wonder Woman",
+    "Iron Man",
+    "Captain America",
+    "Hulk",
+    "Thor",
+    "Black Widow",
+    "Black Panther",
+    "Aquaman",
+    "Doctor Strange",
+    "Scarlet Witch",
+    "Deadpool",
+    "The Flash",
+    "Green Lantern",
+    "Ant-Man",
+    "Hawkeye",
+    "Wolverine",
+    "Cyclops",
+    "Storm",
+    "Rogue",
+    "Jean Grey",
+    "Magneto",
+    "Professor X",
+  ]
 
-  // Elabora ciascun messaggio
-  messages.forEach((message) => {
-    // Estrazione dinamica delle entità dal contenuto del messaggio
-    const { fakevalue, entity, value } = processEntities(message.content)
+  const italianCities = [
+    "Roma",
+    "Milano",
+    "New York",
+    "Boston",
+    "Miami",
+    "Ibiza",
+    "Sardegna",
+    "Paris",
+    "London",
+    "Melburne",
+  ]
 
-    formattedEntities.push({
-      entity,
-      value: value, // Salviamo il valore originale
-      fakevalue: fakevalue,
-    })
-
-    // Sostituisce solo l'entità con il fakevalue, non l'intero messaggio
-    const modifiedContent = replaceValuesInText(message.content, [
-      { value: value, fakevalue: fakevalue },
-    ])
-
-    fakeMessages.push({
-      role: message.role,
-      content: modifiedContent,
-    })
-  })
-
-  return { fakeMessages, formattedEntities }
+  switch (entity) {
+    case "people":
+      return superheroNames[Math.floor(Math.random() * superheroNames.length)] // Scegli un nome casuale da supereroi
+    case "places":
+      return italianCities[Math.floor(Math.random() * italianCities.length)] // Scegli una città italiana casuale
+    default:
+      return value // Per altre entità, restituiamo il valore originale
+  }
 }
 
 // Funzione per processare le entità nel contenuto dinamicamente
@@ -47,60 +67,71 @@ export const processEntities = (
   const people = doc.people().out("array")
   if (people.length > 0) {
     entity = "people"
-    value = people[0] // Impostiamo il valore originale come il primo risultato trovato
-    fakevalue = faker.person.fullName() // Genera un nome falso
+    value = people[0] // Imposta il valore originale come il primo risultato trovato
+    fakevalue = generateFakeValue(entity, value) // Genera un nome fittizio per "people"
   }
 
-  // Riconoscimento dinamico di entità come luoghi (città)
+  // Riconoscimento dinamico di entità come luoghi
   const places = doc.places().out("array")
   if (places.length > 0) {
     entity = "places"
-    value = places[0] // Impostiamo il valore originale come il primo risultato trovato
-    fakevalue = faker.location.city() // Genera una città finta
+    value = places[0] // Imposta il valore originale come il primo risultato trovato
+    fakevalue = generateFakeValue(entity, value) // Genera una città fittizia per "places"
   }
 
-  return { entity, value, fakevalue } // Restituiamo entità, valore originale e valore falso
+  return { entity, value, fakevalue }
 }
 
-// Funzione per generare la mappa per la sostituzione dei nomi e città
-export const generateNameMap = (value: string, fakevalue: string) => {
-  const valueParts = value.split(" ") // Dividiamo il valore originale (es. "Andrea Gelsomino")
-  const fakeParts = fakevalue.split(" ") // Dividiamo il valore finto (es. "Jasmine Hintz")
-
-  // Creiamo una mappa di sostituzioni
-  const nameMap = {
-    [`${valueParts[0]}`]: fakeParts[0], // Sostituisce solo il primo nome
-    [`${valueParts[1]}`]: fakeParts[1], // Sostituisce solo il cognome
-    [`${valueParts.join(" ")}`]: fakeParts.join(" "), // Sostituisce nome e cognome
-  }
-
-  return nameMap
-}
-
-// Funzione per sostituire i valori nel testo
+// Funzione per sostituire i valori fake nel testo
 export const replaceValuesInText = (
   content: string,
   formattedEntities: any[],
   reverse = false
 ): string => {
-  let modifiedText = String(content) // Assicurati che content sia sempre una stringa.
+  let modifiedText = content
 
   formattedEntities.forEach(({ value, fakevalue }) => {
-    const nameMap = generateNameMap(value, fakevalue)
+    const original = reverse ? String(fakevalue) : String(value).trim()
+    const replacement = reverse ? String(value) : String(fakevalue)
 
-    // Se 'reverse' è true, dobbiamo sostituire il fakevalue con il value
-    Object.keys(nameMap).forEach((key) => {
-      const original = reverse ? nameMap[key] : key
-      const replacement = reverse ? key : nameMap[key]
+    // Regex migliorata per gestire punteggiatura opzionale
+    const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+    const regex = new RegExp(`\\b${escapedOriginal}[.,!?;:]*`, "g")
 
-      // Regex migliorata per gestire punteggiatura opzionale e interi nomi
-      const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-      const regex = new RegExp(`\\b${escapedOriginal}\\b`, "g")
-
-      console.log(`Sostituendo ${original} con ${replacement}`)
-      modifiedText = modifiedText.replace(regex, replacement)
-    })
+    modifiedText = modifiedText.replace(regex, replacement)
   })
 
   return modifiedText
+}
+
+// Funzione principale per processare i messaggi dinamicamente
+export const processMessages = (
+  messages: { role: string; content: string }[]
+): { fakeMessages: any[]; formattedEntities: any[] } => {
+  const formattedEntities: any[] = []
+  const fakeMessages: any[] = []
+
+  // Elabora ciascun messaggio
+  messages.forEach((message) => {
+    // Estrazione dinamica delle entità dal contenuto del messaggio
+    const { fakevalue, entity, value } = processEntities(message.content)
+
+    formattedEntities.push({
+      entity,
+      value,
+      fakevalue,
+    })
+
+    // Sostituisce solo l'entità con il fakevalue, non l'intero messaggio
+    const modifiedContent = replaceValuesInText(message.content, [
+      { value: message.content, fakevalue: fakevalue },
+    ])
+
+    fakeMessages.push({
+      role: message.role,
+      content: modifiedContent,
+    })
+  })
+
+  return { fakeMessages, formattedEntities }
 }
