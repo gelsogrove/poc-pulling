@@ -124,6 +124,8 @@ export const processEntities = (
 
   // Riconoscimento dinamico di entità come persone
   const people = doc.people().out("array")
+  console.log(people)
+  console.log(doc.people()) // Stampa l'oggetto completo
   if (people.length > 0) {
     entity = "people"
     value = people[0] // Imposta il valore originale come il primo risultato trovato
