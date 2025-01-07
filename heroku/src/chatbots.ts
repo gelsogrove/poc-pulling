@@ -126,9 +126,9 @@ const handleChat: RequestHandler = async (req, res) => {
       return
     }
 
-    const fakeAnswer = cleanAndParseJSON(
-      openaiResponse.data.choices[0]?.message?.content
-    )
+    const fakeAnswer = openaiResponse.data.choices[0]?.message?.content
+
+    console.log(fakeAnswer)
 
     // Ripristina la risposta con i valori originali
     const restoredAnswer = replaceValuesInText(
@@ -147,7 +147,7 @@ const handleChat: RequestHandler = async (req, res) => {
     console.log("**********REVERT ANSWER**************")
     console.log(restoredAnswer)
 
-    res.status(200).json({ message: restoredAnswer })
+    res.status(200).json({ message: cleanAndParseJSON(restoredAnswer) })
   } catch (error) {
     console.error("Error during chat handling:", error)
     res.status(500).json({ message: "Unexpected error occurred" })
