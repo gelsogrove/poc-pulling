@@ -28,11 +28,13 @@ const generateFakeValue = (entity: string, value: string): string => {
   }
 }
 
-// Funzione per rimuovere duplicati
-const removeDuplicates = <T extends { value: string }>(entities: T[]): T[] => {
+// Funzione per rimuovere duplicati, basandosi sul valore dell'entità
+const removeDuplicates = (
+  entities: { entity: string; value: string; fakevalue: string }[]
+): { entity: string; value: string; fakevalue: string }[] => {
   const seen = new Set()
   return entities.filter((entity) => {
-    const normalizedValue = normalizeText(entity.value)
+    const normalizedValue = normalizeText(entity.value) // Usa una funzione per normalizzare e confrontare i valori
     if (seen.has(normalizedValue)) return false
     seen.add(normalizedValue)
     return true
@@ -51,7 +53,6 @@ export const processMessages = (
 
   // Filtra i messaggi non validi o non rilevanti
   const filteredMessages = messages.filter((message) => {
-    // Escludi messaggi con errori HTTP o contenuti non rilevanti
     const lowerContent = message.content.toLowerCase()
     if (
       lowerContent.includes("http error") ||
@@ -74,8 +75,8 @@ export const processMessages = (
       },
     ]
 
-    // Rimuove duplicati e mantiene tutte le proprietà
-    formattedEntities = [...formattedEntities, ...removeDuplicates(entities)]
+    // Rimuove duplicati
+    formattedEntities = removeDuplicates([...formattedEntities, ...entities])
 
     return { ...message, content: text }
   })
