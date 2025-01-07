@@ -74,12 +74,6 @@ const handleChat: RequestHandler = async (req, res) => {
       return
     }
 
-    // Aggiunge il prompt solo come sistema, senza passarlo a `processMessages`
-    const apiMessages = [
-      { role: "system", content: prompt },
-      ...messages.map(({ role, content }) => ({ role, content })),
-    ]
-
     // Estrazione delle entità dai soli messaggi dell'utente
     const { fakeMessages, formattedEntities } = processMessages(messages)
 
@@ -87,6 +81,8 @@ const handleChat: RequestHandler = async (req, res) => {
     console.log(messages)
     console.log("**********ENTITY**********")
     console.log(formattedEntities)
+    console.log("**********fakeMessages**************")
+    console.log(fakeMessages)
     console.log("**********END**************")
 
     const openaiResponse = await axios.post(
@@ -114,7 +110,7 @@ const handleChat: RequestHandler = async (req, res) => {
       formattedEntities,
       true
     )
-    console.log("Risposta Originale:", fakeAnswer)
+    console.log("Risposta fake:", fakeAnswer)
     console.log("Risposta Ripristinata:", restoredAnswer)
 
     res.status(200).json({ message: restoredAnswer })

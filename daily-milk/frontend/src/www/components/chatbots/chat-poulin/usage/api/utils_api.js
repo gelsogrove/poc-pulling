@@ -20,8 +20,8 @@ export const response = async (
         name,
         conversationId,
         messages,
-        //model: "gpt-3.5-turbo", //   model: "gpt-4o-mini",
-        model: "google/gemini-2.0-flash-exp:free",
+        model: "gpt-4o-mini",
+        // model: "google/gemini-2.0-flash-exp:free",
         temperature: 0.5,
       }),
     })
