@@ -19,7 +19,7 @@ export const processMessages = (
       fakevalue: fakevalue,
     })
 
-    // Sostituisce solo l'entità con il fakevalue, non l'intero messaggio
+    // Sostituisce solo le entità con il fakevalue
     const modifiedContent = replaceValuesInText(message.content, [
       { value: message.content, fakevalue: fakevalue },
     ])
@@ -76,6 +76,7 @@ export const replaceValuesInText = (
     const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
     const regex = new RegExp(`\\b${escapedOriginal}[.,!?;:]*`, "g")
 
+    // Sostituzione solo dell'entità riconosciuta
     modifiedText = modifiedText.replace(regex, replacement)
   })
 

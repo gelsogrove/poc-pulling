@@ -32,27 +32,32 @@ const MessageList = ({ messages }) => {
   )
 }
 
-// Funzione per gestire il rendering del testo del messaggio
+// Funzione aggiornata per gestire i messaggi JSON e formattare il testo
 const renderMessageText = (text) => {
   try {
-    // Se il testo è un oggetto JSON, lo formatta in modo leggibile
+    // Se il testo è una stringa JSON valida, lo parsiamo
     if (typeof text === "string") {
       const parsedText = JSON.parse(text)
-      return typeof parsedText === "object" ? (
-        <pre>{JSON.stringify(parsedText, null, 2)}</pre>
-      ) : (
-        parsedText
-      )
-    } else if (typeof text === "object") {
-      // Se è già un oggetto, lo stringifica
-      return <pre>{JSON.stringify(text, null, 2)}</pre>
-    } else {
-      // Ritorna direttamente il testo come stringa
-      return String(text)
+
+      // Se il JSON è un oggetto o un array, lo mostriamo formattato
+      if (typeof parsedText === "object") {
+        return <pre>{JSON.stringify(parsedText, null, 2)}</pre>
+      }
+
+      // Altrimenti restituiamo il testo parsato
+      return parsedText
     }
-  } catch (error) {
-    // Se non è un JSON valido, ritorna il testo grezzo
+
+    // Se è già un oggetto, lo stringifichiamo e formattiamo
+    if (typeof text === "object") {
+      return <pre>{JSON.stringify(text, null, 2)}</pre>
+    }
+
+    // Per altri tipi, li trasformiamo in stringa
     return String(text)
+  } catch (error) {
+    // Se il parsing fallisce (non è JSON valido), mostriamo il testo originale
+    return <pre>{text.replace(/\\n/g, "\n")}</pre>
   }
 }
 
