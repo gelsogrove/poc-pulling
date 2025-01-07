@@ -75,7 +75,7 @@ const handleChat: RequestHandler = async (req, res) => {
       ...messages.map(({ role, content }) => ({ role, content })),
     ]
 
-    const { fakeMessages, formattedEntities } = processMessages(apiMessages)
+    const { fakeMessages, formattedEntities } = processMessages(messages)
     console.log("Messaggi Fake:", fakeMessages)
     console.log("Entità Estratte:", formattedEntities)
 
