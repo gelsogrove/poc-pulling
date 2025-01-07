@@ -2,10 +2,8 @@ import axios from "axios"
 import dotenv from "dotenv"
 import { RequestHandler, Router } from "express"
 import { pool } from "../server.js"
-import {
-  processMessages,
-  replaceValuesInText,
-} from "./utils/extract-entities.js"
+import { processMessages, replaceValuesInText } from "./utils/extract-entities" // Ensure correct path
+
 import { getUserIdByToken } from "./validateUser.js"
 
 dotenv.config()
