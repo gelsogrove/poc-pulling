@@ -116,8 +116,7 @@ const restoreOriginalText = (fakeText, formattedEntities) => {
 }
 
 // Esempio di utilizzo
-const input =
-  "Give me Andrea Gelsomino that levas in Milan with orders  from 2024 who purchased the product POULING with a total order of 5,000 EUR."
+const input = "Ciao Mi chiamo Andrea Gelsomino"
 
 const { fakeText, formattedEntities } = processText(input)
 const originalText = restoreOriginalText(fakeText, formattedEntities)
