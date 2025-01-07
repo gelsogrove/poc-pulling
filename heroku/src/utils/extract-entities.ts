@@ -91,13 +91,12 @@ export const processMessages = (
   return { fakeMessages, formattedEntities }
 }
 
-// Funzione per sostituire i valori nel testo
 export const replaceValuesInText = (
   content: string,
   formattedEntities: any[],
   reverse = false
 ): string => {
-  let modifiedText = content
+  let modifiedText = String(content) // Forziamo la conversione a stringa
 
   formattedEntities.forEach(({ value, fakevalue }) => {
     const original = reverse ? String(fakevalue) : String(value).trim()
@@ -114,12 +113,12 @@ export const replaceValuesInText = (
   return modifiedText
 }
 
-// Funzione per processare le entità (persone, luoghi, etc.)
 export const processEntities = (
   content: string
-): { entity: string; fakevalue: string } => {
+): { entity: string; value: string; fakevalue: string } => {
   let entity = ""
-  let fakevalue = content // Se non c'è un'entità, restituisci il contenuto originale
+  let value = content // Partiamo dal valore originale
+  let fakevalue = content // Se non c'è un'entità, restituiamo il contenuto originale
 
   const doc = nlp(content)
 
@@ -127,6 +126,7 @@ export const processEntities = (
   const people = doc.people().out("array")
   if (people.length > 0) {
     entity = "people"
+    value = people[0] // Imposta il valore originale come il primo risultato trovato
     fakevalue = faker.person.fullName() // Genera un nome falso
   }
 
@@ -134,8 +134,9 @@ export const processEntities = (
   const places = doc.places().out("array")
   if (places.length > 0) {
     entity = "places"
+    value = places[0] // Imposta il valore originale come il primo risultato trovato
     fakevalue = faker.location.city() // Genera una città finta
   }
 
-  return { entity, fakevalue }
+  return { entity, value, fakevalue } // Restituiamo entità, valore originale e valore falso
 }
