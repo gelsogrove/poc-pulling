@@ -76,8 +76,11 @@ const handleChat: RequestHandler = async (req, res) => {
     ]
 
     const { fakeMessages, formattedEntities } = processMessages(messages)
-    console.log("Messaggi Fake:", fakeMessages)
+
+    console.log("********************:")
+    console.log("Messages:", messages)
     console.log("Entità Estratte:", formattedEntities)
+    console.log("********************:")
 
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
