@@ -15,8 +15,8 @@ export const processMessages = (
 
     formattedEntities.push({
       entity,
-      value: value, // valore originale (es. Andrea Gelsomino)
-      fakevalue: fakevalue, // valore falso (es. Jon Doe)
+      value: value, // Salviamo il valore originale
+      fakevalue: fakevalue,
     })
 
     // Sostituisce solo l'entità con il fakevalue, non l'intero messaggio
@@ -47,7 +47,7 @@ export const processEntities = (
   const people = doc.people().out("array")
   if (people.length > 0) {
     entity = "people"
-    value = people.join(" ") // Uniamo nome e cognome in un'unica stringa
+    value = people[0] // Impostiamo il valore originale come il primo risultato trovato
     fakevalue = faker.person.fullName() // Genera un nome falso
   }
 
@@ -55,13 +55,29 @@ export const processEntities = (
   const places = doc.places().out("array")
   if (places.length > 0) {
     entity = "places"
-    value = places[0] // Imposta il valore originale come il primo risultato trovato
+    value = places[0] // Impostiamo il valore originale come il primo risultato trovato
     fakevalue = faker.location.city() // Genera una città finta
   }
 
   return { entity, value, fakevalue } // Restituiamo entità, valore originale e valore falso
 }
 
+// Funzione per generare la mappa per la sostituzione dei nomi
+export const generateNameMap = (value: string, fakevalue: string) => {
+  const valueParts = value.split(" ") // Dividiamo il valore originale (es. "Andrea Gelsomino")
+  const fakeParts = fakevalue.split(" ") // Dividiamo il valore finto (es. "Jasmine Hintz")
+
+  // Creiamo una mappa di sostituzioni
+  const nameMap = {
+    [`${valueParts[0]}`]: fakeParts[0], // Sostituisce solo il primo nome
+    [`${valueParts[1]}`]: fakeParts[1], // Sostituisce solo il cognome
+    [`${valueParts.join(" ")}`]: fakeParts.join(" "), // Sostituisce nome e cognome
+  }
+
+  return nameMap
+}
+
+// Funzione per sostituire i valori nel testo
 export const replaceValuesInText = (
   content: string,
   formattedEntities: any[],
@@ -69,27 +85,21 @@ export const replaceValuesInText = (
 ): string => {
   let modifiedText = String(content) // Assicurati che content sia sempre una stringa.
 
-  // Creiamo una mappatura tra i valori finti e quelli originali
-  const nameMapping = formattedEntities.reduce((acc, { value, fakevalue }) => {
-    acc[fakevalue] = value // Aggiungiamo il mapping: nome finto -> nome originale
-    return acc
-  }, {})
-
   formattedEntities.forEach(({ value, fakevalue }) => {
-    const original = reverse ? String(fakevalue) : String(value).trim()
-    const replacement = reverse ? String(value) : String(fakevalue)
+    const nameMap = generateNameMap(value, fakevalue)
 
-    // Regex migliorata per gestire punteggiatura opzionale e interi nomi
-    const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-    const regex = new RegExp(`\\b${escapedOriginal}\\b`, "g")
+    // Se 'reverse' è true, dobbiamo sostituire il fakevalue con il value
+    Object.keys(nameMap).forEach((key) => {
+      const original = reverse ? nameMap[key] : key
+      const replacement = reverse ? key : nameMap[key]
 
-    // Se "reverse" è true, sostituire il nome finto con quello originale
-    if (reverse && nameMapping[original]) {
-      console.log(`Sostituisco ${original} con ${nameMapping[original]}`)
-      modifiedText = modifiedText.replace(regex, nameMapping[original])
-    } else {
+      // Regex migliorata per gestire punteggiatura opzionale e interi nomi
+      const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+      const regex = new RegExp(`\\b${escapedOriginal}\\b`, "g")
+
+      console.log(`Sostituendo ${original} con ${replacement}`)
       modifiedText = modifiedText.replace(regex, replacement)
-    }
+    })
   })
 
   return modifiedText

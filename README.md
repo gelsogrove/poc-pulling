@@ -5,11 +5,11 @@ deploy: 50 %
 
 NEXT
 
-- NLP
-- loading
-- ChatBot basic e test NlP
-- ChatBot con prompt
+- ChatBot con prompt temperatura e modello
+- NLP (wip)
 - ChatBot con debug
+- PRESENTARE
+
 - Upload e mapper
 - ChatBot con sql
 - SQL DENTRO SYSTEM PER ANALISI
@@ -20,6 +20,7 @@ NEXT
 
 VERS 2
 
+- loading
 - Togliersi da OpenAI
 - no sorprese dentro heroku ? come si fa
 - staccarsi da main alla prima version
