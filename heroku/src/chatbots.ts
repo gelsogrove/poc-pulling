@@ -78,6 +78,12 @@ const handleChat: RequestHandler = async (req, res) => {
     // Estrazione delle entità dai soli messaggi dell'utente
     const { fakeMessages, formattedEntities } = processMessages(messages)
 
+    console.log("**********ENTITY**********")
+    console.log(formattedEntities)
+    console.log("**********fakeMessages**************")
+    console.log(fakeMessages)
+    console.log("**********END**************")
+
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
       {
