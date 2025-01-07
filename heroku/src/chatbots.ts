@@ -74,7 +74,7 @@ const cleanAndParseJSON = (response: any) => {
     return parsedResponse
   } catch (error) {
     console.error("Errore durante il parsing del JSON:", error)
-    return null // Restituisce null in caso di errore
+    return JSON.parse(response) // Restituisce null in caso di errore
   }
 }
 
