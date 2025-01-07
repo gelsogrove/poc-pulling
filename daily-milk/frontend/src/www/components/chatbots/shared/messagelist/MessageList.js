@@ -32,40 +32,46 @@ const MessageList = ({ messages }) => {
   )
 }
 
-// Funzione aggiornata per gestire JSON annidato
+// Funzione aggiornata per parsare e formattare il JSON annidato
 const renderMessageText = (text) => {
   try {
-    // Controlla se il testo è una stringa JSON
+    // Primo livello di parsing
     if (typeof text === "string") {
-      const parsedText = JSON.parse(text) // Primo livello di parsing
+      const parsedText = JSON.parse(text)
 
-      // Controlla se "message" è un'altra stringa JSON
+      // Se "message" contiene un'altra stringa JSON
       if (parsedText.message && typeof parsedText.message === "string") {
         try {
-          const nestedParsed = JSON.parse(parsedText.message) // Parsing del livello annidato
+          const nestedParsed = JSON.parse(
+            parsedText.message.replace(/\\n/g, "").replace(/\\"/g, '"')
+          )
 
-          // Mostra il JSON annidato ben formattato
+          // Mostra il JSON annidato formattato
           return <pre>{JSON.stringify(nestedParsed, null, 2)}</pre>
         } catch {
-          // Se il parsing del livello annidato fallisce, mostra il valore grezzo
-          return <pre>{parsedText.message.replace(/\\n/g, "\n")}</pre>
+          // Rimuove escape chars e mostra il testo grezzo
+          return (
+            <pre>
+              {parsedText.message.replace(/\\n/g, "\n").replace(/\\"/g, '"')}
+            </pre>
+          )
         }
       }
 
-      // Se non c'è "message", mostra il JSON principale
+      // Mostra il JSON principale se non è annidato
       return <pre>{JSON.stringify(parsedText, null, 2)}</pre>
     }
 
-    // Se il testo è già un oggetto, lo stringifichiamo e formattiamo
+    // Se il testo è già un oggetto
     if (typeof text === "object") {
       return <pre>{JSON.stringify(text, null, 2)}</pre>
     }
 
-    // Per altri tipi di dati, restituiamo il valore come stringa
+    // Per qualsiasi altro tipo, restituisce come stringa
     return String(text)
   } catch (error) {
-    // In caso di errore, restituisce il testo originale senza escape
-    return <pre>{text.replace(/\\n/g, "\n")}</pre>
+    // Se il parsing fallisce, rimuove escape chars e mostra il testo grezzo
+    return <pre>{text.replace(/\\n/g, "\n").replace(/\\"/g, '"')}</pre>
   }
 }
 

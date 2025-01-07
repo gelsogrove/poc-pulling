@@ -96,7 +96,7 @@ export const replaceValuesInText = (
   formattedEntities: any[],
   reverse = false
 ): string => {
-  let modifiedText = String(content) // Forziamo la conversione a stringa
+  let modifiedText = content
 
   formattedEntities.forEach(({ value, fakevalue }) => {
     const original = reverse ? String(fakevalue) : String(value).trim()
@@ -106,7 +106,7 @@ export const replaceValuesInText = (
     const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
     const regex = new RegExp(`\\b${escapedOriginal}\\b`, "g")
 
-    // Applica la sostituzione
+    // Se "reverse" è true, sostituisci il nome falso con quello originale
     modifiedText = modifiedText.replace(regex, replacement)
   })
 
