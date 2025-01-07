@@ -61,13 +61,19 @@ const cleanAndParseJSON = (response: any) => {
       return response // Se è già un oggetto, restituiamo direttamente
     }
 
-    // Gestiamo gli apostrofi singoli (') nel contenuto della risposta
-    let cleanedResponse = response.replace(/'/g, "\\'") // Escape degli apostrofi
+    // Se la risposta è una stringa, eseguiamo la pulizia
+    if (typeof response === "string") {
+      // Sostituire gli apostrofi singoli con il loro escape
+      response = response.replace(/'/g, "\\'")
+
+      // Poi rimuoviamo eventuali caratteri speciali come le sequenze di escape che potrebbero causare errori
+      response = response.replace(/\\"/g, '"')
+    }
 
     // Parsing del JSON
-    const parsedResponse = JSON.parse(cleanedResponse)
+    const parsedResponse = JSON.parse(response)
 
-    // Controllo se "message" è presente e contiene una stringa JSON
+    // Se "message" è presente e contiene una stringa JSON
     if (parsedResponse.message && typeof parsedResponse.message === "string") {
       const cleanedMessage = parsedResponse.message
         .replace(/\\n/g, "") // Rimuove eventuali newline escape
@@ -81,7 +87,7 @@ const cleanAndParseJSON = (response: any) => {
     return parsedResponse // Restituiamo la risposta parsata
   } catch (error) {
     console.error("Errore durante il parsing del JSON:", error)
-    return error // Restituiamo null in caso di errore
+    return null // Restituiamo null in caso di errore
   }
 }
 
