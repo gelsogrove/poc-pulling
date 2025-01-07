@@ -77,10 +77,11 @@ const handleChat: RequestHandler = async (req, res) => {
 
     const { fakeMessages, formattedEntities } = processMessages(messages)
 
-    console.log("********************:")
-    console.log("Messages:", messages)
-    console.log("Entità Estratte:", formattedEntities)
-    console.log("********************:")
+    console.log("**********Messages*********")
+    console.log(messages)
+    console.log("**********ENTITY**********")
+    console.log(formattedEntities)
+    console.log("**********END**************")
 
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
@@ -95,12 +96,12 @@ const handleChat: RequestHandler = async (req, res) => {
       }
     )
 
-    const fakeAnswer = openaiResponse.data.choices[0]?.message?.content
-
-    if (!fakeAnswer) {
+    if (!openaiResponse.data.choices[0]?.message?.content) {
       res.status(500).json({ message: "Empty response from OpenAI" })
       return
     }
+
+    const fakeAnswer = openaiResponse.data.choices[0]?.message?.content
 
     const restoredAnswer = replaceValuesInText(
       fakeAnswer,

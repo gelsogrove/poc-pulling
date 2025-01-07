@@ -24,9 +24,23 @@ interface FormattedEntity {
 
 // Funzione per normalizzare i valori estratti
 const normalizeValue = (value: string): string => {
-  return value
-    .replace(/[,`"'.]/g, "") // Rimuove caratteri indesiderati
-    .trim() // Rimuove spazi
+  return value.replace(/[,`"'.]/g, "").trim()
+}
+
+// Funzione per generare valori fake normalizzati
+const generateFakeValue = (entity: string, value: string): string => {
+  switch (entity) {
+    case "numbers":
+      return normalizeValue(faker.number.int({ min: 1, max: 9999 }).toString())
+    case "people":
+      return normalizeValue(faker.person.fullName())
+    case "places":
+      return normalizeValue(faker.location.city())
+    case "email":
+      return normalizeValue(faker.internet.email())
+    default:
+      return normalizeValue(faker.word.sample())
+  }
 }
 
 // Funzione per filtrare entità duplicate
@@ -42,7 +56,6 @@ const removeDuplicates = (entities: FormattedEntity[]): FormattedEntity[] => {
   })
 }
 
-// Funzione per estrarre entità generiche
 const extractEntities = (text: string): FormattedEntity[] => {
   const doc = nlp(text)
 
@@ -50,25 +63,25 @@ const extractEntities = (text: string): FormattedEntity[] => {
     ...doc
       .people()
       .out("array")
-      .map((person) => ({
+      .map((person: string) => ({
         entity: "people",
         value: normalizeValue(person),
-        fakevalue: faker.person.fullName(),
+        fakevalue: generateFakeValue("people", person),
       })),
     ...(text.match(emailPattern) || []).map((email) => ({
       entity: "email",
       value: normalizeValue(email),
-      fakevalue: faker.internet.email(),
+      fakevalue: generateFakeValue("email", email),
     })),
     ...(text.match(phonePattern) || []).map((phone) => ({
       entity: "phone",
       value: normalizeValue(phone),
-      fakevalue: faker.phone.number(),
+      fakevalue: generateFakeValue("phone", phone),
     })),
     ...(text.match(/\d+(\.\d+)?/g) || []).map((number) => ({
       entity: "numbers",
       value: normalizeValue(number),
-      fakevalue: faker.number.int({ min: 1, max: 9999 }).toString(),
+      fakevalue: generateFakeValue("numbers", number),
     })),
   ]
 
@@ -76,7 +89,7 @@ const extractEntities = (text: string): FormattedEntity[] => {
 }
 
 // Funzione per sostituire i valori fake nella frase
-const replaceValuesInText = (
+export const replaceValuesInText = (
   text: string,
   formattedEntities: FormattedEntity[],
   reverse = false
@@ -87,9 +100,14 @@ const replaceValuesInText = (
     const original = reverse ? fakevalue : value
     const replacement = reverse ? value : fakevalue
 
-    // Regex migliorata per gestire punteggiatura opzionale
     const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-    const regex = new RegExp(`\\b${escapedOriginal}\\b`, "g")
+    const regex = new RegExp(`\\b${escapedOriginal}(?=[.,!?;:]|\\s|$)`, "g")
+
+    if (!regex.test(modifiedText)) {
+      console.warn(
+        `Entità non trovata per sostituzione: "${original}". Testo corrente: "${modifiedText}"`
+      )
+    }
 
     modifiedText = modifiedText.replace(regex, replacement)
   })
