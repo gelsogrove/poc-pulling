@@ -29,17 +29,17 @@ const generateFakeValue = (entity: string, value: string): string => {
 }
 
 // Funzione per rimuovere duplicati
-const removeDuplicates = (entities: { value: string; fakevalue: string }[]) => {
+const removeDuplicates = <T extends { value: string }>(entities: T[]): T[] => {
   const seen = new Set()
-  return entities.filter(({ value }) => {
-    const normalizedValue = normalizeText(value)
+  return entities.filter((entity) => {
+    const normalizedValue = normalizeText(entity.value)
     if (seen.has(normalizedValue)) return false
     seen.add(normalizedValue)
     return true
   })
 }
 
-// Funzione per estrarre entità
+// Funzione per processare i messaggi ed estrarre entità
 export const processMessages = (
   messages: { role: string; content: string }[]
 ) => {
@@ -59,6 +59,7 @@ export const processMessages = (
       },
     ]
 
+    // Rimuove duplicati e mantiene tutte le proprietà
     formattedEntities = [...formattedEntities, ...removeDuplicates(entities)]
 
     return { ...message, content: text }
@@ -70,7 +71,7 @@ export const processMessages = (
 // Funzione per sostituire valori fake con originali
 export const replaceValuesInText = (
   text: string,
-  formattedEntities: { value: string; fakevalue: string }[],
+  formattedEntities: { entity: string; value: string; fakevalue: string }[],
   reverse = false
 ): string => {
   let modifiedText = text
