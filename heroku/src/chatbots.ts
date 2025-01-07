@@ -120,7 +120,7 @@ const handleChat: RequestHandler = async (req, res) => {
     res.status(200).json({ message: restoredAnswer })
   } catch (error) {
     console.error("Error during chat handling:", error)
-    res.status(500).json({ message: "Unexpected error occurred" })
+    res.status(200).json({ message: "Unexpected error occurred" })
   }
 }
 

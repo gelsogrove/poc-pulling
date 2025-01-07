@@ -49,7 +49,22 @@ export const processMessages = (
     fakevalue: string
   }[] = []
 
-  const fakeMessages = messages.map((message) => {
+  // Filtra i messaggi non validi o non rilevanti
+  const filteredMessages = messages.filter((message) => {
+    // Escludi messaggi con errori HTTP o contenuti non rilevanti
+    const lowerContent = message.content.toLowerCase()
+    if (
+      lowerContent.includes("http error") ||
+      lowerContent.includes("status:")
+    ) {
+      console.warn("Messaggio escluso:", message.content)
+      return false
+    }
+    return true
+  })
+
+  // Processa solo i messaggi filtrati
+  const fakeMessages = filteredMessages.map((message) => {
     const text = message.content
     const entities = [
       {
