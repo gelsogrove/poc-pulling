@@ -19,9 +19,14 @@ export const processMessages = (
       fakevalue: fakevalue,
     })
 
+    // Sostituisce solo l'entità con il fakevalue, non l'intero messaggio
+    const modifiedContent = replaceValuesInText(message.content, [
+      { value: message.content, fakevalue: fakevalue },
+    ])
+
     fakeMessages.push({
       role: message.role,
-      content: message.content.replace(message.content, fakevalue), // Sostituisce con il valore fake
+      content: modifiedContent,
     })
   })
 
@@ -55,7 +60,7 @@ export const processEntities = (
   return { entity, fakevalue }
 }
 
-// Esportiamo anche replaceValuesInText
+// Funzione per sostituire i valori nel testo
 export const replaceValuesInText = (
   content: string,
   formattedEntities: any[],
