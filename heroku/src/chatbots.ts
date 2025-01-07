@@ -59,16 +59,18 @@ const cleanAndParseJSON = (response: any) => {
     // Parsing del primo livello
     const parsedResponse = JSON.parse(response)
 
-    // Parsing del JSON annidato nella chiave "message", rimuovendo escape characters
+    // Controlla se "message" è presente e contiene una stringa JSON
     if (parsedResponse.message && typeof parsedResponse.message === "string") {
       const cleanedMessage = parsedResponse.message
         .replace(/\\n/g, "")
         .replace(/\\"/g, '"')
-      const nestedParsed = JSON.parse(cleanedMessage) // Parsing del JSON annidato
-      return nestedParsed // Restituisce il JSON finale
+
+      // Parsing del JSON annidato
+      const nestedParsed = JSON.parse(cleanedMessage)
+      return nestedParsed // Restituisce il JSON finale pulito
     }
 
-    // Se non c'è "message", ritorna l'oggetto parsato del primo livello
+    // Se "message" non è presente o non è un JSON annidato, restituisci il primo livello parsato
     return parsedResponse
   } catch (error) {
     console.error("Errore durante il parsing del JSON:", error)
