@@ -43,23 +43,32 @@ export const extractEntities = (messages: string[]): Entity[] => {
   return entities
 }
 
-// Funzione per sostituire i valori delle entità nel testo
+/**
+ * Funzione per ripristinare i valori originali nel testo,
+ * sostituendo i "fake values" con quelli reali.
+ *
+ * @param content Il testo da modificare
+ * @param formattedEntities Le entità con i valori originali e fake
+ * @param reverse Flag per decidere se sostituire i fake values con quelli reali
+ * @returns Il testo modificato
+ */
 export const replaceValuesInText = (
-  text: string,
-  formattedEntities: Entity[],
+  content: string,
+  formattedEntities: { entity: string; value: string; fakevalue: string }[],
   reverse = false
 ): string => {
-  let modifiedText = text
+  let modifiedText = content
 
-  // Itera attraverso le entità per sostituire i valori
+  // Loop su tutte le entità per fare la sostituzione
   formattedEntities.forEach(({ value, fakevalue }) => {
-    const original = reverse ? fakevalue : value
-    const replacement = reverse ? value : fakevalue
+    const original = reverse ? String(fakevalue) : String(value).trim() // Se reverse, usa il fake value
+    const replacement = reverse ? String(value) : String(fakevalue) // Se reverse, sostituisci con il valore originale
 
-    // Escape dei caratteri speciali per evitare problemi nel regex
+    // Escapes i caratteri speciali per uso in regex
     const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
     const regex = new RegExp(`\\b${escapedOriginal}\\b`, "g")
 
+    // Sostituisci i valori nel testo
     modifiedText = modifiedText.replace(regex, replacement)
   })
 
