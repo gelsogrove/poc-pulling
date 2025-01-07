@@ -69,7 +69,7 @@ export const replaceValuesInText = (
 ): string => {
   let modifiedText = String(content) // Assicurati che content sia sempre una stringa.
 
-  // Mantenere un mapping tra i valori finti e quelli originali
+  // Creiamo una mappatura tra i valori finti e quelli originali
   const nameMapping = formattedEntities.reduce((acc, { value, fakevalue }) => {
     acc[fakevalue] = value // Aggiungiamo il mapping: nome finto -> nome originale
     return acc
@@ -83,7 +83,7 @@ export const replaceValuesInText = (
     const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
     const regex = new RegExp(`\\b${escapedOriginal}\\b`, "g")
 
-    // Se "reverse" è true, sostituiamo il nome finto con quello originale
+    // Se "reverse" è true, sostituire il nome finto con quello originale
     if (reverse && nameMapping[original]) {
       console.log(`Sostituisco ${original} con ${nameMapping[original]}`)
       modifiedText = modifiedText.replace(regex, nameMapping[original])
