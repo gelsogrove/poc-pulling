@@ -32,31 +32,39 @@ const MessageList = ({ messages }) => {
   )
 }
 
-// Funzione aggiornata per gestire i messaggi JSON e formattare il testo
+// Funzione aggiornata per gestire i messaggi JSON e rimuovere i caratteri di escape
 const renderMessageText = (text) => {
   try {
-    // Se il testo è una stringa JSON valida, lo parsiamo
+    // Se il testo è una stringa JSON valida
     if (typeof text === "string") {
       const parsedText = JSON.parse(text)
 
-      // Se il JSON è un oggetto o un array, lo mostriamo formattato
+      // Controlla se il JSON ha una proprietà "message" che è un'altra stringa JSON
+      if (parsedText.message && typeof parsedText.message === "string") {
+        const nestedParsed = JSON.parse(parsedText.message)
+
+        // Mostra il JSON annidato ben formattato
+        return <pre>{JSON.stringify(nestedParsed, null, 2)}</pre>
+      }
+
+      // Mostra il JSON principale ben formattato
       if (typeof parsedText === "object") {
         return <pre>{JSON.stringify(parsedText, null, 2)}</pre>
       }
 
-      // Altrimenti restituiamo il testo parsato
+      // Restituisci il testo semplice se non è un oggetto JSON
       return parsedText
     }
 
-    // Se è già un oggetto, lo stringifichiamo e formattiamo
+    // Se il testo è già un oggetto
     if (typeof text === "object") {
       return <pre>{JSON.stringify(text, null, 2)}</pre>
     }
 
-    // Per altri tipi, li trasformiamo in stringa
+    // Restituisci come stringa se è un altro tipo
     return String(text)
   } catch (error) {
-    // Se il parsing fallisce (non è JSON valido), mostriamo il testo originale
+    // Restituisci il testo grezzo senza escape
     return <pre>{text.replace(/\\n/g, "\n")}</pre>
   }
 }

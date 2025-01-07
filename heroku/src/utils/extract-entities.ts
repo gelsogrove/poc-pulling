@@ -128,7 +128,7 @@ export const processEntities = (
   console.log(doc.people()) // Stampa l'oggetto completo
   if (people.length > 0) {
     entity = "people"
-    value = people[0] // Imposta il valore originale come il primo risultato trovato
+    value = people
     console.log("***", people)
     fakevalue = faker.person.fullName() // Genera un nome falso
   }
@@ -137,7 +137,7 @@ export const processEntities = (
   const places = doc.places().out("array")
   if (places.length > 0) {
     entity = "places"
-    value = places[0] // Imposta il valore originale come il primo risultato trovato
+    value = places
     fakevalue = faker.location.city() // Genera una città finta
   }
 
