@@ -1,4 +1,3 @@
-import { faker } from "@faker-js/faker"
 import nlp from "compromise"
 
 // Funzione per processare i messaggi dinamicamente
@@ -48,7 +47,7 @@ export const processEntities = (
   if (people.length > 0) {
     entity = "people"
     value = people[0] // Impostiamo il valore originale come il primo risultato trovato
-    fakevalue = faker.person.fullName() // Genera un nome falso
+    fakevalue = getFakeHeroName() // Genera un nome di supereroe
   }
 
   // Riconoscimento dinamico di entità come luoghi (città)
@@ -56,10 +55,44 @@ export const processEntities = (
   if (places.length > 0) {
     entity = "places"
     value = places[0] // Impostiamo il valore originale come il primo risultato trovato
-    fakevalue = faker.location.city() // Genera una città finta
+    fakevalue = getFakeCity() // Genera una città finta
   }
 
   return { entity, value, fakevalue } // Restituiamo entità, valore originale e valore falso
+}
+
+// Funzione per generare un nome di supereroe falso
+const getFakeHeroName = () => {
+  const heroes = [
+    "Spider-Man",
+    "Iron Man",
+    "Wonder Woman",
+    "Thor",
+    "The Flash",
+    "Black Panther",
+    "Captain America",
+    "Hulk",
+    "Aquaman",
+    "Doctor Strange",
+  ]
+  return heroes[Math.floor(Math.random() * heroes.length)] // Scegli un supereroe casuale
+}
+
+// Funzione per generare una città finta
+const getFakeCity = () => {
+  const cities = [
+    "Roma",
+    "Milano",
+    "Napoli",
+    "Torino",
+    "Palermo",
+    "Genova",
+    "Bologna",
+    "Firenze",
+    "Venezia",
+    "Verona",
+  ]
+  return cities[Math.floor(Math.random() * cities.length)] // Scegli una città casuale
 }
 
 // Funzione per generare la mappa per la sostituzione dei nomi e città
