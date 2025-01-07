@@ -106,6 +106,9 @@ const handleChat: RequestHandler = async (req, res) => {
     const finalTemperature = extractedTemperature ?? userTemperature ?? 0.7 // Default 0.7
     const finalModel = extractedModel ?? userModel ?? "gpt-3.5-turbo" // Default "gpt-3.5-turbo"
 
+    console.log(finalModel)
+    console.log(finalTemperature)
+
     // Richiesta a OpenAI
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
