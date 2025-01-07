@@ -54,21 +54,6 @@ const getPrompt = async (idPrompt: string): Promise<string | null> => {
   }
 }
 
-const cleanJSONString = (jsonString: string) => {
-  try {
-    // Rimuove i caratteri di escape (\n, \", etc.) dalla stringa
-    const cleanedString = jsonString.replace(/\\n/g, "").replace(/\\"/g, '"')
-
-    // Parso la stringa JSON pulita
-    const parsedResponse = JSON.parse(cleanedString)
-
-    return parsedResponse // Restituisci il JSON parsato
-  } catch (error) {
-    console.error("Errore durante la pulizia e il parsing del JSON:", error)
-    return null // Se c'è un errore, restituisci null
-  }
-}
-
 // Gestione principale della richiesta chatbot
 const handleChat: RequestHandler = async (req, res) => {
   const { conversationId, token, messages, model, temperature } = req.body
