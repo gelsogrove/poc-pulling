@@ -9,6 +9,7 @@ NEXT
 - NLP (wip)
 - ChatBot con debug
 - PRESENTARE
+- debug
 
 - Upload e mapper
 - ChatBot con sql
