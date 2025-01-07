@@ -54,40 +54,18 @@ const getPrompt = async (idPrompt: string): Promise<string | null> => {
   }
 }
 
-const cleanAndParseJSON = (response: any) => {
+const cleanJSONString = (jsonString: string) => {
   try {
-    // Se la risposta è già un oggetto, non fare il parsing
-    if (typeof response === "object") {
-      return response // Se è già un oggetto, restituiamo direttamente
-    }
+    // Rimuove i caratteri di escape (\n, \", etc.) dalla stringa
+    const cleanedString = jsonString.replace(/\\n/g, "").replace(/\\"/g, '"')
 
-    // Se la risposta è una stringa, eseguiamo la pulizia
-    if (typeof response === "string") {
-      // Sostituire gli apostrofi singoli con il loro escape
-      response = response.replace(/'/g, "\\'")
+    // Parso la stringa JSON pulita
+    const parsedResponse = JSON.parse(cleanedString)
 
-      // Poi rimuoviamo eventuali caratteri speciali come le sequenze di escape che potrebbero causare errori
-      response = response.replace(/\\"/g, '"')
-    }
-
-    // Parsing del JSON
-    const parsedResponse = JSON.parse(response)
-
-    // Se "message" è presente e contiene una stringa JSON
-    if (parsedResponse.message && typeof parsedResponse.message === "string") {
-      const cleanedMessage = parsedResponse.message
-        .replace(/\\n/g, "") // Rimuove eventuali newline escape
-        .replace(/\\"/g, '"') // Sostituisce le virgolette escape con quelle normali
-
-      // Parsing del JSON annidato
-      const nestedParsed = JSON.parse(cleanedMessage)
-      return nestedParsed // Restituisce il JSON finale pulito
-    }
-
-    return parsedResponse // Restituiamo la risposta parsata
+    return parsedResponse // Restituisci il JSON parsato
   } catch (error) {
-    console.error("Errore durante il parsing del JSON:", error)
-    return null // Restituiamo null in caso di errore
+    console.error("Errore durante la pulizia e il parsing del JSON:", error)
+    return null // Se c'è un errore, restituisci null
   }
 }
 
