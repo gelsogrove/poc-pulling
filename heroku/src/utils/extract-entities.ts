@@ -33,7 +33,11 @@ const extractEntities = (text: string): Entities => {
   const doc = nlp(text)
 
   const entities: Entities = {
-    people: doc.people().out("array"), // Estrazione delle persone
+    // Estrai solo i nomi propri
+    people: doc
+      .people()
+      .out("array")
+      .filter((person) => person.split(" ").length === 2), // Assicurati che sia solo un nome e un cognome
     dates: text.match(datePattern) || [],
     email: text.match(emailPattern) || [],
     phone: text.match(phonePattern) || [],
@@ -43,10 +47,11 @@ const extractEntities = (text: string): Entities => {
     places: doc.match("#Place").out("array"),
   }
 
-  // Filtra le entità 'people' per cercare solo nomi propri (escludendo frasi lunghe)
+  // Logica per filtrare frasi lunghe nelle entità 'people'
+  // Ad esempio, evita di estrarre "Ciao mi chiamo Andrea Gelsomino e vivo a Milano"
   entities.people = entities.people.filter((person) => {
-    // Filtra solo i nomi propri, escludendo eventuali frasi più lunghe
-    return person.split(" ").length === 2 // Ad esempio, "Andrea Gelsomino" è considerato valido
+    // Se il nome è più di due parole, ignoralo
+    return person.split(" ").length === 2 // Solo nomi con due parole (nome e cognome)
   })
 
   console.log("Entità estratte:", entities) // Debug
