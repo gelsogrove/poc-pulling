@@ -53,6 +53,7 @@ export const processEntities = (
 
   // Riconoscimento dinamico di entità come luoghi (città)
   const places = doc.places().out("array")
+  console.log("***", places)
   if (places.length > 0) {
     entity = "places"
     value = places[0] // Impostiamo il valore originale come il primo risultato trovato
