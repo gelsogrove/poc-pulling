@@ -74,7 +74,7 @@ const cleanAndParseJSON = (response: any) => {
     return parsedResponse
   } catch (error) {
     console.error("Errore durante il parsing del JSON:", error)
-    return JSON.parse(response) // Restituisce null in caso di errore
+    return error
   }
 }
 
@@ -146,7 +146,7 @@ const handleChat: RequestHandler = async (req, res) => {
     console.log("**********RESTORE ANSWER **************")
     console.log(restoredAnswer)
 
-    res.status(200).json({ message: restoredAnswer })
+    res.status(200).json({ message: cleanAndParseJSON(restoredAnswer) })
   } catch (error) {
     console.error("Error during chat handling:", error)
     res.status(500).json({ message: "Unexpected error occurred" })
