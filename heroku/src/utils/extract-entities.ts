@@ -1,7 +1,7 @@
 import nlp from "compromise"
 
 // Funzione per generare un valore fittizio (nome di supereroe o città italiana)
-export const generateFakeValue = (entity: string, value: string): string => {
+const generateFakeValue = (entity: string, value: string): string => {
   const superheroNames = [
     "Superman",
     "Batman",
@@ -33,33 +33,32 @@ export const generateFakeValue = (entity: string, value: string): string => {
   const italianCities = [
     "Roma",
     "Milano",
-    "New York",
-    "Boston",
-    "Miami",
-    "Ibiza",
-    "Sardegna",
-    "Paris",
-    "London",
-    "Melburne",
+    "Napoli",
+    "Torino",
+    "Firenze",
+    "Bologna",
+    "Venezia",
+    "Verona",
+    "Genova",
+    "Palermo",
   ]
 
-  switch (entity) {
-    case "people":
-      return superheroNames[Math.floor(Math.random() * superheroNames.length)] // Scegli un nome casuale da supereroi
-    case "places":
-      return italianCities[Math.floor(Math.random() * italianCities.length)] // Scegli una città italiana casuale
-    default:
-      return value // Per altre entità, restituiamo il valore originale
+  if (entity === "people") {
+    return superheroNames[Math.floor(Math.random() * superheroNames.length)]
+  } else if (entity === "places") {
+    return italianCities[Math.floor(Math.random() * italianCities.length)]
   }
+
+  return value
 }
 
 // Funzione per processare le entità nel contenuto dinamicamente
 export const processEntities = (
   content: string
-): { entity: string; value: string; fakevalue: string } => {
+): { entity: string; fakevalue: string; value: string } => {
   let entity = ""
-  let value = content // Partiamo dal valore originale
   let fakevalue = content // Se non c'è un'entità, restituiamo il contenuto originale
+  let value = content // Partiamo dal valore originale
 
   const doc = nlp(content)
 
@@ -67,44 +66,22 @@ export const processEntities = (
   const people = doc.people().out("array")
   if (people.length > 0) {
     entity = "people"
-    value = people[0] // Imposta il valore originale come il primo risultato trovato
-    fakevalue = generateFakeValue(entity, value) // Genera un nome fittizio per "people"
+    value = people[0] // Valore originale trovato
+    fakevalue = generateFakeValue("people", value) // Nome di supereroe
   }
 
   // Riconoscimento dinamico di entità come luoghi
   const places = doc.places().out("array")
   if (places.length > 0) {
     entity = "places"
-    value = places[0] // Imposta il valore originale come il primo risultato trovato
-    fakevalue = generateFakeValue(entity, value) // Genera una città fittizia per "places"
+    value = places[0] // Valore originale trovato
+    fakevalue = generateFakeValue("places", value) // Città italiana
   }
 
   return { entity, value, fakevalue }
 }
 
-// Funzione per sostituire i valori fake nel testo
-export const replaceValuesInText = (
-  content: string,
-  formattedEntities: any[],
-  reverse = false
-): string => {
-  let modifiedText = content
-
-  formattedEntities.forEach(({ value, fakevalue }) => {
-    const original = reverse ? String(fakevalue) : String(value).trim()
-    const replacement = reverse ? String(value) : String(fakevalue)
-
-    // Regex migliorata per gestire punteggiatura opzionale
-    const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-    const regex = new RegExp(`\\b${escapedOriginal}[.,!?;:]*`, "g")
-
-    modifiedText = modifiedText.replace(regex, replacement)
-  })
-
-  return modifiedText
-}
-
-// Funzione principale per processare i messaggi dinamicamente
+// Funzione per processare i messaggi dinamicamente
 export const processMessages = (
   messages: { role: string; content: string }[]
 ): { fakeMessages: any[]; formattedEntities: any[] } => {
@@ -118,13 +95,13 @@ export const processMessages = (
 
     formattedEntities.push({
       entity,
-      value,
+      value, // Mantenere il valore originale per ogni entità
       fakevalue,
     })
 
     // Sostituisce solo l'entità con il fakevalue, non l'intero messaggio
     const modifiedContent = replaceValuesInText(message.content, [
-      { value: message.content, fakevalue: fakevalue },
+      { value, fakevalue },
     ])
 
     fakeMessages.push({
@@ -134,4 +111,25 @@ export const processMessages = (
   })
 
   return { fakeMessages, formattedEntities }
+}
+
+// Funzione per sostituire i valori nel testo
+export const replaceValuesInText = (
+  content: string,
+  formattedEntities: any[],
+  reverse = false
+): string => {
+  let modifiedText = content
+
+  formattedEntities.forEach(({ value, fakevalue }) => {
+    const original = reverse ? String(fakevalue) : String(value).trim()
+    const replacement = reverse ? String(value) : String(fakevalue)
+
+    const escapedOriginal = original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+    const regex = new RegExp(`\\b${escapedOriginal}[.,!?;:]*`, "g")
+
+    modifiedText = modifiedText.replace(regex, replacement)
+  })
+
+  return modifiedText
 }

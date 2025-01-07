@@ -139,12 +139,11 @@ const handleChat: RequestHandler = async (req, res) => {
 
     console.log("**********formattedEntities**************")
     console.log(formattedEntities)
-
-    console.log("**********FAKE MESSAGES**************")
+    console.log("**********SEND TO OPENROUTER**************")
     console.log(fakeMessages)
     console.log("**********FAKE ANSWER**************")
     console.log(fakeAnswer)
-    console.log("**********REVERT ANSWER**************")
+    console.log("**********RESTORE ANSWER **************")
     console.log(restoredAnswer)
 
     res.status(200).json({ message: cleanAndParseJSON(restoredAnswer) })
