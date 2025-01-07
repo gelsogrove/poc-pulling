@@ -102,9 +102,7 @@ const handleChat: RequestHandler = async (req, res) => {
       return
     }
 
-    const fakeAnswer = JSON.parse(
-      openaiResponse.data.choices[0]?.message?.content
-    )
+    const fakeAnswer = openaiResponse.data.choices[0]?.message?.content
 
     // Ripristina la risposta con i valori originali
     const restoredAnswer = replaceValuesInText(
