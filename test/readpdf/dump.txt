@@ -1,0 +1,40 @@
+-- Creazione del database
+CREATE DATABASE IF NOT EXISTS poulin_grain;
+USE poulin_grain;
+
+-- Tabella per i clienti
+CREATE TABLE customers (
+    customer_id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    class ENUM('KEYM4', 'RETAIL', 'WHOLESALE') NOT NULL,
+    salesperson VARCHAR(255) NOT NULL,
+    user_id VARCHAR(50),
+    page INT NOT NULL
+);
+
+-- Tabella per gli ordini
+CREATE TABLE orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id VARCHAR(50) NOT NULL,
+    order_date_start DATE NOT NULL,
+    order_date_end DATE NOT NULL,
+    total_quantity DECIMAL(10, 2) NOT NULL,
+    total_price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+
+-- Tabella per gli articoli
+CREATE TABLE items (
+    item_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    item_number VARCHAR(50) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    quantity DECIMAL(10, 2) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    page INT NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
+);
+
+-- Indici aggiuntivi per ottimizzare le query
+CREATE INDEX idx_customer_orders ON orders (customer_id);
+CREATE INDEX idx_order_items ON items (order_id);

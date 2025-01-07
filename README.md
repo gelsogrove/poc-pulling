@@ -1,24 +1,26 @@
-heroku : 50%
-daily-milk FE: 45%
+heroku : 55%
+daily-milk FE: 55%
 daily-milk BE: 0%
-deploy: 40 %
+deploy: 50 %
 
 NEXT
 
 - NLP
 - loading
 - ChatBot basic e test NlP
-- Togliersi da OpenAI
 - ChatBot con prompt
 - ChatBot con debug
 - Upload e mapper
 - ChatBot con sql
+- SQL DENTRO SYSTEM PER ANALISI
 - COMPLETARE TUTTO BENE IN LOCALE
 - LOGIN WITH DAILIYMILK
+- UNLIKED SU DAILIY MILK
 - DEPLOY TO DAILIYMILK
 
 VERS 2
 
+- Togliersi da OpenAI
 - no sorprese dentro heroku ? come si fa
 - staccarsi da main alla prima version
 - SCROLBAR NON SI VEDE nel ChatBot

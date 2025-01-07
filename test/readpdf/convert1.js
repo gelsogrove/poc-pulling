@@ -18,6 +18,8 @@ function parseCustomerData(text, pageNumber) {
       const [_, startDate, endDate] = orderDateMatch
       globalOrderDate = {
         raw: `${startDate} - ${endDate}`,
+        startDate: startDate.split("/").reverse().join("-"),
+        endDate: endDate.split("/").reverse().join("-"),
       }
     }
 
@@ -27,10 +29,6 @@ function parseCustomerData(text, pageNumber) {
     )
     if (customerMatch) {
       if (customer) {
-        // Assign the last global order date if not already set
-        if (!customer.order_date && globalOrderDate) {
-          customer.order_date = globalOrderDate
-        }
         customers.push(customer) // Save the previous customer
       }
       customer = {
@@ -41,7 +39,7 @@ function parseCustomerData(text, pageNumber) {
         items: [],
         total_quantity: 0,
         total_price: 0,
-        order_date: globalOrderDate, // Apply global order date
+        order_date: globalOrderDate,
         user_id: null, // Field for user ID
         page: pageNumber,
       }
@@ -79,14 +77,44 @@ function parseCustomerData(text, pageNumber) {
   }
 
   if (customer) {
-    // Ensure the last customer gets the global order date if not set
-    if (!customer.order_date && globalOrderDate) {
-      customer.order_date = globalOrderDate
-    }
     customers.push(customer) // Push the last customer
   }
 
   return customers
+}
+
+// Function to convert data to MySQL-compatible SQL INSERT statements
+function generateSql(customers) {
+  let sql = ""
+
+  customers.forEach((customer) => {
+    // Insert customer
+    sql += `INSERT INTO customers (customer_id, name, class, salesperson, user_id, page) VALUES ('${
+      customer.customer_id
+    }', '${customer.name.replace(/'/g, "''")}', '${
+      customer.class
+    }', '${customer.salesperson.replace(/'/g, "''")}', '${
+      customer.user_id || "NULL"
+    }', ${customer.page});\n`
+
+    // Insert order
+    if (customer.order_date) {
+      sql += `INSERT INTO orders (customer_id, order_date_start, order_date_end, total_quantity, total_price) VALUES ('${customer.customer_id}', '${customer.order_date.startDate}', '${customer.order_date.endDate}', ${customer.total_quantity}, ${customer.total_price});\n`
+    }
+
+    // Insert items
+    customer.items.forEach((item) => {
+      sql += `INSERT INTO items (order_id, item_number, description, quantity, price, page) VALUES ((SELECT id FROM orders WHERE customer_id = '${
+        customer.customer_id
+      }' ORDER BY id DESC LIMIT 1), '${
+        item.item_number
+      }', '${item.description.replace(/'/g, "''")}', ${item.quantity}, ${
+        item.price
+      }, ${item.page});\n`
+    })
+  })
+
+  return sql
 }
 
 // Function to extract data from the PDF
@@ -109,8 +137,8 @@ async function extractDataFromPdf(pdfPath) {
 }
 
 // File paths
-const inputPdfPath = "Sales.pdf" // Input PDF file
-const outputJsonPath = "output.json" // Output JSON file
+const inputPdfPath = "Sept24.pdf" // Input PDF file
+const outputSqlPath = "output.sql" // Output SQL file
 
 // Execute the process
 extractDataFromPdf(inputPdfPath)
@@ -118,12 +146,9 @@ extractDataFromPdf(inputPdfPath)
     if (customers.length === 0) {
       console.log("No customers found.")
     } else {
-      fs.writeFileSync(
-        outputJsonPath,
-        JSON.stringify({ customers }, null, 4),
-        "utf8"
-      )
-      console.log(`JSON file successfully generated: ${outputJsonPath}`)
+      const sql = generateSql(customers)
+      fs.writeFileSync(outputSqlPath, sql, "utf8")
+      console.log(`SQL file successfully generated: ${outputSqlPath}`)
     }
   })
   .catch((err) => {

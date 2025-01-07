@@ -3,28 +3,17 @@ import { RequestHandler, Router } from "express"
 import { pool } from "../server.js"
 import { getUserIdByToken } from "./validateUser.js"
 // Import OpenTelemetry packages
-import { trace } from "@opentelemetry/api"
-import { registerInstrumentations } from "@opentelemetry/instrumentation"
-import { ExpressInstrumentation } from "@opentelemetry/instrumentation-express"
-import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node"
+
 import dotenv from "dotenv"
+import { restoreOriginalText } from "./utils/extract-entities.js"
 dotenv.config() // Carica le variabili d'ambiente
 
-// Initialize OpenTelemetry
-const provider = new NodeTracerProvider()
-provider.register()
-registerInstrumentations({
-  instrumentations: [new ExpressInstrumentation()],
-})
-
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-const OPENROUTER_MODEL = "openai/gpt-4"
-
 const OPENROUTER_HEADERS = {
   Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
   "Content-Type": "application/json",
 }
-const MAX_TOKENS = 350
+const MAX_TOKENS = 500
 const chatbotRouter = Router()
 
 // Assicurati che la chiave API sia fornita
@@ -61,10 +50,7 @@ const getPrompt = async (idPrompt: string): Promise<string | null> => {
 }
 
 const handleChat: RequestHandler = async (req, res) => {
-  // Start a new span for the request
-  const span = trace.getTracer("chatbot").startSpan("handleChat")
-
-  const { conversationId, token, name, messages, model, temperature } = req.body
+  const { conversationId, token, messages, model, temperature } = req.body
 
   if (!conversationId || !token || !Array.isArray(messages)) {
     res.status(400).json({
@@ -90,14 +76,29 @@ const handleChat: RequestHandler = async (req, res) => {
       ...messages.map(({ role, content }) => ({ role, content })),
     ]
 
-    console.log(apiMessages)
+    console.log("Messaggi originali:", apiMessages)
 
-    // Chiamata all'API OpenAI
+    // Passa l'array dei messaggi a extractEntities
+    const formattedEntities = apiMessages.flatMap((message) =>
+      message.content ? extractEntities(message.content) : []
+    )
+
+    // Sostituisci i valori con quelli fake nei messaggi
+    const fakeMessages = apiMessages.map((message) => ({
+      ...message,
+      content: message.content
+        ? replaceValuesInText(message.content, formattedEntities)
+        : message.content,
+    }))
+
+    console.log("fake:", fakeMessages)
+
+    // Chiamata all'API OpenAI con messaggi fake
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
       {
         model,
-        messages: apiMessages,
+        messages: fakeMessages,
         max_tokens: MAX_TOKENS,
         temperature,
       },
@@ -106,29 +107,36 @@ const handleChat: RequestHandler = async (req, res) => {
       }
     )
 
-    // Postprocesso la risposta
-    const resp = openaiResponse.data.choices[0].message?.content
+    // Risposta di OpenAI
+    const responseContent = openaiResponse.data.choices[0].message?.content
 
-    console.log("*************************")
-    console.log(resp)
-
-    res.status(200).json(resp)
-  } catch (error) {
-    // End the span on error
-    if (error instanceof Error) {
-      span.recordException(error)
-      span.setStatus({ code: 2 }) // Set status to ERROR
-      console.error("Error message:", error.message)
-      console.error("Stack trace:", error.stack)
-    } else {
-      console.error("Unknown error:", error)
+    if (!responseContent) {
+      res.status(500).json({ message: "Empty response from OpenAI" })
+      return
     }
+
+    // Ripristina il testo originale nella risposta
+    const restoredResponse = restoreOriginalText(
+      responseContent,
+      formattedEntities
+    )
+
+    console.log("Risposta ripristinata:", restoredResponse)
+
+    res.status(200).json(restoredResponse)
+  } catch (error) {
+    console.error("Error during chat handling:", error)
     res.status(500).json({ message: "Unexpected error occurred" })
-  } finally {
-    span.end()
   }
 }
 
 chatbotRouter.post("/response", handleChat)
 
 export default chatbotRouter
+function replaceValuesInText(content: any, formattedEntities: any[]): any {
+  throw new Error("Function not implemented.")
+}
+
+function extractEntities(content: any): any {
+  throw new Error("Function not implemented.")
+}
