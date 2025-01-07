@@ -58,7 +58,6 @@ export const generateFakeValue = (entity: string, value: string) => {
   }
 }
 
-// Funzione per sostituire i valori fake nella frase
 export const replaceValuesInText = (
   content: string,
   formattedEntities: any[],
@@ -66,12 +65,13 @@ export const replaceValuesInText = (
 ): string => {
   let modifiedText = content
 
+  // Per ogni entità da sostituire, sostituiamo solo l'entità con il fakevalue
   formattedEntities.forEach(({ value, fakevalue }) => {
     const original = reverse ? String(fakevalue) : String(value).trim()
     const replacement = reverse ? String(value) : String(fakevalue)
 
-    // Sostituzione diretta senza complicazioni di regex
-    modifiedText = modifiedText.replace(original, replacement)
+    // Sostituire solo l'entità nel testo (e non l'intero messaggio)
+    modifiedText = modifiedText.replace(new RegExp(original, "g"), replacement)
   })
 
   return modifiedText
