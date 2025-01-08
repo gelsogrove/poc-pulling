@@ -13,7 +13,7 @@ const OPENROUTER_HEADERS = {
   Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
   "Content-Type": "application/json",
 }
-const MAX_TOKENS = 500
+const MAX_TOKENS = 1000
 const chatbotRouter = Router()
 
 // Controlla che la chiave API sia impostata
@@ -103,7 +103,7 @@ const handleChat: RequestHandler = async (req, res) => {
       extractValuesFromPrompt(prompt)
     const finalTemperature = extractedTemperature ?? userTemperature ?? 0.7 // Default 0.7
     const finalModel = extractedModel ?? userModel ?? "gpt-3.5-turbo" // Default "gpt-3.5-turbo"
-    const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
+    let truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
     console.log("*************TEMPERATURE*********")
     console.log(finalTemperature)
     console.log("*************MODEL*********")
@@ -115,6 +115,8 @@ const handleChat: RequestHandler = async (req, res) => {
     )
     console.log("*************TOKEN MESSAGES*********")
     console.log(tokenizedMessages)
+
+    truncatedPrompt = ""
 
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
