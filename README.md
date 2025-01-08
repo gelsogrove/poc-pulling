@@ -7,6 +7,7 @@ NEXT
 
 - ENTITIES (thinking)
 - ChatBot con debug
+- disabilitare il pannello
 - PRESENTARE
 
 - Upload e mapper

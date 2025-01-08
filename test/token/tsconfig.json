@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "module": "ESNext", // Usa ESM come modulo
+    "moduleResolution": "node", // Risoluzione dei moduli in stile Node.js
+    "target": "ES2020", // Target ES2020 o più recente
+    "esModuleInterop": true, // Permette l'interoperabilità tra ESM e CommonJS
+    "skipLibCheck": true // Salta la verifica dei tipi nelle librerie
+  },
+  "include": ["app.ts", "extract_entities.ts"]
+}

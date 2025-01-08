@@ -1,0 +1,5 @@
+{
+    "watch": ["*.ts"],                 // Monitora i file con estensione .ts
+    "exec": "npx tsx app.ts",          // Esegui il file con tsx
+    "ext": "ts"                        // Monit
+  

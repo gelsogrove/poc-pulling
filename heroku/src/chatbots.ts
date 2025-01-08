@@ -3,6 +3,7 @@ import dotenv from "dotenv"
 import { RequestHandler, Router } from "express"
 import { pool } from "../server.js"
 
+import { tokenize, untokenize } from "./utils/extract-entities.js"
 import { getUserIdByToken } from "./validateUser.js"
 
 dotenv.config()
@@ -88,32 +89,37 @@ const handleChat: RequestHandler = async (req, res) => {
   }
 
   try {
+    // CHECK TOKEN
     const userId = await validateToken(token, res)
     if (!userId) return
 
+    // GET PROMPS
     const prompt = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
-
     if (!prompt) {
       res.status(200).json({ message: "Prompt not found." })
       return
     }
-
-    // Estrai TEMPERATURE e MODEL dal prompt
     const { temperature: extractedTemperature, model: extractedModel } =
       extractValuesFromPrompt(prompt)
-
-    // Determina i valori finali di temperatura e modello
     const finalTemperature = extractedTemperature ?? userTemperature ?? 0.7 // Default 0.7
     const finalModel = extractedModel ?? userModel ?? "gpt-3.5-turbo" // Default "gpt-3.5-turbo"
-
-    // Richiesta a OpenAI
     const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
+
+    // TOKENIZE
+    const tokenizedMessages = messages.map((frase) =>
+      tokenize(frase, conversationId)
+    )
+    console.log("*************TOKEN MESSAGES*********")
+    console.log(tokenizedMessages)
 
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
       {
         model: finalModel,
-        messages: [{ role: "system", content: truncatedPrompt }, ...messages],
+        messages: [
+          { role: "system", content: truncatedPrompt },
+          ...tokenizedMessages,
+        ],
         max_tokens: MAX_TOKENS,
         temperature: finalTemperature,
       },
@@ -127,7 +133,12 @@ const handleChat: RequestHandler = async (req, res) => {
       return
     }
 
-    const content = openaiResponse.data.choices[0]?.message?.content
+    console.log("*************UNTOKEN ANSWER*********")
+
+    const content = untokenize(
+      openaiResponse.data.choices[0]?.message?.content,
+      conversationId
+    )
 
     res.status(200).json({ message: content })
   } catch (error) {
