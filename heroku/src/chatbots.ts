@@ -154,19 +154,17 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
     console.log("*************MODEL*********")
     console.log(finalModel)
 
-    const tokenizedMessages = messages.map((frase) =>
-      tokenize(frase.content, conversationId)
-    )
+    // Aggiorna direttamente il campo 'content' di ogni messaggio
+    messages.forEach((frase) => {
+      frase.content = tokenize(frase.content, conversationId)
+    })
 
     console.log("*************TOKENIZED*********")
-    console.log(tokenizedMessages)
+    console.log(messages)
 
     console.log("Request Payload:", {
       model: finalModel,
-      messages: [
-        { role: "system", content: truncatedPrompt },
-        ...tokenizedMessages,
-      ],
+      messages: [{ role: "system", content: truncatedPrompt }, ...messages],
       max_tokens: MAX_TOKENS,
       temperature: finalTemperature,
     })
@@ -175,10 +173,7 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
       OPENROUTER_API_URL,
       {
         model: finalModel,
-        messages: [
-          { role: "system", content: truncatedPrompt },
-          ...tokenizedMessages,
-        ],
+        messages: [{ role: "system", content: truncatedPrompt }, ...messages],
         max_tokens: MAX_TOKENS,
         temperature: finalTemperature,
       },
