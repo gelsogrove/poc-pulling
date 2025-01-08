@@ -4,6 +4,7 @@ import { RequestHandler, Router } from "express"
 import { pool } from "../server.js"
 
 import { tokenize, untokenize } from "./utils/extract-entities.js"
+import { handleError } from "./utils/handle-error.js" // Funzione di gestione errori
 import { getUserIdByToken } from "./validateUser.js"
 
 dotenv.config()
@@ -93,17 +94,20 @@ const handleChat: RequestHandler = async (req, res) => {
     const userId = await validateToken(token, res)
     if (!userId) return
 
-    // GET PROMPS
+    // GET PROMPT
     const prompt = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
     if (!prompt) {
       res.status(200).json({ message: "Prompt not found." })
       return
     }
+
     const { temperature: extractedTemperature, model: extractedModel } =
       extractValuesFromPrompt(prompt)
-    const finalTemperature = extractedTemperature ?? userTemperature ?? 0.7 // Default 0.7
-    const finalModel = extractedModel ?? userModel ?? "gpt-3.5-turbo" // Default "gpt-3.5-turbo"
+    const finalTemperature = extractedTemperature ?? userTemperature ?? 0.7
+    const finalModel = extractedModel ?? userModel ?? "gpt-3.5-turbo"
+
     let truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
+
     console.log("*************TEMPERATURE*********")
     console.log(finalTemperature)
     console.log("*************MODEL*********")
@@ -113,6 +117,7 @@ const handleChat: RequestHandler = async (req, res) => {
     const tokenizedMessages = messages.map((frase) =>
       tokenize(frase.content, conversationId)
     )
+
     console.log("*************TOKEN MESSAGES*********")
     console.log(tokenizedMessages)
 
@@ -131,7 +136,7 @@ const handleChat: RequestHandler = async (req, res) => {
       },
       {
         headers: OPENROUTER_HEADERS,
-        timeout: 15000, // Timeout di 15 secondi
+        timeout: 15000,
       }
     )
 
@@ -152,8 +157,7 @@ const handleChat: RequestHandler = async (req, res) => {
 
     res.status(200).json({ message: content })
   } catch (error) {
-    console.error("Error during chat handling:", error)
-    res.status(500).json({ message: "Unexpected error occurred" })
+    handleError(error, res) // Gestione errori centralizzata
   }
 }
 
