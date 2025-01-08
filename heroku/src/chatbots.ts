@@ -81,15 +81,14 @@ export function handleError(error: unknown, res: Response): void {
           "La richiesta ha impiegato troppo tempo per essere elaborata. Riprova più tardi.",
       })
     } else if ((error as any).response) {
-      const status = (error as any).response.status || 500
       const errorMessage =
         (error as any).response.data?.message ||
         "Errore sconosciuto dal server remoto."
-      res.status(status).json({
+      res.status(200).json({
         message: `Errore dal server remoto: ${errorMessage}`,
       })
     } else {
-      res.status(500).json({
+      res.status(200).json({
         message:
           "Si è verificato un errore inaspettato. Contatta il supporto se il problema persiste.",
       })
