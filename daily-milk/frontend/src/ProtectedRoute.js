@@ -15,7 +15,7 @@ const ProtectedRoute = ({ children, userId }) => {
     }
 
     checkAuth()
-    const intervalId = setInterval(checkAuth, 60000) // Esegui checkAuth ogni 30 secondi
+    const intervalId = setInterval(checkAuth, 120000) // Esegui checkAuth ogni min
 
     return () => clearInterval(intervalId) // Pulisci l'intervallo al dismount
     // eslint-disable-next-line react-hooks/exhaustive-deps
