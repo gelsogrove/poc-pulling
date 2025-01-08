@@ -20,8 +20,6 @@ if (!process.env.OPENROUTER_API_KEY) {
   throw new Error("OPENROUTER_API_KEY is not set in the environment variables.")
 }
 
-console.log("API Key:", process.env.OPENROUTER_API_KEY)
-
 axiosRetry(axios, {
   retries: 3, // Riprova fino a 3 volte
   retryDelay: (retryCount: any) => {

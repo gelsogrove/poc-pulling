@@ -29,7 +29,8 @@
     "openai": "^4.77.3",
     "qrcode": "^1.5.4",
     "speakeasy": "^2.0.0",
-    "uuid": "^11.0.3"
+    "uuid": "^11.0.3",
+    "axios-retry": "^4.5.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -39,7 +40,7 @@
     "@types/pg": "^8.11.10",
     "@types/qrcode": "^1.5.5",
     "@types/speakeasy": "^2.0.10",
-    "axios-retry": "^4.5.0",
+
     "npm-run-all": "^4.1.5",
     "ts-node": "^10.9.2",
     "typescript": "^4.9.5"
