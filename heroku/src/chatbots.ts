@@ -137,6 +137,8 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
 
     const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
 
+    console.log("*************PROMPT*********")
+    console.log(truncatedPrompt)
     console.log("*************TEMPERATURE*********")
     console.log(finalTemperature)
     console.log("*************MODEL*********")
@@ -145,6 +147,10 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
     const tokenizedMessages = messages.map((frase) =>
       tokenize(frase.content, conversationId)
     )
+
+    console.log("*************TOKENIZED*********")
+    console.log(tokenizedMessages)
+
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
       {
