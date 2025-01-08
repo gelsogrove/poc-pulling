@@ -129,8 +129,12 @@ const handleChat: RequestHandler = async (req, res) => {
       },
       {
         headers: OPENROUTER_HEADERS,
+        timeout: 15000, // Timeout di 15 secondi
       }
     )
+
+    console.log("*************RESPONSE*********")
+    console.log(openaiResponse)
 
     if (!openaiResponse.data.choices[0]?.message?.content) {
       res.status(200).json({ message: "Empty response from OpenAI" })
