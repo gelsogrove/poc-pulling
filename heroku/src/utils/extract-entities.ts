@@ -1,5 +1,3 @@
-// extract_entities.ts
-
 // Mappa dei dati sensibili e dei rispettivi token
 const sensitiveDataMap: { [key: string]: string } = {
   "Andrea Gelsomino": "TOKEN_0001",
@@ -12,16 +10,18 @@ export function tokenize(inputString: string, conversationId: string): string {
   const personalizedSensitiveDataMap = { ...sensitiveDataMap }
   Object.keys(personalizedSensitiveDataMap).forEach((key) => {
     personalizedSensitiveDataMap[
-      key
+      key.toLowerCase() // Convertiamo la chiave in lowercase per il confronto
     ] = `${personalizedSensitiveDataMap[key]}_${conversationId}`
   })
 
+  // Creiamo una regex con case-insensitivity
   const regex = new RegExp(
-    Object.keys(personalizedSensitiveDataMap).join("|"),
-    "g"
+    Object.keys(personalizedSensitiveDataMap).map(escapeRegex).join("|"),
+    "gi" // 'g' per sostituire globalmente, 'i' per ignorare maiuscole/minuscole
   )
+
   return inputString.replace(regex, (match) => {
-    return personalizedSensitiveDataMap[match]
+    return personalizedSensitiveDataMap[match.toLowerCase()] // Confrontiamo in lowercase
   })
 }
 
@@ -33,12 +33,22 @@ export function untokenize(
   // Rimuoviamo il conversationId dal token
   const reverseMap = Object.fromEntries(
     Object.entries(sensitiveDataMap).map(([key, value]) => {
-      return [value + `_${conversationId}`, key] // Rimuoviamo il suffisso del conversationId
+      return [`${value}_${conversationId}`, key] // Manteniamo le chiavi nella forma originale
     })
   )
 
-  const regex = new RegExp(Object.keys(reverseMap).join("|"), "g")
+  // Creiamo una regex per i token
+  const regex = new RegExp(
+    Object.keys(reverseMap).map(escapeRegex).join("|"),
+    "gi" // 'g' per sostituire globalmente, 'i' per ignorare maiuscole/minuscole
+  )
+
   return inputString.replace(regex, (match) => {
-    return reverseMap[match]
+    return reverseMap[match] // Non serve toLowerCase qui perché i token sono esatti
   })
+}
+
+// Funzione di utilità per gestire caratteri speciali nei regex
+function escapeRegex(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 }
