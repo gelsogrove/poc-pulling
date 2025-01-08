@@ -90,7 +90,7 @@ export function handleError(error: unknown, res: Response): void {
     } else {
       res.status(200).json({
         message:
-          "Si è verificato un errore inaspettato. Contatta il supporto se il problema persiste.",
+          "An unexpected error occurred. Please wait a bit and contact the  support if the issue persists.",
       })
     }
   } else {
