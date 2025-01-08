@@ -10,8 +10,6 @@ const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 const OPENROUTER_HEADERS = {
   Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
   "Content-Type": "application/json",
-  "HTTP-Referer": "https://yourdomain.com", // Modifica con il tuo dominio (opzionale)
-  "X-Title": "Your Application Name", // Nome della tua app (opzionale)
 }
 const MAX_TOKENS = 1000
 const chatbotRouter = Router()
