@@ -2,7 +2,6 @@ import axios from "axios"
 import dotenv from "dotenv"
 import { Request, RequestHandler, Response, Router } from "express"
 import { pool } from "../server.js"
-import { tokenize, untokenize } from "./utils/extract-entities.js"
 import { getUserIdByToken } from "./validateUser.js"
 
 dotenv.config()
@@ -11,6 +10,8 @@ const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 const OPENROUTER_HEADERS = {
   Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
   "Content-Type": "application/json",
+  "HTTP-Referer": "https://yourdomain.com", // Modifica con il tuo dominio (opzionale)
+  "X-Title": "Your Application Name", // Nome della tua app (opzionale)
 }
 const MAX_TOKENS = 1000
 const chatbotRouter = Router()
@@ -126,7 +127,7 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
 
     const prompt = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
     if (!prompt) {
-      res.status(200).json({ message: "Prompt not found." })
+      res.status(404).json({ message: "Prompt not found." })
       return
     }
 
@@ -135,30 +136,14 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
     const finalTemperature = extractedTemperature ?? userTemperature ?? 0.7
     const finalModel = extractedModel ?? userModel ?? "gpt-3.5-turbo"
 
-    let truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
-
-    console.log("*************TEMPERATURE*********")
-    console.log(finalTemperature)
-    console.log("*************MODEL*********")
-    console.log(finalModel)
-
-    const tokenizedMessages = messages.map((frase) =>
-      tokenize(frase.content, conversationId)
-    )
-
-    console.log("*************TOKEN MESSAGES*********")
-    console.log(tokenizedMessages)
-
-    truncatedPrompt = ""
+    console.log("Using Model:", finalModel)
+    console.log("Using Temperature:", finalTemperature)
 
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
       {
         model: finalModel,
-        messages: [
-          { role: "system", content: truncatedPrompt },
-          ...tokenizedMessages,
-        ],
+        messages: [{ role: "system", content: prompt }, ...messages],
         max_tokens: MAX_TOKENS,
         temperature: finalTemperature,
       },
@@ -168,22 +153,16 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
       }
     )
 
-    console.log("*************RESPONSE*********")
-    console.log(openaiResponse)
+    console.log("Response from OpenRouter:", openaiResponse.data)
 
     if (!openaiResponse.data.choices[0]?.message?.content) {
-      res.status(200).json({ message: "Empty response from OpenAI" })
+      res.status(204).json({ message: "Empty response from OpenRouter" })
       return
     }
 
-    console.log("*************UNTOKEN ANSWER*********")
-
-    const content = untokenize(
-      openaiResponse.data.choices[0]?.message?.content,
-      conversationId
-    )
-
-    res.status(200).json({ message: content })
+    res
+      .status(200)
+      .json({ message: openaiResponse.data.choices[0]?.message?.content })
   } catch (error) {
     handleError(error, res)
   }
