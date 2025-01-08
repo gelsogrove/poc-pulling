@@ -1,8 +1,7 @@
 import axios from "axios"
 
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-const OPENROUTER_API_KEY =
-  "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"
+const OPENROUTER_API_KEY = "X123"
 
 const testEndpoint = async () => {
   try {
