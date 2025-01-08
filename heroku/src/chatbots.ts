@@ -104,6 +104,10 @@ const handleChat: RequestHandler = async (req, res) => {
     const finalTemperature = extractedTemperature ?? userTemperature ?? 0.7 // Default 0.7
     const finalModel = extractedModel ?? userModel ?? "gpt-3.5-turbo" // Default "gpt-3.5-turbo"
     const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
+    console.log("*************TEMPERATURE*********")
+    console.log(finalTemperature)
+    console.log("*************MODEL*********")
+    console.log(finalModel)
 
     // TOKENIZE
     const tokenizedMessages = messages.map((frase) =>
