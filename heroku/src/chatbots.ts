@@ -55,7 +55,7 @@ const extractValuesFromPrompt = (
 ): { temperature: number | null; model: string | null } => {
   try {
     const temperatureMatch = prompt.match(/TEMPERATURE:\s*([0-9.]+)/i)
-    const modelMatch = prompt.match(/MODEL:\s*([a-zA-Z0-9\-_.]+)/i) // Aggiornata l'espressione regolare
+    const modelMatch = prompt.match(/MODEL:\s*([a-zA-Z0-9\-_.\/]+)/i) // Include il carattere '/'
 
     const temperature = temperatureMatch
       ? parseFloat(temperatureMatch[1])
