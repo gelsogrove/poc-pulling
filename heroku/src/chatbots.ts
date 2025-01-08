@@ -24,11 +24,11 @@ console.log("API Key:", process.env.OPENROUTER_API_KEY)
 
 axiosRetry(axios, {
   retries: 3, // Riprova fino a 3 volte
-  retryDelay: (retryCount) => {
+  retryDelay: (retryCount: any) => {
     console.log(`Retry attempt: ${retryCount}`)
     return retryCount * 1000 // Incrementa il tempo di attesa
   },
-  retryCondition: (error) => {
+  retryCondition: (error: any) => {
     return error.code === "ECONNRESET" || error.response?.status >= 500 // Riprova per errori di connessione o server
   },
 })
