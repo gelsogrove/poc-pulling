@@ -107,7 +107,7 @@ const handleChat: RequestHandler = async (req, res) => {
 
     // TOKENIZE
     const tokenizedMessages = messages.map((frase) =>
-      tokenize(frase, conversationId)
+      tokenize(frase.content, conversationId)
     )
     console.log("*************TOKEN MESSAGES*********")
     console.log(tokenizedMessages)
