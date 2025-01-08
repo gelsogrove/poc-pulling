@@ -2,6 +2,7 @@ import axios from "axios"
 import dotenv from "dotenv"
 import { Request, RequestHandler, Response, Router } from "express"
 import { pool } from "../server.js"
+import { tokenize, untokenize } from "./utils/extract-entities.js"
 import { getUserIdByToken } from "./validateUser.js"
 
 dotenv.config()
@@ -134,14 +135,24 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
     const finalTemperature = extractedTemperature ?? userTemperature ?? 0.7
     const finalModel = extractedModel ?? userModel ?? "gpt-3.5-turbo"
 
-    console.log("Using Model:", finalModel)
-    console.log("Using Temperature:", finalTemperature)
+    const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
 
+    console.log("*************TEMPERATURE*********")
+    console.log(finalTemperature)
+    console.log("*************MODEL*********")
+    console.log(finalModel)
+
+    const tokenizedMessages = messages.map((frase) =>
+      tokenize(frase.content, conversationId)
+    )
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
       {
         model: finalModel,
-        messages: [{ role: "system", content: prompt }, ...messages],
+        messages: [
+          { role: "system", content: truncatedPrompt },
+          ...tokenizedMessages,
+        ],
         max_tokens: MAX_TOKENS,
         temperature: finalTemperature,
       },
@@ -158,9 +169,13 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
       return
     }
 
-    res
-      .status(200)
-      .json({ message: openaiResponse.data.choices[0]?.message?.content })
+    console.log("*************UNTOKEN ANSWER*********")
+    const content = untokenize(
+      openaiResponse.data.choices[0]?.message?.content,
+      conversationId
+    )
+
+    res.status(200).json({ message: content })
   } catch (error) {
     handleError(error, res)
   }
