@@ -1,4 +1,5 @@
 import axios from "axios"
+import axiosRetry from "axios-retry"
 import dotenv from "dotenv"
 import { Request, RequestHandler, Response, Router } from "express"
 import { pool } from "../server.js"
@@ -20,6 +21,17 @@ if (!process.env.OPENROUTER_API_KEY) {
 }
 
 console.log("API Key:", process.env.OPENROUTER_API_KEY)
+
+axiosRetry(axios, {
+  retries: 3, // Riprova fino a 3 volte
+  retryDelay: (retryCount) => {
+    console.log(`Retry attempt: ${retryCount}`)
+    return retryCount * 1000 // Incrementa il tempo di attesa
+  },
+  retryCondition: (error) => {
+    return error.code === "ECONNRESET" || error.response?.status >= 500 // Riprova per errori di connessione o server
+  },
+})
 
 const validateToken = async (token: string, res: Response) => {
   try {
@@ -151,6 +163,16 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
     console.log("*************TOKENIZED*********")
     console.log(tokenizedMessages)
 
+    console.log("Request Payload:", {
+      model: finalModel,
+      messages: [
+        { role: "system", content: truncatedPrompt },
+        ...tokenizedMessages,
+      ],
+      max_tokens: MAX_TOKENS,
+      temperature: finalTemperature,
+    })
+
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
       {
@@ -164,7 +186,7 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
       },
       {
         headers: OPENROUTER_HEADERS,
-        timeout: 15000,
+        timeout: 30000,
       }
     )
 
