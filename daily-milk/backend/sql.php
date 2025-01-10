@@ -6,7 +6,7 @@ $user_name = 'dbu1754291';
 $password = 'Almogavers@123';
 
 try {
-    // Connessione al database
+    // Connessione al databases
     $pdo = new PDO("mysql:host=$host_name;dbname=$database;charset=utf8", $user_name, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
