@@ -19,7 +19,7 @@ sshpass -p 'Almogavers@123' scp -P 22 -r daily-milk/frontend/build/* u94121824@h
 
 
 # 2. Mostra i log di Heroku
-echo '*********'
-heroku logs --tail --app poulin
+# echo '*********'
+# heroku logs --tail --app poulin
 
 
