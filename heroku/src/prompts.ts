@@ -70,7 +70,7 @@ const PostGetPromptHandler: RequestHandler = async (req, res) => {
       return
     }
 
-    const content = result.rows[0]
+    const content = result.rows[0].prompt
     res.status(200).json({ content })
   } catch (error) {
     res.status(500).json("Errore durante la lettura del prompt" + error)
