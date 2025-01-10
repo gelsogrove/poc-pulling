@@ -15,25 +15,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Naviga nella directory corretta
-      - name: Navigate to frontend
-        working-directory: daily-milk/frontend
-        run: pwd
-
-      # Installazione di Node.js
+      # Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18.20.4'
+
+      # Debug dei segreti
+      - name: Debug secrets
+        run: |
+          echo "FTP Host: ${{ secrets.FTP_HOST }}"
+          echo "FTP Port: ${{ secrets.FTP_PORT }}"
+          echo "FTP Username: ${{ secrets.FTP_USERNAME }}"
 
       # Installazione delle dipendenze
       - name: Install dependencies
         working-directory: daily-milk/frontend
         run: npm install
 
-      - name: Check for invoicePopup.js
-        run: ls -la daily-milk/frontend/src/www/components/popups/invoices/
-        
       # Build dell'applicazione React
       - name: Build React app
         working-directory: daily-milk/frontend
@@ -42,7 +41,9 @@ jobs:
       # Debug dei file nella directory build
       - name: Debug build directory
         working-directory: daily-milk/frontend
-        run: ls -la ./build
+        run: |
+          echo "Listing build directory contents:"
+          ls -la ./build
 
       # Controllo che la directory build non sia vuota
       - name: Check build directory
@@ -61,5 +62,5 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
-          source: "daily-milk/frontend/build/*" # Percorso aggiornato
+          source: "daily-milk/frontend/build/*"
           target: "/ai/"
