@@ -67,3 +67,4 @@ jobs:
           port: ${{ secrets.FTP_PORT }}
           source: "daily-milk/frontend/build/*"
           target: "/ai/"
+          debug: true
