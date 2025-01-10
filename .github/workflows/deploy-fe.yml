@@ -29,6 +29,12 @@ jobs:
       - name: Build React app
         run: npm run build
 
+      - name: Debug inputs
+      run: |
+        echo "Host: ${{ secrets.FTP_HOST }}"
+        echo "Username: ${{ secrets.FTP_USERNAME }}"
+        echo "Port: ${{ secrets.FTP_PORT }}"
+
       # Upload dei file della cartella build via SFTP
       - name: Upload to SFTP
         uses: appleboy/scp-action@v0.1.7
