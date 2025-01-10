@@ -24,13 +24,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '18.20.4'
 
       # Installazione delle dipendenze
       - name: Install dependencies
         working-directory: daily-milk/frontend
         run: npm install
 
+      - name: Check for invoicePopup.js
+        run: ls -la daily-milk/frontend/src/www/components/popups/invoices/
+        
       # Build dell'applicazione React
       - name: Build React app
         working-directory: daily-milk/frontend
