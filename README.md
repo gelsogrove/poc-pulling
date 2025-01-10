@@ -11,12 +11,9 @@ deploy: 50 %
   ----- quando arriva la risposta decriptarli ancora
   --- il problema e' che non dobbiamom solo criptare il nuovo teso ma tutto il contenuto dell'array content
   -----loggare
-- ENTORNO
--
 
 ===================== DEVELOPMENT =====================
 
-- Mostrare nel pannello modello e temperatura
 - ChatBot con debug
 - USAGE CALCULATION e SPESE DEL MESE
 - tooltips icons

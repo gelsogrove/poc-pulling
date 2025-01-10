@@ -9,63 +9,39 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
-    # Specifica l'ambiente
-    environment: poulin
+    environment: poulin # Specifica l'ambiente da utilizzare
 
     steps:
-      # Checkout del codice sorgente
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18.20.4'
+          node-version: '18'
 
-      # Debug dei segreti
-      - name: Debug secrets
-        run: |
-          echo "FTP Host: ${{ secrets.FTP_HOST }}"
-          echo "FTP Port: ${{ secrets.FTP_PORT }}"
-          echo "FTP Username: ${{ secrets.FTP_USERNAME }}"
-
-      # Installazione delle dipendenze
       - name: Install dependencies
         working-directory: daily-milk/frontend
         run: npm install
 
-      # Build dell'applicazione React
       - name: Build React app
         working-directory: daily-milk/frontend
         run: npm run build
 
-      # Debug dei file nella directory build
-      - name: Debug build directory
+      - name: List build directory contents
         working-directory: daily-milk/frontend
-        run: |
-          echo "Listing build directory contents:"
-          ls -la ./build
+        run: ls -la build
 
-      # Controllo che la directory build non sia vuota
-      - name: Check build directory
-        working-directory: daily-milk/frontend
-        run: |
-          if [ -z "$(ls -A ./build)" ]; then
-            echo "Build directory is empty. Stopping workflow."
-            exit 1
-          fi
+      # Install sshpass
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
 
-      # Upload dei file nella directory build via SFTP
-      - name: Upload to SFTP
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}
-          source: "daily-milk/frontend/build/*"
-          target: "/ai/"
-          strip_components: 0
-          debug: true
+      # Upload files using scp
+      - name: Upload to SFTP using scp
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          echo "Uploading files to SFTP..."
+          sshpass -p $FTP_PASSWORD scp -P 22 -r daily-milk/frontend/build/* $FTP_USERNAME@$FTP_HOST:/ai/
