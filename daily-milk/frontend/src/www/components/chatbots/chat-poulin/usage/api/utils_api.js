@@ -36,6 +36,34 @@ export const response = async (
   }
 }
 
+export const getPromptDetails = async () => {
+  const token = getCookie("token")
+  try {
+    const response = await fetch(
+      `https://poulin-bd075425a92c.herokuapp.com/prompt`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token,
+        }),
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error("Error during initialize data fetch:", error)
+    throw error
+  }
+}
+
 export const getCookie = (name) => {
   const value = `; ${document.cookie}`
   const parts = value.split(`; ${name}=`)

@@ -59,25 +59,6 @@ const getPrompt = async (idPrompt: string): Promise<string | null> => {
   }
 }
 
-const extractValuesFromPrompt = (
-  prompt: string
-): { temperature: number | null; model: string | null } => {
-  try {
-    const temperatureMatch = prompt.match(/TEMPERATURE:\s*([0-9.]+)/i)
-    const modelMatch = prompt.match(/MODEL:\s*([a-zA-Z0-9\-_.:/]+)/i) // Include ':' e '/' per modelli complessi
-
-    const temperature = temperatureMatch
-      ? parseFloat(temperatureMatch[1])
-      : null
-    const model = modelMatch ? modelMatch[1] : null
-
-    return { temperature, model }
-  } catch (error) {
-    console.error("Error extracting values from prompt:", error)
-    return { temperature: null, model: null }
-  }
-}
-
 export function handleError(error: unknown, res: Response): void {
   if (error instanceof Error) {
     console.error("Error:", {
@@ -115,13 +96,7 @@ export function handleError(error: unknown, res: Response): void {
 }
 
 const handleChat: RequestHandler = async (req: Request, res: Response) => {
-  const {
-    conversationId,
-    token,
-    messages,
-    model: userModel,
-    temperature: userTemperature,
-  } = req.body
+  const { conversationId, token, messages } = req.body
 
   if (!conversationId || !token || !Array.isArray(messages)) {
     res.status(400).json({
@@ -142,8 +117,8 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
 
     const { temperature: extractedTemperature, model: extractedModel } =
       extractValuesFromPrompt(prompt)
-    const finalTemperature = extractedTemperature ?? userTemperature ?? 0.7
-    const finalModel = extractedModel ?? userModel ?? "gpt-3.5-turbo"
+    const finalTemperature = extractedTemperature ?? 0.7
+    const finalModel = extractedModel ?? "gpt-3.5-turbo"
 
     const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
 
@@ -205,3 +180,9 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
 chatbotRouter.post("/response", handleChat)
 
 export default chatbotRouter
+function extractValuesFromPrompt(prompt: string): {
+  temperature: any
+  model: any
+} {
+  throw new Error("Function not implemented.")
+}

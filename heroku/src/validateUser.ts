@@ -56,11 +56,21 @@ export const getUserIdByToken = async (
   }
 }
 
-/**
- * Funzione di test (esempio) per convalidare un token.
- * @param token - Il token da testare
- * @returns Sempre `null` per scopi di test
- */
-export const test = async (token: string): Promise<string | null> => {
-  return null
+const extractValuesFromPrompt = (
+  prompt: string
+): { temperature: number | null; model: string | null } => {
+  try {
+    const temperatureMatch = prompt.match(/TEMPERATURE:\s*([0-9.]+)/i)
+    const modelMatch = prompt.match(/MODEL:\s*([a-zA-Z0-9\-_.:/]+)/i) // Include ':' e '/' per modelli complessi
+
+    const temperature = temperatureMatch
+      ? parseFloat(temperatureMatch[1])
+      : null
+    const model = modelMatch ? modelMatch[1] : null
+
+    return { temperature, model }
+  } catch (error) {
+    console.error("Error extracting values from prompt:", error)
+    return { temperature: null, model: null }
+  }
 }

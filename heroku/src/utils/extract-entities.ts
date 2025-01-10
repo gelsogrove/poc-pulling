@@ -142,6 +142,9 @@ const sensitiveDataArray: {
     value: "TOKEN_PRODUCT_0131",
     type: "PRODUCT",
   },
+  { key: "Mash", value: "TOKEN_OTHER_00132", type: "PRODUCT" },
+  { key: "Pallet", value: "TOKEN_OTHER_00133", type: "PRODUCT" },
+  { key: "Mineral", value: "TOKEN_OTHER_00134", type: "PRODUCT" },
 
   // VENDITORI
   { key: "GINGUE, D", value: "TOKEN_SELLER_0001", type: "SELLER" },
@@ -152,12 +155,15 @@ const sensitiveDataArray: {
   { key: "FLINT, H", value: "TOKEN_SELLER_0006", type: "SELLER" },
   { key: "ANDREW, A", value: "TOKEN_SELLER_0007", type: "SELLER" },
 
-  // OTHER (Eur, Dollar, Farm, Family)
+  // OTHER
   { key: "Eur", value: "TOKEN_OTHER_0001", type: "OTHER" },
   { key: "Dollar", value: "TOKEN_OTHER_0002", type: "OTHER" },
   { key: "Farm", value: "TOKEN_OTHER_0003", type: "OTHER" },
   { key: "Family", value: "TOKEN_OTHER_0004", type: "OTHER" },
-  { key: "Bulk", value: "TOKEN_OTHER_0004", type: "OTHER" },
+  { key: "Bulk", value: "TOKEN_OTHER_0005", type: "OTHER" },
+  { key: "LLC", value: "TOKEN_OTHER_0006", type: "OTHER" },
+  { key: "view", value: "TOKEN_OTHER_0007", type: "OTHER" },
+  { key: "Dairy", value: "TOKEN_OTHER_0008", type: "OTHER" },
 ]
 
 // Funzione per tokenizzare (sostituire i dati sensibili con i rispettivi token)

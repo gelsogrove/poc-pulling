@@ -38,3 +38,44 @@ CREATE TABLE items (
 -- Indici aggiuntivi per ottimizzare le query
 CREATE INDEX idx_customer_orders ON orders (customer_id);
 CREATE INDEX idx_order_items ON items (order_id);
+
+
+
+
+
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('BALL11', 'Ballard Acres Farm', 'KEYM4', 'GINGUE, D', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('CONA13', 'Conant''s Riverside Farm LLC', 'KEYM4', 'CARABEAU, M', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('EAST10', 'CTS Dairy', 'RETAIL', 'PIERCE, R.', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('DIMO10', 'Dimock Farms LLC', 'KEYM4', 'MOLESKY, P', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('GERV13', 'Gervais Family - Farm #2', 'KEYM4', 'CARABEAU, M', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('GOTH10', 'Gotham Family Farm LLC', 'RETAIL', 'WHITTAKER, E', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('HIDD10', 'Hidden View Farm', 'KEYM4', 'WHITTAKER, E', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('HIGH10', 'Highway View Farm', 'RETAIL', 'ST. ONGE, M', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('KEEW10', 'Keewaydin Farm', 'RETAIL', 'FLINT, H', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('MAPL14', 'Mapleline Farm', 'RETAIL', 'ST. ONGE, M', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('NOLA10', 'Mike & Donna Nolan', 'RETAIL', 'ANDREW, A', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('NOLA11', 'Nolan Family Farm LLC', 'RETAIL', 'CARABEAU, M', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('ODON11', 'Patrick O''Donnell', 'RETAIL', 'FLINT, H', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('SMIT21', 'Smith Dairy LLC', 'RETAIL', 'ANDREW, A', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('SIZE10', 'Sizen Dairy Farm', 'RETAIL', 'DOANE, M', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('TAFT11', 'Bruce & Mary Taft', 'KEYM4', 'CARABEAU, M', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('VERN10', 'Vern-Mont Farm LLC', 'RETAIL', 'ST. ONGE, M', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('WEST14', 'Westminster Farms', 'RETAIL', 'ST. ONGE, M', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('WOOD10', 'Wood Farm LLC', 'RETAIL', 'PIERCE, R.', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('UVM11', 'UVM Paul Miller Research Cent', 'RETAIL', 'CARABEAU, M', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('HIGH12', 'Highland Farms Dairy LLC', 'RETAIL', 'FLINT, H', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('TAYL12', 'Taylor Dairy Farm', 'RETAIL', 'FLINT, H', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('DEVI11', 'Devine Farms Inc.', 'RETAIL', 'ST. ONGE, M', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('GERV10', 'Gervais Family Farm', 'KEYM4', 'GINGUE, D', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('KELL14', 'Kelly Dairy LLC', 'RETAIL', 'WHITTAKER, E', 'ECabrera');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('REMI11', 'Remillard Farms', 'RETAIL', 'MOLESKY, P', 'MMills');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('PINE11', 'Pinello/Savello Farm', 'RETAIL', 'FLINT, H', 'MMills');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('JORD10', 'Jordan Dairy Farms Inc.', 'RETAIL', 'ST. ONGE, M', 'MMills');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('NAUG10', 'Naughtaveel Farm', 'RETAIL', 'FLINT, H', 'MMills');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('BARN12', 'Barnes Family Farm', 'KEYM4', 'DOANE, M', 'MMills');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('BARS10', 'Barstow''s Longview Farm LLC', 'RETAIL', 'ST. ONGE, M', 'MMills');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('POUL96', 'Joshua Poulin', 'WHOLESALE', 'HOUSE', 'MMills');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('HIGH13', 'High Lawn Farm LLC', 'RETAIL', 'HALL,I', 'MMills');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('HYTO10', 'Hytone Farm LLC', 'RETAIL', 'HALL,I', 'MMills');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('HARK10', 'Harkdale Farms Inc.', 'RETAIL', 'LOVELL, A', 'MMills');
+INSERT INTO customers (customer_id, name, class, salesperson, user_id) VALUES ('MACH10', 'Ronald & Cheryl Machia', 'RETAIL', 'GINGUE, D', 'NULL');

@@ -4,7 +4,6 @@
 const sensitiveDataMap: { [key: string]: string } = {
   "Andrea Gelsomino": "TOKEN_0001",
   Milano: "TOKEN_0001",
-  pieno: "TOKEN_0002",
 }
 
 // Funzione per tokenizzare (sostituire i dati sensibili con i rispettivi token)

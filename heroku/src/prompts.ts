@@ -29,9 +29,17 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
       return
     }
 
+    const { temperature, model } = extractValuesFromPrompt(content)
+    const truncatedPrompt = content.split("=== ENDPROMPT ===")[0].trim()
+
     const result = await pool.query(
-      "UPDATE prompts SET prompt = $1 WHERE idPrompt = $2 RETURNING *",
-      [content, "a2c502db-9425-4c66-9d92-acd3521b38b5"]
+      "UPDATE prompts SET prompt = $1, model = $2, temperature= $3 WHERE idPrompt = $4 RETURNING *",
+      [
+        truncatedPrompt,
+        model,
+        temperature,
+        "a2c502db-9425-4c66-9d92-acd3521b38b5",
+      ]
     )
 
     if (result.rowCount === 0) {
@@ -53,7 +61,7 @@ const PostGetPromptHandler: RequestHandler = async (req, res) => {
     if (!(await validateToken(token, res))) return
 
     const result = await pool.query(
-      "SELECT prompt FROM prompts WHERE idPrompt = $1",
+      "SELECT prompt,model,temperature FROM prompts WHERE idPrompt = $1",
       ["a2c502db-9425-4c66-9d92-acd3521b38b5"]
     )
 
@@ -62,7 +70,7 @@ const PostGetPromptHandler: RequestHandler = async (req, res) => {
       return
     }
 
-    const content = result.rows[0].prompt
+    const content = result.rows[0]
     res.status(200).json({ content })
   } catch (error) {
     res.status(500).json("Errore durante la lettura del prompt" + error)
@@ -73,3 +81,8 @@ promptRouter.put("/", UpdatePromptHandler)
 promptRouter.post("/", PostGetPromptHandler)
 
 export default promptRouter
+function extractValuesFromPrompt(
+  prompt: (message?: string, _default?: string) => string | null
+): { temperature: any; model: any } {
+  throw new Error("Function not implemented.")
+}

@@ -13,6 +13,7 @@ import {
 import React, { useEffect, useState } from "react"
 import "./Usage.css"
 import { fetchUsageData } from "./api/usageApi"
+import { getPromptDetails } from "./api/utils_api"
 
 ChartJS.register(
   CategoryScale,
@@ -29,16 +30,28 @@ const Usage = ({ IdConversation }) => {
   const [usageData, setUsageData] = useState(null)
   const [initialTotalCurrentMonth, setInitialTotalCurrentMonth] = useState(0)
 
+  const [temperature, setTemperature] = useState(null)
+  const [model, setModel] = useState(null)
+
   useEffect(() => {
+    // Usage
     const getData = async () => {
       const data = await fetchUsageData()
-
       setUsageData(data)
       if (data && data.totalCurrentMonth) {
         setInitialTotalCurrentMonth(data.totalCurrentMonth)
       }
     }
+
+    // Temperature Model
+    const getPromptDetasil = async () => {
+      const { temperature, model } = await getPromptDetails()
+      setTemperature(temperature)
+      setModel(model)
+    }
+
     getData()
+    getPromptDetasil()
   }, [])
 
   return (
@@ -60,17 +73,12 @@ const Usage = ({ IdConversation }) => {
             $
           </h3>
           <hr />
-          Last upate:
-          <h4>20/12/2025 19:40</h4>
+          Model:
+          <h4>{model}</h4>
           <hr />
-          client of the month
-          <h4>Farm village snc</h4>
+          Temperature:
+          <h4>{temperature}</h4>
           <hr />
-          Product of the month
-          <h4>comita xxx</h4>
-          <hr />
-          Seller of the month
-          <h4>Andrea Gelsomino</h4>
         </>
       ) : (
         <div className="loading-message">Loading...</div>
