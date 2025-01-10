@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch
 
 jobs:
   deploy:
@@ -18,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18" # Specifica la versione di Node.js, se necessario
+          node-version: '18'
 
       # Installazione delle dipendenze
       - name: Install dependencies
@@ -29,13 +30,12 @@ jobs:
         run: npm run build
 
       # Upload dei file della cartella build via SFTP
-      - name: Deploy to SFTP
-        uses: burnett01/rsync-deployments@5.2
+      - name: Upload to SFTP
+        uses: appleboy/scp-action@v0.1.7
         with:
-          switches: "-avz --delete" # Opzioni rsync per sincronizzare e rimuovere file obsoleti
-          path: ./build/ # Cartella build
-          remote_path: /ai/ # Cartella remota sul server
-          remote_host: ${{ secrets.FTP_HOST }}
-          remote_user: ${{ secrets.FTP_USERNAME }}
-          remote_port: ${{ secrets.FTP_PORT }}
-          remote_key: ${{ secrets.FTP_PASSWORD }}
+          host: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT }}
+          source: "./build/*"
+          target: "/ai/"
