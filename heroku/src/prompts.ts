@@ -34,12 +34,7 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
 
     const result = await pool.query(
       "UPDATE prompts SET prompt = $1, model = $2, temperature= $3 WHERE idPrompt = $4 RETURNING *",
-      [
-        truncatedPrompt,
-        model,
-        temperature,
-        "a2c502db-9425-4c66-9d92-acd3521b38b5",
-      ]
+      [content, model, temperature, "a2c502db-9425-4c66-9d92-acd3521b38b5"]
     )
 
     if (result.rowCount === 0) {
@@ -70,7 +65,7 @@ const PostGetPromptHandler: RequestHandler = async (req, res) => {
       return
     }
 
-    const content = result.rows[0].prompt
+    const content = result.rows[0]
     res.status(200).json({ content })
   } catch (error) {
     res.status(500).json("Errore durante la lettura del prompt" + error)
