@@ -98,7 +98,6 @@ const ChatPoulin = ({ openPanel }) => {
 
       setConversationHistory((prev) => [
         ...prev,
-
         {
           role: "assistant",
           content,

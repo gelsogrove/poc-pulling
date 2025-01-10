@@ -20,7 +20,7 @@ const PromptsForm = ({ onClose }) => {
         console.log("Prompt fetched:", prompt)
         setFormData((prevData) => ({
           ...prevData,
-          introduction: prompt.content || "",
+          introduction: prompt.prompt || "ddd",
         }))
       } catch (error) {
         console.error("Errore durante il recupero del prompt:", error)

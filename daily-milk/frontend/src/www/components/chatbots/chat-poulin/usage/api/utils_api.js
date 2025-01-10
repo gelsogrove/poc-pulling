@@ -57,7 +57,7 @@ export const getPromptDetails = async () => {
     }
 
     const data = await response.json()
-    return data
+    return data.content
   } catch (error) {
     console.error("Error during initialize data fetch:", error)
     throw error
