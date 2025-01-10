@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react"
 import { Bar } from "react-chartjs-2"
 import { fetchUsageData } from "../../chatbots/chat-poulin/usage/api/usageApi"
 import monthlyData from "./api/monthlyData"
-import "./invoicePopup.css"
+import "./InvoicePopup.css"
 
 const InvoicePopup = ({ onClose }) => {
   const [data, setData] = useState([])
