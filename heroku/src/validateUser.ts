@@ -56,7 +56,7 @@ export const getUserIdByToken = async (
   }
 }
 
-const extractValuesFromPrompt = (
+export const extractValuesFromPrompt = (
   prompt: string
 ): { temperature: number | null; model: string | null } => {
   try {

@@ -1,6 +1,6 @@
 import { RequestHandler, Response, Router } from "express"
 import { pool } from "../server.js"
-import { getUserIdByToken } from "./validateUser.js"
+import { extractValuesFromPrompt, getUserIdByToken } from "./validateUser.js"
 
 const promptRouter = Router()
 
@@ -81,8 +81,3 @@ promptRouter.put("/", UpdatePromptHandler)
 promptRouter.post("/", PostGetPromptHandler)
 
 export default promptRouter
-function extractValuesFromPrompt(
-  prompt: (message?: string, _default?: string) => string | null
-): { temperature: any; model: any } {
-  throw new Error("Function not implemented.")
-}

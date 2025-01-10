@@ -4,7 +4,7 @@ import dotenv from "dotenv"
 import { Request, RequestHandler, Response, Router } from "express"
 import { pool } from "../server.js"
 import { tokenize, untokenize } from "./utils/extract-entities.js"
-import { getUserIdByToken } from "./validateUser.js"
+import { extractValuesFromPrompt, getUserIdByToken } from "./validateUser.js"
 
 dotenv.config()
 
@@ -180,9 +180,3 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
 chatbotRouter.post("/response", handleChat)
 
 export default chatbotRouter
-function extractValuesFromPrompt(prompt: string): {
-  temperature: any
-  model: any
-} {
-  throw new Error("Function not implemented.")
-}
