@@ -9,12 +9,16 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: poulin # Specifica l'ambiente per accedere ai segreti
 
     steps:
       # Checkout del codice sorgente
       - name: Checkout code
         uses: actions/checkout@v3
+
+      # Naviga nella directory corretta
+      - name: Navigate to frontend
+        working-directory: daily-milk/frontend
+        run: pwd
 
       # Installazione di Node.js
       - name: Setup Node.js
@@ -24,20 +28,29 @@ jobs:
 
       # Installazione delle dipendenze
       - name: Install dependencies
+        working-directory: daily-milk/frontend
         run: npm install
 
       # Build dell'applicazione React
       - name: Build React app
+        working-directory: daily-milk/frontend
         run: npm run build
 
-      # Debug dei parametri passati
-      - name: Debug inputs
-        run: |
-          echo "Host: ${{ secrets.FTP_HOST }}"
-          echo "Username: ${{ secrets.FTP_USERNAME }}"
-          echo "Port: ${{ secrets.FTP_PORT }}"
+      # Debug dei file nella directory build
+      - name: Debug build directory
+        working-directory: daily-milk/frontend
+        run: ls -la ./build
 
-      # Upload dei file della cartella build via SFTP
+      # Controllo che la directory build non sia vuota
+      - name: Check build directory
+        working-directory: daily-milk/frontend
+        run: |
+          if [ -z "$(ls -A ./build)" ]; then
+            echo "Build directory is empty. Stopping workflow."
+            exit 1
+          fi
+
+      # Upload dei file nella directory build via SFTP
       - name: Upload to SFTP
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -45,5 +58,5 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
-          source: "./build/*"
+          source: "daily-milk/frontend/build/*" # Percorso aggiornato
           target: "/ai/"
