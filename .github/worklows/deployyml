@@ -1,0 +1,41 @@
+name: Deploy to FTP
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout del codice sorgente
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Installazione di Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18" # Specifica la versione di Node.js, se necessario
+
+      # Installazione delle dipendenze
+      - name: Install dependencies
+        run: npm install
+
+      # Build dell'applicazione React
+      - name: Build React app
+        run: npm run build
+
+      # Upload dei file della cartella build via SFTP
+      - name: Deploy to SFTP
+        uses: burnett01/rsync-deployments@5.2
+        with:
+          switches: "-avz --delete" # Opzioni rsync per sincronizzare e rimuovere file obsoleti
+          path: ./build/ # Cartella build
+          remote_path: /ai/ # Cartella remota sul server
+          remote_host: ${{ secrets.FTP_HOST }}
+          remote_user: ${{ secrets.FTP_USERNAME }}
+          remote_port: ${{ secrets.FTP_PORT }}
+          remote_key: ${{ secrets.FTP_PASSWORD }}

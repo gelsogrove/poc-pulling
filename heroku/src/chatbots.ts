@@ -70,15 +70,13 @@ export function handleError(error: unknown, res: Response): void {
 
     if ((error as any).code === "ECONNABORTED") {
       res.status(500).json({
-        message:
-          "La richiesta ha impiegato troppo tempo per essere elaborata. Riprova più tardi.",
+        message: "Timeout try again later.",
       })
     } else if ((error as any).response) {
       const errorMessage =
-        (error as any).response.data?.message ||
-        "Errore sconosciuto dal server remoto."
+        (error as any).response.data?.message || "OpenRouter error."
       res.status(200).json({
-        message: `Errore dal server remoto: ${errorMessage}`,
+        message: `${errorMessage}`,
       })
     } else {
       res.status(200).json({
