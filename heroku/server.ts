@@ -41,16 +41,14 @@ app.set("trust proxy", 1)
 app.use(
   helmet({
     contentSecurityPolicy: {
-      /*
       directives: {
         defaultSrc: ["'self'"], // Permetti solo risorse dallo stesso dominio
-        scriptSrc: ["'self'", "https://trusted.cdn.com"], // Aggiungi domini fidati per gli script
-        styleSrc: ["'self'", "https://trusted.cdn.com"], // Aggiungi domini fidati per gli stili
-        imgSrc: ["'self'", "data:", "https://trusted.cdn.com"], // Permetti immagini dal tuo dominio e da un CDN
-        connectSrc: ["'self'", "https://api.trusted.com"], // Permetti connessioni a un'API fidata
+        scriptSrc: ["'self'", "https://ai.dairy-tools.com/"], // Aggiungi domini fidati per gli script
+        styleSrc: ["'self'", "https://ai.dairy-tools.com/"], // Aggiungi domini fidati per gli stili
+        imgSrc: ["'self'", "data:", "hhttps://ai.dairy-tools.com/"], // Permetti immagini dal tuo dominio e da un CDN
+        connectSrc: ["'self'", "hhttps://ai.dairy-tools.com/"], // Permetti connessioni a un'API fidata
         // Aggiungi altre direttive se necessario
       },
-      */
     },
   })
 )
