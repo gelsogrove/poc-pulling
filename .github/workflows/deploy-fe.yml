@@ -10,6 +10,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    # Specifica l'ambiente
+    environment: poulin
+
     steps:
       # Checkout del codice sorgente
       - name: Checkout code
