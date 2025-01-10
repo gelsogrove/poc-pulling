@@ -5,9 +5,6 @@ git add .
 git commit -m "deploy"
 git push
 
-# 2. Mostra i log di Heroku
-echo '*********'
-heroku logs --tail --app poulin
 
 # 3. Esegui il build del progetto con npm
 echo 'Running npm build...'
@@ -20,4 +17,9 @@ cd ../../
 echo 'Uploading files to server...'
 sshpass -p 'Almogavers@123' scp -P 22 -r daily-milk/frontend/build/* u94121824@home744730785.1and1-data.host:/ai/
 
-echo 'Deployment completed successfully!'
+
+# 2. Mostra i log di Heroku
+echo '*********'
+heroku logs --tail --app poulin
+
+
