@@ -94,54 +94,29 @@ table tr td {
 }
 
 .like-unlike-icons {
-  display: inline-flex; /* Per centrare le icone */
-  align-items: center; /* Allinea verticalmente */
-  position: relative; /* Necessario per posizionare il testo sopra l'icona */
+  display: flex; /* Utilizza il layout flessibile */
+  align-items: center; /* Centra verticalmente le icone */
+  justify-content: flex-end; /* Allinea le icone a destra */
+  gap: 8px; /* Spazio tra le icone */
+  width: 100%; /* Assicura che il contenitore occupi tutta la larghezza */
 }
 
 .like-unlike-icons span {
-  margin-right: 2px; /* Distanza tra le icone (ridotto di 3px) */
-  color: gray; /* Colore grigio per l'icona */
-  cursor: pointer; /* Cambia il cursore per indicare che sono cliccabili */
-  filter: grayscale(100%); /* Applica il filtro grigio */
-  padding: 8px; /* Spaziatura interna per il cerchio */
-  font-size: 16px; /* Dimensione del font */
-  border-radius: 50%; /* Rende il bordo rotondo */
-  transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s; /* Aggiunta di transizioni per un effetto più fluido */
+  cursor: pointer; /* Indica che l'elemento è cliccabile */
+  font-size: 1.4rem; /* Dimensione delle icone */
+  transition: transform 0.3s ease, filter 0.3s ease; /* Transizione fluida per colore e scala */
+  filter: grayscale(100%); /* Rende l'icona in scala di grigi */
 }
 
-/* Cambia il colore e ingrandisce l'icona al passaggio del mouse */
 .like-unlike-icons span:hover {
-  color: #808080; /* Colore grigio scuro al passaggio del mouse */
-  filter: none; /* Rimuove il filtro grigio al passaggio del mouse */
-  transform: scale(1.25); /* Ingrandisce l'icona al 125% */
-  background-color: rgba(
-    200,
-    200,
-    200,
-    0.3
-  ); /* Colore di sfondo leggero al passaggio del mouse */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombra per far risaltare l'icona */
+  filter: grayscale(0%); /* Rimuove il filtro grigio al passaggio del mouse */
+  transform: scale(
+    1.2
+  ); /* Ingrandisce leggermente l'icona al passaggio del mouse */
 }
 
-/* Stile per il testo sopra l'icona */
-.like-unlike-icons .icon-label {
-  position: absolute; /* Posiziona il testo sopra l'icona */
-  bottom: 30px; /* Sposta il testo sopra l'icona */
-  left: 50%; /* Centra orizzontalmente */
-  transform: translateX(-50%); /* Centra il testo */
-  color: white; /* Colore del testo bianco */
-  font-size: 12px; /* Dimensione del font più piccola */
-  font-weight: bold; /* Grassetto per il testo */
-  text-align: center; /* Allinea il testo al centro */
-  background-color: black; /* Sfondo nero per il testo */
-  padding: 2px 5px; /* Spaziatura interna per il testo */
-  border-radius: 5px; /* Rende il bordo del testo arrotondato */
-  opacity: 0; /* Inizialmente invisibile */
-  transition: opacity 0.2s; /* Transizione per l'opacità */
-}
-
-/* Mostra il testo al passaggio del mouse */
-.like-unlike-icons span:hover .icon-label {
-  opacity: 1; /* Rende il testo visibile al passaggio del mouse */
+.actions {
+  padding: 14px;
+  min-height: 0px !important;
+  margin-top: -10px;
 }

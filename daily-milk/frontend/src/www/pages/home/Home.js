@@ -72,7 +72,7 @@ const Home = () => {
                 <div className="subtitle"> </div>
               </div>
             </div>
-            <div className="actions">
+            <div className="actions-chatbot">
               <button className="btn" onClick={() => openPopup("prompts")}>
                 <i className="fas fa-cogs"></i>
                 <div className="tooltip">Prompts</div>
