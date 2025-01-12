@@ -61,24 +61,33 @@ const MessageList = ({ messages }) => {
   )
 }
 
-// Funzione aggiornata per parsare e formattare il JSON annidato
 const renderMessageText = (text, sender, debugMode) => {
   let output = ""
+
   if (sender === "user") {
     console.log(text)
     output = text
+    output = output.replace(/```json/g, "").replace(/```/g, "")
   } else {
     try {
-      const parsedMessage = JSON.parse(text.message)
+      text = text.message.replace(/```json/g, "").replace(/```/g, "")
+
+      const parsedMessage = JSON.parse(text)
+      // Mostra solo "response" quando debugMode è disattivato
       output = debugMode
-        ? JSON.stringify(parsedMessage, null, 2)
-        : parsedMessage.response
+        ? JSON.stringify(parsedMessage, null, 2) // Mostra l'intero oggetto in JSON
+        : parsedMessage.response || "" // Mostra solo il valore di "response"
     } catch (error) {
-      output = "Invalid message format" // Messaggio in caso di JSON non valido
+      output = text.message
+      console.log(error)
     }
   }
 
-  return <pre>{output}</pre>
+  if (debugMode) {
+    return <pre>{output}</pre>
+  } else {
+    return output
+  }
 }
 
 const handleUnlike = (id) => {

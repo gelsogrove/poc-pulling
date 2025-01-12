@@ -20,11 +20,11 @@
   padding: 10px !important;
   border-radius: 15px !important;
   font-size: 1rem !important;
-
   border: 2px solid #ccc !important;
+
   word-wrap: break-word !important; /* Permette al testo di andare a capo */
-  white-space: normal !important; /* Consente il wrapping del testo */
-  overflow-wrap: auto !important; /* Consente il wrapping del testo */
+  white-space: pre-wrap !important; /* Consente il wrapping del testo */
+  overflow-wrap: break-word !important; /* Per sicurezza */
 }
 
 .user-message pre {
@@ -42,7 +42,8 @@
 }
 
 .message-text {
-  white-space: pre-wrap;
+  max-width: 500px;
+  width: 500px;
 }
 
 .table-container {
@@ -119,4 +120,10 @@ table tr td {
   padding: 14px;
   min-height: 0px !important;
   margin-top: -10px;
+}
+
+.msgcontainer {
+  border: 1px solid red;
+  width: 500px;
+  height: 300px;
 }
