@@ -5,6 +5,7 @@ import ChatInput from "../shared/chatinput/ChatInput"
 import MessageList from "../shared/messagelist/MessageList"
 import "./ChatPoulin.css"
 import { response } from "./usage/api/utils_api.js"
+import Usage from "./usage/Usage.js"
 
 import {
   BarElement,
@@ -17,8 +18,6 @@ import {
   Title,
   Tooltip,
 } from "chart.js"
-
-import Usage from "./usage/Usage.js"
 
 ChartJS.register(
   CategoryScale,
@@ -50,6 +49,31 @@ const ChatPoulin = ({ openPanel }) => {
   useEffect(() => {
     const IdConversation = uuidv4()
     setIDConversation(IdConversation)
+
+    // Recupera il nome dall'utente
+    const userName = ((name) =>
+      name
+        ? name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()
+        : "Guest")(Cookies.get("name") || "Guest")
+
+    // Aggiungi il messaggio iniziale di benvenuto
+    const initialBotMessage = {
+      id: uuidv4(),
+      sender: "bot",
+      text: {
+        message: JSON.stringify({
+          response: `Hello, ${userName}! Welcome to the chat. How can I assist you today?`,
+        }),
+      },
+    }
+
+    setMessages([initialBotMessage])
+    setConversationHistory([
+      {
+        role: "assistant",
+        content: `Hello, ${userName}! Welcome to the chat. How can I assist you today?`,
+      },
+    ])
   }, [])
 
   useEffect(() => {
@@ -62,11 +86,9 @@ const ChatPoulin = ({ openPanel }) => {
     }
 
     try {
-      // LOADING
       setInputValue("")
       setIsLoading(true)
 
-      // GET USER MESSAGE
       const userMessage = {
         id: uuidv4(),
         sender: "user",
@@ -74,13 +96,11 @@ const ChatPoulin = ({ openPanel }) => {
       }
       setMessages((prevMessages) => [...prevMessages, userMessage])
 
-      // SET HISTORY
       setConversationHistory((prev) => [
         ...prev,
         { role: "user", content: message },
       ])
 
-      // BOT ANSWER
       const botResponse = await response(
         apiUrl,
         Cookies.get("token"),
@@ -104,7 +124,6 @@ const ChatPoulin = ({ openPanel }) => {
         },
       ])
 
-      // SET ANSWER
       setMessages((prevMessages) =>
         prevMessages.concat({
           id: uuidv4(),
@@ -118,7 +137,7 @@ const ChatPoulin = ({ openPanel }) => {
         { role: "user", content: message },
         {
           role: "assistant",
-          content: error.message || "Si è verificato un errore.",
+          content: error.message || "An error occurred.",
         },
       ])
     } finally {
