@@ -1,8 +1,7 @@
 ===================== STATUS =====================
-heroku : 60%
-daily-milk FE: 55%
-daily-milk BE: 0%
-deploy: 50 %
+heroku : 70%
+daily-milk FE: 60%
+daily-milk BE: 70%
 
 ============================ DOUBT =====================
 
@@ -14,7 +13,6 @@ deploy: 50 %
 
 ===================== DEVELOPMENT =====================
 
-- ChatBot con debug
 - USAGE CALCULATION e SPESE DEL MESE
 - tooltips icons
 - unliked
@@ -22,15 +20,10 @@ deploy: 50 %
 
 ===================== DAILYMILK =====================
 
-- ENTORNO su I
-- FTP PER DEPLOY
-- HTTPS
-- DUMP + DB upload and MAPPER
-- API PER LA SELECT
 - API Statistiche INIZIALI per il chatbot
-- SQL DENTRO role SYSTEM (chain)
 - LOGIN WITH DAILIYMILK
-- DEPLOY TO DAILIYMILK
+  -load file and update
+- altre info
 
 ===================== NIC$ TO HAVE =====================
 

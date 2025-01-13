@@ -1,3 +1,4 @@
+import axios from "axios"
 import Cookies from "js-cookie"
 import React, { useEffect, useRef, useState } from "react"
 import { v4 as uuidv4 } from "uuid"
@@ -101,7 +102,7 @@ const ChatPoulin = ({ openPanel }) => {
         { role: "user", content: message },
       ])
 
-      const botResponse = await response(
+      let botResponse = await response(
         apiUrl,
         Cookies.get("token"),
         Cookies.get("name"),
@@ -110,19 +111,23 @@ const ChatPoulin = ({ openPanel }) => {
       )
 
       let content
+      let parsedResponse
       try {
-        content = JSON.parse(botResponse.message).response
+        parsedResponse = JSON.parse(botResponse.message)
+        content = parsedResponse.response
       } catch {
+        parsedResponse = {}
         content = botResponse.message
       }
 
-      setConversationHistory((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content,
-        },
-      ])
+      // MIDLEWARA
+      if (parsedResponse.sql !== undefined) {
+        botResponse = await middlewareSQL(
+          botResponse,
+          conversationHistory,
+          setConversationHistory
+        )
+      }
 
       setMessages((prevMessages) =>
         prevMessages.concat({
@@ -131,6 +136,14 @@ const ChatPoulin = ({ openPanel }) => {
           text: botResponse,
         })
       )
+
+      setConversationHistory((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content, // SOLO TESTO
+        },
+      ])
     } catch (error) {
       setConversationHistory((prev) => [
         ...prev,
@@ -142,6 +155,75 @@ const ChatPoulin = ({ openPanel }) => {
       ])
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const middlewareSQL = async (
+    botResponse,
+    conversationHistory,
+    setConversationHistory
+  ) => {
+    try {
+      // Step 1: Parse il messaggio del bot per estrarre la query SQL
+      const parsedResponse = JSON.parse(botResponse.message || "{}")
+      const sqlQuery = parsedResponse.sql
+
+      // Step 2: Controlla se il messaggio contiene una query SQL
+      if (!sqlQuery) {
+        return botResponse // Nessuna query SQL presente, restituisce la risposta originale
+      }
+
+      // Step 3: Esegui la query SQL tramite l'API con gestione degli errori
+      let sqlResponse
+      try {
+        const apiUrl = `https://ai.dairy-tools.com/api/sql.php?query=${encodeURIComponent(
+          sqlQuery
+        )}`
+        sqlResponse = await axios.get(apiUrl) // Esegue la chiamata API per eseguire la query SQL
+      } catch (error) {
+        // Step 4: Gestione degli errori della query SQL
+        // Se la query fallisce, restituisce un messaggio di errore al bot
+        return {
+          ...botResponse,
+          message: JSON.stringify({
+            response:
+              "Query Error: Unable to execute the SQL query. Please check the query or try again later.",
+          }),
+        }
+      }
+
+      // Step 5: Prepara il messaggio con i risultati SQL da inviare a OpenAI
+      const sqlResultMessage = {
+        role: "system",
+        content: `SQL Query Result: ${JSON.stringify(sqlResponse.data)}`, // Contiene i risultati della query SQL
+      }
+
+      // Step 6: Trasforma i risultati SQL in una risposta NLP tramite OpenAI
+      const openAiResponse = await response(
+        "https://api.openai.com/v1/chat/completions", // Endpoint OpenAI
+        Cookies.get("token"), // Token di autenticazione
+        Cookies.get("name"), // Nome utente (opzionale)
+        uuidv4(), // Nuovo ID per la conversazione, se necessario
+        [sqlResultMessage] // Invio solo del messaggio con i risultati SQL
+      )
+
+      // Step 7: Aggiungi la risposta NLP di OpenAI alla cronologia della conversazione
+      setConversationHistory((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: openAiResponse.message || "No response from OpenAI.", // Aggiunge la risposta NLP
+        },
+      ])
+
+      // Step 8: Restituisce al bot una risposta combinata con OpenAI
+      return {
+        ...botResponse,
+        message: openAiResponse.message || "No response from OpenAI.", // Include solo la risposta NLP
+      }
+    } catch (error) {
+      // Step 9: Gestione degli errori generali del middleware SQL
+      throw new Error("Failed to process SQL query.") // Lancia un'eccezione per errori non gestiti
     }
   }
 

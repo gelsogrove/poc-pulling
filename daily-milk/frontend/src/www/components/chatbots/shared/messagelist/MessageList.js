@@ -70,7 +70,7 @@ const renderMessageText = (text, sender, debugMode) => {
     output = output.replace(/```json/g, "").replace(/```/g, "")
   } else {
     try {
-      text = text.message.replace(/```json/g, "").replace(/```/g, "")
+      //   text = text.message.replace(/```json/g, "").replace(/```/g, "")
 
       const parsedMessage = JSON.parse(text)
       // Mostra solo "response" quando debugMode è disattivato

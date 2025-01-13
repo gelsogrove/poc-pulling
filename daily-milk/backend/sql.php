@@ -5,8 +5,24 @@ $database = 'dbs13687841';
 $user_name = 'dbu1754291';
 $password = 'Almogavers@123';
 
+// Abilita CORS per localhost:3000 e 127.0.0.1
+$allowedOrigins = ['http://localhost:3000', 'http://127.0.0.1'];
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+if (in_array($origin, $allowedOrigins)) {
+    header('Access-Control-Allow-Origin: ' . $origin);
+    header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    // Risponde alle richieste OPTIONS per il preflight CORS
+    http_response_code(200);
+    exit;
+}
+
 try {
-    // Connessione al databases
+    // Connessione al database
     $pdo = new PDO("mysql:host=$host_name;dbname=$database;charset=utf8", $user_name, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
