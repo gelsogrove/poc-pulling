@@ -44,7 +44,7 @@ export const middlewareSQL = async (
   // 2. Creiamo un messaggio di sistema con il risultato della query
   const sqlResultMessage = {
     role: "system",
-    content: `ritorna la seguente lista in una tabella html con theader e tbody senza la proprieta sql : ${JSON.stringify(
+    content: `ritorna la seguente lista  senza il nodo sql : ${JSON.stringify(
       sqlResponse.data
     )}`,
   }

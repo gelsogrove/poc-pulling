@@ -13,7 +13,7 @@ const OPENROUTER_HEADERS = {
   Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
   "Content-Type": "application/json",
 }
-const MAX_TOKENS = 3500
+const MAX_TOKENS = 5000
 const chatbotRouter = Router()
 
 if (!process.env.OPENROUTER_API_KEY) {
