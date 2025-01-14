@@ -65,29 +65,27 @@ const renderMessageText = (text, sender, debugMode) => {
   let output = ""
 
   if (sender === "user") {
-    console.log(text)
-    output = text
-    output = output.replace(/```json/g, "").replace(/```/g, "")
+    // Se è un messaggio dell’utente, è quasi sempre testo semplice
+    output = text.replace(/```json/g, "").replace(/```/g, "")
   } else {
+    // Se è un messaggio del bot, proviamo a interpretarlo come JSON
     try {
-      //   text = text.message.replace(/```json/g, "").replace(/```/g, "")
-
       const parsedMessage = JSON.parse(text)
-      // Mostra solo "response" quando debugMode è disattivato
-      output = debugMode
-        ? JSON.stringify(parsedMessage, null, 2) // Mostra l'intero oggetto in JSON
-        : parsedMessage.response || "" // Mostra solo il valore di "response"
+      // Se debugMode è ON, mostriamo l'intero JSON formattato
+      if (debugMode) {
+        output = JSON.stringify(parsedMessage, null, 2)
+      } else {
+        // Altrimenti, mostriamo solo la chiave 'response' (o un'altra chiave a tua scelta)
+        output = parsedMessage.response || ""
+      }
     } catch (error) {
-      output = text.message
-      console.log(error)
+      // Se il parse fallisce, mostriamo direttamente `text` come semplice stringa
+      output = text
     }
   }
 
-  if (debugMode) {
-    return <pre>{output}</pre>
-  } else {
-    return output
-  }
+  // Se il debugMode è attivo, avvolgiamo l'output in <pre> per formattarlo
+  return debugMode ? <pre>{output}</pre> : output
 }
 
 const handleUnlike = (id) => {

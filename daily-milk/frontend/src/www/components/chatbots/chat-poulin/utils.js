@@ -1,80 +1,95 @@
-// Function to add a loading message from the bot
-export const addBotLoadingMessage = (setMessages) => {
-  setMessages((prevMessages) => [
-    ...prevMessages,
-    { id: crypto.randomUUID(), sender: "bot", text: "..." }, // Placeholder for loading message
-  ])
+import axios from "axios"
+import Cookies from "js-cookie"
+import { v4 as uuidv4 } from "uuid"
+
+// Ottiene il nome dell'utente dai cookie, con un valore di default "Guest"
+export const getUserName = () => {
+  const name = Cookies.get("name") || "Guest"
+  return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()
 }
 
-// Function to replace the bot's last message with an error message
-export const replaceBotMessageWithError = (setMessages, errorMessage) => {
-  setMessages((prevMessages) =>
-    prevMessages.slice(0, -1).concat({
-      id: crypto.randomUUID(),
-      sender: "bot",
-      text: errorMessage,
-    })
-  )
+// Aggiorna messaggi e cronologia in base agli aggiornamenti forniti
+export const updateChatState = (messages, conversationHistory, updates) => {
+  const updatedMessages = [...messages]
+  const updatedHistory = [...conversationHistory]
+
+  updates.forEach(({ sender, content, role }) => {
+    updatedMessages.push({ id: uuidv4(), sender, text: content })
+    updatedHistory.push({ role, content })
+  })
+
+  return { updatedMessages, updatedHistory }
 }
 
-// Function to load embedding data from a given URL
-export const loadEmbeddingData = async (url) => {
+/**
+ * Middleware che:
+ * 1. Esegue la query SQL
+ * 2. Aggiunge il risultato allo storico
+ * 3. Re-invia lo storico al bot
+ * 4. Aggiunge la nuova risposta del bot allo storico
+ * 5. Ritorna lo storico finale
+ */
+export const middlewareSQL = async (
+  apiUrl,
+  sqlQuery,
+  conversationHistory,
+  conversationId
+) => {
+  // 1. Eseguiamo la query SQL
+  const sqlApiUrl = `https://ai.dairy-tools.com/api/sql.php?query=${encodeURIComponent(
+    sqlQuery
+  )}`
+  const sqlResponse = await axios.get(sqlApiUrl)
+
+  // 2. Creiamo un messaggio di sistema con il risultato della query
+  const sqlResultMessage = {
+    role: "system",
+    content: `ritorna la seguente lista in una tabella html con theader e tbody senza la proprieta sql : ${JSON.stringify(
+      sqlResponse.data
+    )}`,
+  }
+
+  // Aggiorniamo la cronologia
+  const updatedHistory = [...conversationHistory, sqlResultMessage]
+
+  // 3. Inviamo ora lo storico aggiornato all'endpoint del bot
+  const finalBotResponse = await axios.post(apiUrl, {
+    token: Cookies.get("token"),
+    name: Cookies.get("name"),
+    conversationId,
+    messages: updatedHistory,
+  })
+
+  // 4. Prendiamo il testo finale che il bot ha restituito
+  const finalBotMessage = {
+    role: "assistant",
+    content: finalBotResponse.data.message,
+  }
+
+  // 5. Aggiungiamo anche questo messaggio di risposta allo storico
+  const finalUpdatedHistory = [...updatedHistory, finalBotMessage]
+
+  // 6. Ritorniamo lo storico completo
+  return finalUpdatedHistory
+}
+
+// Estrae un oggetto JSON da un messaggio formattato come stringa
+export const extractJsonFromMessage = (message) => {
   try {
-    const response = await fetch(url)
-    if (!response.ok) throw new Error("Failed to load embedding data")
-    return await response.json()
-  } catch (error) {
-    console.error("Embedding loading error:", error)
-    return null
+    const match = message.match(/(\{[\s\S]*?\})/)
+    return match ? JSON.parse(match[1]) : message
+  } catch {
+    return message
   }
 }
 
-export const formatText = (data) => {
-  if (typeof data === "string") {
-    const jsonStringMatch = data.match(/{.*}/s) // Matches the first JSON object found in the string
-
-    if (jsonStringMatch) {
-      const jsonString = jsonStringMatch[0] // Extracted JSON string
-      try {
-        const jsonData = JSON.parse(jsonString) // Parse the extracted JSON string
-        return jsonData // Update this function to return page too
-      } catch (error) {
-        console.error("Error parsing input string:", error)
-        return { formattedResponse: data, options: [], page: null } // Restituisci la stringa originale in caso di errore
-      }
-    } else {
-      return { formattedResponse: data }
-    }
-  }
-}
-
-// Update the extractResponseData function to return the page number
-
-export const cleanText = (text) => {
-  return text
-    .replace(/\\n/g, " ") // Sostituisce \n con uno spazio
-    .replace(/\\r/g, "") // Rimuove \r se presente
-    .replace(/\s+/g, " ") // Riduce spazi bianchi multipli a uno
-    .trim() // Rimuove spazi all'inizio e alla fine
-}
-
-export const formatBoldText = (text) => {
-  // Rimuovi i blocchi di codice HTML e altri delimitatori
-  text = text.replace(/```html|html```|```/g, "") // Rimuove tutti i delimitatori di codice
-
-  text = text.replace(/\n/g, "<br>")
-
-  // Sostituisci **testo** con <b>testo</b>
-  return text.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
-}
-
-export function getCookie(name) {
-  const nameEQ = name + "="
-  const ca = document.cookie.split(";")
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i]
-    while (c.charAt(0) === " ") c = c.substring(1, c.length)
-    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length)
-  }
-  return null
+// Gestisce errori globali aggiornando i messaggi e la cronologia
+export const handleError = (error, messages, conversationHistory) => {
+  return updateChatState(messages, conversationHistory, [
+    {
+      sender: "bot",
+      content: error.message || "An error occurred.",
+      role: "assistant",
+    },
+  ])
 }
