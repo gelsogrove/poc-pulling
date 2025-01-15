@@ -1,7 +1,7 @@
 import axios from "axios"
 import axiosRetry from "axios-retry"
 import dotenv from "dotenv"
-import { Request, RequestHandler, Response, Router } from "express"
+import { RequestHandler, Response, Router } from "express"
 import { pool } from "../server.js"
 import { getUserIdByToken } from "./validateUser.js"
 
@@ -112,13 +112,14 @@ export function handleError(error: unknown, res: Response): void {
   }
 }
 
-const handleChat: RequestHandler = async (req: Request, res: Response) => {
+const handleChat: RequestHandler = async (req, res): Promise<void> => {
   const { conversationId, token, messages } = req.body
 
   if (!conversationId || !token || !Array.isArray(messages)) {
-    return res.status(400).json({
+    res.status(400).json({
       message: "conversationId, token, and messages array are required.",
     })
+    return
   }
 
   try {
@@ -127,15 +128,17 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
 
     const userMessage = messages[messages.length - 1]?.content
     if (!userMessage) {
-      return res.status(400).json({ message: "No user message provided." })
+      res.status(400).json({ message: "No user message provided." })
+      return
     }
 
-    // Rileva la lingua della domanda
+    // Detect the language of the message
     const detectedLanguage = await detectLanguage(userMessage)
 
     const prompt = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
     if (!prompt) {
-      return res.status(404).json({ message: "Prompt not found." })
+      res.status(404).json({ message: "Prompt not found." })
+      return
     }
 
     const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
@@ -145,7 +148,7 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
       messages: [
         { role: "system", content: truncatedPrompt },
         { role: "user", content: userMessage },
-        { role: "system", content: `Language: ${detectedLanguage}` }, // Passa la lingua al modello
+        { role: "system", content: `Language: ${detectedLanguage}` },
       ],
       max_tokens: MAX_TOKENS,
       temperature: 0.2,
@@ -163,7 +166,8 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
     )
 
     if (!openaiResponse.data.choices[0]?.message?.content) {
-      return res.status(204).json({ message: "Empty response from OpenRouter" })
+      res.status(204).json({ message: "Empty response from OpenRouter" })
+      return
     }
 
     const sqlQuery = openaiResponse.data.choices[0]?.message?.content
@@ -176,9 +180,9 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
 
     // Prepare the response payload
     const responsePayload: any = {
-      triggerAction: "getSummary", // Example trigger
+      triggerAction: "getSummary",
       response: "Here is the total sales data.",
-      data: sqlResult.data, // Data from the SQL query
+      data: sqlResult.data,
     }
 
     if (INCLUDE_SQL_IN_RESPONSE) {
