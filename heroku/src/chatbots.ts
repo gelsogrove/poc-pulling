@@ -115,33 +115,42 @@ export function handleError(error: unknown, res: Response): void {
 const handleChat: RequestHandler = async (req, res): Promise<void> => {
   const { conversationId, token, messages } = req.body
 
+  // Validazione dei parametri iniziali
   if (!conversationId || !token || !Array.isArray(messages)) {
     res.status(400).json({
       message: "conversationId, token, and messages array are required.",
     })
-    return // Non ritorniamo `res`!
+    return
   }
 
   try {
+    // Validazione del token utente
     const userId = await validateToken(token, res)
-    if (!userId) return
+    if (!userId) {
+      res.status(403).json({ message: "Invalid token." })
+      return
+    }
 
+    // Recupera l'ultimo messaggio dell'utente
     const userMessage = messages[messages.length - 1]?.content
     if (!userMessage) {
       res.status(400).json({ message: "No user message provided." })
-      return // Non ritorniamo `res`!
+      return
     }
 
+    // Rilevamento della lingua
     const detectedLanguage = await detectLanguage(userMessage)
 
+    // Recupero del prompt
     const prompt = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
     if (!prompt) {
       res.status(404).json({ message: "Prompt not found." })
-      return // Non ritorniamo `res`!
+      return
     }
 
     const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
 
+    // Costruzione della richiesta per OpenRouter
     const requestPayload = {
       model: "gpt-4",
       messages: [
@@ -155,6 +164,7 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
 
     console.log("Request Payload:", requestPayload)
 
+    // Invio della richiesta a OpenRouter
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
       requestPayload,
@@ -167,53 +177,60 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
     const rawResponse = openaiResponse.data.choices[0]?.message?.content
     if (!rawResponse) {
       res.status(204).json({ message: "Empty response from OpenRouter" })
-      return // Non ritorniamo `res`!
+      return
     }
 
     console.log("Raw OpenRouter Response:", rawResponse)
 
-    let parsedResponse: {
-      sql: string | null
-      response: string
-      triggerAction: string
-    }
+    // Parsing della risposta di OpenRouter
+    let sqlQuery: string | null = null
+    let finalResponse: string = ""
+    let triggerAction: string = ""
     try {
-      parsedResponse = JSON.parse(rawResponse)
-    } catch (error) {
-      console.error("Error parsing OpenRouter response:", error)
-      res
-        .status(500)
-        .json({ message: "Invalid response format from OpenRouter" })
-      return // Non ritorniamo `res`!
+      const parsedResponse = JSON.parse(rawResponse)
+      sqlQuery = parsedResponse.sql || null
+      finalResponse = parsedResponse.response || "No response provided."
+      triggerAction = parsedResponse.triggerAction || ""
+    } catch (parseError) {
+      console.error("Error parsing OpenRouter response:", parseError)
+      res.status(500).json({
+        message: "Invalid response format from OpenRouter",
+      })
+      return
     }
 
-    const { sql, response, triggerAction } = parsedResponse
-
-    if (!sql) {
+    // Se non c'è SQL, restituisci solo la risposta
+    if (!sqlQuery) {
+      console.log("No SQL query provided. Sending response only.")
       res.status(200).json({
         triggerAction,
-        response,
-        sql: null,
+        response: finalResponse,
       })
-      return // Non ritorniamo `res`!
+      return
     }
 
-    console.log("Extracted SQL Query:", sql)
-
+    // Se c'è SQL, esegui la query tramite sql.php
+    console.log("Executing SQL Query:", sqlQuery)
     const sqlApiUrl = `https://ai.dairy-tools.com/api/sql.php?query=${encodeURIComponent(
-      sql
+      sqlQuery
     )}`
     const sqlResult = await axios.get(sqlApiUrl)
 
+    console.log("SQL Query Result:", sqlResult.data)
+
+    // Invia il risultato SQL con la risposta
     res.status(200).json({
       triggerAction,
-      response,
+      response: finalResponse,
       data: sqlResult.data,
-      sql: INCLUDE_SQL_IN_RESPONSE ? sql : null, // Include SQL solo se il flag è attivo
     })
   } catch (error) {
+    console.error("Error in handleChat:", error)
     handleError(error, res)
   }
+
+  // Ritorno di fallback per evitare errori di tipo
+  return
 }
 
 chatbotRouter.post("/response", handleChat)
