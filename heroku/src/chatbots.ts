@@ -112,29 +112,32 @@ export function handleError(error: unknown, res: Response): void {
   }
 }
 
-const handleChat: RequestHandler = async (req: Request, res: Response) => {
+const handleChat: RequestHandler = async (req, res): Promise<void> => {
   const { conversationId, token, messages } = req.body
 
   if (!conversationId || !token || !Array.isArray(messages)) {
-    return res.status(400).json({
+    res.status(400).json({
       message: "conversationId, token, and messages array are required.",
     })
+    return // Non ritorniamo nulla!
   }
 
   try {
     const userId = await validateToken(token, res)
-    if (!userId) return
+    if (!userId) return // Non ritorniamo nulla!
 
     const userMessage = messages[messages.length - 1]?.content
     if (!userMessage) {
-      return res.status(400).json({ message: "No user message provided." })
+      res.status(400).json({ message: "No user message provided." })
+      return // Non ritorniamo nulla!
     }
 
     const detectedLanguage = await detectLanguage(userMessage)
 
     const prompt = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
     if (!prompt) {
-      return res.status(404).json({ message: "Prompt not found." })
+      res.status(404).json({ message: "Prompt not found." })
+      return // Non ritorniamo nulla!
     }
 
     const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
@@ -163,39 +166,38 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
 
     const rawResponse = openaiResponse.data.choices[0]?.message?.content
     if (!rawResponse) {
-      return res.status(204).json({ message: "Empty response from OpenRouter" })
+      res.status(204).json({ message: "Empty response from OpenRouter" })
+      return // Non ritorniamo nulla!
     }
 
     console.log("Raw OpenRouter Response:", rawResponse)
 
-    // Extract the SQL query from the response
     let sqlQuery: string
     try {
       const parsedResponse = JSON.parse(rawResponse)
       sqlQuery = parsedResponse.sql
     } catch (parseError) {
       console.error("Error parsing OpenRouter response:", parseError)
-      return res
+      res
         .status(500)
         .json({ message: "Invalid response format from OpenRouter" })
+      return // Non ritorniamo nulla!
     }
 
     if (!sqlQuery) {
-      return res
-        .status(400)
-        .json({ message: "No SQL query found in the response." })
+      res.status(400).json({ message: "No SQL query found in the response." })
+      return // Non ritorniamo nulla!
     }
 
     console.log("Extracted SQL Query:", sqlQuery)
 
-    // Execute the SQL query via sql.php
     const sqlApiUrl = `https://ai.dairy-tools.com/api/sql.php?query=${encodeURIComponent(
       sqlQuery
     )}`
     const sqlResult = await axios.get(sqlApiUrl)
 
     const responsePayload: any = {
-      triggerAction: "getSummary", // Example trigger
+      triggerAction: "getSummary",
       response: "Here is the total sales data.",
       data: sqlResult.data,
     }
@@ -204,7 +206,7 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
       responsePayload.sql = sqlQuery
     }
 
-    res.status(200).json(responsePayload)
+    res.status(200).json(responsePayload) // Rispondiamo direttamente
   } catch (error) {
     handleError(error, res)
   }
