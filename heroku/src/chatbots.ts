@@ -3,8 +3,7 @@ import axiosRetry from "axios-retry"
 import dotenv from "dotenv"
 import { Request, RequestHandler, Response, Router } from "express"
 import { pool } from "../server.js"
-import { tokenize, untokenize } from "./utils/extract-entities.js"
-import { extractValuesFromPrompt, getUserIdByToken } from "./validateUser.js"
+import { getUserIdByToken } from "./validateUser.js"
 
 dotenv.config()
 
@@ -14,6 +13,7 @@ const OPENROUTER_HEADERS = {
   "Content-Type": "application/json",
 }
 const MAX_TOKENS = 5000
+const INCLUDE_SQL_IN_RESPONSE = false // Set to true to include SQL in frontend response
 const chatbotRouter = Router()
 
 if (!process.env.OPENROUTER_API_KEY) {
@@ -21,13 +21,13 @@ if (!process.env.OPENROUTER_API_KEY) {
 }
 
 axiosRetry(axios, {
-  retries: 3, // Riprova fino a 3 volte
+  retries: 3, // Retry up to 3 times
   retryDelay: (retryCount: any) => {
     console.log(`Retry attempt: ${retryCount}`)
-    return retryCount * 1000 // Incrementa il tempo di attesa
+    return retryCount * 1000 // Incremental delay
   },
   retryCondition: (error: any) => {
-    return error.code === "ECONNRESET" || error.response?.status >= 500 // Riprova per errori di connessione o server
+    return error.code === "ECONNRESET" || error.response?.status >= 500 // Retry for connection or server errors
   },
 })
 
@@ -35,7 +35,7 @@ const validateToken = async (token: string, res: Response) => {
   try {
     const userId = await getUserIdByToken(token)
     if (!userId) {
-      res.status(400).json({ message: "Token non valido" })
+      res.status(400).json({ message: "Invalid token" })
       return null
     }
     return userId
@@ -59,6 +59,26 @@ const getPrompt = async (idPrompt: string): Promise<string | null> => {
   }
 }
 
+const detectLanguage = async (message: string): Promise<string> => {
+  const detectionPrompt = `
+Identify the language of the following text and return the ISO 639-1 code:
+"${message}"
+`.trim()
+
+  const response = await axios.post(
+    OPENROUTER_API_URL,
+    {
+      model: "gpt-4",
+      messages: [{ role: "system", content: detectionPrompt }],
+      max_tokens: 10,
+      temperature: 0.0,
+    },
+    { headers: OPENROUTER_HEADERS, timeout: 10000 }
+  )
+
+  return response.data.choices[0]?.message?.content.trim() || "en" // Default to English
+}
+
 export function handleError(error: unknown, res: Response): void {
   if (error instanceof Error) {
     console.error("Error:", {
@@ -70,7 +90,7 @@ export function handleError(error: unknown, res: Response): void {
 
     if ((error as any).code === "ECONNABORTED") {
       res.status(500).json({
-        message: "Timeout try again later.",
+        message: "Timeout, please try again later.",
       })
     } else if ((error as any).response) {
       const errorMessage =
@@ -81,14 +101,13 @@ export function handleError(error: unknown, res: Response): void {
     } else {
       res.status(200).json({
         message:
-          "An unexpected error occurred. Please wait a bit and contact the  support if the issue persists.",
+          "An unexpected error occurred. Please contact support if the issue persists.",
       })
     }
   } else {
     console.error("Unexpected error type:", error)
     res.status(500).json({
-      message:
-        "Errore sconosciuto. Contatta il supporto se il problema persiste.",
+      message: "Unknown error. Please contact support if the problem persists.",
     })
   }
 }
@@ -97,79 +116,76 @@ const handleChat: RequestHandler = async (req: Request, res: Response) => {
   const { conversationId, token, messages } = req.body
 
   if (!conversationId || !token || !Array.isArray(messages)) {
-    res.status(400).json({
+    return res.status(400).json({
       message: "conversationId, token, and messages array are required.",
     })
-    return
   }
 
   try {
     const userId = await validateToken(token, res)
     if (!userId) return
 
-    const prompt = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
-    if (!prompt) {
-      res.status(404).json({ message: "Prompt not found." })
-      return
+    const userMessage = messages[messages.length - 1]?.content
+    if (!userMessage) {
+      return res.status(400).json({ message: "No user message provided." })
     }
 
-    const { temperature: extractedTemperature, model: extractedModel } =
-      extractValuesFromPrompt(prompt)
-    const finalTemperature = extractedTemperature ?? 0.7
-    const finalModel = extractedModel ?? "gpt-3.5-turbo"
+    // Rileva la lingua della domanda
+    const detectedLanguage = await detectLanguage(userMessage)
+
+    const prompt = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
+    if (!prompt) {
+      return res.status(404).json({ message: "Prompt not found." })
+    }
 
     const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
 
-    console.log("*************PROMPT*********")
-    console.log(truncatedPrompt)
-    console.log("*************TEMPERATURE*********")
-    console.log(finalTemperature)
-    console.log("*************MODEL*********")
-    console.log(finalModel)
-
-    // Aggiorna direttamente il campo 'content' di ogni messaggio
-    messages.forEach((frase) => {
-      frase.content = tokenize(frase.content, conversationId)
-    })
-
-    console.log("*************TOKENIZED*********")
-    console.log(messages)
-
-    console.log("Request Payload:", {
-      model: finalModel,
-      messages: [{ role: "system", content: truncatedPrompt }, ...messages],
+    const requestPayload = {
+      model: "gpt-4",
+      messages: [
+        { role: "system", content: truncatedPrompt },
+        { role: "user", content: userMessage },
+        { role: "system", content: `Language: ${detectedLanguage}` }, // Passa la lingua al modello
+      ],
       max_tokens: MAX_TOKENS,
-      temperature: finalTemperature,
-    })
+      temperature: 0.2,
+    }
+
+    console.log("Request Payload:", requestPayload)
 
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
-      {
-        model: finalModel,
-        messages: [{ role: "system", content: truncatedPrompt }, ...messages],
-        max_tokens: MAX_TOKENS,
-        temperature: finalTemperature,
-      },
+      requestPayload,
       {
         headers: OPENROUTER_HEADERS,
         timeout: 30000,
       }
     )
 
-    console.log("Response from OpenRouter:", openaiResponse.data)
-
     if (!openaiResponse.data.choices[0]?.message?.content) {
-      res.status(204).json({ message: "Empty response from OpenRouter" })
-      return
+      return res.status(204).json({ message: "Empty response from OpenRouter" })
     }
 
-    console.log("*************UNTOKEN ANSWER*********")
-    const content = untokenize(
-      openaiResponse.data.choices[0]?.message?.content,
-      conversationId
-    )
+    const sqlQuery = openaiResponse.data.choices[0]?.message?.content
 
-    res.status(200).json({ message: content })
+    // Execute the SQL query via sql.php
+    const sqlApiUrl = `https://your-server-url/sql.php?query=${encodeURIComponent(
+      sqlQuery
+    )}`
+    const sqlResult = await axios.get(sqlApiUrl)
+
+    // Prepare the response payload
+    const responsePayload: any = {
+      triggerAction: "getSummary", // Example trigger
+      response: "Here is the total sales data.",
+      data: sqlResult.data, // Data from the SQL query
+    }
+
+    if (INCLUDE_SQL_IN_RESPONSE) {
+      responsePayload.sql = sqlQuery // Include SQL if the flag is true
+    }
+
+    res.status(200).json(responsePayload)
   } catch (error) {
     handleError(error, res)
   }

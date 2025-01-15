@@ -2,6 +2,7 @@ import axios from "axios"
 import Cookies from "js-cookie"
 import React, { useEffect, useRef, useState } from "react"
 import { v4 as uuidv4 } from "uuid"
+
 import ChatInput from "../shared/chatinput/ChatInput"
 import MessageList from "../shared/messagelist/MessageList"
 import "./ChatPoulin.css"
@@ -11,32 +12,28 @@ import {
   extractJsonFromMessage,
   getUserName,
   handleError,
-  middlewareSQL,
   updateChatState,
 } from "./utils"
 
 const ChatPoulin = ({ openPanel }) => {
-  // Stato per l'input dell'utente, il caricamento, i messaggi e la cronologia della conversazione
-  const [inputValue, setInputValue] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  // Messages displayed in the chat
   const [messages, setMessages] = useState([])
+  // Actual conversation history sent/received
   const [conversationHistory, setConversationHistory] = useState([])
 
-  // Riferimento per scorrere automaticamente fino all'ultimo messaggio
+  const [inputValue, setInputValue] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+
   const messagesEndRef = useRef(null)
-
-  // URL base dell'API
   const apiUrl = "https://poulin-bd075425a92c.herokuapp.com/chatbot/response"
-
-  // Genera un ID conversazione unico per ogni sessione
   const IdConversation = uuidv4()
 
-  // Funzione per scorrere automaticamente fino all'ultimo messaggio
+  // Scroll to the bottom automatically
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }
 
-  // Effetto per inizializzare la conversazione con un messaggio di benvenuto
+  // Initial welcome message
   useEffect(() => {
     const userName = getUserName()
     const { updatedMessages, updatedHistory } = updateChatState(
@@ -45,7 +42,7 @@ const ChatPoulin = ({ openPanel }) => {
       [
         {
           sender: "bot",
-          content: `Hello, ${userName}! Welcome to the chat. How can I assist you today?`,
+          content: `Hello, ${userName}! How can I assist you today?`,
           role: "assistant",
         },
       ]
@@ -54,30 +51,35 @@ const ChatPoulin = ({ openPanel }) => {
     setConversationHistory(updatedHistory)
   }, [])
 
-  // Effetto per scorrere automaticamente fino all'ultimo messaggio ogni volta che cambiano i messaggi
   useEffect(() => {
     scrollToBottom()
   }, [messages])
 
-  // Gestisce l'invio dei messaggi da parte dell'utente
+  // Function to send a message
   const handleSend = async (message) => {
     if (!message.trim()) return
-
     setInputValue("")
     setIsLoading(true)
 
-    // 1. Aggiorna i messaggi e la cronologia con il messaggio dell'utente
     const { updatedMessages, updatedHistory } = updateChatState(
       messages,
       conversationHistory,
       [{ sender: "user", content: message, role: "user" }]
     )
-
     setMessages(updatedMessages)
     setConversationHistory(updatedHistory)
 
+    // Show a temporary loading message
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      {
+        id: uuidv4(),
+        sender: "bot",
+        text: "Typing...",
+      },
+    ])
+
     try {
-      // 2. Invia il messaggio all'API e ottiene la risposta del bot
       const botResponse = await axios.post(apiUrl, {
         token: Cookies.get("token"),
         name: Cookies.get("name"),
@@ -85,51 +87,42 @@ const ChatPoulin = ({ openPanel }) => {
         messages: updatedHistory,
       })
 
-      // 3. Estrae e analizza la risposta del bot
+      console.log("Raw Response from Backend:", botResponse.data)
+
       const parsedResponse = extractJsonFromMessage(botResponse.data.message)
-      const sql = parsedResponse?.sql
+      console.log("Parsed Response:", parsedResponse)
 
-      // Se il messaggio contiene una query SQL, passiamo al middlewareSQL
-      if (sql) {
-        // 4. Esegui la query SQL, inviando nuovamente lo storico al bot
-        const finalHistory = await middlewareSQL(
-          apiUrl,
-          sql,
-          updatedHistory,
-          IdConversation
-        )
-        setConversationHistory(finalHistory)
+      const responseText =
+        parsedResponse.response || "I couldn’t understand that."
+      console.log("Final Response Text:", responseText)
 
-        // 5. Nel frattempo, aggiorniamo i messaggi anche con l’ultima risposta del bot
-        const { updatedMessages: finalMessages } = updateChatState(
-          updatedMessages,
-          updatedHistory,
-          [
-            {
-              sender: "bot",
-              content: finalHistory[finalHistory.length - 1].content,
-              role: "assistant",
-            },
-          ]
-        )
-        setMessages(finalMessages)
-      } else {
-        // 6. Se non c'è SQL, aggiorniamo la cronologia normalmente
-        const botUpdate = updateChatState(updatedMessages, updatedHistory, [
+      // Replace the loading message with the response text
+      setMessages((prevMessages) => {
+        const updated = prevMessages.filter((msg) => msg.text !== "Typing...")
+        return [
+          ...updated,
           {
+            id: uuidv4(),
             sender: "bot",
-            content: botResponse.data.message,
-            role: "assistant",
+            text: responseText,
           },
-        ])
-        setMessages(botUpdate.updatedMessages)
-        setConversationHistory(botUpdate.updatedHistory)
-      }
+        ]
+      })
+
+      // Update conversation history
+      setConversationHistory((prevHistory) => [
+        ...prevHistory,
+        { role: "assistant", content: responseText },
+      ])
     } catch (error) {
-      // Gestisce eventuali errori durante l'invio o la risposta
-      const errorState = handleError(error, messages, conversationHistory)
-      setMessages(errorState.updatedMessages)
-      setConversationHistory(errorState.updatedHistory)
+      console.error("Error in handleSend:", error)
+      const { updatedMessages: errMsgs, updatedHistory: errHist } = handleError(
+        error,
+        messages,
+        conversationHistory
+      )
+      setMessages(errMsgs)
+      setConversationHistory(errHist)
     } finally {
       setIsLoading(false)
     }
@@ -139,11 +132,10 @@ const ChatPoulin = ({ openPanel }) => {
     <div className="chat-poulin">
       <div className="chat-poulin-main">
         <div className="chat-poulin-main-messages">
-          {/* Mostra la lista dei messaggi */}
           <MessageList messages={messages} />
           <div ref={messagesEndRef} />
         </div>
-        {/* Input per l'invio dei messaggi */}
+
         <ChatInput
           inputValue={inputValue}
           setInputValue={setInputValue}
@@ -151,7 +143,7 @@ const ChatPoulin = ({ openPanel }) => {
           handleSend={handleSend}
         />
       </div>
-      {/* Pannello laterale per ulteriori informazioni */}
+
       {openPanel && (
         <div
           className="chat-poulin-right"

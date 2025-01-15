@@ -1,5 +1,4 @@
-/* MessageList.css */
-
+/* Container for messages */
 .chat-messages {
   flex-grow: 1;
   overflow-y: scroll;
@@ -7,123 +6,59 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  border-right: 1px solid #ddd;
-  margin-bottom: 10px;
-  min-height: 540px;
-  -webkit-overflow-scrolling: touch;
   background-color: white;
-  padding: 20px;
+  border-right: 1px solid #ddd;
 }
 
+/* Individual message bubble */
 .chat-message {
   max-width: 900px;
-  padding: 10px !important;
-  border-radius: 15px !important;
-  font-size: 1rem !important;
-  border: 2px solid #ccc !important;
-
-  word-wrap: break-word !important; /* Permette al testo di andare a capo */
-  white-space: pre-wrap !important; /* Consente il wrapping del testo */
-  overflow-wrap: break-word !important; /* Per sicurezza */
+  padding: 10px;
+  border-radius: 15px;
+  font-size: 1rem;
+  border: 2px solid #ccc;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 
-.user-message pre {
+/* User message styling */
+.user-message {
   align-self: flex-end;
   background-color: #007bff;
-  color: white !important;
+  color: white;
   border-top-right-radius: 0;
 }
 
+/* Bot message styling */
 .bot-message {
   align-self: flex-start;
   background-color: #e0e0e0;
-
   border-top-left-radius: 0;
 }
 
+/* Message text */
 .message-text {
   max-width: 500px;
-  width: 500px;
+  word-break: break-word;
 }
 
-.table-container {
-  width: 100%; /* Larghezza al 100% del contenitore */
-  border-collapse: collapse; /* Unisce i bordi delle celle */
-  margin: 20px 0; /* Margine sopra e sotto la tabella */
-
-  margin-top: 30px;
-  margin-right: 0px;
-  font-size: 10px;
-  margin-left: 10px;
-  overflow-x: auto; /* Aggiunge lo scorrimento orizzontale */
-  display: block; /* Necessario per overflow */
-  white-space: nowrap; /* Evita che il contenuto vada a capo */
-}
-
-/* Intestazione della tabella */
-.table-header {
-  font-weight: bold; /* Testo in grassetto */
-  text-align: left; /* Allinea il testo a sinistra */
-}
-
-/* Corpo della tabella */
-.table-body {
-  text-align: left; /* Allinea il testo a sinistra */
-  font-weight: normal;
-  padding: 5px;
-}
-
-/* Stile per le celle della tabella */
-table tr td {
-  padding: 5px;
-  border: 1px solid black;
-  background-color: white !important;
-}
-.table-header th {
-  padding: 10px; /* Spaziatura interna delle celle */
-  border: 1px solid black; /* Bordo grigio chiaro per le celle */
-  background-color: #ccdd; /* Colore di sfondo grigio chiaro */
-}
-
-/* Stile per le righe della tabella */
-
-.total {
-  font-size: 17px;
-  font-weight: bold;
-  display: flex;
-  justify-content: flex-end;
-}
-
+/* Debug and unlike icons */
 .like-unlike-icons {
-  display: flex; /* Utilizza il layout flessibile */
-  align-items: center; /* Centra verticalmente le icone */
-  justify-content: flex-end; /* Allinea le icone a destra */
-  gap: 8px; /* Spazio tra le icone */
-  width: 100%; /* Assicura che il contenitore occupi tutta la larghezza */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .like-unlike-icons span {
-  cursor: pointer; /* Indica che l'elemento è cliccabile */
-  font-size: 1.4rem; /* Dimensione delle icone */
-  transition: transform 0.3s ease, filter 0.3s ease; /* Transizione fluida per colore e scala */
-  filter: grayscale(100%); /* Rende l'icona in scala di grigi */
+  cursor: pointer;
+  font-size: 1.4rem;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  filter: grayscale(100%);
 }
 
 .like-unlike-icons span:hover {
-  filter: grayscale(0%); /* Rimuove il filtro grigio al passaggio del mouse */
-  transform: scale(
-    1.2
-  ); /* Ingrandisce leggermente l'icona al passaggio del mouse */
-}
-
-.actions {
-  padding: 14px;
-  min-height: 0px !important;
-  margin-top: -10px;
-}
-
-.msgcontainer {
-  border: 1px solid red;
-  width: 500px;
-  height: 300px;
+  filter: grayscale(0%);
+  transform: scale(1.2);
 }

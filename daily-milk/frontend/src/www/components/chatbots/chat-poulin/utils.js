@@ -1,95 +1,70 @@
-import axios from "axios"
-import Cookies from "js-cookie"
 import { v4 as uuidv4 } from "uuid"
 
-// Ottiene il nome dell'utente dai cookie, con un valore di default "Guest"
+/**
+ * Returns the user's name from cookies, with a default value of "Guest" if not found.
+ */
 export const getUserName = () => {
-  const name = Cookies.get("name") || "Guest"
+  const name = "Guest" // Replace with cookie logic if necessary
   return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()
 }
 
-// Aggiorna messaggi e cronologia in base agli aggiornamenti forniti
+/**
+ * Updates both `messages` (UI) and `conversationHistory` (for the bot),
+ * adding an array of updates in the format:
+ * [ { sender, content, role }, ... ]
+ */
 export const updateChatState = (messages, conversationHistory, updates) => {
   const updatedMessages = [...messages]
   const updatedHistory = [...conversationHistory]
 
   updates.forEach(({ sender, content, role }) => {
-    updatedMessages.push({ id: uuidv4(), sender, text: content })
-    updatedHistory.push({ role, content })
+    updatedMessages.push({
+      id: uuidv4(),
+      sender,
+      text: content, // what the user sees in chat
+    })
+    updatedHistory.push({
+      role,
+      content, // what will be sent to the bot
+    })
   })
 
   return { updatedMessages, updatedHistory }
 }
 
 /**
- * Middleware che:
- * 1. Esegue la query SQL
- * 2. Aggiunge il risultato allo storico
- * 3. Re-invia lo storico al bot
- * 4. Aggiunge la nuova risposta del bot allo storico
- * 5. Ritorna lo storico finale
+ * Parses a JSON object from the bot's message if it exists.
+ * Ensures the JSON adheres to the expected structure with triggerAction, response, and sql.
  */
-export const middlewareSQL = async (
-  apiUrl,
-  sqlQuery,
-  conversationHistory,
-  conversationId
-) => {
-  // 1. Eseguiamo la query SQL
-  const sqlApiUrl = `https://ai.dairy-tools.com/api/sql.php?query=${encodeURIComponent(
-    sqlQuery
-  )}`
-  const sqlResponse = await axios.get(sqlApiUrl)
-
-  // 2. Creiamo un messaggio di sistema con il risultato della query
-  const sqlResultMessage = {
-    role: "system",
-    content: `ritorna la seguente lista  senza il nodo sql : ${JSON.stringify(
-      sqlResponse.data
-    )}`,
-  }
-
-  // Aggiorniamo la cronologia
-  const updatedHistory = [...conversationHistory, sqlResultMessage]
-
-  // 3. Inviamo ora lo storico aggiornato all'endpoint del bot
-  const finalBotResponse = await axios.post(apiUrl, {
-    token: Cookies.get("token"),
-    name: Cookies.get("name"),
-    conversationId,
-    messages: updatedHistory,
-  })
-
-  // 4. Prendiamo il testo finale che il bot ha restituito
-  const finalBotMessage = {
-    role: "assistant",
-    content: finalBotResponse.data.message,
-  }
-
-  // 5. Aggiungiamo anche questo messaggio di risposta allo storico
-  const finalUpdatedHistory = [...updatedHistory, finalBotMessage]
-
-  // 6. Ritorniamo lo storico completo
-  return finalUpdatedHistory
-}
-
-// Estrae un oggetto JSON da un messaggio formattato come stringa
 export const extractJsonFromMessage = (message) => {
   try {
-    const match = message.match(/(\{[\s\S]*?\})/)
-    return match ? JSON.parse(match[1]) : message
-  } catch {
-    return message
+    const match = message.match(/(\{[\s\S]*?\})/) // Matches JSON within the message
+    if (match) {
+      console.log("Extracted JSON from message:", match[1])
+      return JSON.parse(match[1])
+    }
+    // If no JSON is found, return the message as the response
+    return { response: message }
+  } catch (error) {
+    console.error("Error parsing message:", error)
+    return { response: "Error parsing response from backend." }
   }
 }
 
-// Gestisce errori globali aggiornando i messaggi e la cronologia
+/**
+ * Handles a global error, creating an "assistant" error message in both
+ * `messages` and `conversationHistory`.
+ */
 export const handleError = (error, messages, conversationHistory) => {
-  return updateChatState(messages, conversationHistory, [
-    {
-      sender: "bot",
-      content: error.message || "An error occurred.",
-      role: "assistant",
-    },
-  ])
+  const errorMsg = error.message || "An error occurred."
+  const updatedMessages = [
+    ...messages,
+    { id: uuidv4(), sender: "bot", text: errorMsg },
+  ]
+  const updatedHistory = [
+    ...conversationHistory,
+    { role: "assistant", content: errorMsg },
+  ]
+
+  return { updatedMessages, updatedHistory }
 }

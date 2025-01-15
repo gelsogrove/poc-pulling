@@ -1,4 +1,4 @@
-/* Contenitore principale della chat */
+/* Main container for the chat */
 .chat-poulin {
   display: flex;
   flex-direction: row;
@@ -6,56 +6,69 @@
   width: 100%;
 }
 
-/* Sezione principale della chat */
+/* Main chat section */
 .chat-poulin-main {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
-/* Contenitore dei messaggi, con overflow che attiva lo scroll solo quando necessario */
+/* Message container with scroll when needed */
 .chat-poulin-main-messages {
   overflow-y: auto;
-  max-height: 70vh;
-  scrollbar-width: thin; /* per Firefox, scrollbar sottile */
-  scrollbar-color: transparent transparent; /* per Firefox, scrollbar invisibile per default */
+  flex-grow: 1;
+  scrollbar-width: thin; /* For Firefox, thin scrollbar */
+  scrollbar-color: transparent transparent; /* For Firefox, hide scrollbar by default */
 }
 
-/* Sezione per il pannello laterale */
+/* Right panel section */
 .chat-poulin-right {
   padding: 20px;
   background-color: #fbf7f7;
   overflow-y: auto;
-  max-height: 79vh;
-  margin-left: 10px;
-  margin-top: -20px;
+  transition: width 0.3s ease;
 }
 
-/* Chat input */
+/* Input area */
 .chat-input {
   display: flex;
   gap: 10px;
   padding: 10px 0;
 }
 
-.total {
-  margin-top: -35px;
-  font-size: 18px;
-}
-
-.title-usage {
-  font-size: 22px;
-  margin: 0 auto;
-  width: 100%;
-  text-align: center;
-  background-color: #ccc;
-}
-
 .chat-messages {
   min-height: 70vh;
 }
 
-.user-message {
-  align-self: flex-end; /* Allinea messaggio utente a destra */
-  background-color: #007bff; /* Sfondo blu */
-  color: white; /* Testo bianco */
-  border-top-right-radius: 0; /* Rimuove angolo in alto a destra */
+/* Loading dots */
+.loading-dots {
+  display: flex;
+  gap: 5px;
+}
+
+.loading-dots span {
+  animation: blink 1.4s infinite;
+  background-color: #007bff;
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
 }
