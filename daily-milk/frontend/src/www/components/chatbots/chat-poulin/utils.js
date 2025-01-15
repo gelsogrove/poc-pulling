@@ -1,70 +1,58 @@
-import { v4 as uuidv4 } from "uuid"
-
-/**
- * Returns the user's name from cookies, with a default value of "Guest" if not found.
- */
-export const getUserName = () => {
-  const name = "Guest" // Replace with cookie logic if necessary
-  return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()
-}
-
-/**
- * Updates both `messages` (UI) and `conversationHistory` (for the bot),
- * adding an array of updates in the format:
- * [ { sender, content, role }, ... ]
- */
-export const updateChatState = (messages, conversationHistory, updates) => {
-  const updatedMessages = [...messages]
-  const updatedHistory = [...conversationHistory]
-
-  updates.forEach(({ sender, content, role }) => {
-    updatedMessages.push({
-      id: uuidv4(),
-      sender,
-      text: content, // what the user sees in chat
-    })
-    updatedHistory.push({
-      role,
-      content, // what will be sent to the bot
-    })
-  })
-
-  return { updatedMessages, updatedHistory }
-}
-
-/**
- * Parses a JSON object from the bot's message if it exists.
- * Ensures the JSON adheres to the expected structure with triggerAction, response, and sql.
- */
+// Function to extract JSON from a backend response message
 export const extractJsonFromMessage = (message) => {
   try {
-    const match = message.match(/(\{[\s\S]*?\})/) // Matches JSON within the message
-    if (match) {
-      console.log("Extracted JSON from message:", match[1])
-      return JSON.parse(match[1])
+    if (typeof message === "string") {
+      const parsed = JSON.parse(message) // Parse the string into JSON
+      return parsed
     }
-    // If no JSON is found, return the message as the response
-    return { response: message }
+    return message // If already an object, return it directly
   } catch (error) {
     console.error("Error parsing message:", error)
     return { response: "Error parsing response from backend." }
   }
 }
 
-/**
- * Handles a global error, creating an "assistant" error message in both
- * `messages` and `conversationHistory`.
- */
-export const handleError = (error, messages, conversationHistory) => {
-  const errorMsg = error.message || "An error occurred."
+// Function to update chat state with new messages
+export const updateChatState = (messages, history, newMessages) => {
   const updatedMessages = [
     ...messages,
-    { id: uuidv4(), sender: "bot", text: errorMsg },
+    ...newMessages.map((msg) => ({
+      id: msg.id || `${Date.now()}-${Math.random()}`, // Generate unique ID if missing
+      sender: msg.role === "user" ? "user" : "bot",
+      text: msg.content,
+      data: msg.data || null, // Attach data if it exists
+    })),
   ]
+
   const updatedHistory = [
-    ...conversationHistory,
-    { role: "assistant", content: errorMsg },
+    ...history,
+    ...newMessages.map((msg) => ({
+      role: msg.role,
+      content: msg.content,
+    })),
   ]
 
   return { updatedMessages, updatedHistory }
+}
+
+// Function to handle errors and append a generic error message
+export const handleError = (error, messages, history) => {
+  console.error("Error:", error)
+  const errorMessage = {
+    id: `${Date.now()}-error`,
+    sender: "bot",
+    text: "An error occurred. Please try again later.",
+  }
+
+  const updatedMessages = [...messages, errorMessage]
+  const updatedHistory = [...history]
+
+  return { updatedMessages, updatedHistory }
+}
+
+// Function to get user name from localStorage or fallback to default
+export const getUserName = () => {
+  const defaultName = "Guest"
+  const userName = localStorage.getItem("userName") || defaultName
+  return userName
 }

@@ -11,15 +11,28 @@ const MessageList = ({ messages }) => {
     }))
   }
 
-  const handleUnlike = (id) => {
-    console.log(`Unliked message with id: ${id}`)
+  const renderMessageText = (text, sender, debugMode, data) => {
+    if (text.trim().startsWith("<table") || text.includes("<thead>")) {
+      return <div dangerouslySetInnerHTML={{ __html: text }} />
+    }
+
+    if (sender === "user") {
+      return text
+    } else {
+      return (
+        <div>
+          <p>{text}</p>
+          {debugMode && data && <pre>{JSON.stringify(data, null, 2)}</pre>}
+        </div>
+      )
+    }
   }
 
   return (
     <div className="chat-messages">
       {messages
         .filter((msg) => msg.sender !== "system")
-        .map((msg, index) => (
+        .map((msg) => (
           <div
             key={msg.id}
             className={`chat-message ${
@@ -30,55 +43,29 @@ const MessageList = ({ messages }) => {
               {renderMessageText(
                 msg.text,
                 msg.sender,
-                debugModes[msg.id] || false
+                debugModes[msg.id] || true,
+                msg.data
               )}
             </span>
 
-            {msg.sender === "bot" &&
-              index !== 0 &&
-              msg.text !== "Typing..." && (
-                <div className="like-unlike-icons">
-                  <span
-                    role="img"
-                    aria-label="unlike"
-                    onClick={() => handleUnlike(msg.id)}
-                    title="Unlike"
-                  >
-                    👎
-                  </span>
-                  <span
-                    role="img"
-                    aria-label="debug"
-                    onClick={() => toggleDebugMode(msg.id)}
-                    title={`Toggle Debug Mode (${
-                      debugModes[msg.id] ? "ON" : "OFF"
-                    })`}
-                  >
-                    🐞
-                  </span>
-                </div>
-              )}
+            {msg.sender === "bot" && (
+              <div className="like-unlike-icons">
+                <span
+                  role="img"
+                  aria-label="unlike"
+                  onClick={() => toggleDebugMode(msg.id)}
+                  title={`Toggle Debug Mode (${
+                    debugModes[msg.id] ? "ON" : "OFF"
+                  })`}
+                >
+                  🐞
+                </span>
+              </div>
+            )}
           </div>
         ))}
     </div>
   )
-}
-
-const renderMessageText = (text, sender, debugMode) => {
-  if (sender === "user") {
-    return text
-  } else {
-    try {
-      const parsed = JSON.parse(text)
-      if (debugMode) {
-        return <pre>{JSON.stringify(parsed, null, 2)}</pre>
-      } else {
-        return parsed.response || text
-      }
-    } catch {
-      return text
-    }
-  }
 }
 
 export default MessageList

@@ -62,3 +62,30 @@
   filter: grayscale(0%);
   transform: scale(1.2);
 }
+
+.json-data {
+  background-color: #f9f9f9;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.debug-mode {
+  background-color: #ffe9e9;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ffcccc;
+  border-radius: 5px;
+}
+.json-data {
+  background-color: #f4f4f9;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: #333;
+  overflow-x: auto;
+}

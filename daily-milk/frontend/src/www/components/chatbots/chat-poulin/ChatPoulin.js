@@ -16,11 +16,8 @@ import {
 } from "./utils"
 
 const ChatPoulin = ({ openPanel }) => {
-  // Messages displayed in the chat
   const [messages, setMessages] = useState([])
-  // Actual conversation history sent/received
   const [conversationHistory, setConversationHistory] = useState([])
-
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
@@ -28,12 +25,10 @@ const ChatPoulin = ({ openPanel }) => {
   const apiUrl = "https://poulin-bd075425a92c.herokuapp.com/chatbot/response"
   const IdConversation = uuidv4()
 
-  // Scroll to the bottom automatically
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }
 
-  // Initial welcome message
   useEffect(() => {
     const userName = getUserName()
     const { updatedMessages, updatedHistory } = updateChatState(
@@ -55,7 +50,6 @@ const ChatPoulin = ({ openPanel }) => {
     scrollToBottom()
   }, [messages])
 
-  // Function to send a message
   const handleSend = async (message) => {
     if (!message.trim()) return
     setInputValue("")
@@ -69,7 +63,6 @@ const ChatPoulin = ({ openPanel }) => {
     setMessages(updatedMessages)
     setConversationHistory(updatedHistory)
 
-    // Show a temporary loading message
     setMessages((prevMessages) => [
       ...prevMessages,
       {
@@ -87,16 +80,11 @@ const ChatPoulin = ({ openPanel }) => {
         messages: updatedHistory,
       })
 
-      console.log("Raw Response from Backend:", botResponse.data)
-
-      const parsedResponse = extractJsonFromMessage(botResponse.data.message)
-      console.log("Parsed Response:", parsedResponse)
-
+      const parsedResponse = extractJsonFromMessage(botResponse.data)
       const responseText =
-        parsedResponse.response || "I couldn’t understand that."
-      console.log("Final Response Text:", responseText)
+        parsedResponse?.response || "I couldn’t understand that."
+      const responseData = parsedResponse?.data || null
 
-      // Replace the loading message with the response text
       setMessages((prevMessages) => {
         const updated = prevMessages.filter((msg) => msg.text !== "Typing...")
         return [
@@ -105,17 +93,16 @@ const ChatPoulin = ({ openPanel }) => {
             id: uuidv4(),
             sender: "bot",
             text: responseText,
+            data: responseData,
           },
         ]
       })
 
-      // Update conversation history
       setConversationHistory((prevHistory) => [
         ...prevHistory,
         { role: "assistant", content: responseText },
       ])
     } catch (error) {
-      console.error("Error in handleSend:", error)
       const { updatedMessages: errMsgs, updatedHistory: errHist } = handleError(
         error,
         messages,
