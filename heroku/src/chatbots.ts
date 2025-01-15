@@ -173,7 +173,7 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
     const sqlQuery = openaiResponse.data.choices[0]?.message?.content
 
     // Execute the SQL query via sql.php
-    const sqlApiUrl = `https://your-server-url/sql.php?query=${encodeURIComponent(
+    const sqlApiUrl = `https://ai.dairy-tools.com/api/sql.php?query=${encodeURIComponent(
       sqlQuery
     )}`
     const sqlResult = await axios.get(sqlApiUrl)
