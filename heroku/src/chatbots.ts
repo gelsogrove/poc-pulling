@@ -75,6 +75,8 @@ const handleChat: RequestHandler = async (req, res) => {
       "https://ai.dairy-tools.com/api/stats.php"
     )
 
+    console.log(analysis)
+
     // PAYLOAD
     const requestPayload = {
       model,
