@@ -91,7 +91,7 @@ const handleChat: RequestHandler = async (req, res) => {
 
     const rawResponse = openaiResponse.data.choices[0]?.message?.content
     if (!rawResponse) {
-      res.status(204).json({ message: "Empty response from OpenRouter" })
+      res.status(204).json({ response: "Empty response from OpenRouter" })
       return
     }
     console.log("OPENROUTER RESPONSE:", rawResponse)
@@ -105,7 +105,7 @@ const handleChat: RequestHandler = async (req, res) => {
       finalResponse = parsedResponse.response || "No response provided."
       triggerAction = parsedResponse.triggerAction || ""
     } catch (parseError) {
-      res.status(200).json({ message: rawResponse })
+      res.status(200).json({ response: rawResponse })
       return
     }
 
