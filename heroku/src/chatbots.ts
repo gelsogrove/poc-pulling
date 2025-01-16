@@ -96,6 +96,9 @@ const handleChat: RequestHandler = async (req, res) => {
       }
     )
 
+    console.log("***************************")
+    console.log(openaiResponse.data)
+    console.log("***************************")
     const rawResponse = cleanResponse(
       openaiResponse.data.choices[0]?.message?.content
     )
