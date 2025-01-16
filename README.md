@@ -1,28 +1,33 @@
 ===================== STATUS =====================
 heroku : 70%
 daily-milk FE: 60%
-daily-milk BE: 70%
+daily-milk BE: 80%
+
+===================== TODO =====================
+
+- langchain
+- togliere debug
+- getprompt deve aveare anche model e temperature
+- debug
+- unlike
+- usage
+- upload
 
 ============================ DOUBT =====================
 
 - SICUREZZA DATO
-  ---- prima di salvarli dentro role:assistance criparli
-  ----- quando arriva la risposta decriptarli ancora
-  --- il problema e' che non dobbiamom solo criptare il nuovo teso ma tutto il contenuto dell'array content
-  -----loggare
+  ---- extract entity non dovrebbe essere un disastro!
 
 ===================== DEVELOPMENT =====================
 
 - USAGE CALCULATION e SPESE DEL MESE
 - tooltips icons
-- unliked
-- mettere micro ?
 
 ===================== DAILYMILK =====================
 
 - API Statistiche INIZIALI per il chatbot
 - LOGIN WITH DAILIYMILK
-  -load file and update
+- Load file and update
 - altre info
 
 ===================== NIC$ TO HAVE =====================
@@ -35,9 +40,7 @@ daily-milk BE: 70%
 
 ===================== IDEEE =====================
 
-- Genera un informe ?
-- Analisi ?
-- SOLO QUERY
+- GRAFICO
 
 ===================== IDEEE =====================
 

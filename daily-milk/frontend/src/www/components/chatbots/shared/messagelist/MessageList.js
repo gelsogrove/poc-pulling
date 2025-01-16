@@ -1,3 +1,4 @@
+// MessageList.js - Aggiornato per parsing migliore e gestione lingua
 import React, { useState } from "react"
 import "./MessageList.css"
 
@@ -22,7 +23,9 @@ const MessageList = ({ messages }) => {
       return (
         <div>
           <p>{text}</p>
-          {debugMode && data && <pre>{JSON.stringify(data, null, 2)}</pre>}
+          {debugMode && data && (
+            <pre className="json-data">{JSON.stringify(data, null, 2)}</pre>
+          )}
         </div>
       )
     }
@@ -52,7 +55,7 @@ const MessageList = ({ messages }) => {
               <div className="like-unlike-icons">
                 <span
                   role="img"
-                  aria-label="unlike"
+                  aria-label="toggle-debug"
                   onClick={() => toggleDebugMode(msg.id)}
                   title={`Toggle Debug Mode (${
                     debugModes[msg.id] ? "ON" : "OFF"
