@@ -64,6 +64,7 @@ const handleChat: RequestHandler = async (req, res) => {
     console.log("LANGUAGE MODEL USE:", model)
     const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
     console.log("Prompt:", truncatedPrompt.slice(0, 20))
+    console.log("temperature:", temperature)
 
     // REQUEST TO OPENROUTER
     const requestPayload = {
