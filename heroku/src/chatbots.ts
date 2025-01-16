@@ -229,7 +229,6 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
     handleError(error, res)
   }
 
-  // Ritorno di fallback per evitare errori di tipo
   return
 }
 
