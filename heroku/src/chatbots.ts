@@ -1,9 +1,16 @@
 import axios from "axios"
 import axiosRetry from "axios-retry"
 import dotenv from "dotenv"
-import { RequestHandler, Response, Router } from "express"
-import { getPrompt } from "./chatbots_utility.js"
-import { getUserIdByToken } from "./validateUser.js"
+import { RequestHandler, Router } from "express"
+
+// Importazione delle funzioni utilitarie dal modulo chatbot_utility
+import {
+  detectLanguage,
+  executeSqlQuery,
+  getPrompt,
+  handleError,
+  validateToken,
+} from "./chatbots_utility.js"
 
 dotenv.config()
 
@@ -13,7 +20,6 @@ const OPENROUTER_HEADERS = {
   "Content-Type": "application/json",
 }
 const MAX_TOKENS = 5000
-const INCLUDE_SQL_IN_RESPONSE = false // Set to true to include SQL in frontend response
 const chatbotRouter = Router()
 
 if (!process.env.OPENROUTER_API_KEY) {
@@ -21,10 +27,10 @@ if (!process.env.OPENROUTER_API_KEY) {
 }
 
 axiosRetry(axios, {
-  retries: 3, // Retry up to 3 times
+  retries: 3,
   retryDelay: (retryCount) => {
     console.log(`Retry attempt: ${retryCount}`)
-    return retryCount * 1000 // Incremental delay
+    return retryCount * 1000
   },
   retryCondition: (error) => {
     const status = error.response?.status ?? 0
@@ -32,81 +38,9 @@ axiosRetry(axios, {
   },
 })
 
-const validateToken = async (token: string, res: Response) => {
-  try {
-    const userId = await getUserIdByToken(token)
-    if (!userId) {
-      res.status(400).json({ message: "Invalid token" })
-      return null
-    }
-    return userId
-  } catch (error) {
-    console.error("Error validating token:", error)
-    res.status(500).json({ message: "Error validating token" })
-    return null
-  }
-}
-
-const detectLanguage = async (message: string): Promise<string> => {
-  const detectionPrompt = `
-Identify the language of the following text and return the ISO 639-1 code:
-"${message}"
-  `.trim()
-
-  const response = await axios.post(
-    OPENROUTER_API_URL,
-    {
-      model: "gpt-4",
-      messages: [{ role: "system", content: detectionPrompt }],
-      max_tokens: 10,
-      temperature: 0.0,
-    },
-    { headers: OPENROUTER_HEADERS, timeout: 10000 }
-  )
-
-  const choices = response.data.choices
-  const detectedLanguage =
-    choices && choices.length > 0 ? choices[0]?.message?.content.trim() : "en" // Default to English
-  return detectedLanguage
-}
-
-export function handleError(error: unknown, res: Response): void {
-  if (error instanceof Error) {
-    console.error("Error:", {
-      message: error.message,
-      code: (error as any).code,
-      response: (error as any).response?.data || null,
-      stack: error.stack,
-    })
-
-    if ((error as any).code === "ECONNABORTED") {
-      res.status(500).json({
-        message: "Timeout, please try again later.",
-      })
-    } else if ((error as any).response) {
-      const errorMessage =
-        (error as any).response.data?.message || "OpenRouter error."
-      res.status(200).json({
-        message: `${errorMessage}`,
-      })
-    } else {
-      res.status(200).json({
-        message:
-          "An unexpected error occurred. Please contact support if the issue persists.",
-      })
-    }
-  } else {
-    console.error("Unexpected error type:", error)
-    res.status(500).json({
-      message: "Unknown error. Please contact support if the problem persists.",
-    })
-  }
-}
-
 const handleChat: RequestHandler = async (req, res): Promise<void> => {
   const { conversationId, token, messages } = req.body
 
-  // Validazione dei parametri iniziali
   if (!conversationId || !token || !Array.isArray(messages)) {
     res.status(400).json({
       message: "conversationId, token, and messages array are required.",
@@ -115,34 +49,29 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
   }
 
   try {
-    // Validazione del token utente
-    const userId = await validateToken(token, res)
+    // Validazione del token utente utilizzando la funzione spostata
+    const userId = await validateToken(token)
     if (!userId) {
       res.status(403).json({ message: "Invalid token." })
       return
     }
 
-    // Recupera l'ultimo messaggio dell'utente
     const userMessage = messages[messages.length - 1]?.content
     if (!userMessage) {
       res.status(400).json({ message: "No user message provided." })
       return
     }
 
-    // Rilevamento della lingua
     const detectedLanguage = await detectLanguage(userMessage)
 
     const promptResult = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
     if (!promptResult) {
-      // Gestisci il caso in cui promptResult sia null
       throw new Error("Prompt non trovato")
     }
 
     const { prompt, model, temperature } = promptResult
-
     const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
 
-    // Costruzione della richiesta per OpenRouter
     const requestPayload = {
       model,
       messages: [
@@ -156,7 +85,6 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
 
     console.log("Request Payload:", requestPayload)
 
-    // Invio della richiesta a OpenRouter
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
       requestPayload,
@@ -180,7 +108,6 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
 
     console.log("Raw OpenRouter Response:", rawResponse)
 
-    // Parsing della risposta di OpenRouter
     let sqlQuery: string | null = null
     let finalResponse: string = ""
     let triggerAction: string = ""
@@ -197,7 +124,6 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
       return
     }
 
-    // Se non c'è SQL, restituisci solo la risposta
     if (!sqlQuery) {
       console.log("No SQL query provided. Sending response only.")
       res.status(200).json({
@@ -207,27 +133,23 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
       return
     }
 
-    // Se c'è SQL, esegui la query tramite sql.php
     console.log("Executing SQL Query:", sqlQuery)
-    const sqlApiUrl = `https://ai.dairy-tools.com/api/sql.php?query=${encodeURIComponent(
-      sqlQuery
-    )}`
-    const sqlResult = await axios.get(sqlApiUrl)
+    // Utilizza la funzione executeSqlQuery da chatbot_utility per eseguire la query SQL
+    const sqlData = await executeSqlQuery(sqlQuery)
 
-    console.log("SQL Query Result:", sqlResult.data)
+    console.log("SQL Query Result:", sqlData)
 
-    // Invia il risultato SQL con la risposta
     res.status(200).json({
       triggerAction,
       response: finalResponse,
-      data: sqlResult.data,
+      data: sqlData,
     })
   } catch (error) {
     console.error("Error in handleChat:", error)
-    handleError(error, res)
+    // Utilizza la funzione handleError spostata
+    const errorResponse = handleError(error)
+    res.status(500).json(errorResponse)
   }
-
-  return
 }
 
 chatbotRouter.post("/response", handleChat)

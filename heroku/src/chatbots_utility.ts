@@ -13,7 +13,7 @@ const OPENROUTER_HEADERS = {
 /**
  * Validates the user's token.
  */
-export const validateToken = async (token: string): Promise<string | null> => {
+export const validateToken = async (token: string) => {
   try {
     const result = await pool.query(
       "SELECT user_id FROM users WHERE token = $1",
@@ -29,9 +29,7 @@ export const validateToken = async (token: string): Promise<string | null> => {
 /**
  * Fetches the prompt along with its model and temperature from the database.
  */
-export const getPrompt = async (
-  idPrompt: string
-): Promise<{ prompt: string; model: string; temperature: number } | null> => {
+export const getPrompt = async (idPrompt: string) => {
   try {
     const result = await pool.query(
       "SELECT prompt, model, temperature FROM prompts WHERE idPrompt = $1",
@@ -47,11 +45,11 @@ export const getPrompt = async (
 /**
  * Detects the language of a given message using the configured model.
  */
-export const detectLanguage = async (message: string): Promise<string> => {
+export const detectLanguage = async (message: string) => {
   const detectionPrompt = `
 Identify the language of the following text and return the ISO 639-1 code:
 "${message}"
-`.trim()
+  `.trim()
 
   try {
     const promptConfig = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
@@ -76,23 +74,22 @@ Identify the language of the following text and return the ISO 639-1 code:
   }
 }
 
-/**
- * Handles errors and logs them appropriately.
- */
 export const handleError = (error: unknown): { message: string } => {
-  if (error instanceof Error) {
-    console.error("Error:", {
+  if (axios.isAxiosError(error)) {
+    // Qui sappiamo che error è un AxiosError, quindi ha proprietà come code, response, etc.
+    console.error("Axios Error:", {
       message: error.message,
-      code: (error as any).code,
-      response: (error as any).response?.data || null,
+      code: error.code,
+      response: error.response?.data || null,
       stack: error.stack,
     })
 
-    if ((error as any).code === "ECONNABORTED") {
+    if (error.code === "ECONNABORTED") {
       return { message: "Timeout, please try again later." }
-    } else if ((error as any).response) {
+    } else if (error.response) {
       const errorMessage =
-        (error as any).response.data?.message || "OpenRouter error."
+        (error.response.data as { message?: string })?.message ||
+        "OpenRouter error."
       return { message: errorMessage }
     } else {
       return {
@@ -100,6 +97,13 @@ export const handleError = (error: unknown): { message: string } => {
           "An unexpected error occurred. Please contact support if the issue persists.",
       }
     }
+  } else if (error instanceof Error) {
+    // Gestione per errori generici non Axios
+    console.error("Generic Error:", {
+      message: error.message,
+      stack: error.stack,
+    })
+    return { message: error.message }
   } else {
     console.error("Unexpected error type:", error)
     return {
@@ -107,11 +111,10 @@ export const handleError = (error: unknown): { message: string } => {
     }
   }
 }
-
 /**
  * Executes a query via the SQL API and returns the results.
  */
-export const executeSqlQuery = async (sqlQuery: string): Promise<any> => {
+export const executeSqlQuery = async (sqlQuery: string) => {
   try {
     const sqlApiUrl = `https://ai.dairy-tools.com/api/sql.php?query=${encodeURIComponent(
       sqlQuery
