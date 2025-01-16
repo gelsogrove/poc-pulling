@@ -1,8 +1,7 @@
 import axios from "axios"
 import axiosRetry from "axios-retry"
 import dotenv from "dotenv"
-import { RequestHandler, Router } from "express"
-
+import { Router } from "express"
 // Importazione delle funzioni utilitarie dal modulo chatbot_utility
 import {
   detectLanguage,
@@ -37,16 +36,14 @@ axiosRetry(axios, {
   },
 })
 
-const handleChat: RequestHandler = async (req, res): Promise<void> => {
+const handleChat = async (req, res) => {
   const { conversationId, token, messages } = req.body
-
   if (!conversationId || !token || !Array.isArray(messages)) {
     res.status(400).json({
       message: "conversationId, token, and messages array are required.",
     })
     return
   }
-
   try {
     // Validazione del token utente utilizzando la funzione spostata
     const userId = await validateToken(token)
@@ -60,16 +57,19 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
       res.status(400).json({ message: "No user message provided." })
       return
     }
+    console.log("ULTIMO MESSAGGIO RICEVUTO DALL'UTENTE:", userMessage)
 
     const promptResult = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
     if (!promptResult) {
       throw new Error("Prompt non trovato")
     }
-
     const { prompt, model, temperature } = promptResult
+    console.log("LANGUAGE MODEL USE:", model)
+
     const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
 
     const detectedLanguage = await detectLanguage(userMessage, model)
+    console.log("LANGUAGE DETECTED:", detectedLanguage)
 
     const requestPayload = {
       model,
@@ -81,6 +81,8 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
       max_tokens: MAX_TOKENS,
       temperature,
     }
+    console.log("PAYLOAD:", requestPayload)
+    console.log("MODEL OPENROUTER USE:", requestPayload.model)
 
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
@@ -102,10 +104,11 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
       res.status(204).json({ message: "Empty response from OpenRouter" })
       return
     }
+    console.log("OPENROUTER RESPONSE:", rawResponse)
 
-    let sqlQuery: string | null = null
-    let finalResponse: string = ""
-    let triggerAction: string = ""
+    let sqlQuery = null
+    let finalResponse = ""
+    let triggerAction = ""
     try {
       const parsedResponse = JSON.parse(rawResponse)
       sqlQuery = parsedResponse.sql || null
@@ -126,9 +129,8 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
       })
       return
     }
-    // Utilizza la funzione executeSqlQuery da chatbot_utility per eseguire la query SQL
-    const sqlData = await executeSqlQuery(sqlQuery)
 
+    const sqlData = await executeSqlQuery(sqlQuery)
     res.status(200).json({
       triggerAction,
       response: finalResponse,
@@ -136,12 +138,10 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
     })
   } catch (error) {
     console.error("Error in handleChat:", error)
-    // Utilizza la funzione handleError spostata
     const errorResponse = handleError(error)
     res.status(500).json(errorResponse)
   }
 }
 
 chatbotRouter.post("/response", handleChat)
-
 export default chatbotRouter
