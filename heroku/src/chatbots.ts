@@ -74,7 +74,7 @@ const handleChat: RequestHandler = async (req, res) => {
         { role: "system", content: `Language: eng` },
       ],
       max_tokens: MAX_TOKENS,
-      temperature,
+      temperature: Number(temperature), // Conversione in numero
     }
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
