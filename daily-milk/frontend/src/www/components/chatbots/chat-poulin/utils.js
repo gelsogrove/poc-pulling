@@ -32,28 +32,16 @@ export const updateChatState = (messages, conversationHistory, updates) => {
   return { updatedMessages, updatedHistory }
 }
 
-/**
- * Parses a JSON object from the bot's message if it exists.
- * Ensures the JSON adheres to the expected structure with triggerAction, response, and sql.
- */
+// Function to extract JSON from a backend response message
 export const extractJsonFromMessage = (message) => {
   try {
-    const match = message.match(/(\{[\s\S]*?\})/)
-    if (!match) return message
-
-    const parsed = JSON.parse(match[1])
-    if (
-      parsed &&
-      typeof parsed === "object" &&
-      "triggerAction" in parsed &&
-      "response" in parsed &&
-      "sql" in parsed
-    ) {
+    if (typeof message === "string") {
+      const parsed = JSON.parse(message) // Parse the string into JSON
       return parsed
     }
-    return { response: "Invalid message format." }
-  } catch {
-    return { response: "Failed to parse message." }
+    return message // If already an object, return it directly
+  } catch (err) {
+    return message
   }
 }
 

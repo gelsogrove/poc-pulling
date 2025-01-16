@@ -223,6 +223,7 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
       triggerAction,
       response: finalResponse,
       data: sqlResult.data,
+      sqlQuery,
     })
   } catch (error) {
     console.error("Error in handleChat:", error)

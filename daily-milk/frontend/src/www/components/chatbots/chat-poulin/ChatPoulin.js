@@ -18,6 +18,7 @@ import {
 const ChatPoulin = ({ openPanel }) => {
   // Messages displayed in the chat
   const [messages, setMessages] = useState([])
+  const [data, setData] = useState([])
   // Actual conversation history sent/received
   const [conversationHistory, setConversationHistory] = useState([])
 
@@ -61,7 +62,6 @@ const ChatPoulin = ({ openPanel }) => {
     setInputValue("")
     setIsLoading(true)
 
-    // Update chat and history with the user's message
     const { updatedMessages, updatedHistory } = updateChatState(
       messages,
       conversationHistory,
@@ -81,7 +81,6 @@ const ChatPoulin = ({ openPanel }) => {
     ])
 
     try {
-      // Call the bot API
       const botResponse = await axios.post(apiUrl, {
         token: Cookies.get("token"),
         name: Cookies.get("name"),
@@ -89,12 +88,13 @@ const ChatPoulin = ({ openPanel }) => {
         messages: updatedHistory,
       })
 
-      // Extract the response
-      const parsedResponse = extractJsonFromMessage(botResponse.data.message)
-      const responseText =
-        parsedResponse?.response || "I couldn’t understand that."
+      const parsedResponse = extractJsonFromMessage(botResponse.data.response)
+      setData(botResponse?.data?.data)
 
-      // Replace the loading message with the actual response
+      const responseText = parsedResponse || "I couldn’t understand that."
+      console.log("Final Response Text:", responseText)
+
+      // Replace the loading message with the response text
       setMessages((prevMessages) => {
         const updated = prevMessages.filter((msg) => msg.text !== "Typing...")
         return [
@@ -103,6 +103,7 @@ const ChatPoulin = ({ openPanel }) => {
             id: uuidv4(),
             sender: "bot",
             text: responseText,
+            data: botResponse?.data?.data,
           },
         ]
       })
@@ -113,7 +114,7 @@ const ChatPoulin = ({ openPanel }) => {
         { role: "assistant", content: responseText },
       ])
     } catch (error) {
-      // Handle errors as usual
+      console.error("Error in handleSend:", error)
       const { updatedMessages: errMsgs, updatedHistory: errHist } = handleError(
         error,
         messages,
@@ -130,7 +131,7 @@ const ChatPoulin = ({ openPanel }) => {
     <div className="chat-poulin">
       <div className="chat-poulin-main">
         <div className="chat-poulin-main-messages">
-          <MessageList messages={messages} />
+          <MessageList data={data} messages={messages} />
           <div ref={messagesEndRef} />
         </div>
 

@@ -5,21 +5,56 @@ const MessageList = ({ messages }) => {
   const [debugModes, setDebugModes] = useState({})
 
   const toggleDebugMode = (id) => {
-    setDebugModes((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }))
+    setDebugModes((prev) => {
+      const newVal = !prev[id]
+      console.log(`Toggling debugMode for message ${id}: ${newVal}`)
+      return {
+        ...prev,
+        [id]: newVal,
+      }
+    })
   }
 
   const handleUnlike = (id) => {
     console.log(`Unliked message with id: ${id}`)
   }
 
+  const renderMessageText = (msg, text, sender, debugMode) => {
+    console.log(
+      `renderMessageText chiamata per il messaggio ${msg.id} con debugMode = ${debugMode}`
+    )
+
+    if (sender === "user") {
+      return text
+    } else {
+      try {
+        const parsed = JSON.parse(text)
+        if (debugMode) {
+          return <pre>{JSON.stringify(msg, null, 2)}</pre>
+        } else {
+          return parsed.response || text
+        }
+      } catch (error) {
+        console.log(
+          `Errore nel parsing JSON per il messaggio ${msg.id}:`,
+          error
+        )
+        if (debugMode) {
+          return <pre>{JSON.stringify(msg, null, 2)}</pre>
+        } else {
+          return text
+        }
+      }
+    }
+  }
+
+  console.log("Stato debugModes:", debugModes)
+
   return (
     <div className="chat-messages">
       {messages
         .filter((msg) => msg.sender !== "system")
-        .map((msg, index) => (
+        .map((msg) => (
           <div
             key={msg.id}
             className={`chat-message ${
@@ -28,57 +63,44 @@ const MessageList = ({ messages }) => {
           >
             <span className="message-text">
               {renderMessageText(
+                msg,
                 msg.text,
                 msg.sender,
                 debugModes[msg.id] || false
               )}
             </span>
 
-            {msg.sender === "bot" &&
-              index !== 0 &&
-              msg.text !== "Typing..." && (
-                <div className="like-unlike-icons">
-                  <span
-                    role="img"
-                    aria-label="unlike"
-                    onClick={() => handleUnlike(msg.id)}
-                    title="Unlike"
-                  >
-                    👎
-                  </span>
-                  <span
-                    role="img"
-                    aria-label="debug"
-                    onClick={() => toggleDebugMode(msg.id)}
-                    title={`Toggle Debug Mode (${
-                      debugModes[msg.id] ? "ON" : "OFF"
-                    })`}
-                  >
-                    🐞
-                  </span>
-                </div>
-              )}
+            {/* Se il messaggio possiede dati, visualizzali */}
+            {msg.data && <pre>{JSON.stringify(msg.data, null, 2)}</pre>}
+
+            {msg.sender === "bot" && msg.text !== "Typing..." && (
+              <div className="like-unlike-icons">
+                <span
+                  role="img"
+                  aria-label="unlike"
+                  onClick={() => handleUnlike(msg.id)}
+                  title="Unlike"
+                  style={{ cursor: "pointer", marginRight: "8px" }}
+                >
+                  👎
+                </span>
+                <span
+                  role="img"
+                  aria-label="debug"
+                  onClick={() => toggleDebugMode(msg.id)}
+                  title={`Toggle Debug Mode (${
+                    debugModes[msg.id] ? "ON" : "OFF"
+                  })`}
+                  style={{ cursor: "pointer" }}
+                >
+                  🐞
+                </span>
+              </div>
+            )}
           </div>
         ))}
     </div>
   )
-}
-
-const renderMessageText = (text, sender, debugMode) => {
-  if (sender === "user") {
-    return text
-  } else {
-    try {
-      const parsed = JSON.parse(text)
-      if (debugMode) {
-        return <pre>{JSON.stringify(parsed, null, 2)}</pre>
-      } else {
-        return parsed.response || text
-      }
-    } catch {
-      return text
-    }
-  }
 }
 
 export default MessageList
