@@ -123,3 +123,17 @@ export const executeSqlQuery = async (sqlQuery: string): Promise<any> => {
     throw new Error("SQL execution failed")
   }
 }
+
+/**
+ * Fetches initial statistics from the statistics API.
+ */
+export const fetchInitialStatistics = async (): Promise<any> => {
+  try {
+    const statsApiUrl = "https://ai.dairy-tools.com/api/stats.php?type=csv"
+    const response = await axios.get(statsApiUrl)
+    return response.data
+  } catch (error) {
+    console.error("Error fetching initial statistics:", error)
+    throw new Error("Statistics fetch failed")
+  }
+}

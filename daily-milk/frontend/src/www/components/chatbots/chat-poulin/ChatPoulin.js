@@ -1,4 +1,3 @@
-// ChatPoulin.js - Migliorato per mostrare statistiche iniziali e parsing lingua
 import axios from "axios"
 import Cookies from "js-cookie"
 import React, { useEffect, useRef, useState } from "react"
@@ -7,25 +6,34 @@ import { v4 as uuidv4 } from "uuid"
 import ChatInput from "../shared/chatinput/ChatInput"
 import MessageList from "../shared/messagelist/MessageList"
 import "./ChatPoulin.css"
+import Usage from "./usage/Usage"
 
-import { extractJsonFromMessage, getUserName, updateChatState } from "./utils"
+import {
+  extractJsonFromMessage,
+  getUserName,
+  handleError,
+  updateChatState,
+} from "./utils"
 
 const ChatPoulin = ({ openPanel }) => {
+  // Messages displayed in the chat
   const [messages, setMessages] = useState([])
+  // Actual conversation history sent/received
   const [conversationHistory, setConversationHistory] = useState([])
+
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [statistics, setStatistics] = useState(null)
 
   const messagesEndRef = useRef(null)
   const apiUrl = "https://poulin-bd075425a92c.herokuapp.com/chatbot/response"
-  const statsUrl = "https://ai.dairy-tools.com/api/stats.php?type=csv"
   const IdConversation = uuidv4()
 
+  // Scroll to the bottom automatically
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }
 
+  // Initial welcome message
   useEffect(() => {
     const userName = getUserName()
     const { updatedMessages, updatedHistory } = updateChatState(
@@ -41,39 +49,19 @@ const ChatPoulin = ({ openPanel }) => {
     )
     setMessages(updatedMessages)
     setConversationHistory(updatedHistory)
-
-    // Fetch initial statistics
-    const fetchStatistics = async () => {
-      try {
-        const response = await axios.get(statsUrl)
-        setStatistics(response.data)
-
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            id: uuidv4(),
-            sender: "bot",
-            text: "Here are some initial statistics to get started:",
-            data: response.data,
-          },
-        ])
-      } catch (error) {
-        console.error("Error fetching statistics:", error)
-      }
-    }
-
-    fetchStatistics()
   }, [])
 
   useEffect(() => {
     scrollToBottom()
   }, [messages])
 
+  // Function to send a message
   const handleSend = async (message) => {
     if (!message.trim()) return
     setInputValue("")
     setIsLoading(true)
 
+    // Update chat and history with the user's message
     const { updatedMessages, updatedHistory } = updateChatState(
       messages,
       conversationHistory,
@@ -82,6 +70,7 @@ const ChatPoulin = ({ openPanel }) => {
     setMessages(updatedMessages)
     setConversationHistory(updatedHistory)
 
+    // Show a temporary loading message
     setMessages((prevMessages) => [
       ...prevMessages,
       {
@@ -92,6 +81,7 @@ const ChatPoulin = ({ openPanel }) => {
     ])
 
     try {
+      // Call the bot API
       const botResponse = await axios.post(apiUrl, {
         token: Cookies.get("token"),
         name: Cookies.get("name"),
@@ -99,11 +89,12 @@ const ChatPoulin = ({ openPanel }) => {
         messages: updatedHistory,
       })
 
-      const parsedResponse = extractJsonFromMessage(botResponse.data)
+      // Extract the response
+      const parsedResponse = extractJsonFromMessage(botResponse.data.message)
       const responseText =
         parsedResponse?.response || "I couldn’t understand that."
-      const responseData = parsedResponse?.data || null
 
+      // Replace the loading message with the actual response
       setMessages((prevMessages) => {
         const updated = prevMessages.filter((msg) => msg.text !== "Typing...")
         return [
@@ -112,17 +103,24 @@ const ChatPoulin = ({ openPanel }) => {
             id: uuidv4(),
             sender: "bot",
             text: responseText,
-            data: responseData,
           },
         ]
       })
 
+      // Update conversation history
       setConversationHistory((prevHistory) => [
         ...prevHistory,
         { role: "assistant", content: responseText },
       ])
     } catch (error) {
-      console.error("Error sending message:", error)
+      // Handle errors as usual
+      const { updatedMessages: errMsgs, updatedHistory: errHist } = handleError(
+        error,
+        messages,
+        conversationHistory
+      )
+      setMessages(errMsgs)
+      setConversationHistory(errHist)
     } finally {
       setIsLoading(false)
     }
@@ -143,6 +141,19 @@ const ChatPoulin = ({ openPanel }) => {
           handleSend={handleSend}
         />
       </div>
+
+      {openPanel && (
+        <div
+          className="chat-poulin-right"
+          style={{
+            width: "50%",
+            transition: "width 0.3s ease",
+            padding: "20px",
+          }}
+        >
+          <Usage />
+        </div>
+      )}
     </div>
   )
 }
