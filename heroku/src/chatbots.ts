@@ -105,7 +105,7 @@ const handleChat: RequestHandler = async (req, res) => {
       finalResponse = parsedResponse.response || "No response provided."
       triggerAction = parsedResponse.triggerAction || ""
     } catch (parseError) {
-      res.status(200).json({ rawResponse })
+      res.status(200).json({ response: rawResponse })
       return
     }
 
