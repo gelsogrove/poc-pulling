@@ -62,8 +62,6 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
       return
     }
 
-    const detectedLanguage = await detectLanguage(userMessage)
-
     const promptResult = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
     if (!promptResult) {
       throw new Error("Prompt non trovato")
@@ -71,6 +69,8 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
 
     const { prompt, model, temperature } = promptResult
     const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
+
+    const detectedLanguage = await detectLanguage(userMessage, model)
 
     const requestPayload = {
       model,
@@ -82,8 +82,6 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
       max_tokens: MAX_TOKENS,
       temperature,
     }
-
-    console.log("Request Payload:", requestPayload)
 
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
@@ -136,8 +134,6 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
     console.log("Executing SQL Query:", sqlQuery)
     // Utilizza la funzione executeSqlQuery da chatbot_utility per eseguire la query SQL
     const sqlData = await executeSqlQuery(sqlQuery)
-
-    console.log("SQL Query Result:", sqlData)
 
     res.status(200).json({
       triggerAction,

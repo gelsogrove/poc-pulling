@@ -41,7 +41,7 @@ export const getPrompt = async (idPrompt: string) => {
 /**
  * Detects the language of a given message using the configured model.
  */
-export const detectLanguage = async (message: string) => {
+export const detectLanguage = async (message: string, model: string) => {
   const detectionPrompt = `
 Identify the language of the following text and return the ISO 639-1 code:
 "${message}"
@@ -62,7 +62,14 @@ Identify the language of the following text and return the ISO 639-1 code:
       { headers: OPENROUTER_HEADERS, timeout: 10000 }
     )
 
-    const detectedLanguage = response.data.choices[0]?.message?.content.trim()
+    // Verifica l'esistenza di choices prima di accedere al primo elemento
+    const choices = response.data.choices
+    if (!choices || choices.length === 0) {
+      console.error("No choices returned in language detection.")
+      return "en" // Valore predefinito se non ci sono risposte
+    }
+
+    const detectedLanguage = choices[0]?.message?.content.trim()
     return detectedLanguage || "en" // Default to English if detection fails
   } catch (error) {
     console.error("Language detection failed:", error)
