@@ -82,7 +82,7 @@ const handleChat: RequestHandler = async (req, res) => {
       model,
       messages: [
         { role: "system", content: truncatedPrompt },
-        //  { role: "system", content: analysis },
+        { role: "system", content: JSON.stringify(analysis) },
         ...conversationHistory,
         { role: "user", content: userMessage },
         { role: "system", content: `Language: eng` },
@@ -101,9 +101,9 @@ const handleChat: RequestHandler = async (req, res) => {
       }
     )
 
-    console.log("********** RESPONSE *****************")
-    console.log(openaiResponse.data)
-    console.log("************************************")
+    //console.log("********** RESPONSE *****************")
+    //console.log(openaiResponse.data)
+    //console.log("************************************")
 
     //ANSWER
     const rawResponse = cleanResponse(
@@ -113,6 +113,7 @@ const handleChat: RequestHandler = async (req, res) => {
       res.status(204).json({ response: "Empty response from OpenRouter" })
       return
     }
+    console.log("************************************")
     console.log("OPENROUTER RESPONSE:", rawResponse)
 
     let sqlQuery: string | null = null
