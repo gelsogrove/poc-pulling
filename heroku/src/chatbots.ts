@@ -22,11 +22,11 @@ if (!process.env.OPENROUTER_API_KEY) {
 
 axiosRetry(axios, {
   retries: 3, // Retry up to 3 times
-  retryDelay: (retryCount: any) => {
+  retryDelay: (retryCount) => {
     console.log(`Retry attempt: ${retryCount}`)
     return retryCount * 1000 // Incremental delay
   },
-  retryCondition: (error: any) => {
+  retryCondition: (error) => {
     return error.code === "ECONNRESET" || error.response?.status >= 500 // Retry for connection or server errors
   },
 })
@@ -63,7 +63,7 @@ const detectLanguage = async (message: string): Promise<string> => {
   const detectionPrompt = `
 Identify the language of the following text and return the ISO 639-1 code:
 "${message}"
-`.trim()
+  `.trim()
 
   const response = await axios.post(
     OPENROUTER_API_URL,
@@ -76,7 +76,10 @@ Identify the language of the following text and return the ISO 639-1 code:
     { headers: OPENROUTER_HEADERS, timeout: 10000 }
   )
 
-  return response.data.choices[0]?.message?.content.trim() || "en" // Default to English
+  const choices = response.data.choices
+  const detectedLanguage =
+    choices && choices.length > 0 ? choices[0]?.message?.content.trim() : "en" // Default to English
+  return detectedLanguage
 }
 
 export function handleError(error: unknown, res: Response): void {
@@ -174,7 +177,13 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
       }
     )
 
-    const rawResponse = openaiResponse.data.choices[0]?.message?.content
+    const choices = openaiResponse.data.choices
+    if (!choices || choices.length === 0) {
+      res.status(204).json({ message: "No choices returned from OpenRouter" })
+      return
+    }
+
+    const rawResponse = choices[0]?.message?.content
     if (!rawResponse) {
       res.status(204).json({ message: "Empty response from OpenRouter" })
       return
