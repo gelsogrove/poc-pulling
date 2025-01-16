@@ -3,12 +3,7 @@ import axiosRetry from "axios-retry"
 import dotenv from "dotenv"
 import { RequestHandler, Router } from "express"
 // Importazione delle funzioni utilitarie dal modulo chatbot_utility
-import {
-  executeSqlQuery,
-  getPrompt,
-  handleError,
-  validateToken,
-} from "./chatbots_utility.js"
+import { getPrompt, handleError, validateToken } from "./chatbots_utility.js"
 
 dotenv.config()
 
@@ -105,26 +100,9 @@ const handleChat: RequestHandler = async (req, res) => {
       finalResponse = parsedResponse.response || "No response provided."
       triggerAction = parsedResponse.triggerAction || ""
     } catch (parseError) {
-      res.status(200).json({ response: rawResponse })
+      res.status(200).json(rawResponse)
       return
     }
-
-    if (!sqlQuery) {
-      res.status(200).json({
-        triggerAction,
-        response: finalResponse,
-      })
-      return
-    }
-
-    console.log("Executing SQL Query:", sqlQuery)
-    const sqlData = await executeSqlQuery(sqlQuery)
-
-    res.status(200).json({
-      triggerAction,
-      response: finalResponse,
-      data: sqlData,
-    })
   } catch (error) {
     console.error("Error in handleChat:", error)
     const errorResponse = handleError(error)
