@@ -28,11 +28,7 @@ axiosRetry(axios, {
     return retryCount * 1000
   },
   retryCondition: (error) => {
-    if (error.code === "ECONNRESET") {
-      return true
-    }
-    const status = error.response?.status
-    return status !== undefined && status >= 500
+    return error.code === "ECONNRESET" || (error.response?.status ?? 0) >= 500
   },
 })
 
