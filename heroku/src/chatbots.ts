@@ -64,16 +64,18 @@ const handleChat: RequestHandler = async (req, res) => {
     const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
     console.log("Prompt:", truncatedPrompt.slice(0, 20))
 
-    // REQUEST TO OPENROUTER
+    // HISOTOY
     const conversationHistory = messages.map((msg) => {
       // Se hai un campo "role" nel tuo oggetto message, usalo; altrimenti default a "user".
       return { role: msg.role || "user", content: msg.content }
     })
 
+    // ANALYSISS
     const { data: analysis } = await axios.get(
       "https://ai.dairy-tools.com/api/stats.php"
     )
 
+    // PAYLOAD
     const requestPayload = {
       model,
       messages: [
@@ -86,6 +88,8 @@ const handleChat: RequestHandler = async (req, res) => {
       max_tokens: MAX_TOKENS,
       temperature: Number(temperature), // Conversione in numero
     }
+
+    // OPENROUTER
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
       requestPayload,
@@ -98,6 +102,8 @@ const handleChat: RequestHandler = async (req, res) => {
     console.log("********** RESPONSE *****************")
     console.log(openaiResponse.data)
     console.log("************************************")
+
+    //ANSWER
     const rawResponse = cleanResponse(
       openaiResponse.data.choices[0]?.message?.content
     )
@@ -115,27 +121,27 @@ const handleChat: RequestHandler = async (req, res) => {
       sqlQuery = parsedResponse.sql || null
       finalResponse = parsedResponse.response || "No response provided."
       triggerAction = parsedResponse.triggerAction || ""
-    } catch (parseError) {
-      res.status(200).json({ response: rawResponse })
-      return
-    }
+      if (!sqlQuery) {
+        res.status(200).json({
+          triggerAction,
+          response: finalResponse,
+        })
+        return
+      }
 
-    if (!sqlQuery) {
+      // EXECUTE QUERY
+      const sqlData = await executeSqlQuery(sqlQuery)
       res.status(200).json({
         triggerAction,
         response: finalResponse,
+        data: sqlData,
+        query: sqlQuery,
       })
+    } catch (parseError) {
+      // retunr single sentence
+      res.status(200).json({ response: rawResponse })
       return
     }
-
-    const sqlData = await executeSqlQuery(sqlQuery)
-
-    res.status(200).json({
-      triggerAction,
-      response: finalResponse,
-      data: sqlData,
-      query: sqlQuery,
-    })
   } catch (error) {
     console.error("Error in handleChat:", error)
 
