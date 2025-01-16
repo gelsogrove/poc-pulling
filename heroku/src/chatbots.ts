@@ -56,10 +56,7 @@ const handleChat: RequestHandler = async (req, res) => {
 
     const userMessage = messages[messages.length - 1]?.content
 
-    console.log(
-      "ULTIMO MESSAGGIO RICEVUTO DALL'UTENTE:",
-      userMessage.find((item: any) => item.role === "user")
-    )
+    console.log("MESSAGFE", messages)
 
     const promptResult = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
     if (!promptResult) {
