@@ -76,6 +76,17 @@ const limiter = rateLimit({
   message: { error: "Request limit reached today. Try again tomorrow." },
 })
 
+// Aggiungi supporto per richieste preflight
+app.options("*", (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*")
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  )
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+  res.sendStatus(200)
+})
+
 // Usa i vari router
 app.use("/", welcomeRouter)
 app.use("/auth", limiter, authRouter)
