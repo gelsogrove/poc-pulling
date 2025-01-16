@@ -63,7 +63,7 @@ const handleChat: RequestHandler = async (req, res) => {
     const { prompt, model, temperature } = promptResult
     console.log("LANGUAGE MODEL USE:", model)
     const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
-    console.log("Prompt:", truncatedPrompt.slice(1, 20))
+    console.log("Prompt:", truncatedPrompt.slice(0, 20))
 
     // REQUEST TO OPENROUTER
     const requestPayload = {
@@ -85,6 +85,8 @@ const handleChat: RequestHandler = async (req, res) => {
     )
 
     console.log("MODEL OPENROUTER USE:", requestPayload.model)
+
+    console.log("OPENROUTER RESPONSE:", openaiResponse.data)
 
     const rawResponse = openaiResponse.data.choices[0]?.message?.content
     if (!rawResponse) {
