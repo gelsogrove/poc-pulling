@@ -86,7 +86,6 @@ const handleChat: RequestHandler = async (req, res) => {
     )
 
     console.log("MODEL OPENROUTER USE:", requestPayload.model)
-
     console.log("OPENROUTER RESPONSE:", openaiResponse.data)
 
     const rawResponse = openaiResponse.data.choices[0]?.message?.content
@@ -106,9 +105,7 @@ const handleChat: RequestHandler = async (req, res) => {
       triggerAction = parsedResponse.triggerAction || ""
     } catch (parseError) {
       console.error("Error parsing OpenRouter response:", parseError)
-      res.status(500).json({
-        message: "Invalid response format from OpenRouter",
-      })
+      res.status(200).json({ message: rawResponse })
       return
     }
 
