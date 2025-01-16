@@ -38,45 +38,6 @@ export const getPrompt = async (idPrompt: string) => {
   }
 }
 
-/**
- * Detects the language of a given message using the configured model.
- */
-export const detectLanguage = async (message: string, model: string) => {
-  const detectionPrompt = `
-Identify the language of the following text and return the ISO 639-1 code:
-"${message}"
-  `.trim()
-
-  try {
-    const promptConfig = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
-    const model = promptConfig?.model || "gpt-4" // Default to gpt-4 if not found
-
-    const response = await axios.post(
-      OPENROUTER_API_URL,
-      {
-        model,
-        messages: [{ role: "system", content: detectionPrompt }],
-        max_tokens: 10,
-        temperature: 0.0,
-      },
-      { headers: OPENROUTER_HEADERS, timeout: 10000 }
-    )
-
-    // Verifica l'esistenza di choices prima di accedere al primo elemento
-    const choices = response.data.choices
-    if (!choices || choices.length === 0) {
-      console.error("No choices returned in language detection.")
-      return "en" // Valore predefinito se non ci sono risposte
-    }
-
-    const detectedLanguage = choices[0]?.message?.content.trim()
-    return detectedLanguage || "en" // Default to English if detection fails
-  } catch (error) {
-    console.error("Language detection failed:", error)
-    return "en" // Default to English in case of error
-  }
-}
-
 export const handleError = (error: unknown): { message: string } => {
   if (axios.isAxiosError(error)) {
     // Qui sappiamo che error è un AxiosError, quindi ha proprietà come code, response, etc.
