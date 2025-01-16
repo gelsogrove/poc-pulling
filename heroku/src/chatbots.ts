@@ -29,7 +29,6 @@ if (!process.env.OPENROUTER_API_KEY) {
 axiosRetry(axios, {
   retries: 3,
   retryDelay: (retryCount) => {
-    console.log(`Retry attempt: ${retryCount}`)
     return retryCount * 1000
   },
   retryCondition: (error) => {
@@ -104,8 +103,6 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
       return
     }
 
-    console.log("Raw OpenRouter Response:", rawResponse)
-
     let sqlQuery: string | null = null
     let finalResponse: string = ""
     let triggerAction: string = ""
@@ -123,15 +120,12 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
     }
 
     if (!sqlQuery) {
-      console.log("No SQL query provided. Sending response only.")
       res.status(200).json({
         triggerAction,
         response: finalResponse,
       })
       return
     }
-
-    console.log("Executing SQL Query:", sqlQuery)
     // Utilizza la funzione executeSqlQuery da chatbot_utility per eseguire la query SQL
     const sqlData = await executeSqlQuery(sqlQuery)
 
