@@ -68,10 +68,16 @@ const handleChat: RequestHandler = async (req, res) => {
     console.log("temperature:", temperature)
 
     // REQUEST TO OPENROUTER
+    const conversationHistory = messages.map((msg) => {
+      // Se hai un campo "role" nel tuo oggetto message, usalo; altrimenti default a "user".
+      return { role: msg.role || "user", content: msg.content }
+    })
+
     const requestPayload = {
       model,
       messages: [
         { role: "system", content: truncatedPrompt },
+        ...conversationHistory,
         { role: "user", content: userMessage },
         { role: "system", content: `Language: eng` },
       ],

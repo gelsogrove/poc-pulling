@@ -89,8 +89,7 @@ const ChatPoulin = ({ openPanel }) => {
       })
 
       const parsedResponse = extractJsonFromMessage(botResponse.data.response)
-      setData(botResponse?.data?.data)
-      debugger
+      setData(botResponse?.data)
 
       const responseText = parsedResponse || "I couldn’t understand that."
       console.log("Final Response Text:", responseText)
@@ -110,10 +109,24 @@ const ChatPoulin = ({ openPanel }) => {
       })
 
       // Update conversation history
-      setConversationHistory((prevHistory) => [
-        ...prevHistory,
-        { role: "assistant", content: responseText },
-      ])
+
+      setConversationHistory((prevHistory) => {
+        // Inizia con gli elementi obbligatori
+        const newHistory = [
+          ...prevHistory,
+          { role: "assistant", content: responseText },
+        ]
+
+        // Aggiungi l'elemento condizionale solo se botResponse?.data?.data esiste
+        if (botResponse?.data?.data) {
+          newHistory.push({
+            role: "system",
+            content: JSON.stringify(botResponse.data.data),
+          })
+        }
+
+        return newHistory
+      })
     } catch (error) {
       console.error("Error in handleSend:", error)
       const { updatedMessages: errMsgs, updatedHistory: errHist } = handleError(
