@@ -7,7 +7,6 @@ import {
   cleanResponse,
   executeSqlQuery,
   getPrompt,
-  handleError,
   validateToken,
 } from "./chatbots_utility.js"
 
@@ -96,9 +95,9 @@ const handleChat: RequestHandler = async (req, res) => {
       }
     )
 
-    console.log("***************************")
+    console.log("********** RESPONSE *****************")
     console.log(openaiResponse.data)
-    console.log("***************************")
+    console.log("************************************")
     const rawResponse = cleanResponse(
       openaiResponse.data.choices[0]?.message?.content
     )
@@ -139,8 +138,8 @@ const handleChat: RequestHandler = async (req, res) => {
     })
   } catch (error) {
     console.error("Error in handleChat:", error)
-    const errorResponse = handleError(error)
-    res.status(500).json(errorResponse)
+
+    res.status(500).json(error)
   }
 }
 
