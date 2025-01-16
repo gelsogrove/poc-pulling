@@ -8,8 +8,8 @@ import pkg from "pg"
 import authRouter from "./src/auth.js"
 import chatbotRouter from "./src/chatbots.js"
 import promptRouter from "./src/prompts.js"
-import usageRouter from "./src/usage.js" // Aggiungi .js
-import welcomeRouter from "./src/welcome.js" // Aggiungi .js
+import usageRouter from "./src/usage.js"
+import welcomeRouter from "./src/welcome.js"
 
 const { Pool } = pkg
 
@@ -42,20 +42,24 @@ app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        defaultSrc: ["'self'"], // Permetti solo risorse dallo stesso dominio
-        scriptSrc: ["'self'", "https://ai.dairy-tools.com/"], // Aggiungi domini fidati per gli script
-        styleSrc: ["'self'", "https://ai.dairy-tools.com/"], // Aggiungi domini fidati per gli stili
-        imgSrc: ["'self'", "data:", "hhttps://ai.dairy-tools.com/"], // Permetti immagini dal tuo dominio e da un CDN
-        connectSrc: ["'self'", "hhttps://ai.dairy-tools.com/"], // Permetti connessioni a un'API fidata
-        // Aggiungi altre direttive se necessario
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "https://ai.dairy-tools.com/"],
+        styleSrc: ["'self'", "https://ai.dairy-tools.com/"],
+        imgSrc: ["'self'", "data:", "https://ai.dairy-tools.com/"],
+        connectSrc: [
+          "'self'",
+          "https://ai.dairy-tools.com/",
+          "http://localhost:3000",
+        ],
       },
     },
   })
 )
 
+// Configurazione CORS
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://ai.dairy-tools.com"], // Aggiungi più domini se necessario
+    origin: ["http://localhost:3000", "https://ai.dairy-tools.com"], // Permetti richieste da questi domini
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
@@ -68,15 +72,15 @@ app.use(express.json())
 // Limite di richieste
 const limiter = rateLimit({
   windowMs: 24 * 60 * 60 * 1000, // 24 ore
-  max: 200, //  richieste al giorno
+  max: 200, // richieste al giorno
   message: { error: "Request limit reached today. Try again tomorrow." },
 })
 
 // Usa i vari router
-app.use("/", welcomeRouter) // Router di benvenuto
-app.use("/auth", limiter, authRouter) // Router di autenticazione
-app.use("/usage", limiter, usageRouter) // Router per utilizzo con limiter
-app.use("/prompt", limiter, promptRouter) // Router per utilizzo con limiter
+app.use("/", welcomeRouter)
+app.use("/auth", limiter, authRouter)
+app.use("/usage", limiter, usageRouter)
+app.use("/prompt", limiter, promptRouter)
 app.use("/chatbot", limiter, chatbotRouter)
 
 // Forza HTTPS in produzione
