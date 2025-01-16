@@ -1,6 +1,7 @@
 import axios from "axios"
 import dotenv from "dotenv"
 import { pool } from "../server.js"
+import { getUserIdByToken } from "./validateUser.js"
 
 dotenv.config()
 
@@ -10,22 +11,17 @@ const OPENROUTER_HEADERS = {
   "Content-Type": "application/json",
 }
 
-/**
- * Validates the user's token.
- */
 export const validateToken = async (token: string) => {
   try {
-    const result = await pool.query(
-      "SELECT user_id FROM users WHERE token = $1",
-      [token]
-    )
-    return result.rows.length > 0 ? result.rows[0].user_id : null
+    const userId = await getUserIdByToken(token)
+    if (!userId) {
+      return null
+    }
+    return userId
   } catch (error) {
-    console.error("Error validating token:", error)
     return null
   }
 }
-
 /**
  * Fetches the prompt along with its model and temperature from the database.
  */
