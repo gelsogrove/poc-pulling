@@ -38,6 +38,14 @@ export const getPrompt = async (idPrompt: string) => {
   }
 }
 
+export const cleanResponse = (responseText: string) => {
+  // Rimuovi eventuali delimitatori Markdown come ```json e ```
+  return responseText
+    .replace(/^```json\s*/i, "") // Rimuove l'inizio ```json (case-insensitive)
+    .replace(/```$/, "") // Rimuove i tre backticks finali
+    .trim()
+}
+
 export const handleError = (error: unknown): { message: string } => {
   if (axios.isAxiosError(error)) {
     // Qui sappiamo che error è un AxiosError, quindi ha proprietà come code, response, etc.

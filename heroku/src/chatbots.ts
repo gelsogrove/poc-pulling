@@ -4,6 +4,7 @@ import dotenv from "dotenv"
 import { RequestHandler, Router } from "express"
 // Importazione delle funzioni utilitarie dal modulo chatbot_utility
 import {
+  cleanResponse,
   executeSqlQuery,
   getPrompt,
   handleError,
@@ -89,7 +90,9 @@ const handleChat: RequestHandler = async (req, res) => {
     console.log("MODEL OPENROUTER USE:", requestPayload.model)
     console.log("OPENROUTER RESPONSE:", openaiResponse.data)
 
-    const rawResponse = openaiResponse.data.choices[0]?.message?.content
+    const rawResponse = cleanResponse(
+      openaiResponse.data.choices[0]?.message?.content
+    )
     if (!rawResponse) {
       res.status(204).json({ response: "Empty response from OpenRouter" })
       return
@@ -113,7 +116,6 @@ const handleChat: RequestHandler = async (req, res) => {
       res.status(200).json({
         triggerAction,
         response: finalResponse,
-        query: sqlQuery,
       })
       return
     }
@@ -125,6 +127,7 @@ const handleChat: RequestHandler = async (req, res) => {
       triggerAction,
       response: finalResponse,
       data: sqlData,
+      query: sqlQuery,
     })
   } catch (error) {
     console.error("Error in handleChat:", error)
