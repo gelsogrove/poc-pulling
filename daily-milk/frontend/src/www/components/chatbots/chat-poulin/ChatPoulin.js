@@ -18,7 +18,7 @@ import {
 const ChatPoulin = ({ openPanel }) => {
   // Messages displayed in the chat
   const [messages, setMessages] = useState([])
-  const [data, setData] = useState([])
+  const [, setData] = useState([])
   // Actual conversation history sent/received
   const [conversationHistory, setConversationHistory] = useState([])
 
@@ -90,6 +90,7 @@ const ChatPoulin = ({ openPanel }) => {
 
       const parsedResponse = extractJsonFromMessage(botResponse.data.response)
       setData(botResponse?.data)
+      debugger
 
       const responseText = parsedResponse || "I couldn’t understand that."
       console.log("Final Response Text:", responseText)
@@ -104,6 +105,7 @@ const ChatPoulin = ({ openPanel }) => {
             sender: "bot",
             text: responseText,
             data: botResponse?.data?.data,
+            query: botResponse?.data?.query,
           },
         ]
       })
@@ -145,7 +147,7 @@ const ChatPoulin = ({ openPanel }) => {
     <div className="chat-poulin">
       <div className="chat-poulin-main">
         <div className="chat-poulin-main-messages">
-          <MessageList data={data} messages={messages} />
+          <MessageList messages={messages} />
           <div ref={messagesEndRef} />
         </div>
 

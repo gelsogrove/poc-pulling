@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import "./MessageList.css"
 
-const MessageList = ({ data, messages }) => {
+const MessageList = ({ messages }) => {
   const [debugModes, setDebugModes] = useState({})
 
   const toggleDebugMode = (id) => {
@@ -31,7 +31,7 @@ const MessageList = ({ data, messages }) => {
         const parsed = JSON.parse(text)
         if (debugMode) {
           debugger
-          return <pre>{JSON.stringify(data, null, 2)}</pre>
+          return <pre>{JSON.stringify(msg, null, 2)}</pre>
         } else {
           return parsed.response || text
         }
@@ -41,8 +41,7 @@ const MessageList = ({ data, messages }) => {
           error
         )
         if (debugMode) {
-          delete data.data
-          return <pre>{JSON.stringify(data, null, 2)}</pre>
+          return <pre>{JSON.stringify(msg, null, 2)}</pre>
         } else {
           return text
         }
