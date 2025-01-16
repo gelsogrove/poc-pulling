@@ -70,6 +70,7 @@ const handleChat: RequestHandler = async (req, res) => {
     const requestPayload = {
       model,
       messages: [
+        { role: "system", content: truncatedPrompt },
         { role: "user", content: userMessage },
         { role: "system", content: `Language: eng` },
       ],
@@ -104,7 +105,6 @@ const handleChat: RequestHandler = async (req, res) => {
       finalResponse = parsedResponse.response || "No response provided."
       triggerAction = parsedResponse.triggerAction || ""
     } catch (parseError) {
-      console.error("Error parsing OpenRouter response:", parseError)
       res.status(200).json({ message: rawResponse })
       return
     }
