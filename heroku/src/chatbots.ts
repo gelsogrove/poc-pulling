@@ -62,10 +62,8 @@ const handleChat: RequestHandler = async (req, res) => {
     // PROMPT
     const promptResult = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
     const { prompt, model, temperature } = promptResult
-    console.log("LANGUAGE MODEL USE:", model)
     const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
     console.log("Prompt:", truncatedPrompt.slice(0, 20))
-    console.log("temperature:", temperature)
 
     // REQUEST TO OPENROUTER
     const conversationHistory = messages.map((msg) => {
@@ -73,10 +71,15 @@ const handleChat: RequestHandler = async (req, res) => {
       return { role: msg.role || "user", content: msg.content }
     })
 
+    const { data: analysis } = await axios.get(
+      "https://ai.dairy-tools.com/api/stats.php"
+    )
+
     const requestPayload = {
       model,
       messages: [
         { role: "system", content: truncatedPrompt },
+        { role: "system", content: analysis },
         ...conversationHistory,
         { role: "user", content: userMessage },
         { role: "system", content: `Language: eng` },
@@ -92,9 +95,6 @@ const handleChat: RequestHandler = async (req, res) => {
         timeout: 30000,
       }
     )
-
-    console.log("MODEL OPENROUTER USE:", requestPayload.model)
-    console.log("OPENROUTER RESPONSE:", openaiResponse.data)
 
     const rawResponse = cleanResponse(
       openaiResponse.data.choices[0]?.message?.content
@@ -126,7 +126,6 @@ const handleChat: RequestHandler = async (req, res) => {
       return
     }
 
-    console.log("Executing SQL Query:", sqlQuery)
     const sqlData = await executeSqlQuery(sqlQuery)
 
     res.status(200).json({

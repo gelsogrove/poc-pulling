@@ -1,10 +1,11 @@
+import Cookies from "js-cookie"
 import { v4 as uuidv4 } from "uuid"
 
 /**
  * Returns the user's name from cookies, with a default value of "Guest" if not found.
  */
 export const getUserName = () => {
-  const name = "Guest" // Replace with cookie logic if necessary
+  const name = Cookies.get("name") // Replace with cookie logic if necessary
   return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()
 }
 
