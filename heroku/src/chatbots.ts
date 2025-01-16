@@ -80,7 +80,7 @@ const handleChat: RequestHandler = async (req, res) => {
       model,
       messages: [
         { role: "system", content: truncatedPrompt },
-        { role: "system", content: analysis },
+        //  { role: "system", content: analysis },
         ...conversationHistory,
         { role: "user", content: userMessage },
         { role: "system", content: `Language: eng` },
