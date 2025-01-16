@@ -55,11 +55,11 @@ const handleChat: RequestHandler = async (req, res) => {
     }
 
     const userMessage = messages[messages.length - 1]?.content
-    if (!userMessage) {
-      res.status(400).json({ message: "No user message provided." })
-      return
-    }
-    console.log("ULTIMO MESSAGGIO RICEVUTO DALL'UTENTE:", userMessage)
+
+    console.log(
+      "ULTIMO MESSAGGIO RICEVUTO DALL'UTENTE:",
+      userMessage.find((item: any) => item.role === "user")
+    )
 
     const promptResult = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
     if (!promptResult) {
@@ -95,14 +95,11 @@ const handleChat: RequestHandler = async (req, res) => {
       }
     )
 
-    const choices = openaiResponse.data.choices
-    if (!choices || choices.length === 0) {
-      res.status(204).json({ message: "No choices returned from OpenRouter" })
-      return
-    }
+    const choices = openaiResponse.data.choices || "en"
 
     const rawResponse = choices[0]?.message?.content
     if (!rawResponse) {
+      console.log("Empty response from OpenRouter")
       res.status(204).json({ message: "Empty response from OpenRouter" })
       return
     }
