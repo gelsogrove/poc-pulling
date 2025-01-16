@@ -13,7 +13,7 @@ const OPENROUTER_HEADERS = {
   "Content-Type": "application/json",
 }
 const MAX_TOKENS = 5000
-const INCLUDE_SQL_IN_RESPONSE = true // Set to true to include SQL in frontend response
+const INCLUDE_SQL_IN_RESPONSE = false // Set to true to include SQL in frontend response
 const chatbotRouter = Router()
 
 if (!process.env.OPENROUTER_API_KEY) {
