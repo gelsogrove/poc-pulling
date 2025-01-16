@@ -2,7 +2,7 @@ import axios from "axios"
 import axiosRetry from "axios-retry"
 import dotenv from "dotenv"
 import { RequestHandler, Response, Router } from "express"
-import { pool } from "../server.js"
+import { getPrompt } from "./chatbots_utility.js"
 import { getUserIdByToken } from "./validateUser.js"
 
 dotenv.config()
@@ -27,7 +27,8 @@ axiosRetry(axios, {
     return retryCount * 1000 // Incremental delay
   },
   retryCondition: (error) => {
-    return error.code === "ECONNRESET" || error.response?.status >= 500 // Retry for connection or server errors
+    const status = error.response?.status ?? 0
+    return error.code === "ECONNRESET" || status >= 500
   },
 })
 
@@ -42,19 +43,6 @@ const validateToken = async (token: string, res: Response) => {
   } catch (error) {
     console.error("Error validating token:", error)
     res.status(500).json({ message: "Error validating token" })
-    return null
-  }
-}
-
-const getPrompt = async (idPrompt: string): Promise<string | null> => {
-  try {
-    const result = await pool.query(
-      "SELECT prompt FROM prompts WHERE idPrompt = $1",
-      [idPrompt]
-    )
-    return result.rows.length > 0 ? result.rows[0].prompt : null
-  } catch (error) {
-    console.error("Error fetching prompt:", error)
     return null
   }
 }
@@ -144,25 +132,26 @@ const handleChat: RequestHandler = async (req, res): Promise<void> => {
     // Rilevamento della lingua
     const detectedLanguage = await detectLanguage(userMessage)
 
-    // Recupero del prompt
-    const prompt = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
-    if (!prompt) {
-      res.status(404).json({ message: "Prompt not found." })
-      return
+    const promptResult = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
+    if (!promptResult) {
+      // Gestisci il caso in cui promptResult sia null
+      throw new Error("Prompt non trovato")
     }
+
+    const { prompt, model, temperature } = promptResult
 
     const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
 
     // Costruzione della richiesta per OpenRouter
     const requestPayload = {
-      model: "gpt-4",
+      model,
       messages: [
         { role: "system", content: truncatedPrompt },
         { role: "user", content: userMessage },
         { role: "system", content: `Language: ${detectedLanguage}` },
       ],
       max_tokens: MAX_TOKENS,
-      temperature: 0.2,
+      temperature,
     }
 
     console.log("Request Payload:", requestPayload)
