@@ -90,7 +90,6 @@ const ChatPoulin = ({ openPanel }) => {
 
       const parsedResponse = extractJsonFromMessage(botResponse.data.response)
       setData(botResponse?.data)
-      debugger
 
       const responseText = parsedResponse || "I couldn’t understand that."
       console.log("Final Response Text:", responseText)

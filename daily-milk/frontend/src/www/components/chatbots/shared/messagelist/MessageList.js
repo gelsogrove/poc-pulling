@@ -30,7 +30,6 @@ const MessageList = ({ messages }) => {
       try {
         const parsed = JSON.parse(text)
         if (debugMode) {
-          debugger
           return <pre>{JSON.stringify(msg, null, 2)}</pre>
         } else {
           return parsed.response || text
@@ -74,7 +73,7 @@ const MessageList = ({ messages }) => {
             {/* Se il messaggio possiede dati, visualizzali */}
             {msg.data && <pre>{JSON.stringify(msg.data, null, 2)}</pre>}
 
-            {msg.sender === "bot" && msg.text !== "Typing..." && (
+            {msg.sender === "bot" && msg.text !== "Typing..." && msg.data && (
               <div className="like-unlike-icons">
                 <span
                   role="img"
