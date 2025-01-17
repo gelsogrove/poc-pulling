@@ -72,7 +72,7 @@ app.use(express.json())
 // Limite di richieste
 const limiter = rateLimit({
   windowMs: 24 * 60 * 60 * 1000, // 24 ore
-  max: 200, // richieste al giorno
+  max: 350, // richieste al giorno
   message: { error: "Request limit reached today. Try again tomorrow." },
 })
 

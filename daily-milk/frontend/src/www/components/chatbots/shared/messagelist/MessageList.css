@@ -30,6 +30,14 @@
   border-top-right-radius: 0;
 }
 
+ol {
+  background-color: #dee2e6 !important;
+}
+
+li {
+  background-color: #dee2e6 !important;
+}
+
 /* Bot message styling */
 .bot-message {
   align-self: flex-start;

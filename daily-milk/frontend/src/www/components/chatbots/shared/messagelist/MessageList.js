@@ -25,14 +25,22 @@ const MessageList = ({ messages }) => {
     )
 
     if (sender === "user") {
-      return text
+      return <span>{text}</span>
     } else {
       try {
         const parsed = JSON.parse(text)
+
         if (debugMode) {
           return <pre>{JSON.stringify(msg, null, 2)}</pre>
+        } else if (parsed.response) {
+          return (
+            <div
+              dangerouslySetInnerHTML={{ __html: parsed.response }}
+              style={{ whiteSpace: "pre-line" }} // Aggiungi questo stile per supportare gli a capo
+            />
+          )
         } else {
-          return parsed.response || text
+          return <span>{text}</span>
         }
       } catch (error) {
         console.log(
@@ -42,13 +50,16 @@ const MessageList = ({ messages }) => {
         if (debugMode) {
           return <pre>{JSON.stringify(msg, null, 2)}</pre>
         } else {
-          return text
+          return (
+            <div
+              dangerouslySetInnerHTML={{ __html: text }}
+              style={{ whiteSpace: "pre-line" }} // Aggiungi questo stile per supportare gli a capo
+            />
+          )
         }
       }
     }
   }
-
-  console.log("Stato debugModes:", debugModes)
 
   return (
     <div className="chat-messages">
