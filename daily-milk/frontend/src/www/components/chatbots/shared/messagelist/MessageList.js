@@ -1,6 +1,49 @@
 import React, { useState } from "react"
 import "./MessageList.css"
 
+// Funzione per creare una tabella ASCII dinamica
+export const createDynamicAsciiTable = (data) => {
+  if (!Array.isArray(data) || data.length === 0) {
+    return "No data available"
+  }
+
+  // Ottieni le chiavi come intestazioni
+  const headers = Object.keys(data[0])
+
+  // Trova la larghezza massima per ogni colonna
+  const columnWidths = headers.map((header) =>
+    Math.max(
+      header.length,
+      ...data.map((row) => String(row[header] || "").length)
+    )
+  )
+
+  // Funzione per creare una riga formattata
+  const createRow = (row) =>
+    "| " +
+    headers
+      .map((header, i) => String(row[header] || "").padEnd(columnWidths[i]))
+      .join(" | ") +
+    " |"
+
+  // Genera l'intestazione
+  const headerRow = createRow(Object.fromEntries(headers.map((h) => [h, h])))
+  const separatorRow =
+    "+-" + columnWidths.map((width) => "-".repeat(width)).join("-+-") + "-+"
+
+  // Genera le righe dei dati
+  const dataRows = data.map((row) => createRow(row))
+
+  // Combina tutte le parti per creare la tabella
+  return [
+    separatorRow,
+    headerRow,
+    separatorRow,
+    ...dataRows,
+    separatorRow,
+  ].join("\n")
+}
+
 const MessageList = ({ messages }) => {
   const [debugModes, setDebugModes] = useState({})
 
@@ -20,10 +63,6 @@ const MessageList = ({ messages }) => {
   }
 
   const renderMessageText = (msg, text, sender, debugMode) => {
-    console.log(
-      `renderMessageText chiamata per il messaggio ${msg.id} con debugMode = ${debugMode}`
-    )
-
     if (sender === "user") {
       return <span>{text}</span>
     } else {
@@ -36,7 +75,7 @@ const MessageList = ({ messages }) => {
           return (
             <div
               dangerouslySetInnerHTML={{ __html: parsed.response }}
-              style={{ whiteSpace: "pre-line" }} // Aggiungi questo stile per supportare gli a capo
+              style={{ whiteSpace: "pre-line" }}
             />
           )
         } else {
@@ -47,16 +86,11 @@ const MessageList = ({ messages }) => {
           `Errore nel parsing JSON per il messaggio ${msg.id}:`,
           error
         )
-        if (debugMode) {
-          return <pre>{JSON.stringify(msg, null, 2)}</pre>
-        } else {
-          return (
-            <div
-              dangerouslySetInnerHTML={{ __html: text }}
-              style={{ whiteSpace: "pre-line" }} // Aggiungi questo stile per supportare gli a capo
-            />
-          )
-        }
+        return debugMode ? (
+          <pre>{JSON.stringify(msg, null, 2)}</pre>
+        ) : (
+          <div style={{ whiteSpace: "pre-line" }}>{text}</div>
+        )
       }
     }
   }
@@ -82,7 +116,9 @@ const MessageList = ({ messages }) => {
             </span>
 
             {/* Se il messaggio possiede dati, visualizzali */}
-            {msg.data && <pre>{JSON.stringify(msg.data, null, 2)}</pre>}
+            {msg.data && (
+              <pre>{createDynamicAsciiTable(msg.data)}</pre> // Usa direttamente i dati come array di oggetti
+            )}
 
             {msg.sender === "bot" && msg.text !== "Typing..." && msg.data && (
               <div className="like-unlike-icons">
