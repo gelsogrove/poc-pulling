@@ -64,6 +64,7 @@ li {
   font-size: 1.4rem;
   transition: transform 0.3s ease, filter 0.3s ease;
   filter: grayscale(100%);
+  position: relative;
 }
 
 .like-unlike-icons span:hover {
@@ -71,22 +72,29 @@ li {
   transform: scale(1.2);
 }
 
-.json-data {
-  background-color: #f9f9f9;
-  padding: 10px;
-  margin-top: 10px;
-  border: 1px solid #ddd;
+/* Tooltip for icons */
+.like-unlike-icons span::after {
+  content: attr(title);
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 5px 10px;
   border-radius: 5px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
 }
 
-.debug-mode {
-  background-color: #ffe9e9;
-  padding: 10px;
-  margin-top: 10px;
-  border: 1px solid #ffcccc;
-  border-radius: 5px;
+.like-unlike-icons span:hover::after {
+  opacity: 1;
 }
 
+/* JSON data container */
 .json-data {
   background-color: #f4f4f9;
   padding: 10px;
@@ -97,4 +105,13 @@ li {
   font-size: 0.9rem;
   color: #333;
   overflow-x: auto;
+}
+
+/* Debug mode */
+.debug-mode {
+  background-color: #ffe9e9;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ffcccc;
+  border-radius: 5px;
 }

@@ -6,10 +6,10 @@ export const createDynamicAsciiTable = (data) => {
     return "No data available"
   }
 
-  // Ottieni le chiavi come intestazioni
+  // Get headers as column names
   const headers = Object.keys(data[0])
 
-  // Funzione per formattare i numeri nello stile italiano senza decimali
+  // Function to format numbers in Italian style without decimals
   const formatNumber = (value) => {
     if (!isNaN(value) && value !== null && value !== "") {
       return parseInt(value, 10).toLocaleString("it-IT")
@@ -17,7 +17,7 @@ export const createDynamicAsciiTable = (data) => {
     return value
   }
 
-  // Trova la larghezza massima per ogni colonna
+  // Find the maximum width for each column
   const columnWidths = headers.map((header) =>
     Math.max(
       header.length,
@@ -25,7 +25,7 @@ export const createDynamicAsciiTable = (data) => {
     )
   )
 
-  // Funzione per creare una riga formattata
+  // Function to create a formatted row
   const createRow = (row) =>
     "| " +
     headers
@@ -35,15 +35,15 @@ export const createDynamicAsciiTable = (data) => {
       .join(" | ") +
     " |"
 
-  // Genera l'intestazione
+  // Generate header row
   const headerRow = createRow(Object.fromEntries(headers.map((h) => [h, h])))
   const separatorRow =
     "+-" + columnWidths.map((width) => "-".repeat(width)).join("-+-") + "-+"
 
-  // Genera le righe dei dati
+  // Generate data rows
   const dataRows = data.map((row) => createRow(row))
 
-  // Combina tutte le parti per creare la tabella
+  // Combine all parts to create the table
   const table = [
     separatorRow,
     headerRow,
@@ -73,6 +73,24 @@ const MessageList = ({ messages }) => {
     console.log(`Unliked message with id: ${id}`)
   }
 
+  const copyContent = (id) => {
+    const messageElement = document.querySelector(`[data-id='${id}']`)
+    if (messageElement) {
+      const contentToCopy = Array.from(messageElement.children)
+        .filter((child) => !child.classList.contains("like-unlike-icons"))
+        .map((child) => child.innerText)
+        .join("\n")
+      navigator.clipboard.writeText(contentToCopy).then(
+        () => {
+          console.log("Content copied to clipboard")
+        },
+        (err) => {
+          console.error("Failed to copy content: ", err)
+        }
+      )
+    }
+  }
+
   const renderMessageText = (msg, text, sender, debugMode) => {
     if (sender === "user") {
       return <span>{text}</span>
@@ -90,17 +108,22 @@ const MessageList = ({ messages }) => {
             />
           )
         } else {
-          return <span>{text}</span>
+          return (
+            <div
+              dangerouslySetInnerHTML={{ __html: text }}
+              style={{ whiteSpace: "pre-line" }}
+            />
+          )
         }
       } catch (error) {
-        console.log(
-          `Errore nel parsing JSON per il messaggio ${msg.id}:`,
-          error
-        )
+        console.log(`Error parsing JSON for message ${msg.id}:`, error)
         return debugMode ? (
           <pre>{JSON.stringify(msg, null, 2)}</pre>
         ) : (
-          <div style={{ whiteSpace: "pre-line" }}>{text}</div>
+          <div
+            dangerouslySetInnerHTML={{ __html: text }}
+            style={{ whiteSpace: "pre-line" }}
+          />
         )
       }
     }
@@ -110,8 +133,9 @@ const MessageList = ({ messages }) => {
     <div className="chat-messages">
       {messages
         .filter((msg) => msg.sender !== "system")
-        .map((msg) => (
+        .map((msg, index) => (
           <div
+            data-id={msg.id}
             key={msg.id}
             className={`chat-message ${
               msg.sender === "user" ? "user-message" : "bot-message"
@@ -126,35 +150,44 @@ const MessageList = ({ messages }) => {
               )}
             </span>
 
-            {/* Se il messaggio possiede dati, visualizzali */}
+            {/* Display data if available */}
             {msg.data && (
-              <pre>{createDynamicAsciiTable(msg.data)}</pre> // Usa direttamente i dati come array di oggetti
+              <pre>{createDynamicAsciiTable(msg.data)}</pre> // Directly use data as array of objects
             )}
 
-            {msg.sender === "bot" && msg.text !== "Typing..." && msg.data && (
-              <div className="like-unlike-icons">
-                <span
-                  role="img"
-                  aria-label="unlike"
-                  onClick={() => handleUnlike(msg.id)}
-                  title="Unlike"
-                  style={{ cursor: "pointer", marginRight: "8px" }}
-                >
-                  👎
-                </span>
-                <span
-                  role="img"
-                  aria-label="debug"
-                  onClick={() => toggleDebugMode(msg.id)}
-                  title={`Toggle Debug Mode (${
-                    debugModes[msg.id] ? "ON" : "OFF"
-                  })`}
-                  style={{ cursor: "pointer" }}
-                >
-                  🐞
-                </span>
-              </div>
-            )}
+            {msg.sender === "bot" &&
+              msg.text !== "Typing..." &&
+              index !== 0 && (
+                <div className="like-unlike-icons">
+                  <span
+                    role="img"
+                    aria-label="unlike"
+                    onClick={() => handleUnlike(msg.id)}
+                    title="Dislike this message"
+                    style={{ cursor: "pointer", marginRight: "8px" }}
+                  >
+                    👎
+                  </span>
+                  <span
+                    role="img"
+                    aria-label="debug"
+                    onClick={() => toggleDebugMode(msg.id)}
+                    title="Toggle debug mode"
+                    style={{ cursor: "pointer", marginRight: "8px" }}
+                  >
+                    🐞
+                  </span>
+                  <span
+                    role="img"
+                    aria-label="copy"
+                    onClick={() => copyContent(msg.id)}
+                    title="Copy this message"
+                    style={{ cursor: "pointer" }}
+                  >
+                    📄
+                  </span>
+                </div>
+              )}
           </div>
         ))}
     </div>
