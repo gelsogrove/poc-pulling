@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 import "./MessageList.css"
 
-// Funzione per creare una tabella ASCII dinamica
 export const createDynamicAsciiTable = (data) => {
   if (!Array.isArray(data) || data.length === 0) {
     return "No data available"
@@ -10,11 +9,19 @@ export const createDynamicAsciiTable = (data) => {
   // Ottieni le chiavi come intestazioni
   const headers = Object.keys(data[0])
 
+  // Funzione per formattare i numeri nello stile italiano senza decimali
+  const formatNumber = (value) => {
+    if (!isNaN(value) && value !== null && value !== "") {
+      return parseInt(value, 10).toLocaleString("it-IT")
+    }
+    return value
+  }
+
   // Trova la larghezza massima per ogni colonna
   const columnWidths = headers.map((header) =>
     Math.max(
       header.length,
-      ...data.map((row) => String(row[header] || "").length)
+      ...data.map((row) => String(formatNumber(row[header]) || "").length)
     )
   )
 
@@ -22,7 +29,9 @@ export const createDynamicAsciiTable = (data) => {
   const createRow = (row) =>
     "| " +
     headers
-      .map((header, i) => String(row[header] || "").padEnd(columnWidths[i]))
+      .map((header, i) =>
+        String(formatNumber(row[header]) || "").padEnd(columnWidths[i])
+      )
       .join(" | ") +
     " |"
 
@@ -35,13 +44,15 @@ export const createDynamicAsciiTable = (data) => {
   const dataRows = data.map((row) => createRow(row))
 
   // Combina tutte le parti per creare la tabella
-  return [
+  const table = [
     separatorRow,
     headerRow,
     separatorRow,
     ...dataRows,
     separatorRow,
   ].join("\n")
+
+  return table
 }
 
 const MessageList = ({ messages }) => {
