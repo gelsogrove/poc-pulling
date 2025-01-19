@@ -119,12 +119,13 @@ const ChatPoulin = ({ openPanel }) => {
         ]
 
         // Aggiungi l'elemento condizionale solo se botResponse?.data?.data esiste
-        if (botResponse?.data?.data) {
+        /*  if (botResponse?.data?.data) {
           newHistory.push({
             role: "system",
             content: JSON.stringify(botResponse.data.data),
           })
         }
+          */
 
         return newHistory
       })

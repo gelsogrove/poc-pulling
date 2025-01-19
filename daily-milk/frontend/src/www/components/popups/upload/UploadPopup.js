@@ -42,7 +42,7 @@ const UploadPopup = ({ onClose }) => {
         onDragOver={handleDragOver}
         onClick={() => document.getElementById("file-input").click()} // Apre il file browser al click
       >
-        Trascina i tuoi file qui o clicca per selezionare
+        select the file to import
       </div>
       <input
         type="file"
