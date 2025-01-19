@@ -122,7 +122,7 @@ export const sendUsageData = async (
         },
       }
     )
-    return response.data
+    return true
   } catch (error) {
     return null
   }
