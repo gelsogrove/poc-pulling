@@ -20,11 +20,15 @@ usageRouter.post("/new", async (req, res) => {
   const { day, total, token, service } = req.body
 
   try {
+    console.log("********23")
     // Convert token to userId
     const userId = await validateToken(token, res)
     if (!userId) return
+    console.log("********27")
 
     await validateUser(userId)
+
+    console.log("********31")
 
     // Costruisci la query e stampa i valori
     const query =
@@ -32,7 +36,8 @@ usageRouter.post("/new", async (req, res) => {
     const values = [day, total, userId, service]
 
     // Esegui la query
-    console.log(query)
+    console.log(query, values)
+
     const result = await pool.query(query, values)
     res.status(201).json(result)
   } catch (error) {
