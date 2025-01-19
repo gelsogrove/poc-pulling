@@ -55,7 +55,7 @@ const Home = () => {
       </Popup>
 
       <div className="home-container">
-        <h1 className="ourservice">Poulin Grain</h1>
+        <h1 className="ourservice">AI dairy-tools</h1>
         <section className="features">
           <div className="feature-item">
             <div
@@ -87,11 +87,51 @@ const Home = () => {
                 <i className="fas fa-history"></i>
                 <div className="tooltip">Unliked</div>
               </button>
+            </div>
+          </div>
 
-              <button className="btn" onClick={() => openPopup("invoices")}>
-                <i class="fas fa-file-invoice"></i>
-                <div className="tooltip">Invoices</div>
-              </button>
+          <div className="feature-item">
+            <div className="image-container">
+              <img
+                src="../images/chatbot.webp"
+                alt={t("home.features.chatbot.title")}
+                className="feature-image disabled-image"
+                style={{ backgroundColor: "gray" }}
+              />
+              <div className="overlay">
+                <h3>... </h3>
+                <div className="subtitle"> </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="feature-item">
+            <div className="image-container">
+              <img
+                src="../images/chatbot.webp"
+                alt={t("home.features.chatbot.title")}
+                className="feature-image disabled-image"
+                style={{ backgroundColor: "gray" }}
+              />
+              <div className="overlay">
+                <h3>... </h3>
+                <div className="subtitle"> </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="feature-item">
+            <div className="image-container">
+              <img
+                src="../images/chatbot.webp"
+                alt={t("home.features.chatbot.title")}
+                className="feature-image disabled-image"
+                style={{ backgroundColor: "gray" }}
+              />
+              <div className="overlay">
+                <h3> ...</h3>
+                <div className="subtitle"> </div>
+              </div>
             </div>
           </div>
         </section>

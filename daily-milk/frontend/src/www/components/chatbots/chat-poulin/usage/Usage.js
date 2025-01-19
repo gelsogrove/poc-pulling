@@ -26,33 +26,30 @@ ChartJS.register(
   Legend
 )
 
-const Usage = ({ IdConversation }) => {
+const Usage = ({ IdConversation, refresh }) => {
   const [usageData, setUsageData] = useState(null)
-  const [initialTotalCurrentMonth, setInitialTotalCurrentMonth] = useState(0)
+  const [, setInitialTotalCurrentMonth] = useState(0)
 
   const [temperature, setTemperature] = useState(null)
   const [model, setModel] = useState(null)
 
-  useEffect(() => {
+  const fetchData = async () => {
     // Usage
-    const getData = async () => {
-      const data = await fetchUsageData()
-      setUsageData(data)
-      if (data && data.totalCurrentMonth) {
-        setInitialTotalCurrentMonth(data.totalCurrentMonth)
-      }
+    const data = await fetchUsageData()
+    setUsageData(data)
+    if (data && data.totalCurrentMonth) {
+      setInitialTotalCurrentMonth(data.totalCurrentMonth)
     }
 
     // Temperature Model
-    const getPromptDetasil = async () => {
-      const { temperature, model } = await getPromptDetails()
-      setTemperature(temperature)
-      setModel(model)
-    }
+    const { temperature, model } = await getPromptDetails()
+    setTemperature(temperature)
+    setModel(model)
+  }
 
-    getData()
-    getPromptDetasil()
-  }, [])
+  useEffect(() => {
+    fetchData()
+  }, [refresh])
 
   return (
     <div className="usage-container">
@@ -65,13 +62,8 @@ const Usage = ({ IdConversation }) => {
       ) : usageData ? (
         <>
           <div className="title-usage"></div>
-          Current chat:
-          <h3>
-            {(initialTotalCurrentMonth - usageData.totalCurrentMonth).toFixed(
-              2
-            )}{" "}
-            $
-          </h3>
+          Current monthly usage:
+          <h3>{usageData.totalCurrentMonth} $</h3>
           <hr />
           Model:
           <h4>{model}</h4>

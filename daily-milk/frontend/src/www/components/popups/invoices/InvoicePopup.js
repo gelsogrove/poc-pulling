@@ -1,4 +1,3 @@
-// daily-milk/frontend/src/www/components/UsageTable.js
 import React, { useEffect, useState } from "react"
 import { Bar } from "react-chartjs-2"
 import { fetchUsageData } from "../../chatbots/chat-poulin/usage/api/usageApi"
@@ -25,52 +24,56 @@ const InvoicePopup = ({ onClose }) => {
   ]
 
   useEffect(() => {
-    // MONTHLY DATA
+    // Fetch monthly data
     const getMonthlyData = async () => {
       const data = await monthlyData()
-
       setData(data)
     }
     getMonthlyData()
 
-    // STATISTICS
+    // Fetch usage statistics
     const getData = async () => {
       const usageData = await fetchUsageData()
-      setUsageData(usageData)
 
-      usageData.lastmonths.pop()
+      // Ordina i mesi per anno e mese
+      usageData.lastmonths.sort((a, b) => {
+        const dateA = new Date(
+          `${a.year}-${monthNames.indexOf(a.month) + 1}-01`
+        )
+        const dateB = new Date(
+          `${b.year}-${monthNames.indexOf(b.month) + 1}-01`
+        )
+        return dateA - dateB
+      })
+
+      setUsageData(usageData)
     }
     getData()
   }, [])
 
+  // Preparazione dei dati per il grafico
   const barData = {
-    labels:
-      usageData && usageData.lastmonths
-        ? usageData.lastmonths.slice(-12).map((item) => item.month)
-        : [],
+    labels: usageData?.lastmonths
+      ? usageData.lastmonths
+          .slice(-12)
+          .map((item) => `${item.month} ${item.year}`)
+      : [],
     datasets: [
       {
-        label: "",
-        data:
-          usageData && usageData.lastmonths
-            ? usageData.lastmonths
-                .slice(-12)
-                .map((item) => parseFloat(item.total))
-            : [],
-        backgroundColor:
-          usageData && usageData.lastmonths
-            ? usageData.lastmonths
-                .slice(-12)
-                .map((_, index) =>
-                  index === 5 ? "rgba(255,0,0,0.6)" : "rgba(153,102,255,0.6)"
-                )
-            : [],
+        label: "Monthly Totals",
+        data: usageData?.lastmonths
+          ? usageData.lastmonths
+              .slice(-12)
+              .map((item) => parseFloat(item.total))
+          : [],
+        backgroundColor: "rgba(153,102,255,0.6)",
         borderColor: "rgba(153,102,255,1)",
         borderWidth: 2,
       },
     ],
   }
 
+  // Opzioni per il grafico
   const barOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -120,10 +123,9 @@ const InvoicePopup = ({ onClose }) => {
               <td>{item.year}</td>
               <td>{monthNames[item.month - 1]}</td>
               <td>{item.total}</td>
-
               <td>{item.paid ? "Yes" : "No"}</td>
               <td>
-                <button class="btnInvoice">Download</button>
+                <button className="btnInvoice">Download</button>
               </td>
             </tr>
           ))}

@@ -107,8 +107,6 @@ export const sendUsageData = async (
   userId: string
 ) => {
   try {
-    console.log("****************")
-
     const query =
       'INSERT INTO usage (day, total, "user", service) VALUES ($1, $2, $3, $4) RETURNING *'
     const values = [day, total, userId, service]

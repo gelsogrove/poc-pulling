@@ -1,11 +1,22 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { LogOut } from "./api/LogoutApi"
 import i18n from "../../../i18n"
+import InvoicePopup from "../../components/popups/invoices/InvoicePopup.js"
+import Popup from "../../components/popups/Popup"
+import { LogOut } from "./api/LogoutApi"
 import "./Navbar.css"
 
 const Navbar = () => {
   const navigate = useNavigate()
+
+  const [activePopup, setActivePopup] = useState(null)
+  const closePopup = () => {
+    setActivePopup(null)
+  }
+
+  const openPopup = (popupType) => {
+    setActivePopup(popupType)
+  }
 
   useEffect(() => {
     const supportedLanguages = ["it", "es", "en"]
@@ -36,12 +47,23 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="navbar">
-      <button onClick={clearAllCookies} className="btn logout-btn">
-        <i className="fa-solid fa-right-from-bracket"></i>
-        <div className="tooltip">Logout</div>
-      </button>
-    </nav>
+    <div>
+      <Popup isOpen={activePopup === "invoices"}>
+        <InvoicePopup onClose={closePopup} />
+      </Popup>
+
+      <nav className="navbar">
+        <button className="btn" onClick={() => openPopup("invoices")}>
+          <i className="fas fa-file-invoice"></i>
+          <div className="tooltip">Invoices</div>
+        </button>
+
+        <button onClick={clearAllCookies} className="btn logout-btn">
+          <i className="fa-solid fa-right-from-bracket"></i>
+          <div className="tooltip">Logout</div>
+        </button>
+      </nav>
+    </div>
   )
 }
 

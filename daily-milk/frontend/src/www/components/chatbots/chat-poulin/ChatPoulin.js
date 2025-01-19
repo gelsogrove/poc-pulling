@@ -16,6 +16,7 @@ import {
 } from "./utils"
 
 const ChatPoulin = ({ openPanel }) => {
+  const [refreshUsage, setRefreshUsage] = useState(false)
   // Messages displayed in the chat
   const [messages, setMessages] = useState([])
   const [, setData] = useState([])
@@ -80,6 +81,8 @@ const ChatPoulin = ({ openPanel }) => {
     ])
 
     try {
+      setRefreshUsage(!refreshUsage)
+
       const botResponse = await axios.post(apiUrl, {
         token: Cookies.get("token"),
         name: Cookies.get("name"),
@@ -167,7 +170,7 @@ const ChatPoulin = ({ openPanel }) => {
             padding: "20px",
           }}
         >
-          <Usage />
+          <Usage refresh={refreshUsage} />
         </div>
       )}
     </div>
