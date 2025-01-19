@@ -16,21 +16,23 @@ const validateToken = async (
   return userId
 }
 
-// Endpoint per aggiungere un utilizzo
 usageRouter.post("/new", async (req, res) => {
   const { day, total, token, service } = req.body
 
   try {
-    //Convert token to userId
+    // Convert token to userId
     const userId = await validateToken(token, res)
     if (!userId) return
 
     await validateUser(userId)
 
-    const result = await pool.query(
-      'INSERT INTO usage (day, total, "user", service) VALUES ($1, $2, $3, $4) RETURNING *',
-      [day, total, userId, service]
-    )
+    // Costruisci la query e stampa i valori
+    const query =
+      'INSERT INTO usage (day, total, "user", service) VALUES ($1, $2, $3, $4) RETURNING *'
+    const values = [day, total, userId, service]
+
+    // Esegui la query
+    const result = await pool.query(query, values)
     res.status(201).json(result)
   } catch (error) {
     if (error instanceof Error) {
