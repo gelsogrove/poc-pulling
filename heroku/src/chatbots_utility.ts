@@ -102,8 +102,9 @@ export const executeSqlQuery = async (sqlQuery: string) => {
 export const sendUsageData = async (
   day: any,
   total: any,
-  token: any,
-  service: any
+  token: string,
+  service: string,
+  userId: string
 ) => {
   const payload = {
     day,
@@ -114,12 +115,14 @@ export const sendUsageData = async (
 
   try {
     console.log("****************")
-    const response = await axios.post("/usage/new", payload, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    return response
+
+    const query =
+      'INSERT INTO usage (day, total, "user", service) VALUES ($1, $2, $3, $4) RETURNING *'
+    const values = [day, total, userId, service]
+
+    const result = await pool.query(query, values)
+
+    return result
   } catch (error) {
     return error
   }
