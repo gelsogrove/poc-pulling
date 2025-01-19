@@ -24,7 +24,6 @@ const ChatPoulin = ({ openPanel }) => {
 
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-
   const messagesEndRef = useRef(null)
   const apiUrl = "https://poulin-bd075425a92c.herokuapp.com/chatbot/response"
   const IdConversation = uuidv4()
@@ -92,7 +91,6 @@ const ChatPoulin = ({ openPanel }) => {
       setData(botResponse?.data)
 
       const responseText = parsedResponse || "I couldn’t understand that."
-      console.log("Final Response Text:", responseText)
 
       // Replace the loading message with the response text
       setMessages((prevMessages) => {
@@ -105,7 +103,7 @@ const ChatPoulin = ({ openPanel }) => {
             text: responseText,
             data: botResponse?.data?.data,
             query: botResponse?.data?.query,
-            triggerAction: botResponse?.data.triggerAction,
+            triggerAction: botResponse?.data?.triggerAction,
           },
         ]
       })
