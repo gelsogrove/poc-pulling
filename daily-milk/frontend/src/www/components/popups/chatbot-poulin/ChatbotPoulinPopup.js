@@ -1,12 +1,13 @@
 import React, { useState } from "react"
 import ChatPoulin from "../../chatbots/chat-poulin/ChatPoulin"
 import "./ChatbotPoulinPopup.css"
+import PrintSection from "./PrintSection"
 
 const ChatbotPoulinPopup = ({ onClose }) => {
-  const [openPanel, setOpenPanel] = useState(false) // Usa useState per gestire lo stato del pannello
+  const [openPanel, setOpenPanel] = useState(false)
 
   const onTogglePanel = () => {
-    setOpenPanel((prev) => !prev) // Cambia lo stato del pannello
+    setOpenPanel((prev) => !prev)
   }
 
   return (
@@ -17,17 +18,18 @@ const ChatbotPoulinPopup = ({ onClose }) => {
           onClick={onTogglePanel}
         >
           {openPanel ? (
-            <i class="fa-solid fa-arrow-right icon"></i>
+            <i className="fa-solid fa-arrow-right icon"></i>
           ) : (
-            <i class="fa-solid fa-arrow-left icon"></i>
+            <i className="fa-solid fa-arrow-left icon"></i>
           )}
         </button>
 
         <button onClick={onClose} className="close-popup btn hover-effect">
-          <i class="fa-solid fa-close icon"></i>
+          <i className="fa-solid fa-close icon"></i>
         </button>
 
-        {/* Sezione Chat */}
+        <PrintSection />
+
         <div className="chat-section-source">
           <h3>Sales reader chatbot</h3>
           <ChatPoulin openPanel={openPanel} />

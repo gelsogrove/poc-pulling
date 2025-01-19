@@ -1,5 +1,3 @@
-/* src/components/popups/chatbot/ChatbotPopup.css */
-
 .chatbot-popup-poulin {
   display: flex;
   flex-direction: row;
@@ -10,11 +8,9 @@
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  position: relative;
   border: 2px solid #ccc;
 }
 
-/* Sezione Chat */
 .chat-section-source {
   width: 100%;
   padding: 0px;
@@ -22,7 +18,8 @@
   box-sizing: border-box;
   height: 83vh;
   margin-top: 30px;
-  margin-left: -10px;
+  margin-left: -70px;
+  padding: 5px;
 }
 
 .resize-popup-link {
@@ -33,7 +30,7 @@
 
 .visible-panel {
   position: relative;
-  left: 95%;
+  left: 89%;
   height: 20px;
   top: 20px;
   z-index: 99;
@@ -56,10 +53,19 @@
   background-color: none;
 }
 
-.hover-effect:hover {
-  background-color: rgb(
-    211,
-    204,
-    204
-  ) !important; /* Cambia il colore di sfondo come desiderato */
+.print-popup {
+  position: absolute;
+  left: 85%;
+  top: 20px;
+  z-index: 999;
+  font-size: 22px;
+  background: none;
+  cursor: pointer;
+  color: #333;
+}
+
+.print-popup:hover {
+  color: #007bff;
+  transform: scale(1.2);
+  transition: transform 0.3s ease, color 0.3s ease;
 }
