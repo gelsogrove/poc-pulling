@@ -32,6 +32,7 @@ usageRouter.post("/new", async (req, res) => {
     const values = [day, total, userId, service]
 
     // Esegui la query
+    console.log(query)
     const result = await pool.query(query, values)
     res.status(201).json(result)
   } catch (error) {
