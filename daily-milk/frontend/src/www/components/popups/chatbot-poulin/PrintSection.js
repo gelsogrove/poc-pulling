@@ -11,7 +11,6 @@ const PrintSection = () => {
       const pdfWidth = pdf.internal.pageSize.getWidth()
       const pdfHeight = pdf.internal.pageSize.getHeight()
 
-      const imgWidth = canvas.width / 2 // High-quality scaling
       const imgHeight = (canvas.height * pdfWidth) / canvas.width
 
       let heightLeft = imgHeight

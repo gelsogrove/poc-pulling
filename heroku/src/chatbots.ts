@@ -39,7 +39,7 @@ const handleChat: RequestHandler = async (req, res) => {
   const { conversationId, token, messages } = req.body
 
   try {
-    // VALIDATAION
+    // VALIDATION
     if (!conversationId || !token || !Array.isArray(messages)) {
       res.status(400).json({
         message: "conversationId, token, and messages array are required.",
@@ -54,7 +54,7 @@ const handleChat: RequestHandler = async (req, res) => {
       return
     }
 
-    // USERMESSAGE
+    // USER MESSAGE
     const userMessage = messages[messages.length - 1]?.content
     console.log("Message", userMessage)
 
@@ -64,31 +64,44 @@ const handleChat: RequestHandler = async (req, res) => {
     const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
     console.log("Prompt:", truncatedPrompt.slice(0, 20))
 
-    // HISOTOY
+    // HISTORY
     const conversationHistory = messages.map((msg) => {
-      // Se hai un campo "role" nel tuo oggetto message, usalo; altrimenti default a "user".
       return { role: msg.role || "user", content: msg.content }
     })
 
-    // ANALYSISS
-    const { data: analysis } = await axios.get(
-      "https://ai.dairy-tools.com/api/stats.php"
-    )
+    // ANALYSIS
+    if (["analysis", "trend"].includes(userMessage.toLowerCase())) {
+      try {
+        const { data: analysis } = await axios.get(
+          "https://ai.dairy-tools.com/api/stats.php"
+        )
 
-    console.log(analysis)
+        console.log("Analysis Data:", analysis)
+
+        res.status(200).json({
+          response: `Here is the analysis: ${JSON.stringify(analysis)}`,
+        })
+        return
+      } catch (analysisError) {
+        console.error("Error fetching analysis data:", analysisError)
+        res.status(500).json({
+          response: "Failed to fetch analysis data.",
+        })
+        return
+      }
+    }
 
     // PAYLOAD
     const requestPayload = {
       model,
       messages: [
         { role: "system", content: truncatedPrompt },
-        //  { role: "system", content: JSON.stringify(analysis) },
         ...conversationHistory,
         { role: "user", content: userMessage },
         { role: "system", content: `Language: eng` },
       ],
       max_tokens: MAX_TOKENS,
-      temperature: Number(temperature), // Conversione in numero
+      temperature: Number(temperature),
     }
 
     // OPENROUTER
@@ -101,11 +114,7 @@ const handleChat: RequestHandler = async (req, res) => {
       }
     )
 
-    //console.log("********** RESPONSE *****************")
-    //console.log(openaiResponse.data)
-    //console.log("************************************")
-
-    //ANSWER
+    // ANSWER
     const rawResponse = cleanResponse(
       openaiResponse.data.choices[0]?.message?.content
     )
@@ -113,7 +122,6 @@ const handleChat: RequestHandler = async (req, res) => {
       res.status(204).json({ response: "Empty response from OpenRouter" })
       return
     }
-    console.log("************************************")
     console.log("OPENROUTER RESPONSE:", rawResponse)
 
     let sqlQuery: string | null = null
@@ -141,7 +149,6 @@ const handleChat: RequestHandler = async (req, res) => {
         query: sqlQuery,
       })
     } catch (parseError) {
-      // retunr single sentence
       res.status(200).json({ response: rawResponse })
       return
     }
