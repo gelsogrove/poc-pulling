@@ -113,6 +113,7 @@ export const sendUsageData = async (
   }
 
   try {
+    console.log("****************")
     const response = await axios.post("/usage/new", payload, {
       headers: {
         "Content-Type": "application/json",
@@ -120,6 +121,6 @@ export const sendUsageData = async (
     })
     return response
   } catch (error) {
-    return null
+    return error
   }
 }
