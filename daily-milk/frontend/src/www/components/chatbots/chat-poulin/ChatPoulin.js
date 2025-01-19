@@ -105,6 +105,7 @@ const ChatPoulin = ({ openPanel }) => {
             text: responseText,
             data: botResponse?.data?.data,
             query: botResponse?.data?.query,
+            triggerAction: botResponse?.data.triggerAction,
           },
         ]
       })

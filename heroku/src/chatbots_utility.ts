@@ -98,3 +98,32 @@ export const executeSqlQuery = async (sqlQuery: string) => {
     throw new Error("SQL execution failed")
   }
 }
+
+export const sendUsageData = async (
+  day: any,
+  total: any,
+  token: any,
+  service: any
+) => {
+  const payload = {
+    day,
+    total,
+    token,
+    service,
+  }
+
+  try {
+    const response = await axios.post(
+      "http://localhost:8080/usage/new",
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    return null
+  }
+}

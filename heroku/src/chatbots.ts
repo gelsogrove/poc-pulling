@@ -7,6 +7,7 @@ import {
   cleanResponse,
   executeSqlQuery,
   getPrompt,
+  sendUsageData,
   validateToken,
 } from "./chatbots_utility.js"
 
@@ -122,7 +123,6 @@ const handleChat: RequestHandler = async (req, res) => {
       res.status(204).json({ response: "Empty response from OpenRouter" })
       return
     }
-    console.log("OPENROUTER RESPONSE:", rawResponse)
 
     let sqlQuery: string | null = null
     let finalResponse: string = ""
@@ -132,6 +132,12 @@ const handleChat: RequestHandler = async (req, res) => {
       sqlQuery = parsedResponse.sql || null
       finalResponse = parsedResponse.response || "No response provided."
       triggerAction = parsedResponse.triggerAction || ""
+
+      if (sqlQuery !== null) {
+        const day = new Date().toISOString().split("T")[0]
+        await sendUsageData(day, 0.2, token, triggerAction)
+      }
+
       if (!sqlQuery) {
         res.status(200).json({
           triggerAction,
