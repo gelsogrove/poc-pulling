@@ -106,13 +106,6 @@ export const sendUsageData = async (
   service: string,
   userId: string
 ) => {
-  const payload = {
-    day,
-    total,
-    token,
-    service,
-  }
-
   try {
     console.log("****************")
 
