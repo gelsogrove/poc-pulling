@@ -31,7 +31,7 @@ usageRouter.post("/new", async (req, res) => {
       'INSERT INTO usage (day, total, "user", service) VALUES ($1, $2, $3, $4) RETURNING *',
       [day, total, userId, service]
     )
-    res.status(201).json(result.rows[0])
+    res.status(201).json(result)
   } catch (error) {
     if (error instanceof Error) {
       res.status(401).json({ error: error.message })
