@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import "./MessageList.css"
 
 export const createDynamicAsciiTable = (data) => {
@@ -69,8 +69,57 @@ const MessageList = ({ messages }) => {
     })
   }
 
-  const handleUnlike = (id) => {
-    console.log(`Unliked message with id: ${id}`)
+  function getCurrentDateTime() {
+    const now = new Date()
+
+    // Ottieni l'anno, il mese e il giorno
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, "0") // Mesi da 0 a 11, quindi aggiungi 1
+    const day = String(now.getDate()).padStart(2, "0")
+
+    // Ottieni ore e minuti
+    const hours = String(now.getHours()).padStart(2, "0")
+    const minutes = String(now.getMinutes()).padStart(2, "0")
+
+    // Combina tutto in un'unica stringa
+    return `${year}-${month}-${day} ${hours}:${minutes}`
+  }
+
+  const handleUnlike = async (msgId, conversationHistory) => {
+    const payload = {
+      conversationId: conversationHistory,
+      msgId,
+      dataTime: getCurrentDateTime(),
+    }
+
+    try {
+      const response = await fetch(
+        "https://poulin-bd075425a92c.herokuapp.com/chatbot/unlike",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      )
+      debugger
+
+      if (response.ok) {
+        console.log("Message unliked successfully")
+
+        // Disabilita tutte le icone unlike (mettendole grigie)
+        const unlikeIcons = document.querySelectorAll(".like-unlike-icons span")
+        unlikeIcons.forEach((icon) => {
+          icon.style.color = "gray" // Cambia colore
+          icon.style.pointerEvents = "none" // Disabilita clic
+        })
+      } else {
+        console.error("Failed to unlike the message:", response.statusText)
+      }
+    } catch (error) {
+      console.error("Error in unliking message:", error)
+    }
   }
 
   const copyContent = (id) => {

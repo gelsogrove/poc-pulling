@@ -149,7 +149,10 @@ const ChatPoulin = ({ openPanel }) => {
     <div className="chat-poulin">
       <div className="chat-poulin-main">
         <div className="chat-poulin-main-messages">
-          <MessageList messages={messages} />
+          <MessageList
+            conversationHistory={conversationHistory}
+            messages={messages}
+          />
           <div ref={messagesEndRef} />
         </div>
 
@@ -170,7 +173,7 @@ const ChatPoulin = ({ openPanel }) => {
             padding: "20px",
           }}
         >
-          <Usage refresh={refreshUsage} />
+          <Usage IdConversation={IdConversation} refresh={refreshUsage} />
         </div>
       )}
     </div>

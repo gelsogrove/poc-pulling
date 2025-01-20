@@ -8,7 +8,7 @@ import pkg from "pg"
 import authRouter from "./src/auth.js"
 import chatbotRouter from "./src/chatbots.js"
 import promptRouter from "./src/prompts.js"
-import usageRouter from "./src/usage.js"
+import { default as unlikeRouter, default as usageRouter } from "./src/usage.js"
 import welcomeRouter from "./src/welcome.js"
 
 const { Pool } = pkg
@@ -93,6 +93,7 @@ app.use("/auth", limiter, authRouter)
 app.use("/usage", limiter, usageRouter)
 app.use("/prompt", limiter, promptRouter)
 app.use("/chatbot", limiter, chatbotRouter)
+app.use("/unlike", limiter, unlikeRouter)
 
 // Forza HTTPS in produzione
 if (process.env.NODE_ENV === "production") {
