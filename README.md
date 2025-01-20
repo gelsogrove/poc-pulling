@@ -1,13 +1,19 @@
 ===================== STATUS =====================
-heroku : 80%
-daily-milk FE: 70%
-daily-milk BE: 80%
+heroku : 90%
+daily-milk FE: 80%
+daily-milk BE: 80% > todo
 
 ===================== TODO =====================
 
-- unlike
-- upload
-- LOGIN WITH DAILIYMILK
+- unlike (50%)
+- doblle query
+- user admin e user normale
+- LOGIN WITH DAILIYMILK (todo)
+- upload (todo)
+- togliere page
+- divider temperatura e prompt
+- remove test
+- freccettina down
 
 ===================== NIC$ TO HAVE =====================
 
@@ -15,8 +21,6 @@ daily-milk BE: 80%
 - BE DI DAIRY-TOLLS mettere allow only from localhost o mio desarrollo
 
 ===================== AI COSTI =====================
-20 euro di OpenAI fino a fine gennaio
-10 github copilot
 8 euroku
 5 database
 ...openrouter

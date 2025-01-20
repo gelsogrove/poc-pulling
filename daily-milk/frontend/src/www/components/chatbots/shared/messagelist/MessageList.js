@@ -116,6 +116,22 @@ const MessageList = ({ IdConversation, conversationHistory, messages }) => {
           icon.style.pointerEvents = "none" // Disabilita clic
           icon.setAttribute("disabled", "true") // Aggiunge un attributo disabled
         })
+
+        // Disabilita il pulsante di invio
+        const submitButton = document.querySelector(".btn.btn-primary.btn-wide")
+        if (submitButton) {
+          submitButton.style.color = "gray" // Cambia colore
+          submitButton.style.pointerEvents = "none" // Disabilita clic
+          submitButton.setAttribute("disabled", "true") // Aggiunge un attributo disabled
+        }
+
+        // Disabilita il textarea
+        const messageInput = document.querySelector(".form-control.input-wide")
+        if (messageInput) {
+          messageInput.style.backgroundColor = "#f5f5f5" // Cambia lo sfondo per indicare disabilitazione
+          messageInput.style.pointerEvents = "none" // Disabilita clic
+          messageInput.setAttribute("disabled", "true") // Aggiunge un attributo disabled
+        }
       } else {
         console.error("Failed to unlike the message:", response.statusText)
       }

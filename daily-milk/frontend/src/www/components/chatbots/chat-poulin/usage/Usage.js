@@ -71,9 +71,6 @@ const Usage = ({ IdConversation, refresh }) => {
           Temperature:
           <h4>{temperature}</h4>
           <hr />
-          ConversationId
-          <div>{IdConversation}</div>
-          <hr />
         </>
       ) : (
         <div className="loading-message">Loading...</div>
