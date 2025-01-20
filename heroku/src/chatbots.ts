@@ -85,7 +85,7 @@ const handleChat: RequestHandler = async (req, res) => {
         return
       } catch (analysisError) {
         console.error("Error fetching analysis data:", analysisError)
-        res.status(200).json({ message: "Invalid token." })
+        res.status(200).json({ message: analysisError })
         return
       }
     }
@@ -157,9 +157,9 @@ const handleChat: RequestHandler = async (req, res) => {
       return
     }
   } catch (error) {
-    console.error("Error in handleChat:", error)
+    console.error("Error in handleChat1:", error)
 
-    res.status(200).json({ message: "Invalid token." })
+    res.status(200).json({ message: error })
   }
 }
 
