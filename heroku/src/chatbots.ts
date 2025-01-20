@@ -113,7 +113,11 @@ const handleChat: RequestHandler = async (req, res) => {
       }
     )
 
-    console.log("*************RESP********", openaiResponse)
+    if (openaiResponse.data.error) {
+      console.log("*************RESP********", openaiResponse.data.error)
+      res.status(204).json({ response: openaiResponse.data.error })
+      return
+    }
 
     // ANSWER
     const rawResponse = cleanResponse(
