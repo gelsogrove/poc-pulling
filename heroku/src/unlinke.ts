@@ -42,6 +42,21 @@ unlikeRouter.post(
 
       await validateUser(userId) // Validazione dell'utente, se necessario
 
+      // Controlla se conversationId esiste già
+      const checkQuery = `
+        SELECT 1 FROM unlike
+        WHERE conversationId = $1 AND userId = $2
+        LIMIT 1
+      `
+      const checkResult = await pool.query(checkQuery, [conversationId, userId])
+
+      if (checkResult?.rowCount && checkResult.rowCount > 0) {
+        res.status(200).json({
+          message: "Record already exists. No changes made.",
+        })
+        return
+      }
+
       // Converti conversationHistory in stringa JSON
       const conversationHistoryString = JSON.stringify(conversationHistory)
 

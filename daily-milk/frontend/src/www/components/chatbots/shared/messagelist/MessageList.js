@@ -86,7 +86,7 @@ const MessageList = ({ IdConversation, conversationHistory, messages }) => {
     return `${year}-${month}-${day} ${hours}:${minutes}`
   }
 
-  const handleUnlike = async (msgId, IdConversation) => {
+  const handleUnlike = async (msgId, conversationHistory, IdConversation) => {
     const payload = {
       conversationHistory: conversationHistory,
       conversationId: IdConversation,
