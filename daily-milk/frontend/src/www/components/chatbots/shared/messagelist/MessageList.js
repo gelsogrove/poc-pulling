@@ -94,7 +94,7 @@ const MessageList = ({ messages }) => {
 
     try {
       const response = await fetch(
-        "https://poulin-bd075425a92c.herokuapp.com/chatbot/unlike",
+        "https://poulin-bd075425a92c.herokuapp.com/chatbot/unlike/new",
         {
           method: "POST",
           headers: {

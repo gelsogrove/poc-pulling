@@ -8,7 +8,8 @@ import pkg from "pg"
 import authRouter from "./src/auth.js"
 import chatbotRouter from "./src/chatbots.js"
 import promptRouter from "./src/prompts.js"
-import { default as unlikeRouter, default as usageRouter } from "./src/usage.js"
+import unlikeRouter from "./src/unlinke.js"
+import usageRouter from "./src/usage.js"
 import welcomeRouter from "./src/welcome.js"
 
 const { Pool } = pkg
