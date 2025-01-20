@@ -115,7 +115,7 @@ const handleChat: RequestHandler = async (req, res) => {
 
     if (openaiResponse.data.error) {
       console.log("*************RESP********", openaiResponse.data.error)
-      res.status(204).json({ response: openaiResponse.data.error })
+      res.status(204).json({ message: openaiResponse.data.error.message })
       return
     }
 
