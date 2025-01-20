@@ -38,10 +38,10 @@ unlikeRouter.post(
 
       // Query per inserire il record
       const query = `
-      INSERT INTO unlike (conversationId, msgId, dataTime)
-      VALUES ($1, $2, $3)
-      RETURNING idUnlike, conversationId, msgId, dataTime
-    `
+        INSERT INTO unlike (conversationId, msgId, dataTime)
+        VALUES ($1, $2, $3)
+        RETURNING idUnlike, conversationId, msgId, dataTime
+      `
       const values = [conversationId, msgId, dataTime]
 
       // Esegui la query
@@ -54,6 +54,78 @@ unlikeRouter.post(
       })
     } catch (error) {
       console.error("Error inserting record:", error)
+      res.status(500).json({ error: "Internal server error" })
+    }
+  }
+)
+
+// Endpoint per ottenere tutti i record nella tabella "unlike"
+unlikeRouter.get("/", async (req: Request, res: Response): Promise<void> => {
+  const { token } = req.query
+
+  if (!token || typeof token !== "string") {
+    res.status(400).json({ error: "Token is required." })
+    return
+  }
+
+  try {
+    // Convert token to userId
+    const userId = await validateToken(token, res)
+    if (!userId) return
+
+    await validateUser(userId) // Validazione dell'utente, se necessario
+
+    // Query per ottenere tutti i record
+    const query = `
+        SELECT * FROM unlike
+        WHERE userId = $1
+        ORDER BY dataTime DESC
+      `
+    const result = await pool.query(query, [userId])
+
+    // Restituisci i risultati
+    res.status(200).json(result.rows)
+  } catch (error) {
+    console.error("Error fetching records:", error)
+    res.status(500).json({ error: "Internal server error" })
+  }
+})
+
+// Endpoint per eliminare un record dalla tabella "unlike"
+unlikeRouter.delete(
+  "/:id",
+  async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params
+    const { token } = req.body
+
+    if (!token) {
+      res.status(400).json({ error: "Token is required." })
+      return
+    }
+
+    try {
+      // Convert token to userId
+      const userId = await validateToken(token, res)
+      if (!userId) return
+
+      await validateUser(userId) // Validazione dell'utente, se necessario
+
+      // Query per eliminare il record
+      const query = `
+        DELETE FROM unlike
+        WHERE idUnlike = $1 AND userId = $2
+      `
+      const result = await pool.query(query, [id, userId])
+
+      if (result.rowCount === 0) {
+        res.status(404).json({ error: "Record not found or not authorized." })
+        return
+      }
+
+      // Restituisci il successo
+      res.status(204).send() // Nessun contenuto
+    } catch (error) {
+      console.error("Error deleting record:", error)
       res.status(500).json({ error: "Internal server error" })
     }
   }
