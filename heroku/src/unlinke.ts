@@ -4,7 +4,6 @@ import { getUserIdByToken, validateUser } from "./validateUser.js" // Presuppone
 
 const unlikeRouter = Router()
 
-// Funzione per validare il token
 const validateToken = async (
   token: string,
   res: Response
@@ -45,7 +44,7 @@ unlikeRouter.post(
       // Controlla se conversationId esiste già
       const checkQuery = `
         SELECT 1 FROM unlike
-        WHERE conversationId = $1 AND userId = $2
+        WHERE conversationId = $1 
         LIMIT 1
       `
       const checkResult = await pool.query(checkQuery, [conversationId, userId])
@@ -88,7 +87,6 @@ unlikeRouter.post(
   }
 )
 
-// Endpoint per ottenere tutti i record nella tabella "unlike"
 unlikeRouter.get("/", async (req: Request, res: Response): Promise<void> => {
   const { token } = req.query
 
@@ -120,7 +118,6 @@ unlikeRouter.get("/", async (req: Request, res: Response): Promise<void> => {
   }
 })
 
-// Endpoint per eliminare un record dalla tabella "unlike"
 unlikeRouter.delete(
   "/:id",
   async (req: Request, res: Response): Promise<void> => {

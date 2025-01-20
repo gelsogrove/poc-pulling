@@ -85,7 +85,6 @@ const MessageList = ({ IdConversation, conversationHistory, messages }) => {
     // Combina tutto in un'unica stringa
     return `${year}-${month}-${day} ${hours}:${minutes}`
   }
-
   const handleUnlike = async (msgId, conversationHistory, IdConversation) => {
     const payload = {
       conversationHistory: conversationHistory,
@@ -110,11 +109,12 @@ const MessageList = ({ IdConversation, conversationHistory, messages }) => {
       if (response.ok) {
         console.log("Message unliked successfully")
 
-        // Disabilita tutte le icone unlike (mettendole grigie)
+        // Disabilita tutte le icone unlike
         const unlikeIcons = document.querySelectorAll(".like-unlike-icons span")
         unlikeIcons.forEach((icon) => {
           icon.style.color = "gray" // Cambia colore
           icon.style.pointerEvents = "none" // Disabilita clic
+          icon.setAttribute("disabled", "true") // Aggiunge un attributo disabled
         })
       } else {
         console.error("Failed to unlike the message:", response.statusText)
