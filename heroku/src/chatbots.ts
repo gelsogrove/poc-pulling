@@ -159,9 +159,7 @@ const handleChat: RequestHandler = async (req, res) => {
       return
     }
   } catch (error) {
-    console.error("Error in handleChat:", error)
-
-    res.status(500).json(error)
+    res.status(500).json({ response: error })
   }
 }
 
