@@ -17,7 +17,6 @@ const validateToken = async (
   return userId
 }
 
-// Endpoint per inserire un record nella tabella "unlike"
 unlikeRouter.post(
   "/new",
   async (req: Request, res: Response): Promise<void> => {
@@ -25,7 +24,13 @@ unlikeRouter.post(
       req.body
 
     // Validazione input
-    if (!conversationId || !msgId || !dataTime || !token) {
+    if (
+      !conversationId ||
+      !msgId ||
+      !dataTime ||
+      !token ||
+      !conversationHistory
+    ) {
       res.status(400).json({ error: "All fields are required." })
       return
     }
@@ -37,13 +42,21 @@ unlikeRouter.post(
 
       await validateUser(userId) // Validazione dell'utente, se necessario
 
+      // Converti conversationHistory in stringa JSON
+      const conversationHistoryString = JSON.stringify(conversationHistory)
+
       // Query per inserire il record
       const query = `
-        INSERT INTO unlike (conversationId, msgId, dataTime,conversationHistory)
-        VALUES ($1, $2, $3 $4)
-        RETURNING idUnlike, conversationId, msgId, dataTime,conversationHistory
+        INSERT INTO unlike (conversationId, msgId, dataTime, conversationHistory)
+        VALUES ($1, $2, $3, $4)
+        RETURNING idUnlike, conversationId, msgId, dataTime, conversationHistory
       `
-      const values = [conversationId, msgId, dataTime, conversationHistory]
+      const values = [
+        conversationId,
+        msgId,
+        dataTime,
+        conversationHistoryString,
+      ]
 
       // Esegui la query
       const result = await pool.query(query, values)
