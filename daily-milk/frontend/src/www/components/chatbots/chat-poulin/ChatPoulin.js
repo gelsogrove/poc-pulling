@@ -150,6 +150,7 @@ const ChatPoulin = ({ openPanel }) => {
       <div className="chat-poulin-main">
         <div className="chat-poulin-main-messages">
           <MessageList
+            IdConversation={IdConversation}
             conversationHistory={conversationHistory}
             messages={messages}
           />

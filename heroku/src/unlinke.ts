@@ -21,7 +21,8 @@ const validateToken = async (
 unlikeRouter.post(
   "/new",
   async (req: Request, res: Response): Promise<void> => {
-    const { conversationId, msgId, dataTime, token } = req.body
+    const { conversationId, msgId, dataTime, token, conversationHistory } =
+      req.body
 
     // Validazione input
     if (!conversationId || !msgId || !dataTime || !token) {
@@ -38,11 +39,11 @@ unlikeRouter.post(
 
       // Query per inserire il record
       const query = `
-        INSERT INTO unlike (conversationId, msgId, dataTime)
-        VALUES ($1, $2, $3)
-        RETURNING idUnlike, conversationId, msgId, dataTime
+        INSERT INTO unlike (conversationId, msgId, dataTime,conversationHistory)
+        VALUES ($1, $2, $3 $4)
+        RETURNING idUnlike, conversationId, msgId, dataTime,conversationHistory
       `
-      const values = [conversationId, msgId, dataTime]
+      const values = [conversationId, msgId, dataTime, conversationHistory]
 
       // Esegui la query
       const result = await pool.query(query, values)

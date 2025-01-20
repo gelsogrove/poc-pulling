@@ -1,3 +1,4 @@
+import Cookies from "js-cookie"
 import { useState } from "react"
 import "./MessageList.css"
 
@@ -55,7 +56,7 @@ export const createDynamicAsciiTable = (data) => {
   return table
 }
 
-const MessageList = ({ messages }) => {
+const MessageList = ({ IdConversation, conversationHistory, messages }) => {
   const [debugModes, setDebugModes] = useState({})
 
   const toggleDebugMode = (id) => {
@@ -85,16 +86,18 @@ const MessageList = ({ messages }) => {
     return `${year}-${month}-${day} ${hours}:${minutes}`
   }
 
-  const handleUnlike = async (msgId, conversationHistory) => {
+  const handleUnlike = async (msgId, IdConversation) => {
     const payload = {
-      conversationId: conversationHistory,
+      conversationHistory: conversationHistory,
+      conversationId: IdConversation,
       msgId,
       dataTime: getCurrentDateTime(),
+      token: Cookies.get("token"),
     }
 
     try {
       const response = await fetch(
-        "https://poulin-bd075425a92c.herokuapp.com/chatbot/unlike/new",
+        "https://poulin-bd075425a92c.herokuapp.com/unlike/new",
         {
           method: "POST",
           headers: {
@@ -103,7 +106,6 @@ const MessageList = ({ messages }) => {
           body: JSON.stringify(payload),
         }
       )
-      debugger
 
       if (response.ok) {
         console.log("Message unliked successfully")
@@ -211,7 +213,9 @@ const MessageList = ({ messages }) => {
                   <span
                     role="img"
                     aria-label="unlike"
-                    onClick={() => handleUnlike(msg.id)}
+                    onClick={() =>
+                      handleUnlike(msg.id, conversationHistory, IdConversation)
+                    }
                     title="Dislike this message"
                     style={{ cursor: "pointer", marginRight: "8px" }}
                   >
