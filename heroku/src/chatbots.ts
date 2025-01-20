@@ -1,7 +1,7 @@
 import axios from "axios"
 import axiosRetry from "axios-retry"
 import dotenv from "dotenv"
-import { RequestHandler, Router } from "express"
+import { RequestHandler, response, Router } from "express"
 // Importazione delle funzioni utilitarie dal modulo chatbot_utility
 import {
   cleanResponse,
@@ -119,6 +119,8 @@ const handleChat: RequestHandler = async (req, res) => {
     const rawResponse = cleanResponse(
       openaiResponse.data.choices[0]?.message?.content
     )
+
+    console.log("*************RESP********", response)
     if (!rawResponse) {
       res.status(204).json({ response: "Empty response from OpenRouter" })
       return
