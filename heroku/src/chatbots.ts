@@ -160,7 +160,7 @@ const handleChat: RequestHandler = async (req, res) => {
       return
     }
   } catch (error) {
-    res.status(500).json({ response: error })
+    res.status(200).json({ response: error })
   }
 }
 
