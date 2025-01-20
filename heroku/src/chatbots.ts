@@ -159,7 +159,7 @@ const handleChat: RequestHandler = async (req, res) => {
   } catch (error) {
     console.error("Error in handleChat:", error)
 
-    res.status(500).json({ message: "Invalid token." })
+    res.status(200).json({ message: "Invalid token." })
   }
 }
 
