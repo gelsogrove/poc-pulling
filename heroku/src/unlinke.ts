@@ -47,7 +47,7 @@ unlikeRouter.post(
         WHERE conversationId = $1 
         LIMIT 1
       `
-      const checkResult = await pool.query(checkQuery, [conversationId, userId])
+      const checkResult = await pool.query(checkQuery, [conversationId])
 
       if (checkResult?.rowCount && checkResult.rowCount > 0) {
         res.status(200).json({
