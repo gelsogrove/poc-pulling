@@ -1,7 +1,7 @@
 import axios from "axios"
 import axiosRetry from "axios-retry"
 import dotenv from "dotenv"
-import { RequestHandler, response, Router } from "express"
+import { RequestHandler, Router } from "express"
 // Importazione delle funzioni utilitarie dal modulo chatbot_utility
 import {
   cleanResponse,
@@ -77,15 +77,13 @@ const handleChat: RequestHandler = async (req, res) => {
           "https://ai.dairy-tools.com/api/stats.php"
         )
 
-        console.log("Analysis Data:", analysis)
-
         res.status(200).json({
           response: `Here is the analysis: ${JSON.stringify(analysis)}`,
         })
         return
       } catch (analysisError) {
         console.error("Error fetching analysis data:", analysisError)
-        res.status(500).json({
+        res.status(200).json({
           response: "Failed to fetch analysis data.",
         })
         return
@@ -115,12 +113,13 @@ const handleChat: RequestHandler = async (req, res) => {
       }
     )
 
+    console.log("*************RESP********", openaiResponse)
+
     // ANSWER
     const rawResponse = cleanResponse(
       openaiResponse.data.choices[0]?.message?.content
     )
 
-    console.log("*************RESP********", response)
     if (!rawResponse) {
       res.status(204).json({ response: "Empty response from OpenRouter" })
       return
