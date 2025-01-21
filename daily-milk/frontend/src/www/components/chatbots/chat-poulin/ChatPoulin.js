@@ -153,6 +153,7 @@ const ChatPoulin = ({ openPanel }) => {
             IdConversation={IdConversation}
             conversationHistory={conversationHistory}
             messages={messages}
+            refresh={refreshUsage}
           />
           <div ref={messagesEndRef} />
         </div>

@@ -1,13 +1,53 @@
-/* Container for messages */
+.chat-container {
+  position: relative;
+  height: 100%;
+}
+
 .chat-messages {
   flex-grow: 1;
-  overflow-y: scroll;
+  overflow-y: auto;
   padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   background-color: white;
   border-right: 1px solid #ddd;
+}
+
+.info-message {
+  font-size: 0.75rem; /* Dimensione del testo piccola */
+  color: #6c757d; /* Grigio chiaro */
+  text-align: center; /* Centra il testo */
+  margin-top: 9px; /* Distanza dal textarea */
+}
+
+.scroll-to-bottom {
+  position: fixed;
+  bottom: 830px; /* Posizionata 180px sopra il bordo inferiore */
+  left: 890px !important; /* Centrata rispetto alla larghezza del container */
+  transform: translateX(-50%);
+  background-color: #d3d3d3; /* Grigio chiaro */
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  z-index: 1000;
+}
+
+.scroll-to-bottom:hover {
+  background-color: #a9a9a9; /* Grigio scuro */
+}
+
+.scroll-to-bottom:active {
+  transform: scale(1); /* Nessun movimento visibile durante il clic */
 }
 
 /* Individual message bubble */

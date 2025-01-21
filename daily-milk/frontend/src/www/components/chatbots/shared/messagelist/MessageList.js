@@ -1,5 +1,5 @@
 import Cookies from "js-cookie"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import "./MessageList.css"
 
 export const createDynamicAsciiTable = (data) => {
@@ -49,8 +49,16 @@ export const createDynamicAsciiTable = (data) => {
   return table
 }
 
-const MessageList = ({ IdConversation, conversationHistory, messages }) => {
+const MessageList = ({
+  IdConversation,
+  conversationHistory,
+  messages,
+  refresh,
+}) => {
   const [debugModes, setDebugModes] = useState({})
+  const [showScrollButton, setShowScrollButton] = useState(false)
+  const [buttonPosition, setButtonPosition] = useState("50%")
+  const messagesEndRef = useRef(null)
 
   const toggleDebugMode = (id) => {
     setDebugModes((prev) => {
@@ -62,6 +70,28 @@ const MessageList = ({ IdConversation, conversationHistory, messages }) => {
       }
     })
   }
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
+  useEffect(() => {
+    // Show or hide the scroll button based on the number of messages
+    setShowScrollButton(messages.length > 10)
+  }, [messages])
+
+  useEffect(() => {
+    // Adjust button position based on refresh prop
+    if (refresh) {
+      setButtonPosition("140px")
+    } else {
+      setButtonPosition("50%")
+    }
+  }, [refresh])
 
   function getCurrentDateTime() {
     const now = new Date()
@@ -182,73 +212,93 @@ const MessageList = ({ IdConversation, conversationHistory, messages }) => {
   }
 
   return (
-    <div className="chat-messages">
-      {messages
-        .filter((msg) => msg.sender !== "system")
-        .map((msg, index) => (
-          <div
-            data-id={msg.id}
-            key={msg.id}
-            className={`chat-message ${
-              msg.sender === "user" ? "user-message" : "bot-message"
-            }`}
-          >
-            <span className="message-text">
-              {msg.text === "Typing..." ? (
-                <div className="typing-indicator">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              ) : (
-                renderMessageText(
-                  msg,
-                  msg.text,
-                  msg.sender,
-                  debugModes[msg.id] || false
-                )
-              )}
-            </span>
+    <div className="chat-container">
+      <div className="chat-messages">
+        {messages
+          .filter((msg) => msg.sender !== "system")
+          .map((msg, index) => (
+            <div
+              data-id={msg.id}
+              key={msg.id}
+              className={`chat-message ${
+                msg.sender === "user" ? "user-message" : "bot-message"
+              }`}
+            >
+              <span className="message-text">
+                {msg.text === "Typing..." ? (
+                  <div className="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                ) : (
+                  renderMessageText(
+                    msg,
+                    msg.text,
+                    msg.sender,
+                    debugModes[msg.id] || false
+                  )
+                )}
+              </span>
 
-            {msg.data && <pre>{createDynamicAsciiTable(msg.data)}</pre>}
+              {msg.data && <pre>{createDynamicAsciiTable(msg.data)}</pre>}
 
-            {msg.sender === "bot" &&
-              msg.text !== "Typing..." &&
-              index !== 0 && (
-                <div className="like-unlike-icons">
-                  <span
-                    role="img"
-                    aria-label="unlike"
-                    onClick={() =>
-                      handleUnlike(msg.id, conversationHistory, IdConversation)
-                    }
-                    title="Dislike this message"
-                    style={{ cursor: "pointer", marginRight: "8px" }}
-                  >
-                    👎
-                  </span>
-                  <span
-                    role="img"
-                    aria-label="debug"
-                    onClick={() => toggleDebugMode(msg.id)}
-                    title="Toggle debug mode"
-                    style={{ cursor: "pointer", marginRight: "8px" }}
-                  >
-                    🐞
-                  </span>
-                  <span
-                    role="img"
-                    aria-label="copy"
-                    onClick={() => copyContent(msg.id)}
-                    title="Copy this message"
-                    style={{ cursor: "pointer" }}
-                  >
-                    📄
-                  </span>
-                </div>
-              )}
-          </div>
-        ))}
+              {msg.sender === "bot" &&
+                msg.text !== "Typing..." &&
+                index !== 0 && (
+                  <div className="like-unlike-icons">
+                    <span
+                      role="img"
+                      aria-label="unlike"
+                      onClick={() =>
+                        handleUnlike(
+                          msg.id,
+                          conversationHistory,
+                          IdConversation
+                        )
+                      }
+                      title="Dislike this message"
+                      style={{ cursor: "pointer", marginRight: "8px" }}
+                    >
+                      👎
+                    </span>
+                    <span
+                      role="img"
+                      aria-label="debug"
+                      onClick={() => toggleDebugMode(msg.id)}
+                      title="Toggle debug mode"
+                      style={{ cursor: "pointer", marginRight: "8px" }}
+                    >
+                      🐞
+                    </span>
+                    <span
+                      role="img"
+                      aria-label="copy"
+                      onClick={() => copyContent(msg.id)}
+                      title="Copy this message"
+                      style={{ cursor: "pointer" }}
+                    >
+                      📄
+                    </span>
+                  </div>
+                )}
+            </div>
+          ))}
+        <div ref={messagesEndRef} />
+      </div>
+      {showScrollButton && (
+        <button
+          className="scroll-to-bottom"
+          onClick={scrollToBottom}
+          title="Scroll to bottom"
+          style={{ left: buttonPosition }}
+        >
+          ↓
+        </button>
+      )}
+      <div className="info-message">
+        ChatGPT can make mistakes. Check important info.
+      </div>
     </div>
   )
 }
