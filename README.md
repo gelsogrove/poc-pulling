@@ -7,13 +7,15 @@ daily-milk BE: 80% > todo
 
 - unlike (50%)
 - doblle query
+- grafico ?
 - user admin e user normale
 - LOGIN WITH DAILIYMILK (todo)
 - upload (todo)
-- togliere page
+- togliere page dall'import
 - divider temperatura e prompt
 - remove test
 - freccettina down
+- aggiornare prompt file
 
 ===================== NIC$ TO HAVE =====================
 

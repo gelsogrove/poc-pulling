@@ -7,10 +7,8 @@ export const createDynamicAsciiTable = (data) => {
     return "No data available"
   }
 
-  // Get headers as column names
   const headers = Object.keys(data[0])
 
-  // Function to format numbers in Italian style without decimals
   const formatNumber = (value) => {
     if (!isNaN(value) && value !== null && value !== "") {
       return parseInt(value, 10).toLocaleString("it-IT")
@@ -18,7 +16,6 @@ export const createDynamicAsciiTable = (data) => {
     return value
   }
 
-  // Find the maximum width for each column
   const columnWidths = headers.map((header) =>
     Math.max(
       header.length,
@@ -26,7 +23,6 @@ export const createDynamicAsciiTable = (data) => {
     )
   )
 
-  // Function to create a formatted row
   const createRow = (row) =>
     "| " +
     headers
@@ -36,15 +32,12 @@ export const createDynamicAsciiTable = (data) => {
       .join(" | ") +
     " |"
 
-  // Generate header row
   const headerRow = createRow(Object.fromEntries(headers.map((h) => [h, h])))
   const separatorRow =
     "+-" + columnWidths.map((width) => "-".repeat(width)).join("-+-") + "-+"
 
-  // Generate data rows
   const dataRows = data.map((row) => createRow(row))
 
-  // Combine all parts to create the table
   const table = [
     separatorRow,
     headerRow,
@@ -72,19 +65,14 @@ const MessageList = ({ IdConversation, conversationHistory, messages }) => {
 
   function getCurrentDateTime() {
     const now = new Date()
-
-    // Ottieni l'anno, il mese e il giorno
     const year = now.getFullYear()
-    const month = String(now.getMonth() + 1).padStart(2, "0") // Mesi da 0 a 11, quindi aggiungi 1
+    const month = String(now.getMonth() + 1).padStart(2, "0")
     const day = String(now.getDate()).padStart(2, "0")
-
-    // Ottieni ore e minuti
     const hours = String(now.getHours()).padStart(2, "0")
     const minutes = String(now.getMinutes()).padStart(2, "0")
-
-    // Combina tutto in un'unica stringa
     return `${year}-${month}-${day} ${hours}:${minutes}`
   }
+
   const handleUnlike = async (msgId, conversationHistory, IdConversation) => {
     const payload = {
       conversationHistory: conversationHistory,
@@ -109,28 +97,25 @@ const MessageList = ({ IdConversation, conversationHistory, messages }) => {
       if (response.ok) {
         console.log("Message unliked successfully")
 
-        // Disabilita tutte le icone unlike
         const unlikeIcons = document.querySelectorAll(".like-unlike-icons span")
         unlikeIcons.forEach((icon) => {
-          icon.style.color = "gray" // Cambia colore
-          icon.style.pointerEvents = "none" // Disabilita clic
-          icon.setAttribute("disabled", "true") // Aggiunge un attributo disabled
+          icon.style.color = "gray"
+          icon.style.pointerEvents = "none"
+          icon.setAttribute("disabled", "true")
         })
 
-        // Disabilita il pulsante di invio
         const submitButton = document.querySelector(".btn.btn-primary.btn-wide")
         if (submitButton) {
-          submitButton.style.color = "gray" // Cambia colore
-          submitButton.style.pointerEvents = "none" // Disabilita clic
-          submitButton.setAttribute("disabled", "true") // Aggiunge un attributo disabled
+          submitButton.style.color = "gray"
+          submitButton.style.pointerEvents = "none"
+          submitButton.setAttribute("disabled", "true")
         }
 
-        // Disabilita il textarea
         const messageInput = document.querySelector(".form-control.input-wide")
         if (messageInput) {
-          messageInput.style.backgroundColor = "#f5f5f5" // Cambia lo sfondo per indicare disabilitazione
-          messageInput.style.pointerEvents = "none" // Disabilita clic
-          messageInput.setAttribute("disabled", "true") // Aggiunge un attributo disabled
+          messageInput.style.backgroundColor = "#f5f5f5"
+          messageInput.style.pointerEvents = "none"
+          messageInput.setAttribute("disabled", "true")
         }
       } else {
         console.error("Failed to unlike the message:", response.statusText)
@@ -209,18 +194,23 @@ const MessageList = ({ IdConversation, conversationHistory, messages }) => {
             }`}
           >
             <span className="message-text">
-              {renderMessageText(
-                msg,
-                msg.text,
-                msg.sender,
-                debugModes[msg.id] || false
+              {msg.text === "Typing..." ? (
+                <div className="typing-indicator">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              ) : (
+                renderMessageText(
+                  msg,
+                  msg.text,
+                  msg.sender,
+                  debugModes[msg.id] || false
+                )
               )}
             </span>
 
-            {/* Display data if available */}
-            {msg.data && (
-              <pre>{createDynamicAsciiTable(msg.data)}</pre> // Directly use data as array of objects
-            )}
+            {msg.data && <pre>{createDynamicAsciiTable(msg.data)}</pre>}
 
             {msg.sender === "bot" &&
               msg.text !== "Typing..." &&
