@@ -1,24 +1,24 @@
-import "codemirror/lib/codemirror.css" // CSS per l'editor
-import "codemirror/mode/javascript/javascript" // Puoi usare un altro linguaggio se necessario
-import "codemirror/theme/dracula.css" // Tema dell'editor
-import React from "react"
-import "./UnlikePopup.css"
+import React, { useEffect } from "react"
+import { fetchUnlikeData } from "../api/unlike_api"
 
-const UnlikePopup = ({ onClose }) => {
+const UnlikePopup = () => {
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const data = await fetchUnlikeData()
+        console.log("Fetched Data:", data)
+      } catch (error) {
+        console.error("Error in UnlikePopup:", error)
+      }
+    }
+
+    getData()
+  }, [])
+
   return (
-    <div className="prompts-form-container">
-      <button className="close-button" onClick={onClose}>
-        ×
-      </button>
-      <h3>UnlikePopup </h3>
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
+    <div>
+      <h3>Unlike Popup</h3>
+      <p>Check the console for fetched data.</p>
     </div>
   )
 }

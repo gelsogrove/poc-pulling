@@ -296,9 +296,7 @@ const MessageList = ({
           ↓
         </button>
       )}
-      <div className="info-message">
-        ChatGPT can make mistakes. Check important info.
-      </div>
+      <div className="info-message"></div>
     </div>
   )
 }

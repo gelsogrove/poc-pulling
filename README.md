@@ -11,11 +11,12 @@ daily-milk BE: 80% > todo
 - user admin e user normale
 - LOGIN WITH DAILIYMILK (todo)
 - upload (todo)
-- togliere page dall'import
+- togliere page dall'import e dalla tabella
 - divider temperatura e prompt
-- remove test
-- freccettina down
-- aggiornare prompt file
+- remove test folder
+- duplicare tutto per altra italia
+- provare analisi funziona bene?
+- fare branch generico copiabile come template con prompt e usage
 
 ===================== NIC$ TO HAVE =====================
 

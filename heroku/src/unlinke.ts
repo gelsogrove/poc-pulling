@@ -87,7 +87,7 @@ unlikeRouter.post(
   }
 )
 
-unlikeRouter.get("/", async (req: Request, res: Response): Promise<void> => {
+unlikeRouter.post("/", async (req: Request, res: Response): Promise<void> => {
   const { token } = req.query
 
   if (!token || typeof token !== "string") {
