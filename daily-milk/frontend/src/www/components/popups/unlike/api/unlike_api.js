@@ -32,8 +32,6 @@ export const fetchUnlikeData = async () => {
 
 export const deleteUnlikeRecord = async (id) => {
   try {
-    debugger
-
     const token = Cookies.get("token")
     if (!token) {
       console.error("Token not found in cookies.")
