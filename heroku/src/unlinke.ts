@@ -105,10 +105,10 @@ unlikeRouter.post("/", async (req: Request, res: Response): Promise<void> => {
     // Query per ottenere tutti i record
     const query = `
         SELECT * FROM unlike
-        WHERE userId = $1
+         
         ORDER BY dataTime DESC
       `
-    const result = await pool.query(query, [userId])
+    const result = await pool.query(query)
 
     // Restituisci i risultati
     res.status(200).json(result.rows)
