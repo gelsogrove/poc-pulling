@@ -137,9 +137,9 @@ unlikeRouter.delete(
       // Query per eliminare il record
       const query = `
         DELETE FROM unlike
-        WHERE idUnlike = $1 AND userId = $2
+        WHERE idUnlike = $1
       `
-      const result = await pool.query(query, [id, userId])
+      const result = await pool.query(query, [id])
 
       if (result.rowCount === 0) {
         res.status(404).json({ error: "Record not found or not authorized." })

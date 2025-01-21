@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+import axios from "axios"
 import Cookies from "js-cookie"
 
 export const fetchUnlikeData = async () => {
@@ -25,6 +26,33 @@ export const fetchUnlikeData = async () => {
     return data
   } catch (error) {
     console.error("Error during initialize data fetch:", error)
+    throw error
+  }
+}
+
+export const deleteUnlikeRecord = async (id) => {
+  try {
+    debugger
+
+    const token = Cookies.get("token")
+    if (!token) {
+      console.error("Token not found in cookies.")
+      return null
+    }
+
+    const response = await axios.delete(
+      `https://poulin-bd075425a92c.herokuapp.com/unlike/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: { token },
+      }
+    )
+
+    return response.status === 204
+  } catch (error) {
+    console.error("Error deleting record:", error)
     throw error
   }
 }
