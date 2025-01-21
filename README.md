@@ -17,6 +17,7 @@ daily-milk BE: 80% > todo
 - duplicare tutto per altra italia
 - provare analisi funziona bene?
 - fare branch generico copiabile come template con prompt e usage
+- token dovrebbe essere dento Header delle chiamate.
 
 ===================== NIC$ TO HAVE =====================
 

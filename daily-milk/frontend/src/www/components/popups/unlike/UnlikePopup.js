@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import { fetchUnlikeData } from "../api/unlike_api"
+import { fetchUnlikeData } from "./api/unlike_api"
 
 const UnlikePopup = () => {
   useEffect(() => {

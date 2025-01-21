@@ -12,8 +12,8 @@ import {
 } from "chart.js"
 import React, { useEffect, useState } from "react"
 import "./Usage.css"
-import { fetchUsageData } from "./api/usageApi"
-import { getPromptDetails } from "./api/utils_api"
+
+import { fetchUsageData, getPromptDetails } from "./api/utils_api"
 
 ChartJS.register(
   CategoryScale,

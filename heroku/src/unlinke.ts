@@ -88,7 +88,7 @@ unlikeRouter.post(
 )
 
 unlikeRouter.post("/", async (req: Request, res: Response): Promise<void> => {
-  const { token } = req.query
+  const { token } = req.body
 
   if (!token || typeof token !== "string") {
     res.status(400).json({ error: "Token is required." })

@@ -1,20 +1,30 @@
-import axios from "axios"
-import Cookie from "js-cookie"
+/* eslint-disable no-undef */
+import Cookies from "js-cookie"
 
 export const fetchUnlikeData = async () => {
+  const token = Cookies.get("token")
   try {
-    const token = Cookie.get("token")
-    if (!token) {
-      console.error("Token not found in cookies.")
-      return null
+    const response = await fetch(
+      `https://poulin-bd075425a92c.herokuapp.com/unlike`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token,
+        }),
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`)
     }
 
-    const response = await axios.get(
-      `https://poulin-bd075425a92c.herokuapp.com/unlike?token=${token}`
-    )
-    return response.data
+    const data = await response.json()
+    return data
   } catch (error) {
-    console.error("Error fetching data:", error)
+    console.error("Error during initialize data fetch:", error)
     throw error
   }
 }
