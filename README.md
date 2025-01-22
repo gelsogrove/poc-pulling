@@ -5,7 +5,14 @@ daily-milk BE: 80% > todo
 
 ===================== TODO =====================
 
-- unlike (50%)
+- unlike (70%)
+- SAVED CHATS
+
+-- QUANDO FA UNLIKE SALVIAMO IDCONVERSAZIONE, MSGID E IDUNLIKE
+E SALVIAMO
+
+-- SALVIAMO LE CONVERSAZIONI
+
 - doblle query
 - grafico ?
 - user admin e user normale
@@ -18,6 +25,7 @@ daily-milk BE: 80% > todo
 - provare analisi funziona bene?
 - fare branch generico copiabile come template con prompt e usage
 - token dovrebbe essere dento Header delle chiamate.
+- TOGLIERE ALZEZZA NELLA HOME
 
 ===================== NIC$ TO HAVE =====================
 

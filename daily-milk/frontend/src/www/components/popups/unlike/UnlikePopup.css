@@ -1,51 +1,106 @@
-/* UnlikePopup.css */
+.unlike-popup {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 8px;
 
-/* Table Styling */
+  margin: auto;
+  height: 90vh;
+  width: 1200px;
+  padding: 35px;
+  overflow: hidden;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.content-container {
+  display: flex;
+  flex-direction: row; /* Layout orizzontale */
+  height: 100%;
+}
+
+.unlike-table-container {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+}
+
 .unlike-table {
   width: 100%;
   border-collapse: collapse;
-  margin: 20px 0;
-  font-size: 16px;
-  text-align: left;
 }
 
-.unlike-table thead th {
-  background-color: #f4f4f4;
-  color: #333;
-  font-weight: bold;
-  padding: 10px;
+.unlike-table td,
+.unlike-table th {
   border: 1px solid #ddd;
+  padding: 8px;
 }
 
-.unlike-table tbody td {
-  padding: 10px;
-  border: 1px solid #ddd;
-}
-
-.unlike-table tbody tr:nth-child(even) {
+.unlike-table tr {
   background-color: #f9f9f9;
+  cursor: pointer;
 }
 
-.unlike-table tbody tr:hover {
+.unlike-table tr:nth-child(even) {
   background-color: #f1f1f1;
 }
 
-/* Icon Button Styling */
-.icon-button {
-  background: none;
-  border: none;
-  font-size: 24px; /* Increase icon size */
-  cursor: pointer;
-  transition: transform 0.2s ease, color 0.2s ease; /* Add smooth animation */
-  padding: 5px; /* Add padding around the icon */
-  color: #333; /* Default icon color */
+.unlike-table tr:hover {
+  background-color: #e0e0e0;
 }
 
-.icon-button:hover {
-  color: red; /* Change color on hover */
-  transform: scale(1.2); /* Slightly enlarge on hover */
+.unlike-table tr.selected {
+  background-color: #007bff;
+  color: white;
 }
 
-.icon-button:active {
-  transform: scale(1.1); /* Slightly reduce size when clicked */
+.chat {
+  flex: 2;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.chat-history {
+  padding: 10px;
+  overflow-y: auto;
+  height: calc(100% - 50px);
+}
+
+.chat-message {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.chat-message.user {
+  background-color: #007bff;
+  color: white;
+  text-align: right;
+}
+
+.chat-message.assistant {
+  background-color: #e0e0e0;
+  color: black;
+  text-align: left;
 }

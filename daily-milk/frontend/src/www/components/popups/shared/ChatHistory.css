@@ -1,0 +1,93 @@
+.chat-history-container {
+  height: 100%;
+  width: 100%;
+  background: #f9f9f9;
+  border-radius: 8px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.delete-chat-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  margin-left: 95%;
+  color: #007bff;
+  transition: transform 0.3s ease, color 0.3s ease;
+  position: relative;
+}
+
+.delete-chat-button:hover {
+  color: #0056b3;
+  transform: scale(1.2);
+}
+
+.delete-chat-button:active {
+  transform: scale(0.9);
+  color: #003f88;
+}
+
+/* Tooltip */
+.delete-chat-button::after {
+  content: "Delete Chat";
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  opacity: 0;
+  visibility: hidden;
+  white-space: nowrap;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  pointer-events: none;
+}
+
+.delete-chat-button:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Chat History */
+.chat-history {
+  padding: 10px;
+  overflow-y: auto;
+  height: calc(100% - 50px); /* Lascia spazio per l'intestazione */
+  display: flex;
+  flex-direction: column; /* Assicura che ogni messaggio sia una nuova riga */
+  gap: 10px; /* Spazio tra i messaggi */
+}
+
+.chat-message {
+  padding: 10px;
+  border-radius: 8px;
+  max-width: 70%; /* Limita la larghezza massima del messaggio */
+  word-wrap: break-word; /* Consente di spezzare parole lunghe */
+  white-space: pre-wrap; /* Mantiene i ritorni a capo */
+  display: block; /* Ogni messaggio occupa una nuova riga */
+}
+
+.chat-message.user {
+  background-color: #007bff;
+  color: white;
+  text-align: right;
+  margin-left: auto; /* Allinea i messaggi dell'utente a destra */
+}
+
+.chat-message.assistant {
+  background-color: #e0e0e0;
+  color: black;
+  text-align: left;
+  margin-right: auto; /* Allinea i messaggi dell'assistente a sinistra */
+}
