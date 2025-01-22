@@ -30,13 +30,6 @@ const ChatHistory = ({ msgIds, messages, onDeleteChat }) => {
         >
           🗑️
         </button>
-        <button
-          className="print-chat-button"
-          onClick={handlePrint}
-          title="Print"
-        >
-          🖨️
-        </button>
       </div>
       <div className="chat-history">
         {messages.map((msg, index) => (

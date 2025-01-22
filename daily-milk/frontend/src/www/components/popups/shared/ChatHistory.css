@@ -5,6 +5,8 @@
   border-radius: 8px;
   overflow-y: auto;
   position: relative;
+  border: 1px solid grey;
+  min-height: 600px;
 }
 
 /* Header della Chat */
@@ -14,6 +16,7 @@
   align-items: center;
   padding: 10px;
   gap: 10px; /* Spazio tra le icone */
+  border-bottom: 1px solid grey;
 }
 
 /* Pulsante Delete */
@@ -25,7 +28,7 @@
   color: #007bff;
   transition: transform 0.3s ease, color 0.3s ease;
   position: relative; /* Necessario per il tooltip */
-  margin-left: 630px;
+  margin-left: 660px;
 }
 
 .delete-chat-button:hover {

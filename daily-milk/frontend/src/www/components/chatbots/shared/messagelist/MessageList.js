@@ -134,8 +134,6 @@ const MessageList = ({
           return
         }
 
-        console.log(unlikeIcon)
-
         if (unlikeIcon) {
           unlikeIcon.classList.toggle("selected") // Aggiungi/rimuovi la classe 'selected'
         }
