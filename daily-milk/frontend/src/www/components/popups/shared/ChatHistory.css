@@ -9,43 +9,50 @@
   min-height: 600px;
 }
 
+/* Azioni sui messaggi (Debug e Dislike) */
+.message-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  margin-top: 5px;
+}
+
 /* Header della Chat */
 .chat-header {
   display: flex;
-  justify-content: flex-end; /* Allinea tutte le icone a destra */
+  justify-content: flex-end;
   align-items: center;
   padding: 10px;
-  gap: 10px; /* Spazio tra le icone */
+  gap: 10px;
   border-bottom: 1px solid grey;
 }
 
-/* Pulsante Delete */
-.delete-chat-button {
+/* Pulsante Generico */
+button {
   background: none;
   border: none;
   cursor: pointer;
   font-size: 20px;
   color: #007bff;
   transition: transform 0.3s ease, color 0.3s ease;
-  position: relative; /* Necessario per il tooltip */
-  margin-left: 660px;
 }
 
-.delete-chat-button:hover {
+button:hover {
   color: #0056b3;
   transform: scale(1.2);
 }
 
-.delete-chat-button:active {
+button:active {
   transform: scale(0.9);
   color: #003f88;
 }
 
-.delete-chat-button::after {
-  content: "Delete";
+button::after {
   position: absolute;
-  bottom: -30px; /* Sposta il tooltip sotto il pulsante */
-  left: 50%; /* Centra il tooltip rispetto al pulsante */
+  bottom: -30px;
+  left: 50%;
   transform: translateX(-50%);
   background: #333;
   color: #fff;
@@ -58,51 +65,7 @@
   white-space: nowrap;
 }
 
-.delete-chat-button:hover::after {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Pulsante Print */
-.print-chat-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 20px;
-  color: #007bff;
-  transition: transform 0.3s ease, color 0.3s ease;
-  position: relative; /* Necessario per il tooltip */
-  margin-right: 10px;
-}
-
-.print-chat-button:hover {
-  color: #0056b3;
-  transform: scale(1.2);
-}
-
-.print-chat-button:active {
-  transform: scale(0.9);
-  color: #003f88;
-}
-
-.print-chat-button::after {
-  content: "Print";
-  position: absolute;
-  bottom: -30px; /* Sposta il tooltip sotto il pulsante */
-  left: 50%; /* Centra il tooltip rispetto al pulsante */
-  transform: translateX(-50%);
-  background: #333;
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 12px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  white-space: nowrap;
-}
-
-.print-chat-button:hover::after {
+button:hover::after {
   opacity: 1;
   visibility: visible;
 }
@@ -111,44 +74,52 @@
 .chat-history {
   padding: 10px;
   overflow-y: auto;
-  height: calc(100% - 50px); /* Lascia spazio per l'intestazione */
+  height: calc(100% - 50px);
   display: flex;
-  flex-direction: column; /* Forza ogni messaggio su una nuova riga */
-  gap: 10px; /* Spazio tra i messaggi */
+  flex-direction: column;
+  gap: 10px;
 }
 
 .chat-message {
   padding: 10px;
   border-radius: 8px;
-  max-width: 70%; /* Limita la larghezza massima del messaggio */
-  word-wrap: break-word; /* Consente di spezzare parole lunghe */
-  white-space: pre-wrap; /* Mantiene i ritorni a capo */
-  display: block; /* Ogni messaggio occupa una nuova riga */
+  max-width: 70%;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  display: block;
 }
 
-/* Messaggi Utente */
 .chat-message.user {
   background-color: #007bff;
   color: white;
   text-align: right;
-  margin-left: auto; /* Allinea i messaggi dell'utente a destra */
+  margin-left: auto;
 }
 
-/* Messaggi Assistente */
 .chat-message.assistant {
   background-color: #e0e0e0;
   color: black;
   text-align: left;
-  margin-right: auto; /* Allinea i messaggi dell'assistente a sinistra */
+  margin-right: auto;
 }
 
-/* Icona Dislike */
+/* Stile per le icone */
+
 .dislike-icon {
-  display: inline-block;
-  margin-left: 10px; /* Spazio rispetto al messaggio */
-  font-size: 16px;
-  color: #ff0000;
-  opacity: 0.8;
-  vertical-align: middle;
-  cursor: default; /* Non cliccabile */
+  font-size: 22px;
+  filter: grayscale(0%);
+  cursor: pointer;
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.debug-icon {
+  font-size: 22px;
+  filter: grayscale(100%);
+  cursor: pointer;
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.debug-icon:hover {
+  filter: grayscale(0%);
+  transform: scale(1.2);
 }

@@ -117,17 +117,17 @@ const ChatBotComponent = ({ openPanel }) => {
         // Inizia con gli elementi obbligatori
         const newHistory = [
           ...prevHistory,
-          { id, role: "assistant", content: responseText },
+          {
+            id,
+            role: "assistant",
+            content: responseText,
+            triggerAction: botResponse?.data?.triggerAction,
+            query: botResponse?.data?.query,
+            data: botResponse?.data?.data,
+          },
         ]
 
-        // Aggiungi l'elemento condizionale solo se botResponse?.data?.data esiste
-        /*  if (botResponse?.data?.data) {
-          newHistory.push({
-            role: "system",
-            content: JSON.stringify(botResponse.data.data),
-          })
-        }
-          */
+        /* TODO ho cancelli data o fai una copia */
 
         return newHistory
       })
