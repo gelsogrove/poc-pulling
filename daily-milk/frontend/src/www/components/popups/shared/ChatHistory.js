@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react"
 import "./ChatHistory.css"
 
-const ChatHistory = ({ messages, onDeleteChat }) => {
+const ChatHistory = ({ msgIds, messages, onDeleteChat }) => {
   const chatEndRef = useRef(null)
 
   useEffect(() => {
@@ -47,6 +47,11 @@ const ChatHistory = ({ messages, onDeleteChat }) => {
             }`}
           >
             <span>{msg.content}</span>
+            {msgIds.includes(msg.id) && (
+              <span className="dislike-icon" title="Disliked">
+                👎
+              </span>
+            )}
           </div>
         ))}
         <div ref={chatEndRef} />

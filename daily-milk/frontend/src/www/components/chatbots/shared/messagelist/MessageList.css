@@ -112,7 +112,7 @@ li {
   transform: scale(1.2);
 }
 
-/* Tooltip for icons */
+/* Tooltip for icons 
 .like-unlike-icons span::after {
   content: attr(title);
   position: absolute;
@@ -129,6 +129,7 @@ li {
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
 }
+  */
 
 .like-unlike-icons span:hover::after {
   opacity: 1;
@@ -190,4 +191,25 @@ li {
   40% {
     transform: scale(1);
   }
+}
+
+/* Icona di Unlike */
+.unlike-icon {
+  cursor: pointer;
+  font-size: 16px;
+  color: #007bff; /* Colore di default */
+  transition: color 0.3s ease, transform 0.3s ease;
+  border: 0px solid red;
+}
+
+.unlike-icon:hover {
+  color: #0056b3; /* Colore durante il passaggio del mouse */
+  transform: scale(1.2);
+}
+
+.unlike-icon.selected {
+  color: red; /* Cambia colore per lo stato selezionato */
+  filter: grayscale(0%); /* Rimuovi il filtro grigio */
+  border: 2px solid red; /* Aggiungi un bordo rosso */
+  transform: scale(1.2); /* Leggera animazione */
 }

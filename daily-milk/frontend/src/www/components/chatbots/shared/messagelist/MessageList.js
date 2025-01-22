@@ -125,28 +125,22 @@ const MessageList = ({
       )
 
       if (response.ok) {
-        console.log("Message unliked successfully")
+        const unlikeIcon = document.querySelector(
+          `[data-id='${msgId}'] .unlike-icon`
+        )
 
-        const unlikeIcons = document.querySelectorAll(".like-unlike-icons span")
-        unlikeIcons.forEach((icon) => {
-          icon.style.color = "gray"
-          icon.style.pointerEvents = "none"
-          icon.setAttribute("disabled", "true")
-        })
-
-        const submitButton = document.querySelector(".btn.btn-primary.btn-wide")
-        if (submitButton) {
-          submitButton.style.color = "gray"
-          submitButton.style.pointerEvents = "none"
-          submitButton.setAttribute("disabled", "true")
+        if (!unlikeIcon) {
+          console.error(`Icon with data-id='${msgId}' not found!`)
+          return
         }
 
-        const messageInput = document.querySelector(".form-control.input-wide")
-        if (messageInput) {
-          messageInput.style.backgroundColor = "#f5f5f5"
-          messageInput.style.pointerEvents = "none"
-          messageInput.setAttribute("disabled", "true")
+        console.log(unlikeIcon)
+
+        if (unlikeIcon) {
+          unlikeIcon.classList.toggle("selected") // Aggiungi/rimuovi la classe 'selected'
         }
+
+        console.log(unlikeIcon)
       } else {
         console.error("Failed to unlike the message:", response.statusText)
       }
@@ -246,10 +240,11 @@ const MessageList = ({
               {msg.sender === "bot" &&
                 msg.text !== "Typing..." &&
                 index !== 0 && (
-                  <div className="like-unlike-icons">
+                  <div className="like-unlike-icons" data-id={msg.id}>
                     <span
                       role="img"
                       aria-label="unlike"
+                      className="unlike-icon"
                       onClick={() =>
                         handleUnlike(
                           msg.id,

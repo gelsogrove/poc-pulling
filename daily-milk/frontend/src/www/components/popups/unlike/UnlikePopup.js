@@ -118,10 +118,13 @@ const UnlikePopup = ({ onClose }) => {
             </div>
             <div className="chat">
               {selectedItem?.conversationhistory ? (
-                <ChatHistory
-                  messages={JSON.parse(selectedItem.conversationhistory)}
-                  onDeleteChat={handleDeleteChat}
-                />
+                <div>
+                  <ChatHistory
+                    msgIds={[selectedItem.msgid]} // Passa un array contenente il msgId
+                    messages={JSON.parse(selectedItem.conversationhistory)}
+                    onDeleteChat={handleDeleteChat}
+                  />
+                </div>
               ) : (
                 <p></p>
               )}

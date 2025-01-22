@@ -95,12 +95,13 @@ const ChatBotComponent = ({ openPanel }) => {
       const responseText = parsedResponse || "I couldn’t understand that."
 
       // Replace the loading message with the response text
+      const id = uuidv4()
       setMessages((prevMessages) => {
         const updated = prevMessages.filter((msg) => msg.text !== "Typing...")
         return [
           ...updated,
           {
-            id: uuidv4(),
+            id,
             sender: "bot",
             text: responseText,
             data: botResponse?.data?.data,
@@ -116,7 +117,7 @@ const ChatBotComponent = ({ openPanel }) => {
         // Inizia con gli elementi obbligatori
         const newHistory = [
           ...prevHistory,
-          { role: "assistant", content: responseText },
+          { id, role: "assistant", content: responseText },
         ]
 
         // Aggiungi l'elemento condizionale solo se botResponse?.data?.data esiste

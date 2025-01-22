@@ -138,3 +138,14 @@
   text-align: left;
   margin-right: auto; /* Allinea i messaggi dell'assistente a sinistra */
 }
+
+/* Icona Dislike */
+.dislike-icon {
+  display: inline-block;
+  margin-left: 10px; /* Spazio rispetto al messaggio */
+  font-size: 16px;
+  color: #ff0000;
+  opacity: 0.8;
+  vertical-align: middle;
+  cursor: default; /* Non cliccabile */
+}
