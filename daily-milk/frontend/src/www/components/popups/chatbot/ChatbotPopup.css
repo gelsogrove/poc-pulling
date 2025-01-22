@@ -1,0 +1,71 @@
+.chatbot-popup-poulin {
+  display: flex;
+  flex-direction: row;
+  height: 90vh;
+  width: 65vw;
+  position: relative;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid #ccc;
+}
+
+.chat-section-source {
+  width: 100%;
+  padding: 0px;
+  background-color: #fff;
+  box-sizing: border-box;
+  height: 83vh;
+  margin-top: 30px;
+  margin-left: -70px;
+  padding: 5px;
+}
+
+.resize-popup-link {
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.visible-panel {
+  position: relative;
+  left: 89%;
+  height: 20px;
+  top: 20px;
+  z-index: 99;
+  background-color: none;
+  margin-left: -80px;
+}
+
+.icon {
+  font-size: 25px !important;
+}
+
+.close-popup {
+  position: absolute;
+  left: 96%;
+  height: 20px;
+  top: 20px;
+  margin-bottom: 8px;
+  z-index: 9999999;
+  font-size: 22px;
+  background-color: none;
+}
+
+.print-popup {
+  position: absolute;
+  left: 85%;
+  top: 20px;
+  z-index: 999;
+  font-size: 22px;
+  background: none;
+  cursor: pointer;
+  color: #333;
+}
+
+.print-popup:hover {
+  color: #007bff;
+  transform: scale(1.2);
+  transition: transform 0.3s ease, color 0.3s ease;
+}

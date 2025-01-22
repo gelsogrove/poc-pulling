@@ -7,22 +7,24 @@
   position: relative;
 }
 
+/* Header della Chat */
 .chat-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end; /* Allinea tutte le icone a destra */
   align-items: center;
   padding: 10px;
+  gap: 15px; /* Spazio tra le icone */
 }
 
+/* Pulsante Delete */
 .delete-chat-button {
   background: none;
   border: none;
   cursor: pointer;
   font-size: 20px;
-  margin-left: 95%;
   color: #007bff;
   transition: transform 0.3s ease, color 0.3s ease;
-  position: relative;
+  position: relative; /* Necessario per il tooltip */
 }
 
 .delete-chat-button:hover {
@@ -35,23 +37,21 @@
   color: #003f88;
 }
 
-/* Tooltip */
 .delete-chat-button::after {
-  content: "Delete Chat";
+  content: "Delete chat";
   position: absolute;
-  bottom: -30px;
-  left: 50%;
+  top: -30px;
+  left: 50%; /* Centra il tooltip rispetto al pulsante */
   transform: translateX(-50%);
   background: #333;
   color: #fff;
   padding: 5px 10px;
-  border-radius: 4px;
+  border-radius: 5px;
   font-size: 12px;
   opacity: 0;
   visibility: hidden;
-  white-space: nowrap;
   transition: opacity 0.3s ease, visibility 0.3s ease;
-  pointer-events: none;
+  white-space: nowrap;
 }
 
 .delete-chat-button:hover::after {
@@ -59,13 +59,56 @@
   visibility: visible;
 }
 
-/* Chat History */
+/* Pulsante Print */
+.print-chat-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #007bff;
+  transition: transform 0.3s ease, color 0.3s ease;
+  position: relative; /* Necessario per il tooltip */
+}
+
+.print-chat-button:hover {
+  color: #0056b3;
+  transform: scale(1.2);
+}
+
+.print-chat-button:active {
+  transform: scale(0.9);
+  color: #003f88;
+}
+
+.print-chat-button::after {
+  content: "Print chat";
+  position: absolute;
+  top: -30px;
+  left: 50%; /* Centra il tooltip rispetto al pulsante */
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  white-space: nowrap;
+}
+
+.print-chat-button:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Stile Messaggi */
 .chat-history {
   padding: 10px;
   overflow-y: auto;
   height: calc(100% - 50px); /* Lascia spazio per l'intestazione */
   display: flex;
-  flex-direction: column; /* Assicura che ogni messaggio sia una nuova riga */
+  flex-direction: column; /* Forza ogni messaggio su una nuova riga */
   gap: 10px; /* Spazio tra i messaggi */
 }
 
@@ -78,6 +121,7 @@
   display: block; /* Ogni messaggio occupa una nuova riga */
 }
 
+/* Messaggi Utente */
 .chat-message.user {
   background-color: #007bff;
   color: white;
@@ -85,6 +129,7 @@
   margin-left: auto; /* Allinea i messaggi dell'utente a destra */
 }
 
+/* Messaggi Assistente */
 .chat-message.assistant {
   background-color: #e0e0e0;
   color: black;

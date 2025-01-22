@@ -6,7 +6,7 @@ import "./UnlikePopup.css"
 const UnlikePopup = ({ onClose }) => {
   const [data, setData] = useState([])
   const [selectedItem, setSelectedItem] = useState(null)
-  const [loading, setLoading] = useState(true) // Stato per il caricamento
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const getData = async () => {
@@ -14,12 +14,12 @@ const UnlikePopup = ({ onClose }) => {
         const fetchedData = await fetchUnlikeData()
         setData(fetchedData || [])
         if (fetchedData && fetchedData.length > 0) {
-          setSelectedItem(fetchedData[0]) // Seleziona il primo elemento per default
+          setSelectedItem(fetchedData[0])
         }
       } catch (error) {
         console.error("Error fetching data:", error)
       } finally {
-        setLoading(false) // Caricamento completato
+        setLoading(false)
       }
     }
 
@@ -40,13 +40,27 @@ const UnlikePopup = ({ onClose }) => {
           (item) => item.idunlike !== selectedItem.idunlike
         )
         setData(updatedData)
-        setSelectedItem(updatedData.length > 0 ? updatedData[0] : null) // Seleziona il primo elemento rimanente
+        setSelectedItem(updatedData.length > 0 ? updatedData[0] : null)
       } else {
         console.error("Failed to delete the record.")
       }
     } catch (error) {
       console.error("Error deleting chat:", error)
     }
+  }
+
+  const getFirstUserName = (conversationHistory) => {
+    const messages = JSON.parse(conversationHistory)
+    const firstAssistantMessage = messages.find(
+      (msg) => msg.role === "assistant"
+    )
+
+    if (firstAssistantMessage) {
+      const match = firstAssistantMessage.content.match(/Hello, (\w+)!/)
+      return match ? match[1] : "Unknown" // Ritorna il nome se trovato
+    }
+
+    return "Unknown" // Default se non trovato
   }
 
   const getFirstUserMessage = (conversationHistory) => {
@@ -60,11 +74,11 @@ const UnlikePopup = ({ onClose }) => {
       <button className="close-button" onClick={onClose}>
         ×
       </button>
-      <h1>Unlike</h1>
+      <h1>Dislike</h1>
       <div className="content-container">
-        {loading ? ( // Mostra caricamento se i dati non sono ancora arrivati
+        {loading ? (
           <div className="loading-message">Loading...</div>
-        ) : data.length === 0 ? ( // Nessun record trovato
+        ) : data.length === 0 ? (
           <div className="no-data-message">No unlike message</div>
         ) : (
           <>
@@ -76,23 +90,29 @@ const UnlikePopup = ({ onClose }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.map((item) => (
-                    <tr
-                      key={item.idunlike}
-                      onClick={() => handleRowClick(item)}
-                      className={
-                        selectedItem?.idunlike === item.idunlike
-                          ? "selected"
-                          : ""
-                      }
-                      style={{ cursor: "pointer" }}
-                    >
-                      <td>
-                        {new Date(item.datatime).toLocaleString()} -{" "}
-                        {getFirstUserMessage(item.conversationhistory)}
-                      </td>
-                    </tr>
-                  ))}
+                  {data.map((item) => {
+                    const userName = getFirstUserName(item.conversationhistory)
+                    const firstMessage = getFirstUserMessage(
+                      item.conversationhistory
+                    )
+                    return (
+                      <tr
+                        key={item.idunlike}
+                        onClick={() => handleRowClick(item)}
+                        className={
+                          selectedItem?.idunlike === item.idunlike
+                            ? "selected"
+                            : ""
+                        }
+                        style={{ cursor: "pointer" }}
+                      >
+                        <td>
+                          {new Date(item.datatime).toLocaleString()} -{" "}
+                          {userName} - {firstMessage}
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>

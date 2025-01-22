@@ -257,7 +257,7 @@ const MessageList = ({
                           IdConversation
                         )
                       }
-                      title="Dislike this message"
+                      title="Dislike this answer"
                       style={{ cursor: "pointer", marginRight: "8px" }}
                     >
                       👎

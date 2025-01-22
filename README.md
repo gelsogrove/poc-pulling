@@ -26,6 +26,7 @@ E SALVIAMO
 - fare branch generico copiabile come template con prompt e usage
 - token dovrebbe essere dento Header delle chiamate.
 - TOGLIERE ALZEZZA NELLA HOME
+- cabaire il nome di chat-poulinn.chatbot
 
 ===================== NIC$ TO HAVE =====================
 

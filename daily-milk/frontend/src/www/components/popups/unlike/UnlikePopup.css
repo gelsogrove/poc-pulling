@@ -6,7 +6,7 @@
   border-radius: 8px;
 
   margin: auto;
-  height: 90vh;
+  height: 85vh;
   width: 1200px;
   padding: 35px;
   overflow: hidden;
@@ -84,7 +84,7 @@
 .chat-history {
   padding: 10px;
   overflow-y: auto;
-  height: calc(100% - 50px);
+  height: 50vh;
 }
 
 .chat-message {

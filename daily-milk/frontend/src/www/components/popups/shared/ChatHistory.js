@@ -8,15 +8,34 @@ const ChatHistory = ({ messages, onDeleteChat }) => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
+  const handlePrint = () => {
+    const printableContent = messages
+      .map(
+        (msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`
+      )
+      .join("\n")
+    const newWindow = window.open("", "_blank")
+    newWindow.document.write(`<pre>${printableContent}</pre>`)
+    newWindow.document.close()
+    newWindow.print()
+  }
+
   return (
     <div className="chat-history-container">
       <div className="chat-header">
         <button
           className="delete-chat-button"
           onClick={onDeleteChat}
-          title="Delete Chat"
+          title="Delete"
         >
           🗑️
+        </button>
+        <button
+          className="print-chat-button"
+          onClick={handlePrint}
+          title="Print"
+        >
+          🖨️
         </button>
       </div>
       <div className="chat-history">
