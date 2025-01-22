@@ -113,23 +113,23 @@ li {
 }
 
 /* Tooltip for icons 
-.like-unlike-icons span::after {
-  content: attr(title);
-  position: absolute;
-  top: -30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.75);
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 12px;
-  white-space: nowrap;
-  z-index: 10;
-  opacity: 0;
-  transition: opacity 0.2s ease-in-out;
-}
-  */
+  .like-unlike-icons span::after {
+    content: attr(title);
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+    */
 
 .like-unlike-icons span:hover::after {
   opacity: 1;
@@ -210,6 +210,5 @@ li {
 .unlike-icon.selected {
   color: red; /* Cambia colore per lo stato selezionato */
   filter: grayscale(0%); /* Rimuovi il filtro grigio */
-  border: 2px solid red; /* Aggiungi un bordo rosso */
   transform: scale(1.2); /* Leggera animazione */
 }

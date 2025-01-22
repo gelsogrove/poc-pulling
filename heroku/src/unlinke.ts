@@ -44,10 +44,9 @@ unlikeRouter.post(
       // Controlla se conversationId esiste già
       const checkQuery = `
         SELECT 1 FROM unlike
-        WHERE conversationId = $1 
-        LIMIT 1
+        WHERE conversationId = $1  and msgid $2
       `
-      const checkResult = await pool.query(checkQuery, [conversationId])
+      const checkResult = await pool.query(checkQuery, [conversationId, msgId])
 
       if (checkResult?.rowCount && checkResult.rowCount > 0) {
         res.status(200).json({
