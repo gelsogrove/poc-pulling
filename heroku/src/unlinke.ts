@@ -44,13 +44,21 @@ unlikeRouter.post(
       // Controlla se conversationId esiste già
       const checkQuery = `
         SELECT 1 FROM unlike
-        WHERE conversationId = $1 and msgid = $2
+        WHERE conversationId = $1 AND msgid = $2
       `
       const checkResult = await pool.query(checkQuery, [conversationId, msgId])
 
       if (checkResult?.rowCount && checkResult.rowCount > 0) {
+        // Cancella i record esistenti
+        const deleteQuery = `
+          DELETE FROM unlike
+          WHERE conversationId = $1 AND msgid = $2
+        `
+        await pool.query(deleteQuery, [conversationId, msgId])
+
         res.status(200).json({
-          message: "Record already exists. No changes made.",
+          message:
+            "Record already existed and has been deleted. No new record inserted.",
         })
         return
       }
