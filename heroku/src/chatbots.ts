@@ -57,13 +57,10 @@ const handleChat: RequestHandler = async (req, res) => {
 
     // USER MESSAGE
     const userMessage = messages[messages.length - 1]?.content
-    console.log("Message", userMessage)
 
     // PROMPT
     const promptResult = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
     const { prompt, model, temperature } = promptResult
-    const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
-    console.log("Prompt:", truncatedPrompt.slice(0, 20))
 
     // HISTORY
     const conversationHistory = messages.map((msg) => {
@@ -71,7 +68,7 @@ const handleChat: RequestHandler = async (req, res) => {
     })
 
     // ANALYSIS
-    if (["analysis", "trend"].includes(userMessage.toLowerCase())) {
+    if (["analysis", "trend", "analisi"].includes(userMessage.toLowerCase())) {
       try {
         const { data: analysis } = await axios.get(
           "https://ai.dairy-tools.com/api/stats.php"
@@ -94,7 +91,7 @@ const handleChat: RequestHandler = async (req, res) => {
     const requestPayload = {
       model,
       messages: [
-        { role: "system", content: truncatedPrompt },
+        { role: "system", content: prompt },
         ...conversationHistory,
         { role: "user", content: userMessage },
         { role: "system", content: `Language: eng` },

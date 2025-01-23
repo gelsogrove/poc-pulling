@@ -17,6 +17,7 @@ daily-milk BE: 80% > todo
 - unlike filter per promptID
 - user admin e user normale
 - come gestiamo no surprice ne Heroku ?
+- unlike get deve avere prompt id come filtro
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - pulire test folder perche' c'e import
