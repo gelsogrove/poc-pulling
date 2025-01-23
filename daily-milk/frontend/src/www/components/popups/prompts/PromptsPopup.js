@@ -22,8 +22,7 @@ const PromptsForm = ({ onClose }) => {
     const fetchPrompt = async () => {
       try {
         const token = Cookies.get("token")
-        const prompt = await getPrompt(token) // Recupera tutti i campi richiesti
-        console.log("Prompt fetched:", prompt)
+        const prompt = await getPrompt(idPrompt, token)
         setFormData((prevData) => ({
           ...prevData,
           content: prompt.prompt || "ddd",

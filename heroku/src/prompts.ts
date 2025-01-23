@@ -47,18 +47,18 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
 }
 
 const PostGetPromptHandler: RequestHandler = async (req, res) => {
-  const { token } = req.body
+  const { idPrompt, token } = req.body
 
   try {
     if (!(await validateToken(token, res))) return
 
     const result = await pool.query(
       "SELECT prompt,model,temperature FROM prompts WHERE idPrompt = $1",
-      ["a2c502db-9425-4c66-9d92-acd3521b38b5"]
+      [idPrompt]
     )
 
     if (result.rows.length === 0) {
-      res.status(404).json({ message: "Prompt non trovato" })
+      res.status(404).json({ message: "Prompt NOT EXIST" })
       return
     }
 
