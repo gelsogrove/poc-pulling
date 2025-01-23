@@ -9,7 +9,7 @@ import { getPrompt, postPrompt } from "./api/PromptsApi"
 
 const PromptsForm = ({ onClose }) => {
   const [formData, setFormData] = useState({
-    introduction: "",
+    content: "",
     temperature: 0.5,
     model: "",
   })
@@ -24,7 +24,7 @@ const PromptsForm = ({ onClose }) => {
         console.log("Prompt fetched:", prompt)
         setFormData((prevData) => ({
           ...prevData,
-          introduction: prompt.introduction || "ddd",
+          content: prompt.content || "ddd",
           model: prompt.model || "",
           temperature: parseFloat(prompt.temperature) || 0.5, // Converti in numero
         }))
@@ -69,7 +69,7 @@ const PromptsForm = ({ onClose }) => {
     try {
       const token = Cookies.get("token")
       await postPrompt(
-        formData.introduction,
+        formData.content,
         formData.model,
         formData.temperature,
         token
@@ -140,8 +140,8 @@ const PromptsForm = ({ onClose }) => {
       <div className="editor-container">
         <ControlledEditor
           className="codemirror-editor"
-          value={formData.introduction || ""}
-          onBeforeChange={handleEditorChange("introduction")}
+          value={formData.postPrompt || ""}
+          onBeforeChange={handleEditorChange("postPrompt")}
           options={{
             lineNumbers: true,
             mode: "json",

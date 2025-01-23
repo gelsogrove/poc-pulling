@@ -13,12 +13,12 @@ export const getPrompt = async (token) => {
   }
 }
 
-export const postPrompt = async (introduction, model, temperature, token) => {
+export const postPrompt = async (content, model, temperature, token) => {
   try {
     const response = await axios.put(
       `${process.env.REACT_APP_API_URL}/prompt`,
       {
-        introduction, // Invia il prompt
+        content, // Invia il prompt
         model, // Invia il modello
         temperature, // Invia la temperatura
         token, // Invia il token
