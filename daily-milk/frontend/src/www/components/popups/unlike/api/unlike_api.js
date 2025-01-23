@@ -3,20 +3,18 @@ import axios from "axios"
 import Cookies from "js-cookie"
 
 export const fetchUnlikeData = async () => {
+  const API_URL = `${process.env.REACT_APP_API_URL}/unlike`
   const token = Cookies.get("token")
   try {
-    const response = await fetch(
-      `https://poulin-bd075425a92c.herokuapp.com/unlike`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          token,
-        }),
-      }
-    )
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token,
+      }),
+    })
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`)
@@ -38,15 +36,14 @@ export const deleteUnlikeRecord = async (id) => {
       return null
     }
 
-    const response = await axios.delete(
-      `https://poulin-bd075425a92c.herokuapp.com/unlike/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: { token },
-      }
-    )
+    const API_URL = `${process.env.REACT_APP_API_URL}/unlike`
+
+    const response = await axios.delete(`${API_URL}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: { token },
+    })
 
     return response.status === 204
   } catch (error) {

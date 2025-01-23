@@ -5,38 +5,32 @@ daily-milk BE: 80% > todo
 
 ===================== TODO =====================
 
-- unlike (70%)
-- SAVED CHATS
-
--- QUANDO FA UNLIKE SALVIAMO IDCONVERSAZIONE, MSGID E IDUNLIKE
-E SALVIAMO
-
--- SALVIAMO LE CONVERSAZIONI
-
+- provare analisi funziona bene?
+- pulire codice
+- PROMPT CON ID FIJO COS FACCIAMO
+- salviamo le conversazioni
+- divider temperatura e prompt
+- puliamo le conversazioni vecchie
 - doblle query
-- grafico ?
+- token dovrebbe essere dento Header delle chiamate come barrer
+- unlike filter per promptID
 - user admin e user normale
+- come gestiamo no surprice ne Heroku ?
+
+- **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
+- pulire test folder perche' c'e import
 - LOGIN WITH DAILIYMILK (todo)
 - upload (todo)
 - togliere page dall'import e dalla tabella
-- divider temperatura e prompt
-- remove test folder
-- duplicare tutto per altra italia
-- provare analisi funziona bene?
-- fare branch generico copiabile come template con prompt e usage
-- token dovrebbe essere dento Header delle chiamate.
-- TOGLIERE ALZEZZA NELLA HOME
-- cabaire il nome di chat-poulinn.chatbot
 
 ===================== NIC$ TO HAVE =====================
 
-- staccarsi da main alla prima version
 - BE DI DAIRY-TOLLS mettere allow only from localhost o mio desarrollo
 
 ===================== AI COSTI =====================
 8 euroku
 5 database
-...openrouter
+...openrouter (50 euro)
 
 ===================== COMANDI HREOKU =====================
 heroku pg:psql HEROKU_POSTGRESQL_AMBER_URL -a poulin

@@ -1,6 +1,6 @@
 import axios from "axios" // Importa axios per le chiamate API
 
-const API_URL = "https://poulin-bd075425a92c.herokuapp.com/auth/login"
+const API_URL = `${process.env.REACT_APP_API_URL}/auth/login`
 
 export const login = async (username, password) => {
   try {

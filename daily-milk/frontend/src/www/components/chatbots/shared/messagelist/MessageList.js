@@ -105,24 +105,22 @@ const MessageList = ({
 
   const handleUnlike = async (msgId, conversationHistory, IdConversation) => {
     const payload = {
-      conversationHistory: conversationHistory,
+      conversationHistory: conversationHistory.slice(-3),
       conversationId: IdConversation,
       msgId,
       dataTime: getCurrentDateTime(),
       token: Cookies.get("token"),
     }
 
+    const API_URL = `${process.env.REACT_APP_API_URL}/unlike/new`
     try {
-      const response = await fetch(
-        "https://poulin-bd075425a92c.herokuapp.com/unlike/new",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      )
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      })
 
       if (response.ok) {
         const unlikeIcon = document.querySelector(

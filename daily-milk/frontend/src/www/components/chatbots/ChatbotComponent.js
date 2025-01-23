@@ -25,7 +25,7 @@ const ChatBotComponent = ({ openPanel }) => {
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef(null)
-  const apiUrl = "https://poulin-bd075425a92c.herokuapp.com/chatbot/response"
+  const apiUrl = `${process.env.REACT_APP_API_URL}/chatbot/response`
   const IdConversation = uuidv4()
 
   // Scroll to the bottom automatically

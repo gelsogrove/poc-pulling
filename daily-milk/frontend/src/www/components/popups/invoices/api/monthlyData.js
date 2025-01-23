@@ -5,12 +5,11 @@ import Cookies from "js-cookie"
 const monthyData = async () => {
   const token = Cookies.get("token")
 
+  const API_URL = `${process.env.REACT_APP_API_URL}/usage/monthly-totals`
+
   try {
-    const response = await axios.post(
-      `https://poulin-bd075425a92c.herokuapp.com/usage/monthly-totals`,
-      { token } // Passa userId nel corpo della richiesta
-    )
-    return response.data // Restituisce l'array di dati
+    const response = await axios.post(API_URL, { token })
+    return response.data
   } catch (error) {
     console.error("Errore durante il recupero dei dati:", error)
     return []

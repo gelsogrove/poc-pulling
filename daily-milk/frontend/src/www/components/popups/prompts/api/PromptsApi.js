@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const API_URL = "https://poulin-bd075425a92c.herokuapp.com/prompt"
+const API_URL = `${process.env.REACT_APP_API_URL}/prompt`
 
 export const getPrompt = async (token) => {
   try {

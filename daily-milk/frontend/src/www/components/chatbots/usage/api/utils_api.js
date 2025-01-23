@@ -38,19 +38,19 @@ export const response = async (
 
 export const getPromptDetails = async () => {
   const token = getCookie("token")
+
+  const API_URL = `${process.env.REACT_APP_API_URL}/prompt`
+
   try {
-    const response = await fetch(
-      `https://poulin-bd075425a92c.herokuapp.com/prompt`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          token,
-        }),
-      }
-    )
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token,
+      }),
+    })
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`)
@@ -72,17 +72,16 @@ export const getCookie = (name) => {
 
 export const fetchUsageData = async () => {
   const token = getCookie("token")
+  const API_URL = `${process.env.REACT_APP_API_URL}/usage`
+
   try {
-    const response = await fetch(
-      `https://poulin-bd075425a92c.herokuapp.com/usage`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token }),
-      }
-    )
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token }),
+    })
     if (!response.ok) {
       throw new Error("Network response was not ok")
     }
