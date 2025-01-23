@@ -234,19 +234,14 @@ usageRouter.post("/monthly-totals", async (req, res) => {
 
     const monthlyResult = await pool.query(
       `
-     SELECT *
-FROM (
-  SELECT 
-    service, 
-    to_char(date_trunc('month', day), 'YYYY') AS year, 
-    to_char(date_trunc('month', day), 'MM') AS month, 
-    COALESCE(SUM(total), 0) AS total,
-    ROW_NUMBER() OVER (PARTITION BY service ORDER BY date_trunc('month', day) DESC) AS row_num
-  FROM usage
-  GROUP BY service, date_trunc('month', day)
-) subquery
-WHERE row_num <= 12
-ORDER BY service, year DESC, month DESC;
+    
+    SELECT 
+    to_char(date_trunc('month', day), 'YYYY') AS year,
+    to_char(date_trunc('month', day), 'MM') AS month,
+    COALESCE(SUM(total), 0)::NUMERIC AS total
+FROM usage
+GROUP BY date_trunc('month', day)
+ORDER BY year DESC, month DESC;
     `
     )
 
