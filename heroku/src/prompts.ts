@@ -17,7 +17,7 @@ const validateToken = async (
 }
 
 const UpdatePromptHandler: RequestHandler = async (req, res) => {
-  const { content, model, temperature, token } = req.body
+  const { content, model, temperature, idPrompt, token } = req.body
 
   try {
     if (!(await validateToken(token, res))) return
@@ -31,7 +31,7 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
 
     const result = await pool.query(
       "UPDATE prompts SET prompt = $1, model = $2, temperature= $3 WHERE idPrompt = $4 RETURNING *",
-      [content, model, temperature, "a2c502db-9425-4c66-9d92-acd3521b38b5"]
+      [content, model, temperature, idPrompt]
     )
 
     if (result.rowCount === 0) {

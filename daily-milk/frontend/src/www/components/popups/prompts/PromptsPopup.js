@@ -16,6 +16,8 @@ const PromptsForm = ({ onClose }) => {
   const [isChanged, setIsChanged] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
+  const idPrompt = "a2c502db-9425-4c66-9d92-acd3521b38b5"
+
   useEffect(() => {
     const fetchPrompt = async () => {
       try {
@@ -72,6 +74,7 @@ const PromptsForm = ({ onClose }) => {
         formData.content,
         formData.model,
         formData.temperature,
+        idPrompt,
         token
       )
       console.log("Prompt inviato con successo")

@@ -6,7 +6,6 @@ daily-milk BE: 80% > todo
 ===================== TODO =====================
 
 - provare analisi funziona bene?
-- invoice non va
 - grafico dei costi ?
 - pulire codice
 - heroku e se ho piu' chatbots?
@@ -24,6 +23,7 @@ daily-milk BE: 80% > todo
 - LOGIN WITH DAILIYMILK (todo)
 - upload (todo)
 - togliere page dall'import e dalla tabella
+- mettere last update nel panell con chiamata ultimo record
 
 ===================== NIC$ TO HAVE =====================
 
