@@ -86,7 +86,7 @@ const MessageList = ({
   }
 
   useEffect(() => {
-    scrollToBottom()
+    setTimeout(scrollToBottom, 0)
   }, [messages])
 
   useEffect(() => {

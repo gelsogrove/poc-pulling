@@ -74,7 +74,13 @@ export const fetchUsageData = async () => {
   const token = getCookie("token")
   const API_URL = `${process.env.REACT_APP_API_URL}/usage`
 
+  // Funzione per aggiungere un ritardo
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
   try {
+    // Attendi 1500 millisecondi prima di continuare
+    await delay(1500)
+
     const response = await fetch(API_URL, {
       method: "POST",
       headers: {
@@ -82,6 +88,7 @@ export const fetchUsageData = async () => {
       },
       body: JSON.stringify({ token }),
     })
+
     if (!response.ok) {
       throw new Error("Network response was not ok")
     }

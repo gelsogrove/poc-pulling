@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: row;
   height: 90vh;
-  width: 65vw;
+  width: 80vw;
   position: relative;
   background: white;
   border-radius: 8px;
@@ -55,7 +55,7 @@
 
 .print-popup {
   position: absolute;
-  left: 85%;
+  left: 86.5%;
   top: 20px;
   z-index: 999;
   font-size: 22px;

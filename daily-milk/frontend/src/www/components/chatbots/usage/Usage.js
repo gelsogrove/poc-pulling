@@ -1,4 +1,3 @@
-// src/components/Usage.js
 import {
   BarElement,
   CategoryScale,
@@ -10,7 +9,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import "./Usage.css"
 
 import { fetchUsageData, getPromptDetails } from "./api/utils_api"
@@ -28,28 +27,36 @@ ChartJS.register(
 
 const Usage = ({ IdConversation, refresh }) => {
   const [usageData, setUsageData] = useState(null)
-  const [, setInitialTotalCurrentMonth] = useState(0)
-
+  const [initialTotalCurrentMonth, setInitialTotalCurrentMonth] = useState(null)
+  const [currentChatDifference, setCurrentChatDifference] = useState(0)
   const [temperature, setTemperature] = useState(null)
   const [model, setModel] = useState(null)
 
-  const fetchData = async () => {
-    // Usage
+  // Memorizza fetchData per evitare che venga ricreata ad ogni render
+  const fetchData = useCallback(async () => {
+    // Fetch Usage Data
     const data = await fetchUsageData()
     setUsageData(data)
+
+    // Calcola la differenza
     if (data && data.totalCurrentMonth) {
-      setInitialTotalCurrentMonth(data.totalCurrentMonth)
+      if (initialTotalCurrentMonth === null) {
+        setInitialTotalCurrentMonth(data.totalCurrentMonth)
+      } else {
+        const difference = data.totalCurrentMonth - initialTotalCurrentMonth
+        setCurrentChatDifference(difference)
+      }
     }
 
-    // Temperature Model
+    // Fetch Temperature and Model
     const { temperature, model } = await getPromptDetails()
     setTemperature(temperature)
     setModel(model)
-  }
+  }, [initialTotalCurrentMonth])
 
   useEffect(() => {
     fetchData()
-  }, [refresh])
+  }, [fetchData, refresh])
 
   return (
     <div className="usage-container">
@@ -62,14 +69,22 @@ const Usage = ({ IdConversation, refresh }) => {
       ) : usageData ? (
         <>
           <div className="title-usage"></div>
+          <h3>{currentChatDifference.toFixed(2)} $</h3>
+          <br />
           Current monthly usage:
-          <h3>{usageData.totalCurrentMonth} $</h3>
+          <div>{usageData.totalCurrentMonth} $</div>
           <hr />
           Model:
-          <h4>{model}</h4>
+          <div>{model}</div>
           <hr />
           Temperature:
-          <h4>{temperature}</h4>
+          <div>{temperature}</div>
+          <hr />
+          PromptId:
+          <div>a2c502db-9425-4c66-9d92-acd3521b38b5</div>
+          <hr />
+          ConversationId:
+          <div>{IdConversation}</div>
           <hr />
         </>
       ) : (

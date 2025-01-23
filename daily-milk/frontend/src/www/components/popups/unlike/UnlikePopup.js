@@ -49,20 +49,6 @@ const UnlikePopup = ({ onClose }) => {
     }
   }
 
-  const getFirstUserName = (conversationHistory) => {
-    const messages = JSON.parse(conversationHistory)
-    const firstAssistantMessage = messages.find(
-      (msg) => msg.role === "assistant"
-    )
-
-    if (firstAssistantMessage) {
-      const match = firstAssistantMessage.content.match(/Hello, (\w+)!/)
-      return match ? match[1] : "Unknown" // Ritorna il nome se trovato
-    }
-
-    return "Unknown" // Default se non trovato
-  }
-
   const getFirstUserMessage = (conversationHistory) => {
     const messages = JSON.parse(conversationHistory)
     const firstUserMessage = messages.find((msg) => msg.role === "user")
@@ -91,7 +77,6 @@ const UnlikePopup = ({ onClose }) => {
                 </thead>
                 <tbody>
                   {data.map((item) => {
-                    const userName = getFirstUserName(item.conversationhistory)
                     const firstMessage = getFirstUserMessage(
                       item.conversationhistory
                     )

@@ -26,7 +26,7 @@ const ChatBotComponent = ({ openPanel }) => {
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef(null)
   const apiUrl = `${process.env.REACT_APP_API_URL}/chatbot/response`
-  const IdConversation = uuidv4()
+  const [IdConversation] = useState(uuidv4()) // Si inizializza una sola volta
 
   // Scroll to the bottom automatically
   const scrollToBottom = () => {
@@ -82,11 +82,16 @@ const ChatBotComponent = ({ openPanel }) => {
     try {
       setRefreshUsage(!refreshUsage)
 
+      const sanitizedHistory = updatedHistory.map((message) => {
+        const { data, ...rest } = message // Rimuove il campo "data"
+        return rest
+      })
+
       const botResponse = await axios.post(apiUrl, {
         token: Cookies.get("token"),
         name: Cookies.get("name"),
         conversationId: IdConversation,
-        messages: updatedHistory,
+        messages: sanitizedHistory,
       })
 
       const parsedResponse = extractJsonFromMessage(botResponse.data.response)
@@ -126,8 +131,6 @@ const ChatBotComponent = ({ openPanel }) => {
             data: botResponse?.data?.data,
           },
         ]
-
-        /* TODO ho cancelli data o fai una copia */
 
         return newHistory
       })
@@ -170,7 +173,7 @@ const ChatBotComponent = ({ openPanel }) => {
         <div
           className="chatbot-right"
           style={{
-            width: "50%",
+            width: "35%",
             transition: "width 0.3s ease",
             padding: "20px",
           }}

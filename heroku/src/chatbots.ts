@@ -141,7 +141,7 @@ const handleChat: RequestHandler = async (req, res) => {
 
       if (sqlQuery !== null) {
         const day = new Date().toISOString().split("T")[0]
-        await sendUsageData(day, 0.2, token, triggerAction, userId)
+        await sendUsageData(day, 0.1, token, triggerAction, userId)
       }
 
       if (!sqlQuery) {

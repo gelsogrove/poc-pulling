@@ -24,7 +24,7 @@ const PromptsForm = ({ onClose }) => {
         console.log("Prompt fetched:", prompt)
         setFormData((prevData) => ({
           ...prevData,
-          content: prompt.content || "ddd",
+          content: prompt.prompt || "ddd",
           model: prompt.model || "",
           temperature: parseFloat(prompt.temperature) || 0.5, // Converti in numero
         }))
@@ -101,15 +101,26 @@ const PromptsForm = ({ onClose }) => {
         <div className="fields-container">
           <div className="form-section">
             <label className="form-label">Model</label>
-            <input
-              type="text"
+            <select
               name="model"
-              placeholder="Insert model name"
               value={formData.model}
               onChange={handleInputChange}
-              className="model-input"
-            />
+              className="model-select"
+            >
+              <option value="" disabled>
+                Select a model
+              </option>
+              <option value="openai/chatgpt-4o-latest">
+                openai/chatgpt-4o-latest
+              </option>
+
+              <option value="openai/gpt-4o">openai/gpt-4o</option>
+              <option value="openai/gpt-4o">google/gemini-pro-vision</option>
+              <option value="openai/gpt-4o-mini">openai/gpt-4o-mini</option>
+              <option value="openai/gpt-3.5-turbo">openai/gpt-3.5-turbo</option>
+            </select>
           </div>
+
           <div className="form-section">
             <label className="form-label">
               Temperature:{" "}
@@ -140,8 +151,8 @@ const PromptsForm = ({ onClose }) => {
       <div className="editor-container">
         <ControlledEditor
           className="codemirror-editor"
-          value={formData.postPrompt || ""}
-          onBeforeChange={handleEditorChange("postPrompt")}
+          value={formData.content || ""}
+          onBeforeChange={handleEditorChange("content")}
           options={{
             lineNumbers: true,
             mode: "json",
