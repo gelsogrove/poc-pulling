@@ -1,101 +1,76 @@
 .prompts-form-container {
-  min-width: 64vw; /* Larghezza aumentata */
-  max-width: 80vw; /* Limita la larghezza massima */
-  margin: 20px auto; /* Centra il contenitore */
+  min-width: 90vw;
+  max-width: 90vw;
+  margin: 20px auto;
   padding: 50px;
   border-radius: 8px;
   background-color: #f9f9f9;
+  height: 90vh;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
-.prompts-form-container .title {
-  padding: 0 0 35px;
-  text-align: center;
-  font-size: 1.8rem; /* Aumenta la dimensione del titolo */
-  color: #333;
-}
-
-.prompts-form-container h2 {
-  text-align: center;
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 20px;
 }
 
-.prompts-form-container .form-section {
-  margin-bottom: 15px;
+.title {
+  font-size: 1.8rem;
+  color: #333;
+  margin: 0;
 }
 
-.prompts-form-container label {
-  display: block;
-  font-weight: bold;
+.fields-container {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-right: 70px;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.form-label {
+  font-size: 14px;
   margin-bottom: 5px;
 }
 
-.submit-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #4caf50;
+.model-input,
+.temperature-slider {
+  width: 150px;
+}
+
+.save-button {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: bold;
   color: white;
-  font-size: 16px;
+  background-color: #4caf50;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 16px;
+  margin-left: 20px;
 }
 
-.submit-button :hover {
+.save-button:hover:enabled {
   background-color: #45a049;
 }
 
-.prompts-form-container .close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  z-index: 10;
-  color: black;
-}
-
-.prompts-form-container .editor-height {
-  height: 600px;
+.save-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .codemirror-editor .CodeMirror {
-  height: 600px !important; /* Altezza dell'editor */
-  max-width: 100%; /* Larghezza al massimo dello spazio disponibile */
+  height: 700px !important;
   border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  background-color: #f8f8f8;
-}
-
-.codemirror-editor {
-  overflow-y: auto; /* Abilita lo scrolling verticale */
-  width: 100%; /* Usa tutto lo spazio disponibile */
-  max-width: 100%; /* Assicura l'adattamento */
-}
-
-/* Personalizzazione della scrollbar */
-.codemirror-editor::-webkit-scrollbar {
-  width: 8px;
-}
-
-.codemirror-editor::-webkit-scrollbar-track {
-  background: white;
-}
-
-.codemirror-editor::-webkit-scrollbar-thumb {
-  background: gray;
-  border-radius: 4px;
-}
-
-.codemirror-editor::-webkit-scrollbar-thumb:hover {
-  background: darkgray;
-}
-
-/* Regole per Firefox */
-.codemirror-editor {
-  scrollbar-width: thin;
-  scrollbar-color: gray white;
+  border-radius: 5px;
 }

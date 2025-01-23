@@ -6,7 +6,9 @@ daily-milk BE: 80% > todo
 ===================== TODO =====================
 
 - provare analisi funziona bene?
+  stiamo inviando data?
 - pulire codice
+- heroku e se ho piu' chatbots?
 - PROMPT CON ID FIJO COS FACCIAMO
 - salviamo le conversazioni
 - divider temperatura e prompt

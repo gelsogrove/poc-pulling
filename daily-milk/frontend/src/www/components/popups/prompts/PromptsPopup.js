@@ -10,17 +10,23 @@ import { getPrompt, postPrompt } from "./api/PromptsApi"
 const PromptsForm = ({ onClose }) => {
   const [formData, setFormData] = useState({
     introduction: "",
+    temperature: 0.5,
+    model: "",
   })
+  const [isChanged, setIsChanged] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     const fetchPrompt = async () => {
       try {
         const token = Cookies.get("token")
-        const prompt = await getPrompt(token)
+        const prompt = await getPrompt(token) // Recupera tutti i campi richiesti
         console.log("Prompt fetched:", prompt)
         setFormData((prevData) => ({
           ...prevData,
-          introduction: prompt.prompt || "ddd",
+          introduction: prompt.introduction || "ddd",
+          model: prompt.model || "",
+          temperature: parseFloat(prompt.temperature) || 0.5, // Converti in numero
         }))
       } catch (error) {
         console.error("Errore durante il recupero del prompt:", error)
@@ -35,20 +41,53 @@ const PromptsForm = ({ onClose }) => {
       ...prevData,
       [name]: value,
     }))
+    setIsChanged(true)
+  }
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }))
+    setIsChanged(true)
+  }
+
+  const handleSliderChange = (event) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      temperature: parseFloat(event.target.value), // Converte il valore in numero
+    }))
+    setIsChanged(true)
   }
 
   const handleSubmit = async () => {
+    if (isLoading) return // Previene clic multipli durante il caricamento
+    setIsLoading(true) // Attiva il loader
+
+    const startTime = Date.now() // Segna l'inizio della chiamata
     try {
       const token = Cookies.get("token")
-      await postPrompt(formData.introduction, token)
+      await postPrompt(
+        formData.introduction,
+        formData.model,
+        formData.temperature,
+        token
+      )
       console.log("Prompt inviato con successo")
-      onClose()
+
+      // Calcola il tempo rimanente per raggiungere 3 secondi
+      const elapsedTime = Date.now() - startTime
+      const remainingTime = Math.max(1500 - elapsedTime, 0)
+
+      setTimeout(() => {
+        setIsLoading(false)
+      }, remainingTime)
     } catch (error) {
       console.error("Errore durante l'invio del prompt:", error)
+      setIsLoading(false) // Riattiva il pulsante in caso di errore
     }
   }
-
-  console.log("Form Data:", formData) // Debug dello stato del form
 
   return (
     <div className="prompts-form-container">
@@ -56,28 +95,63 @@ const PromptsForm = ({ onClose }) => {
         ×
       </button>
 
-      <h3 className="title">Prompt Composer</h3>
-      <div className="form-section">
-        <div className="editor-height">
-          <ControlledEditor
-            className="codemirror-editor"
-            value={formData.introduction || ""}
-            onBeforeChange={handleEditorChange("introduction")}
-            options={{
-              lineNumbers: true,
-              mode: "json", // Cambia il linguaggio se necessario
-              theme: "dracula", // Tema scelto
-              lineWrapping: true,
-              scrollbarStyle: "native", // Stile della scrollbar
-              viewportMargin: Infinity, // Migliora la gestione dello scrolling
-            }}
-          />
+      {/* Sezione titolo + campi + pulsante Save */}
+      <div className="header-row">
+        <h3 className="title">Prompt Composer</h3>
+        <div className="fields-container">
+          <div className="form-section">
+            <label className="form-label">Model</label>
+            <input
+              type="text"
+              name="model"
+              placeholder="Insert model name"
+              value={formData.model}
+              onChange={handleInputChange}
+              className="model-input"
+            />
+          </div>
+          <div className="form-section">
+            <label className="form-label">
+              Temperature:{" "}
+              <span>{Number(formData.temperature).toFixed(2)}</span>
+            </label>
+            <input
+              type="range"
+              name="temperature"
+              min="0"
+              max="1"
+              step="0.1"
+              value={formData.temperature}
+              onChange={handleSliderChange}
+              className="temperature-slider"
+            />
+          </div>
+          <button
+            type="submit"
+            className="save-button"
+            onClick={handleSubmit}
+            disabled={!isChanged || isLoading}
+          >
+            {isLoading ? "Saving..." : "Submit"}
+          </button>
         </div>
       </div>
 
-      <button type="submit" className="submit-button" onClick={handleSubmit}>
-        Submit
-      </button>
+      <div className="editor-container">
+        <ControlledEditor
+          className="codemirror-editor"
+          value={formData.introduction || ""}
+          onBeforeChange={handleEditorChange("introduction")}
+          options={{
+            lineNumbers: true,
+            mode: "json",
+            theme: "dracula",
+            lineWrapping: true,
+            scrollbarStyle: "native",
+            viewportMargin: Infinity,
+          }}
+        />
+      </div>
     </div>
   )
 }

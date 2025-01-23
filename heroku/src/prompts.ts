@@ -1,6 +1,6 @@
 import { RequestHandler, Response, Router } from "express"
 import { pool } from "../server.js"
-import { extractValuesFromPrompt, getUserIdByToken } from "./validateUser.js"
+import { getUserIdByToken } from "./validateUser.js"
 
 const promptRouter = Router()
 
@@ -17,7 +17,7 @@ const validateToken = async (
 }
 
 const UpdatePromptHandler: RequestHandler = async (req, res) => {
-  const { content, token } = req.body
+  const { content, model, temperature, token } = req.body
 
   try {
     if (!(await validateToken(token, res))) return
@@ -28,9 +28,6 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
         .json({ message: "Il contenuto è troppo lungo" + content.length })
       return
     }
-
-    const { temperature, model } = extractValuesFromPrompt(content)
-    const truncatedPrompt = content.split("=== ENDPROMPT ===")[0].trim()
 
     const result = await pool.query(
       "UPDATE prompts SET prompt = $1, model = $2, temperature= $3 WHERE idPrompt = $4 RETURNING *",
