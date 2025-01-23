@@ -7,7 +7,7 @@
 
   margin: auto;
   height: 85vh;
-  width: 1200px;
+  width: 1400px;
   padding: 35px;
   overflow: hidden;
 }
@@ -29,13 +29,13 @@
 }
 
 .unlike-table-container {
-  flex: 1;
-  padding: 10px;
-  overflow-y: auto;
+  width: 30%;
 }
 
 .unlike-table {
-  width: 100%;
+  width: 90%;
+
+  margin-top: 13px;
   border-collapse: collapse;
 }
 
@@ -64,7 +64,7 @@
 }
 
 .chat {
-  flex: 2;
+  flex: 1 1;
   padding: 10px;
   overflow-y: auto;
 }

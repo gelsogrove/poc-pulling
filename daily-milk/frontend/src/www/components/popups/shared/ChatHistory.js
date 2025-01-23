@@ -87,7 +87,11 @@ const ChatHistory = ({ msgIds, messages, onDeleteChat }) => {
                 <pre>{JSON.stringify(msg, null, 2)}</pre>
               ) : (
                 <div>
-                  <pre>
+                  <pre
+                    className={
+                      msg.role === "user" ? "text-user" : "text-assistant"
+                    }
+                  >
                     {msg.data && Array.isArray(msg.data) && msg.data.length > 0
                       ? createDynamicAsciiTable(msg.data)
                       : msg.content}

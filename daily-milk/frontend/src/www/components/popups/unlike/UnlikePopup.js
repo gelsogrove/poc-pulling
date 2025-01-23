@@ -108,7 +108,7 @@ const UnlikePopup = ({ onClose }) => {
                       >
                         <td>
                           {new Date(item.datatime).toLocaleString()} -{" "}
-                          {userName} - {firstMessage}
+                          {firstMessage}
                         </td>
                       </tr>
                     )

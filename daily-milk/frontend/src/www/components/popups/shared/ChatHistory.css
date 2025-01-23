@@ -1,12 +1,13 @@
 .chat-history-container {
-  height: 100%;
   width: 100%;
   background: #f9f9f9;
   border-radius: 8px;
   overflow-y: auto;
   position: relative;
   border: 1px solid grey;
-  min-height: 600px;
+  min-height: 650px;
+  max-height: 650px;
+  border: 1px solid #ccc;
 }
 
 /* Azioni sui messaggi (Debug e Dislike) */
@@ -33,7 +34,7 @@
 .chat-history {
   padding: 10px;
   overflow-y: auto;
-  height: calc(100% - 50px);
+  height: 60vh !important;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -50,9 +51,16 @@
 
 .chat-message.user {
   background-color: #007bff;
-  color: white;
+  color: white !important;
   text-align: right;
   margin-left: auto;
+}
+.text-user {
+  color: white !important;
+}
+
+.text-assistant {
+  color: black !important;
 }
 
 .chat-message.assistant {
@@ -126,9 +134,17 @@
 
 .delete-chat-button {
   font-size: 22px;
-  margin-left: 650px;
+  margin-left: 94%;
   position: relative;
   cursor: pointer;
+  border: none;
+  background: none;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.delete-chat-button:hover {
+  transform: scale(1.1);
+  color: #ff4d4d;
 }
 
 .delete-chat-button::after {
