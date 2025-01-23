@@ -3,7 +3,7 @@ import "./ChatHistory.css"
 
 export const createDynamicAsciiTable = (data) => {
   if (!Array.isArray(data) || data.length === 0) {
-    return "No data available"
+    return "No data available..."
   }
 
   const headers = Object.keys(data[0])
@@ -90,7 +90,7 @@ const ChatHistory = ({ msgIds, messages, onDeleteChat }) => {
                   <pre>
                     {msg.data && Array.isArray(msg.data) && msg.data.length > 0
                       ? createDynamicAsciiTable(msg.data)
-                      : "No data available"}
+                      : msg.content}
                   </pre>
                 </div>
               )}

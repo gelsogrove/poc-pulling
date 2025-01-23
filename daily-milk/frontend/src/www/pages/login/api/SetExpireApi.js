@@ -4,7 +4,7 @@ const API_URL = `${process.env.REACT_APP_API_URL}/auth/set-expire`
 
 export const setExpire = async (userId) => {
   try {
-    const response = await axios.put(API_URL(), {
+    const response = await axios.put(API_URL, {
       userId,
     })
     return response.data

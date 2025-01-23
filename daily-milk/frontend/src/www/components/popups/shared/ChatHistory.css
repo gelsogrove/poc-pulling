@@ -29,47 +29,6 @@
   border-bottom: 1px solid grey;
 }
 
-/* Pulsante Generico */
-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 20px;
-  color: #007bff;
-  transition: transform 0.3s ease, color 0.3s ease;
-}
-
-button:hover {
-  color: #0056b3;
-  transform: scale(1.2);
-}
-
-button:active {
-  transform: scale(0.9);
-  color: #003f88;
-}
-
-button::after {
-  position: absolute;
-  bottom: -30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #333;
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 12px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  white-space: nowrap;
-}
-
-button:hover::after {
-  opacity: 1;
-  visibility: visible;
-}
-
 /* Stile Messaggi */
 .chat-history {
   padding: 10px;
@@ -110,6 +69,29 @@ button:hover::after {
   filter: grayscale(0%);
   cursor: pointer;
   transition: filter 0.3s ease, transform 0.3s ease;
+  position: relative;
+}
+
+.dislike-icon::after {
+  content: attr(title);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: black;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  opacity: 0;
+  visibility: hidden;
+  white-space: nowrap;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.dislike-icon:hover::after {
+  opacity: 1;
+  visibility: visible;
 }
 
 .debug-icon {
@@ -117,9 +99,56 @@ button:hover::after {
   filter: grayscale(100%);
   cursor: pointer;
   transition: filter 0.3s ease, transform 0.3s ease;
+  position: relative;
 }
 
-.debug-icon:hover {
-  filter: grayscale(0%);
-  transform: scale(1.2);
+.debug-icon::after {
+  content: attr(title);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: black;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  opacity: 0;
+  visibility: hidden;
+  white-space: nowrap;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.debug-icon:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.delete-chat-button {
+  font-size: 22px;
+  margin-left: 650px;
+  position: relative;
+  cursor: pointer;
+}
+
+.delete-chat-button::after {
+  content: attr(title);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: black;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  opacity: 0;
+  visibility: hidden;
+  white-space: nowrap;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.delete-chat-button:hover::after {
+  opacity: 1;
+  visibility: visible;
 }
