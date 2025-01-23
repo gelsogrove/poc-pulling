@@ -60,7 +60,11 @@ app.use(
 // Configurazione CORS
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://ai.dairy-tools.com"], // Permetti richieste da questi domini
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "https://ai.dairy-tools.com",
+    ], // Permetti richieste da questi domini
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
