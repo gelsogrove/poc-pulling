@@ -15,6 +15,7 @@ daily-milk BE: 80% > todo
 - texarea grigia'
 - chatbot bottoni troppi distazionati
 - pulire codice funzioni dengfo utils
+- &issuer=Poulin Secretkey`
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - pulire test folder perche' c'e import

@@ -10,11 +10,10 @@ const authRouter = Router()
 
 const validateRequest = async (req: any, res: any): Promise<string | null> => {
   const authHeader = req.headers["authorization"] as string | undefined
-  console.log("Authorization Header ricevuto:", authHeader) // <--- Log importante
+
   const token = authHeader?.startsWith("Bearer ")
     ? authHeader.split(" ")[1]
     : null
-  console.log("token:", token)
 
   if (!token) {
     res.status(401).json({ message: "Missing or invalid token." })

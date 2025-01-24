@@ -131,6 +131,7 @@ const handleResponse: RequestHandler = async (req, res) => {
       finalResponse = parsedResponse.response || "No response provided."
       triggerAction = parsedResponse.triggerAction || ""
 
+      console.log("**************SQL", sqlQuery);
       if (sqlQuery !== null) {
         const day = new Date().toISOString().split("T")[0]
         console.log("**************", token);

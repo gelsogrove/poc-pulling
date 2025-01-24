@@ -5,9 +5,9 @@
   overflow-y: auto;
   position: relative;
   border: 1px solid grey;
-  min-height: 650px;
-  max-height: 650px;
-  border: 1px solid #ccc;
+  min-height: 540px;
+  max-height: 540px;
+  border: 1px solid red;
 }
 
 /* Azioni sui messaggi (Debug e Dislike) */
