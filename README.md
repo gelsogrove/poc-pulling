@@ -6,15 +6,16 @@ daily-milk BE: 80% > todo
 ===================== TODO =====================
 
 - heroku e se ho piu' chatbots?
-- PROMPT CON ID FIJO COS FACCIAMO (unlike)
 - unlike filter per promptID
 - come gestiamo no surprice ne Heroku ?
-- unlike get deve avere prompt id come filtro
 - salviamo le conversazioni
 - dobbiamo arrivare a due chats DUE UNLIKE DUE PROMP
 - token dovrebbe essere dento Header delle chiamate come barrer
 - pulire codice funzioni dengfo utils
 - user admin e user normale admin sessions
+- usage dovewbbe salvarmi anche il promptId
+- texarea grigia'
+- chatbot bottoni troppi distazionati
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - pulire test folder perche' c'e import
@@ -36,3 +37,9 @@ daily-milk BE: 80% > todo
 heroku pg:psql HEROKU_POSTGRESQL_AMBER_URL -a poulin
 heroku logs --tail --app poulin
 heroku restart -a poulin
+
+===================== NEW PROMPT =====================
+
+- new rocord dentro prompt
+- new grafic dentro home
+- passare il nuovo idprompt dentro

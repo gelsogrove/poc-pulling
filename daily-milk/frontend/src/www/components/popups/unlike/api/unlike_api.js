@@ -11,7 +11,7 @@ export const fetchUnlikeData = async () => {
       Authorization: `Bearer ${token}`,
     }
 
-    const response = await axios.get(API_URL, {}, { headers })
+    const response = await axios.get(API_URL, { headers })
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`)

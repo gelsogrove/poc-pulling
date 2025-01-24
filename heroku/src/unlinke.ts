@@ -55,6 +55,7 @@ unlikeRouter.post(
         msgId,
         dataTime,
         conversationHistoryString,
+        idPrompt,
       ]
 
       await pool.query(query, values)
