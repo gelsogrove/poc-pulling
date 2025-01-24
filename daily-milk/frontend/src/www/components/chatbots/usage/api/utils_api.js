@@ -73,8 +73,8 @@ export const fetchUsageData = async () => {
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
   try {
-    // Attendi 1500 millisecondi prima di continuare
-    await delay(1500)
+    // Attendi 1500 millisecondi p∫rima di continuare
+    await delay(2000)
 
     const headers = {
       "Content-Type": "application/json",
