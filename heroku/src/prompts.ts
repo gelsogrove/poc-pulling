@@ -53,13 +53,16 @@ const GetPromptHandler: RequestHandler = async (req, res) => {
   const { idPrompt, noprompt } = req.query
 
   try {
+    // QUERY
     let sql =
       "SELECT prompt, model, temperature FROM prompts WHERE idPrompt = $1"
     if (noprompt) {
       sql = "SELECT  model, temperature FROM prompts WHERE idPrompt = $1"
     }
-
-    const result = await pool.query(sql, [idPrompt])
+    const values = [idPrompt]
+    const result = await pool.query(sql, values)
+    const fullQuery = sql.replace(/\$1/g, `'${values[0]}'`)
+    console.log(fullQuery)
 
     if (result.rows.length === 0) {
       res.status(404).json({ message: "Prompt non trovato." })
