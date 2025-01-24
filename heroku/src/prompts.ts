@@ -46,11 +46,11 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
 /**
  * Handler per ottenere un prompt.
  */
-const PostGetPromptHandler: RequestHandler = async (req, res) => {
+const GetPromptHandler: RequestHandler = async (req, res) => {
   const userId = await validateRequest(req, res)
   if (!userId) return
 
-  const { idPrompt } = req.body
+  const { idPrompt } = req.query
 
   try {
     const result = await pool.query(
@@ -75,6 +75,6 @@ const PostGetPromptHandler: RequestHandler = async (req, res) => {
 }
 
 promptRouter.put("/", UpdatePromptHandler)
-promptRouter.post("/", PostGetPromptHandler)
+promptRouter.get("/", GetPromptHandler)
 
 export default promptRouter

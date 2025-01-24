@@ -1,3 +1,5 @@
+import axios from "axios"
+
 export const response = async (
   apiUrl,
   token,
@@ -48,14 +50,11 @@ export const getPromptDetails = async (idPrompt) => {
   }
 
   try {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        idPrompt,
-        token,
-      }),
-    })
+    const params = {
+      idPrompt, // Passa idPrompt come parametro nella query string
+    }
+
+    const response = await axios.get(API_URL, { headers, params })
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`)
