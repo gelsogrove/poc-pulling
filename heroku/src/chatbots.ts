@@ -98,7 +98,9 @@ const handleResponse: RequestHandler = async (req, res) => {
       console.log("Parsed response:", parsedResponse)
     } catch (error) {
       console.error("Failed to parse OpenAI response:", rawResponse, error)
-      res.status(500).json({ response: "Invalid response from OpenRouter" })
+      res
+        .status(500)
+        .json({ response: "Invalid response from OpenRouter", rawResponse })
       return
     }
 

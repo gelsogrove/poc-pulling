@@ -9,9 +9,13 @@ export const getPrompt = async (idPrompt, token) => {
       Authorization: `Bearer ${token}`,
     }
 
-    const response = await axios.post(API_URL, { idPrompt }, { headers })
-    console.log("Prompt fetched:", response.data.content)
-    return response.data.content // Restituisce introduction, model, e temperature
+    const params = {
+      idPrompt, // Passa idPrompt come parametro nella query string
+    }
+
+    const response = await axios.get(API_URL, { headers, params })
+
+    return response.data.content
   } catch (error) {
     console.error("Errore durante il recupero del prompt:", error)
     throw error

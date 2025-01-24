@@ -7,7 +7,7 @@ import { Controlled as ControlledEditor } from "react-codemirror2"
 import "./PromptsPopup.css"
 import { getPrompt, postPrompt } from "./api/PromptsApi"
 
-const PromptsForm = ({ onClose }) => {
+const PromptsForm = ({ idPrompt, onClose }) => {
   const [formData, setFormData] = useState({
     content: "",
     temperature: 0.5,
@@ -15,8 +15,6 @@ const PromptsForm = ({ onClose }) => {
   })
   const [isChanged, setIsChanged] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-
-  const idPrompt = "a2c502db-9425-4c66-9d92-acd3521b38b5"
 
   useEffect(() => {
     const fetchPrompt = async () => {
