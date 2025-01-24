@@ -1,12 +1,10 @@
 import { Request, Response, Router } from "express"
 import { pool } from "../server.js" // Importa il pool dal file principale
-import { getUserIdByToken, validateUser } from "./validateUser.js"
+
+import { validateToken, validateUser } from "./validateUser.js"
 
 const usageRouter = Router()
 
-/**
- * Funzione generica per validare il token e l'utente.
- */
 const validateRequest = async (
   req: Request,
   res: Response
@@ -22,7 +20,7 @@ const validateRequest = async (
   }
 
   try {
-    const userId = await getUserIdByToken(token)
+    const userId = await validateToken(token)
     if (!userId) {
       res.status(403).json({ message: "Invalid or expired token." })
       return null
@@ -47,9 +45,6 @@ const validateRequest = async (
   }
 }
 
-/**
- * Endpoint per creare un nuovo record di utilizzo.
- */
 usageRouter.post("/new", async (req, res) => {
   const userId = await validateRequest(req, res)
   if (!userId) return
@@ -72,9 +67,6 @@ usageRouter.post("/new", async (req, res) => {
   }
 })
 
-/**
- * Endpoint per ottenere il totale giornaliero, settimanale e mensile.
- */
 usageRouter.post("/", async (req, res) => {
   const userId = await validateRequest(req, res)
   if (!userId) return
@@ -183,14 +175,85 @@ usageRouter.post("/", async (req, res) => {
   }
 })
 
-/**
- * Gestione degli errori.
- */
-usageRouter.use((err: any, req: Request, res: Response, next: Function) => {
-  if (err && err.status === 429) {
-    res.status(429).json({ error: "Request limit reached. Try again later." })
-  } else {
-    next(err)
+usageRouter.put("/:id", async (req, res) => {
+  const userId = await validateRequest(req, res)
+  if (!userId) return
+
+  const { id } = req.params
+  const { day, total } = req.body
+
+  if (!day || !total) {
+    res.status(400).json({ error: "Day and total are required." })
+    return
+  }
+
+  try {
+    const result = await pool.query(
+      'UPDATE usage SET day = $1, total = $2 WHERE idusage = $3 AND "user" = $4 RETURNING *',
+      [day, total, id, userId]
+    )
+    if (result.rowCount === 0) {
+      res.status(404).json({ error: "Usage not found." })
+      return
+    }
+    res.json(result.rows[0])
+  } catch (error) {
+    console.error("Error during update:", error)
+    res.status(500).json({ error: "Internal server error." })
+  }
+})
+
+usageRouter.delete("/:id", async (req, res) => {
+  const userId = await validateRequest(req, res)
+  if (!userId) return
+
+  const { id } = req.params
+
+  try {
+    const result = await pool.query(
+      'DELETE FROM usage WHERE idusage = $1 AND "user" = $2',
+      [id, userId]
+    )
+    if (result.rowCount === 0) {
+      res.status(404).json({ error: "Usage not found." })
+      return
+    }
+    res.status(204).send()
+  } catch (error) {
+    console.error("Error during deletion:", error)
+    res.status(500).json({ error: "Internal server error." })
+  }
+})
+
+// Endpoint per ottenere il totale per ogni mese
+usageRouter.post("/monthly-totals", async (req, res) => {
+  const userId = await validateRequest(req, res)
+  if (!userId) return
+
+  try {
+    const monthlyResult = await pool.query(
+      `
+      SELECT 
+        to_char(date_trunc('month', day), 'YYYY') AS year,
+        to_char(date_trunc('month', day), 'MM') AS month,
+        COALESCE(SUM(total), 0)::NUMERIC AS total
+      FROM usage
+      GROUP BY date_trunc('month', day)
+      ORDER BY year DESC, month DESC;
+    `
+    )
+
+    const monthlyTotals = monthlyResult.rows.map((row) => ({
+      year: row.year,
+      month: row.month,
+      total: row.total || 0,
+      paid: false,
+    }))
+
+    res.json(monthlyTotals)
+  } catch (error) {
+    console.error("Error during monthly totals retrieval:", error)
+    res.status(500).json({ error: "Internal server error." })
   }
 })
 

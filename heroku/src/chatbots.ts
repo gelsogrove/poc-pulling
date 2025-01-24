@@ -7,8 +7,8 @@ import {
   executeSqlQuery,
   getPrompt,
   sendUsageData,
-  validateToken,
 } from "./chatbots_utility.js"
+import { validateRequest } from "./validateUser.js"
 
 dotenv.config()
 
@@ -32,39 +32,6 @@ axiosRetry(axios, {
     return error.code === "ECONNRESET" || status >= 500
   },
 })
-
-/**
- * Funzione generica per validare il token e l'utente.
- */
-const validateRequest = async (req: any, res: any): Promise<any> => {
-  const authHeader = req.headers["authorization"] as string | undefined
-  const token = authHeader?.startsWith("Bearer ")
-    ? authHeader.split(" ")[1]
-    : null
-
-  if (!token) {
-    res.status(401).json({ message: "Missing or invalid token." })
-    return null
-  }
-
-  try {
-    const userId = await validateToken(token)
-    if (!userId) {
-      res.status(403).json({ message: "Invalid or expired token." })
-      return null
-    }
-    return { userId, token }
-  } catch (error) {
-    console.error(
-      "Error during token validation:",
-      error instanceof Error ? error.message : error
-    )
-    res
-      .status(500)
-      .json({ message: "Internal server error during validation." })
-    return null
-  }
-}
 
 /**
  * Handler principale per gestire la chat.

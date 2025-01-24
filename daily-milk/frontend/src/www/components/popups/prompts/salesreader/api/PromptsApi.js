@@ -9,7 +9,7 @@ export const getPrompt = async (idPrompt, token) => {
       Authorization: `Bearer ${token}`,
     }
 
-    const response = await axios.post(API_URL, { idPrompt, token }, headers)
+    const response = await axios.post(API_URL, { idPrompt }, { headers })
     console.log("Prompt fetched:", response.data.content)
     return response.data.content // Restituisce introduction, model, e temperature
   } catch (error) {
@@ -39,9 +39,9 @@ export const postPrompt = async (
         temperature,
         idPrompt,
       },
-      headers
+      { headers }
     )
-    console.log("Response:", response.data)
+
     return response.data
   } catch (error) {
     console.error("Errore durante il salvataggio del prompt:", error)

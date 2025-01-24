@@ -1,51 +1,8 @@
-import { RequestHandler, Response, Router } from "express"
+import { RequestHandler, Router } from "express"
 import { pool } from "../server.js"
-import { getUserIdByToken, validateUser } from "./validateUser.js"
+import { validateRequest } from "./validateUser.js"
 
 const promptRouter = Router()
-
-/**
- * Funzione generica per validare il token e l'utente.
- */
-const validateRequest = async (
-  req: any,
-  res: Response
-): Promise<string | null> => {
-  const authHeader = req.headers["authorization"] as string | undefined
-  const token = authHeader?.startsWith("Bearer ")
-    ? authHeader.split(" ")[1]
-    : null
-
-  if (!token) {
-    res.status(401).json({ message: "Missing or invalid token." })
-    return null
-  }
-
-  try {
-    const userId = await getUserIdByToken(token)
-    if (!userId) {
-      res.status(403).json({ message: "Invalid or expired token." })
-      return null
-    }
-
-    const isUserValid = await validateUser(userId)
-    if (!isUserValid) {
-      res.status(403).json({ message: "User is not authorized." })
-      return null
-    }
-
-    return userId
-  } catch (error) {
-    console.error(
-      "Error during token validation:",
-      error instanceof Error ? error.message : error
-    )
-    res
-      .status(500)
-      .json({ message: "Internal server error during validation." })
-    return null
-  }
-}
 
 /**
  * Handler per aggiornare un prompt.

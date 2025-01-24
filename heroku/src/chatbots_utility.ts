@@ -1,30 +1,9 @@
 import axios from "axios"
 import dotenv from "dotenv"
 import { pool } from "../server.js"
-import { getUserIdByToken } from "./validateUser.js"
 
 dotenv.config()
 
-const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-const OPENROUTER_HEADERS = {
-  Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-  "Content-Type": "application/json",
-}
-
-export const validateToken = async (token: string) => {
-  try {
-    const userId = await getUserIdByToken(token)
-    if (!userId) {
-      return null
-    }
-    return userId
-  } catch (error) {
-    return null
-  }
-}
-/**
- * Fetches the prompt along with its model and temperature from the database.
- */
 export const getPrompt = async (idPrompt: string) => {
   try {
     const result = await pool.query(
@@ -83,9 +62,7 @@ export const handleError = (error: unknown): { message: string } => {
     }
   }
 }
-/**
- * Executes a query via the SQL API and returns the results.
- */
+
 export const executeSqlQuery = async (sqlQuery: string) => {
   try {
     const sqlApiUrl = `https://ai.dairy-tools.com/api/sql.php?query=${encodeURIComponent(

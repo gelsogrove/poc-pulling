@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react"
 import { Bar } from "react-chartjs-2"
 import { fetchUsageData } from "../../chatbots/usage/api/utils_api"
-import monthlyData from "./api/monthlyData"
+import monthlyData from "./api/monthlyData_api"
 import "./InvoicePopup.css"
 
 const InvoicePopup = ({ onClose }) => {
