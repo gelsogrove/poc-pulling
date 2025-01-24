@@ -5,7 +5,6 @@ daily-milk BE: 80% > todo
 
 ===================== TODO =====================
 
-- HTTP error! Status: 404 quando clicco su usare
 - provare analisi perche' non viene messa nello storico vedo
 - cerca e sistema getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
 - heroku e se ho piu' chatbots?
