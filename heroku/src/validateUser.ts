@@ -79,19 +79,26 @@ export const extractValuesFromPrompt = (
  * Funzione generica per validare il token e l'utente.
  */
 export const validateRequest = async (req: any, res: any): Promise<any> => {
+  console.log("82:")
   const authHeader = req.headers["authorization"] as string | undefined
 
   const token = authHeader?.startsWith("Bearer ")
     ? authHeader.split(" ")[1]
     : null
 
+  console.log("88:")
+
   if (!token) {
     res.status(401).json({ message: "Missing or invalid token." })
     return null
   }
 
+  console.log("896")
+
   try {
     const userId = await getUserIdByToken(token)
+
+    console.log("101", userId)
     if (!userId) {
       res.status(403).json({ message: "Invalid or expired token." })
       return null

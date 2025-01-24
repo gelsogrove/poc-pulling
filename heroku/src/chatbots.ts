@@ -34,12 +34,15 @@ axiosRetry(axios, {
 
 const handleResponse: RequestHandler = async (req, res) => {
   try {
+    const { idPrompt } = req.body
+    console.log("idPrompt:", idPrompt)
+
     const { userId, token } = await validateRequest(req, res)
     if (!userId) return
 
     console.log("User validated:", { userId })
 
-    const { conversationId, idPrompt, messages } = req.body
+    const { conversationId, messages } = req.body
 
     if (!conversationId || !Array.isArray(messages)) {
       console.log("Validation failed for conversationId or messages.") // Log input non valido

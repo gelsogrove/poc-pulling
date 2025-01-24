@@ -17,19 +17,15 @@ export const response = async (
       Authorization: `Bearer ${token}`,
     }
 
-    const response = await fetch(`${apiUrl}/chatbot/response`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
+    const response = await axios.post(
+      `${apiUrl}/chatbot/response`,
+      {
         name,
         conversationId,
         messages,
-      }),
-    })
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`)
-    }
+      },
+      { headers }
+    )
 
     const data = await response.json()
     return data
