@@ -77,13 +77,13 @@ unlikeRouter.get("/", async (req: Request, res: Response): Promise<void> => {
   const userId = await validateRequest(req, res)
   if (!userId) return
 
-  const { promptId } = req.query // Cambiato da req.params a req.query
+  const { idPrompt } = req.query // Cambiato da req.params a req.query
 
   try {
     const query = `
-      SELECT * FROM unlike WHERE promptid = $1 ORDER BY datatime DESC
+      SELECT * FROM unlike WHERE idPrompt = $1 ORDER BY datatime DESC
     `
-    const result = await pool.query(query, [promptId]) // Aggiunto il valore di bind
+    const result = await pool.query(query, [idPrompt]) // Aggiunto il valore di bind
 
     res.status(200).json(result.rows)
   } catch (error) {
