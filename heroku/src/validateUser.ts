@@ -86,7 +86,7 @@ export const validateRequest = async (req: any, res: any): Promise<any> => {
     ? authHeader.split(" ")[1]
     : null
 
-  console.log("88:")
+  console.log("88:", token)
 
   if (!token) {
     res.status(401).json({ message: "Missing or invalid token." })
