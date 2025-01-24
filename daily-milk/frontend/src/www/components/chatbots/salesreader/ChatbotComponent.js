@@ -57,6 +57,8 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
 
   // Function to send a message
   const handleSend = async (message) => {
+    const token = Cookies.get("token")
+
     if (!message.trim()) return
     setInputValue("")
     setIsLoading(true)
@@ -86,14 +88,21 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
         const { data, ...rest } = message // Rimuove il campo "data"
         return rest
       })
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      }
 
-      const botResponse = await axios.post(apiUrl, {
-        token: Cookies.get("token"),
-        name: Cookies.get("name"),
-        conversationId: IdConversation,
-        messages: sanitizedHistory,
-        idPrompt,
-      })
+      const botResponse = await axios.post(
+        apiUrl,
+        {
+          name: Cookies.get("name"),
+          conversationId: IdConversation,
+          messages: sanitizedHistory,
+          idPrompt,
+        },
+        { headers }
+      )
 
       const parsedResponse = extractJsonFromMessage(botResponse.data.response)
       setData(botResponse?.data)

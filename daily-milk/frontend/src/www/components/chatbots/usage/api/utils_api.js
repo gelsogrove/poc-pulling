@@ -56,13 +56,7 @@ export const getPromptDetails = async (idPrompt) => {
     }
 
     const response = await axios.get(API_URL, { headers, params })
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`)
-    }
-
-    const data = await response.json()
-    return data.content
+    return response.data.content
   } catch (error) {
     console.error("Error during initialize data fetch:", error)
     throw error

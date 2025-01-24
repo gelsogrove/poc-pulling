@@ -39,9 +39,10 @@ const Usage = ({ idPrompt, IdConversation, refresh }) => {
     setUsageData(data)
 
     // Fetch Temperature and Model
-    const { temperature, model } = await getPromptDetails(idPrompt)
-    setTemperature(temperature)
-    setModel(model)
+
+    const prompt = await getPromptDetails(idPrompt)
+    setTemperature(prompt.temperature)
+    setModel(prompt.model)
   }, [idPrompt])
 
   useEffect(() => {

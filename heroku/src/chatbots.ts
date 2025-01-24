@@ -38,7 +38,9 @@ axiosRetry(axios, {
  */
 const handleChat: RequestHandler = async (req, res) => {
   const { userId, token } = await validateRequest(req, res)
-  if (!userId) return
+  if (!userId || !token) {
+    return // La risposta 401 è già gestita in validateRequest
+  }
 
   const { conversationId, idPrompt, messages } = req.body
 
