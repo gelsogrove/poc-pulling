@@ -60,11 +60,15 @@ const handleChat: RequestHandler = async (req, res) => {
     const promptResult = await getPrompt(idPrompt)
     const { prompt, model, temperature } = promptResult
 
+    console.log(prompt.slice(0, 10))
+
     // HISTORY
     const conversationHistory = messages.map((msg) => ({
       role: msg.role || "user",
       content: msg.content,
     }))
+
+    console.log(conversationHistory.length)
 
     // CUSTOM FOR PROMPT
     const hasAnalysisKeywords = conversationHistory.some((msg) =>
@@ -72,6 +76,8 @@ const handleChat: RequestHandler = async (req, res) => {
         msg.content.toLowerCase().includes(keyword)
       )
     )
+
+    console.log(hasAnalysisKeywords)
     if (hasAnalysisKeywords) {
       try {
         const { data: analysis } = await axios.get(
@@ -114,6 +120,8 @@ const handleChat: RequestHandler = async (req, res) => {
         timeout: 30000,
       }
     )
+
+    console.log(openaiResponse)
 
     if (openaiResponse.data.error) {
       res.status(200).json({ response: openaiResponse.data.error.message })
