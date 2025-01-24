@@ -36,7 +36,7 @@ axiosRetry(axios, {
 })
 
 const handleChat: RequestHandler = async (req, res) => {
-  const { conversationId, token, messages } = req.body
+  const { conversationId, idPrompt, token, messages } = req.body
 
   try {
     // VALIDATION
@@ -58,7 +58,7 @@ const handleChat: RequestHandler = async (req, res) => {
     const userMessage = messages[messages.length - 1]?.content
 
     // PROMPT
-    const promptResult = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
+    const promptResult = await getPrompt(idPrompt)
     const { prompt, model, temperature } = promptResult
 
     // HISTORY
@@ -66,13 +66,12 @@ const handleChat: RequestHandler = async (req, res) => {
       return { role: msg.role || "user", content: msg.content }
     })
 
-    // ANALYSIS
+    // CUSTOM FOR PROMPT
     const hasAnalysisKeywords = conversationHistory.some((msg) =>
       ["analysis", "trend", "analisi"].some((keyword) =>
         msg.content.toLowerCase().includes(keyword)
       )
     )
-
     if (hasAnalysisKeywords) {
       try {
         const { data: analysis } = await axios.get(
@@ -95,6 +94,7 @@ const handleChat: RequestHandler = async (req, res) => {
         return
       }
     }
+    // END CUSTOM ANALYSIS
 
     // PAYLOAD
     const requestPayload = {
@@ -119,17 +119,16 @@ const handleChat: RequestHandler = async (req, res) => {
       }
     )
 
+    // RETURN ERROR
     if (openaiResponse.data.error) {
-      console.log("*************RESP********", openaiResponse.data.error)
       res.status(200).json({ response: openaiResponse.data.error.message })
       return
     }
 
-    // ANSWER
+    // RETURN ANSWER
     const rawResponse = cleanResponse(
       openaiResponse.data.choices[0]?.message?.content
     )
-
     if (!rawResponse) {
       res.status(204).json({ response: "Empty response from OpenRouter" })
       return

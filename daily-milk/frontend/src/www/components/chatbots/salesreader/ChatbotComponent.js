@@ -92,6 +92,7 @@ const ChatBotComponent = ({ openPanel }) => {
         name: Cookies.get("name"),
         conversationId: IdConversation,
         messages: sanitizedHistory,
+        idPrompt: "a2c502db-9425-4c66-9d92-acd3521b38b5",
       })
 
       const parsedResponse = extractJsonFromMessage(botResponse.data.response)
