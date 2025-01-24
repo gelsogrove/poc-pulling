@@ -33,44 +33,65 @@ axiosRetry(axios, {
 })
 
 const handleResponse: RequestHandler = async (req, res) => {
+  const { userId, token } = await validateRequest(req, res)
+  if (!userId) return
+  const { conversationId, idPrompt, messages } = req.body
+
+  if (!conversationId || !Array.isArray(messages)) {
+    console.log("Validation failed for conversationId or messages.") // Log input non valido
+    res.status(400).json({
+      message: "conversationId and messages array are required.",
+    })
+    return
+  }
+
   try {
-    const { userId, token } = await validateRequest(req, res)
-    if (!userId) return
+    // USER MESSAGE
+    const userMessage = messages[messages.length - 1]?.content
 
-    const { conversationId, idPrompt, messages } = req.body
-
-    if (!conversationId || !Array.isArray(messages)) {
-      console.log("Validation failed for conversationId or messages.") // Log input non valido
-      res.status(400).json({
-        message: "conversationId and messages array are required.",
-      })
-      return
-    }
-
-    // Recupera prompt
+    // PROMPT
     const promptResult = await getPrompt(idPrompt)
-
     const { prompt, model, temperature } = promptResult
 
-    // Simula la storia della conversazione
-    const conversationHistory = messages.map((msg) => ({
-      role: msg.role || "user",
-      content: msg.content,
-    }))
+    // HISTORY
+    const conversationHistory = messages.map((msg: any) => {
+      return { role: msg.role || "user", content: msg.content }
+    })
 
-    // Payload per OpenRouter
+    // ANALYSIS
+    if (["analysis", "trend"].includes(userMessage.toLowerCase())) {
+      try {
+        const { data: analysis } = await axios.get(
+          "https://ai.dairy-tools.com/api/stats.php"
+        )
+
+        res.status(200).json({
+          response: `Here is the analysis: ${JSON.stringify(analysis)}`,
+        })
+        return
+      } catch (analysisError) {
+        console.error("Error fetching analysis data:", analysisError)
+        res.status(200).json({
+          response: "Failed to fetch analysis data.",
+        })
+        return
+      }
+    }
+
+    // PAYLOAD
     const requestPayload = {
       model,
       messages: [
         { role: "system", content: prompt },
         ...conversationHistory,
+        { role: "user", content: userMessage },
         { role: "system", content: `Language: eng` },
       ],
       max_tokens: MAX_TOKENS,
       temperature: Number(temperature),
     }
 
-    // Chiamata a OpenRouter
+    // OPENROUTER
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
       requestPayload,
@@ -81,54 +102,62 @@ const handleResponse: RequestHandler = async (req, res) => {
     )
 
     if (openaiResponse.data.error) {
-      console.log("Error in OpenRouter response:", openaiResponse.data.error)
-      res.status(500).json({ response: openaiResponse.data.error.message })
+      res
+        .status(200)
+        .json({ response: "Empty response from OpenRouter",  openaiResponse.data.error.message })
       return
     }
 
-    // Parsing della risposta
+    // ANSWER
     const rawResponse = cleanResponse(
       openaiResponse.data.choices[0]?.message?.content
     )
-    console.log("Raw response:", rawResponse)
 
-    let parsedResponse
-    try {
-      parsedResponse = JSON.parse(rawResponse)
-      console.log("Parsed response:", parsedResponse)
-    } catch (error) {
-      console.error("Failed to parse OpenAI response:", rawResponse, error)
+    if (!rawResponse) {
       res
-        .status(500)
-        .json({ response: "Invalid response from OpenRouter", rawResponse })
+        .status(200)
+        .json({ response: "Empty response from OpenRouter", rawResponse })
       return
     }
 
-    // Gestione risposta
-    const sqlQuery = parsedResponse.sql || null
-    const finalResponse = parsedResponse.response || "No response provided."
-    const triggerAction = parsedResponse.triggerAction || ""
+    // PARSE RESPONSE
+    let sqlQuery: string | null = null
+    let finalResponse: string = ""
+    let triggerAction: string = ""
+    try {
+      const parsedResponse = JSON.parse(rawResponse)
+      sqlQuery = parsedResponse.sql || null
+      finalResponse = parsedResponse.response || "No response provided."
+      triggerAction = parsedResponse.triggerAction || ""
 
-    if (sqlQuery) {
-      console.log("Executing SQL query:", sqlQuery) // Log della query SQL
+      if (sqlQuery !== null) {
+        const day = new Date().toISOString().split("T")[0]
+        await sendUsageData(day, 0.1, token, triggerAction, userId)
+      }
+
+      if (!sqlQuery) {
+        res.status(200).json({
+          triggerAction,
+          response: finalResponse,
+        })
+        return
+      }
+
+      // EXECUTE QUERY
       const sqlData = await executeSqlQuery(sqlQuery)
-      console.log("SQL query executed successfully.")
       res.status(200).json({
         triggerAction,
         response: finalResponse,
         data: sqlData,
         query: sqlQuery,
       })
+    } catch (parseError) {
+      res.status(200).json({ response: rawResponse })
       return
     }
-
-    res.status(200).json({
-      triggerAction,
-      response: finalResponse,
-    })
   } catch (error) {
-    console.error("Unhandled error in handleResponse:", error) // Log degli errori non gestiti
-    res.status(500).json({ response: "Internal server error" })
+    console.log("********ERROR**********", error)
+    res.status(200).json({ response: "error:" + error })
   }
 }
 
