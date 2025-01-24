@@ -77,16 +77,21 @@ unlikeRouter.get("/", async (req: Request, res: Response): Promise<void> => {
   const userId = await validateRequest(req, res)
   if (!userId) return
 
-  const { idPrompt } = req.params // Cambiato da req.params a req.query
+  const { idPrompt } = req.query // Cambiato da req.params a req.query
 
   try {
     const query = `
       SELECT * FROM unlike WHERE idPrompt = $1 ORDER BY datatime DESC
     `
-    const result = await pool.query(query, [idPrompt]) // Aggiunto il valore di bind
+    const values = [idPrompt] // Valori di bind
 
-    console.log("Executing query:", query)
-    console.log("With values:", idPrompt)
+    // Genera una query completa sostituendo i placeholder
+    const fullQuery = query.replace(/\$1/g, `'${values[0]}'`)
+
+    // Stampa la query completa per un debug più semplice
+    console.log("Generated query for testing:", fullQuery)
+
+    const result = await pool.query(query, values)
 
     res.status(200).json(result.rows)
   } catch (error) {
