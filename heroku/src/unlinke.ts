@@ -4,56 +4,79 @@ import { getUserIdByToken, validateUser } from "./validateUser.js" // Presuppone
 
 const unlikeRouter = Router()
 
-const validateToken = async (
-  token: string,
+/**
+ * Funzione generica per validare il token e l'utente.
+ */
+const validateRequest = async (
+  req: Request,
   res: Response
 ): Promise<string | null> => {
-  const userId = await getUserIdByToken(token)
-  if (!userId) {
-    res.status(400).json({ message: "Token non valido" })
+  const authHeader = req.headers["authorization"] as string | undefined
+  const token = authHeader?.startsWith("Bearer ")
+    ? authHeader.split(" ")[1]
+    : null
+
+  if (!token) {
+    res.status(401).json({ message: "Missing or invalid token." })
     return null
   }
-  return userId
+
+  try {
+    const userId = await getUserIdByToken(token)
+    if (!userId) {
+      res.status(403).json({ message: "Invalid or expired token." })
+      return null
+    }
+
+    const isUserValid = await validateUser(userId)
+    if (!isUserValid) {
+      res.status(403).json({ message: "User is not authorized." })
+      return null
+    }
+
+    return userId
+  } catch (error) {
+    console.error(
+      "Error during token validation:",
+      error instanceof Error ? error.message : error
+    )
+    res
+      .status(500)
+      .json({ message: "Internal server error during validation." })
+    return null
+  }
 }
 
+/**
+ * Endpoint per creare un nuovo record di unlike.
+ */
 unlikeRouter.post(
   "/new",
   async (req: Request, res: Response): Promise<void> => {
-    const { conversationId, msgId, dataTime, token, conversationHistory } =
-      req.body
+    const userId = await validateRequest(req, res)
+    if (!userId) return
 
-    // Validazione input
-    if (
-      !conversationId ||
-      !msgId ||
-      !dataTime ||
-      !token ||
-      !conversationHistory
-    ) {
+    const { conversationId, msgId, dataTime, conversationHistory } = req.body
+
+    if (!conversationId || !msgId || !dataTime || !conversationHistory) {
       res.status(400).json({ error: "All fields are required." })
       return
     }
 
     try {
-      // Convert token to userId
-      const userId = await validateToken(token, res)
-      if (!userId) return // Se il token non è valido, interrompe l'esecuzione
+      await validateUser(userId)
 
-      await validateUser(userId) // Validazione dell'utente, se necessario
-
-      // Controlla se conversationId esiste già
       const checkQuery = `
-        SELECT 1 FROM unlike
-        WHERE conversationId = $1 AND msgid = $2
-      `
+      SELECT 1 FROM unlike
+      WHERE conversationId = $1 AND msgid = $2
+    `
       const checkResult = await pool.query(checkQuery, [conversationId, msgId])
 
       if (checkResult?.rowCount && checkResult.rowCount > 0) {
-        // Cancella i record esistenti
         const deleteQuery = `
-          DELETE FROM unlike
-          WHERE conversationId = $1 AND msgid = $2
-        `
+        DELETE FROM unlike
+        WHERE conversationId = $1 AND msgid = $2
+      `
         await pool.query(deleteQuery, [conversationId, msgId])
 
         res.status(200).json({
@@ -63,15 +86,13 @@ unlikeRouter.post(
         return
       }
 
-      // Converti conversationHistory in stringa JSON
       const conversationHistoryString = JSON.stringify(conversationHistory)
 
-      // Query per inserire il record
       const query = `
-        INSERT INTO unlike (conversationId, msgId, dataTime, conversationHistory)
-        VALUES ($1, $2, $3, $4)
-        RETURNING idUnlike, conversationId, msgId, dataTime, conversationHistory
-      `
+      INSERT INTO unlike (conversationId, msgId, dataTime, conversationHistory)
+      VALUES ($1, $2, $3, $4)
+      RETURNING idUnlike, conversationId, msgId, dataTime, conversationHistory
+    `
       const values = [
         conversationId,
         msgId,
@@ -79,73 +100,63 @@ unlikeRouter.post(
         conversationHistoryString,
       ]
 
-      // Esegui la query
       const result = await pool.query(query, values)
 
-      // Restituisci il risultato
       res.status(201).json({
         message: "Record inserted successfully",
         data: result.rows[0],
       })
     } catch (error) {
-      console.error("Error inserting record:", error)
+      console.error(
+        "Error inserting record:",
+        error instanceof Error ? error.message : error
+      )
       res.status(500).json({ error: "Internal server error" })
     }
   }
 )
 
+/**
+ * Endpoint per ottenere tutti i record.
+ */
 unlikeRouter.post("/", async (req: Request, res: Response): Promise<void> => {
-  const { token } = req.body
-
-  if (!token || typeof token !== "string") {
-    res.status(400).json({ error: "Token is required." })
-    return
-  }
+  const userId = await validateRequest(req, res)
+  if (!userId) return
 
   try {
-    // Convert token to userId
-    const userId = await validateToken(token, res)
-    if (!userId) return
-
-    await validateUser(userId) // Validazione dell'utente, se necessario
-
-    // Query per ottenere tutti i record
     const query = `
-        SELECT * FROM unlike ORDER BY dataTime DESC
-      `
+      SELECT * FROM unlike ORDER BY dataTime DESC
+    `
     const result = await pool.query(query)
 
-    // Restituisci i risultati
     res.status(200).json(result.rows)
   } catch (error) {
-    console.error("Error fetching records:", error)
+    console.error(
+      "Error fetching records:",
+      error instanceof Error ? error.message : error
+    )
     res.status(500).json({ error: "Internal server error" })
   }
 })
 
+/**
+ * Endpoint per eliminare un record.
+ */
 unlikeRouter.delete(
   "/:id",
   async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params
-    const { token } = req.body
+    const userId = await validateRequest(req, res)
+    if (!userId) return
 
-    if (!token) {
-      res.status(400).json({ error: "Token is required." })
-      return
-    }
+    const { id } = req.params
 
     try {
-      // Convert token to userId
-      const userId = await validateToken(token, res)
-      if (!userId) return
+      await validateUser(userId)
 
-      await validateUser(userId) // Validazione dell'utente, se necessario
-
-      // Query per eliminare il record
       const query = `
-        DELETE FROM unlike
-        WHERE idUnlike = $1
-      `
+      DELETE FROM unlike
+      WHERE idUnlike = $1
+    `
       const result = await pool.query(query, [id])
 
       if (result.rowCount === 0) {
@@ -153,10 +164,12 @@ unlikeRouter.delete(
         return
       }
 
-      // Restituisci il successo
-      res.status(204).send() // Nessun contenuto
+      res.status(204).send()
     } catch (error) {
-      console.error("Error deleting record:", error)
+      console.error(
+        "Error deleting record:",
+        error instanceof Error ? error.message : error
+      )
       res.status(500).json({ error: "Internal server error" })
     }
   }

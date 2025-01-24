@@ -10,13 +10,15 @@ export const response = async (
       throw new Error("Messages must be an array")
     }
 
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    }
+
     const response = await fetch(`${apiUrl}/chatbot/response`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify({
-        token,
         name,
         conversationId,
         messages,
@@ -41,12 +43,15 @@ export const getPromptDetails = async (idPrompt) => {
 
   const API_URL = `${process.env.REACT_APP_API_URL}/prompt`
 
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  }
+
   try {
     const response = await fetch(API_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify({
         idPrompt,
         token,
@@ -82,11 +87,14 @@ export const fetchUsageData = async () => {
     // Attendi 1500 millisecondi prima di continuare
     await delay(1500)
 
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    }
+
     const response = await fetch(API_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify({ token }),
     })
 

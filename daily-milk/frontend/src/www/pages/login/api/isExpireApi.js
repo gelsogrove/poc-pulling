@@ -6,8 +6,13 @@ const API_URL = `${process.env.REACT_APP_API_URL}/auth/is-expired`
 export const IsExpired = async () => {
   const token = Cookies.get("token")
   try {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    }
+
     // Sending a POST request to check expiration
-    const response = await axios.post(API_URL, { token })
+    const response = await axios.post(API_URL, { headers })
     return response.data.isExpired
   } catch (error) {
     console.error("Error checking expiration:", error)

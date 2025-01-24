@@ -6,14 +6,14 @@ export const fetchUnlikeData = async () => {
   const API_URL = `${process.env.REACT_APP_API_URL}/unlike`
   const token = Cookies.get("token")
   try {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    }
+
     const response = await fetch(API_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token,
-      }),
+      headers,
     })
 
     if (!response.ok) {
@@ -30,19 +30,21 @@ export const fetchUnlikeData = async () => {
 
 export const deleteUnlikeRecord = async (id) => {
   try {
+    // CHECK TOKE
     const token = Cookies.get("token")
     if (!token) {
       console.error("Token not found in cookies.")
       return null
     }
 
+    // RUN QUERY
     const API_URL = `${process.env.REACT_APP_API_URL}/unlike`
-
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    }
     const response = await axios.delete(`${API_URL}/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      data: { token },
+      headers,
     })
 
     return response.status === 204

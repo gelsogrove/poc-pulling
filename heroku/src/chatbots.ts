@@ -26,31 +26,61 @@ if (!process.env.OPENROUTER_API_KEY) {
 
 axiosRetry(axios, {
   retries: 3,
-  retryDelay: (retryCount) => {
-    return retryCount * 1000
-  },
+  retryDelay: (retryCount) => retryCount * 1000,
   retryCondition: (error) => {
     const status = error.response?.status ?? 0
     return error.code === "ECONNRESET" || status >= 500
   },
 })
 
+/**
+ * Funzione generica per validare il token e l'utente.
+ */
+const validateRequest = async (req: any, res: any): Promise<any> => {
+  const authHeader = req.headers["authorization"] as string | undefined
+  const token = authHeader?.startsWith("Bearer ")
+    ? authHeader.split(" ")[1]
+    : null
+
+  if (!token) {
+    res.status(401).json({ message: "Missing or invalid token." })
+    return null
+  }
+
+  try {
+    const userId = await validateToken(token)
+    if (!userId) {
+      res.status(403).json({ message: "Invalid or expired token." })
+      return null
+    }
+    return { userId, token }
+  } catch (error) {
+    console.error(
+      "Error during token validation:",
+      error instanceof Error ? error.message : error
+    )
+    res
+      .status(500)
+      .json({ message: "Internal server error during validation." })
+    return null
+  }
+}
+
+/**
+ * Handler principale per gestire la chat.
+ */
 const handleChat: RequestHandler = async (req, res) => {
-  const { conversationId, idPrompt, token, messages } = req.body
+  const { userId, token } = await validateRequest(req, res)
+  if (!userId) return
+
+  const { conversationId, idPrompt, messages } = req.body
 
   try {
     // VALIDATION
-    if (!conversationId || !token || !Array.isArray(messages)) {
+    if (!conversationId || !Array.isArray(messages)) {
       res.status(400).json({
-        message: "conversationId, token, and messages array are required.",
+        message: "conversationId and messages array are required.",
       })
-      return
-    }
-
-    // TOKEN
-    const userId = await validateToken(token)
-    if (!userId) {
-      res.status(403).json({ message: "Invalid token." })
       return
     }
 
@@ -62,9 +92,10 @@ const handleChat: RequestHandler = async (req, res) => {
     const { prompt, model, temperature } = promptResult
 
     // HISTORY
-    const conversationHistory = messages.map((msg) => {
-      return { role: msg.role || "user", content: msg.content }
-    })
+    const conversationHistory = messages.map((msg) => ({
+      role: msg.role || "user",
+      content: msg.content,
+    }))
 
     // CUSTOM FOR PROMPT
     const hasAnalysisKeywords = conversationHistory.some((msg) =>
@@ -78,19 +109,15 @@ const handleChat: RequestHandler = async (req, res) => {
           "https://ai.dairy-tools.com/api/stats.php"
         )
 
-        // Trasformare i dati di analisi in una stringa leggibile
         const analysisString = JSON.stringify(analysis, null, 2)
 
-        // Aggiungere i dati di analisi al contesto della conversazione
         conversationHistory.push({
           role: "system",
           content: `Here is the analysis data:\n${analysisString}`,
         })
       } catch (analysisError) {
         console.error("Error fetching analysis data:", analysisError)
-        res.status(200).json({
-          response: "Failed to fetch analysis data.",
-        })
+        res.status(200).json({ response: "Failed to fetch analysis data." })
         return
       }
     }
@@ -119,13 +146,11 @@ const handleChat: RequestHandler = async (req, res) => {
       }
     )
 
-    // RETURN ERROR
     if (openaiResponse.data.error) {
       res.status(200).json({ response: openaiResponse.data.error.message })
       return
     }
 
-    // RETURN ANSWER
     const rawResponse = cleanResponse(
       openaiResponse.data.choices[0]?.message?.content
     )
@@ -170,8 +195,8 @@ const handleChat: RequestHandler = async (req, res) => {
       return
     }
   } catch (error) {
-    console.log("********ERROR**********", error)
-    res.status(200).json({ response: "error:" + error })
+    console.error("********ERROR**********", error)
+    res.status(500).json({ response: "Internal server error" })
   }
 }
 

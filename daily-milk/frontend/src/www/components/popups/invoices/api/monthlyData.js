@@ -7,8 +7,13 @@ const monthyData = async () => {
 
   const API_URL = `${process.env.REACT_APP_API_URL}/usage/monthly-totals`
 
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  }
+
   try {
-    const response = await axios.post(API_URL, { token })
+    const response = await axios.post(API_URL, null, { headers })
     return response.data
   } catch (error) {
     console.error("Errore durante il recupero dei dati:", error)

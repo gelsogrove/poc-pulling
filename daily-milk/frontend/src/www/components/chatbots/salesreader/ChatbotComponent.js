@@ -15,7 +15,7 @@ import {
   updateChatState,
 } from "./utils"
 
-const ChatBotComponent = ({ openPanel }) => {
+const ChatBotComponent = ({ idPrompt, openPanel }) => {
   const [refreshUsage, setRefreshUsage] = useState(false)
   // Messages displayed in the chat
   const [messages, setMessages] = useState([])
@@ -92,7 +92,7 @@ const ChatBotComponent = ({ openPanel }) => {
         name: Cookies.get("name"),
         conversationId: IdConversation,
         messages: sanitizedHistory,
-        idPrompt: "a2c502db-9425-4c66-9d92-acd3521b38b5",
+        idPrompt,
       })
 
       const parsedResponse = extractJsonFromMessage(botResponse.data.response)

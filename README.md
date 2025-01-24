@@ -5,7 +5,6 @@ daily-milk BE: 80% > todo
 
 ===================== TODO =====================
 
-- cerca e sistema getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
 - heroku e se ho piu' chatbots?
 - PROMPT CON ID FIJO COS FACCIAMO (unlike)
 - unlike filter per promptID
@@ -15,7 +14,7 @@ daily-milk BE: 80% > todo
 - dobbiamo arrivare a due chats DUE UNLIKE DUE PROMP
 - token dovrebbe essere dento Header delle chiamate come barrer
 - pulire codice funzioni dengfo utils
-- user admin e user normale
+- user admin e user normale admin sessions
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - pulire test folder perche' c'e import

@@ -109,16 +109,18 @@ const MessageList = ({
       conversationId: IdConversation,
       msgId,
       dataTime: getCurrentDateTime(),
-      token: Cookies.get("token"),
     }
 
     const API_URL = `${process.env.REACT_APP_API_URL}/unlike/new`
     try {
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      }
+
       const response = await fetch(API_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify(payload),
       })
 

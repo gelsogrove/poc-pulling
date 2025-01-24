@@ -35,7 +35,10 @@ const Home = () => {
       <Navbar />
 
       <Popup isOpen={activePopup === "chatbotsource"}>
-        <ChatbotSource onClose={closePopup} />
+        <ChatbotSource
+          idPrompt="a2c502db-9425-4c66-9d92-acd3521b38b5"
+          onClose={closePopup}
+        />
       </Popup>
 
       <Popup isOpen={activePopup === "prompts"}>

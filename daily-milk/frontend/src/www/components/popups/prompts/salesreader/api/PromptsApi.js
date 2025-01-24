@@ -21,6 +21,11 @@ export const postPrompt = async (
   token
 ) => {
   try {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    }
+
     const response = await axios.put(
       `${process.env.REACT_APP_API_URL}/prompt`,
       {
@@ -28,11 +33,8 @@ export const postPrompt = async (
         model,
         temperature,
         idPrompt,
-        token,
       },
-      {
-        headers: { "Content-Type": "application/json" },
-      }
+      headers
     )
     console.log("Response:", response.data)
     return response.data
