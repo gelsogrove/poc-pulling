@@ -1,55 +1,9 @@
-import Cookies from "js-cookie"
-import { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
+import { createDynamicAsciiTable, handleUnlikeApi } from "./api/MessageList_api"
 import "./MessageList.css"
 
-export const createDynamicAsciiTable = (data) => {
-  if (!Array.isArray(data) || data.length === 0) {
-    return "No data available"
-  }
-
-  const headers = Object.keys(data[0])
-
-  const formatNumber = (value) => {
-    if (!isNaN(value) && value !== null && value !== "") {
-      return parseInt(value, 10).toLocaleString("it-IT")
-    }
-    return value
-  }
-
-  const columnWidths = headers.map((header) =>
-    Math.max(
-      header.length,
-      ...data.map((row) => String(formatNumber(row[header]) || "").length)
-    )
-  )
-
-  const createRow = (row) =>
-    "| " +
-    headers
-      .map((header, i) =>
-        String(formatNumber(row[header]) || "").padEnd(columnWidths[i])
-      )
-      .join(" | ") +
-    " |"
-
-  const headerRow = createRow(Object.fromEntries(headers.map((h) => [h, h])))
-  const separatorRow =
-    "+-" + columnWidths.map((width) => "-".repeat(width)).join("-+-") + "-+"
-
-  const dataRows = data.map((row) => createRow(row))
-
-  const table = [
-    separatorRow,
-    headerRow,
-    separatorRow,
-    ...dataRows,
-    separatorRow,
-  ].join("\n")
-
-  return table
-}
-
 const MessageList = ({
+  idPrompt,
   IdConversation,
   conversationHistory,
   messages,
@@ -75,27 +29,15 @@ const MessageList = ({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }
 
-  const getCurrentDateTime = () => {
-    const now = new Date()
-    const year = now.getFullYear()
-    const month = String(now.getMonth() + 1).padStart(2, "0")
-    const day = String(now.getDate()).padStart(2, "0")
-    const hours = String(now.getHours()).padStart(2, "0")
-    const minutes = String(now.getMinutes()).padStart(2, "0")
-    return `${year}-${month}-${day} ${hours}:${minutes}`
-  }
-
   useEffect(() => {
     setTimeout(scrollToBottom, 0)
   }, [messages])
 
   useEffect(() => {
-    // Show or hide the scroll button based on the number of messages
     setShowScrollButton(messages.length > 10)
   }, [messages])
 
   useEffect(() => {
-    // Adjust button position based on refresh prop
     if (refresh) {
       setButtonPosition("140px")
     } else {
@@ -104,27 +46,14 @@ const MessageList = ({
   }, [refresh])
 
   const handleUnlike = async (msgId, conversationHistory, IdConversation) => {
-    const payload = {
-      conversationHistory: conversationHistory.slice(-3),
-      conversationId: IdConversation,
-      msgId,
-      dataTime: getCurrentDateTime(),
-    }
-
-    const API_URL = `${process.env.REACT_APP_API_URL}/unlike/new`
     try {
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${Cookies.get("token")}`,
-      }
-
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(payload),
-      })
-
-      if (response.ok) {
+      const response = await handleUnlikeApi(
+        msgId,
+        conversationHistory,
+        IdConversation,
+        idPrompt
+      )
+      if (response) {
         const unlikeIcon = document.querySelector(
           `[data-id='${msgId}'] .unlike-icon`
         )
@@ -134,13 +63,8 @@ const MessageList = ({
           return
         }
 
-        if (unlikeIcon) {
-          unlikeIcon.classList.toggle("selected") // Aggiungi/rimuovi la classe 'selected'
-        }
-
+        unlikeIcon.classList.toggle("selected")
         console.log(unlikeIcon)
-      } else {
-        console.error("Failed to unlike the message:", response.statusText)
       }
     } catch (error) {
       console.error("Error in unliking message:", error)

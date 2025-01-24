@@ -154,6 +154,7 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
       <div className="chatbot-main">
         <div className="chatbot-messages">
           <MessageList
+            idPrompt={idPrompt}
             IdConversation={IdConversation}
             conversationHistory={conversationHistory}
             messages={messages}
@@ -180,7 +181,7 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
           }}
         >
           <Usage
-            idPrompt="a2c502db-9425-4c66-9d92-acd3521b38b5"
+            idPrompt={idPrompt}
             IdConversation={IdConversation}
             refresh={refreshUsage}
           />

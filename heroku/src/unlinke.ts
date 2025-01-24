@@ -1,51 +1,8 @@
 import { Request, Response, Router } from "express"
 import { pool } from "../server.js" // Presuppone che pool sia correttamente configurato
-import { getUserIdByToken, validateUser } from "./validateUser.js" // Presuppone che queste funzioni esistano
+import { validateRequest, validateUser } from "./validateUser.js" // Presuppone che queste funzioni esistano
 
 const unlikeRouter = Router()
-
-/**
- * Funzione generica per validare il token e l'utente.
- */
-const validateRequest = async (
-  req: Request,
-  res: Response
-): Promise<string | null> => {
-  const authHeader = req.headers["authorization"] as string | undefined
-  const token = authHeader?.startsWith("Bearer ")
-    ? authHeader.split(" ")[1]
-    : null
-
-  if (!token) {
-    res.status(401).json({ message: "Missing or invalid token." })
-    return null
-  }
-
-  try {
-    const userId = await getUserIdByToken(token)
-    if (!userId) {
-      res.status(403).json({ message: "Invalid or expired token." })
-      return null
-    }
-
-    const isUserValid = await validateUser(userId)
-    if (!isUserValid) {
-      res.status(403).json({ message: "User is not authorized." })
-      return null
-    }
-
-    return userId
-  } catch (error) {
-    console.error(
-      "Error during token validation:",
-      error instanceof Error ? error.message : error
-    )
-    res
-      .status(500)
-      .json({ message: "Internal server error during validation." })
-    return null
-  }
-}
 
 /**
  * Endpoint per creare un nuovo record di unlike.
@@ -56,7 +13,8 @@ unlikeRouter.post(
     const userId = await validateRequest(req, res)
     if (!userId) return
 
-    const { conversationId, msgId, dataTime, conversationHistory } = req.body
+    const { conversationId, msgId, dataTime, conversationHistory, idPrompt } =
+      req.body
 
     if (!conversationId || !msgId || !dataTime || !conversationHistory) {
       res.status(400).json({ error: "All fields are required." })
@@ -89,9 +47,8 @@ unlikeRouter.post(
       const conversationHistoryString = JSON.stringify(conversationHistory)
 
       const query = `
-      INSERT INTO unlike (conversationId, msgId, dataTime, conversationHistory)
-      VALUES ($1, $2, $3, $4)
-      RETURNING idUnlike, conversationId, msgId, dataTime, conversationHistory
+      INSERT INTO unlike (conversationId, msgId, dataTime, conversationHistory,idPrompt)
+      VALUES ($1, $2, $3, $4, $5)
     `
       const values = [
         conversationId,
@@ -100,11 +57,10 @@ unlikeRouter.post(
         conversationHistoryString,
       ]
 
-      const result = await pool.query(query, values)
+      await pool.query(query, values)
 
       res.status(201).json({
         message: "Record inserted successfully",
-        data: result.rows[0],
       })
     } catch (error) {
       console.error(
@@ -116,18 +72,17 @@ unlikeRouter.post(
   }
 )
 
-/**
- * Endpoint per ottenere tutti i record.
- */
-unlikeRouter.post("/", async (req: Request, res: Response): Promise<void> => {
+unlikeRouter.get("/", async (req: Request, res: Response): Promise<void> => {
   const userId = await validateRequest(req, res)
   if (!userId) return
 
+  const { promptId } = req.query // Cambiato da req.params a req.query
+
   try {
     const query = `
-      SELECT * FROM unlike ORDER BY dataTime DESC
+      SELECT * FROM unlike WHERE promptid = $1 ORDER BY datatime DESC
     `
-    const result = await pool.query(query)
+    const result = await pool.query(query, [promptId]) // Aggiunto il valore di bind
 
     res.status(200).json(result.rows)
   } catch (error) {

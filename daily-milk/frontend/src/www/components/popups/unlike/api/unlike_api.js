@@ -11,10 +11,7 @@ export const fetchUnlikeData = async () => {
       Authorization: `Bearer ${token}`,
     }
 
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers,
-    })
+    const response = await axios.get(API_URL, {}, { headers })
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`)
