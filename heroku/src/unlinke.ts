@@ -85,6 +85,9 @@ unlikeRouter.get("/", async (req: Request, res: Response): Promise<void> => {
     `
     const result = await pool.query(query, [idPrompt]) // Aggiunto il valore di bind
 
+    console.log("Executing query:", query)
+    console.log("With values:", idPrompt)
+
     res.status(200).json(result.rows)
   } catch (error) {
     console.error(
