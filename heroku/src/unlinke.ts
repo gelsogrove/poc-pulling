@@ -77,7 +77,8 @@ unlikeRouter.get("/", async (req: Request, res: Response): Promise<void> => {
   const userId = await validateRequest(req, res)
   if (!userId) return
 
-  const { idPrompt } = req.query // Cambiato da req.params a req.query
+  // Estrai il parametro idPrompt dal corpo della richiesta (payload)
+  const { idPrompt } = req.body
 
   try {
     const query = `
@@ -85,10 +86,8 @@ unlikeRouter.get("/", async (req: Request, res: Response): Promise<void> => {
     `
     const values = [idPrompt] // Valori di bind
 
-    // Genera una query completa sostituendo i placeholder
+    // Genera una query completa per il debug
     const fullQuery = query.replace(/\$1/g, `'${values[0]}'`)
-
-    // Stampa la query completa per un debug più semplice
     console.log("Generated query for testing:", fullQuery)
 
     const result = await pool.query(query, values)
