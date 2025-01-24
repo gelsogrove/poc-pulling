@@ -108,7 +108,7 @@ unlikeRouter.get("/", async (req: Request, res: Response): Promise<void> => {
 unlikeRouter.delete(
   "/:id",
   async (req: Request, res: Response): Promise<void> => {
-    const userId = await validateRequest(req, res)
+    const { userId, token } = await validateRequest(req, res)
     if (!userId) return
 
     const { id } = req.params

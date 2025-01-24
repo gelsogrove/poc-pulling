@@ -37,8 +37,6 @@ const handleResponse: RequestHandler = async (req, res) => {
     const { userId, token } = await validateRequest(req, res)
     if (!userId) return
 
-    console.log("User validated:", userId)
-
     const { conversationId, idPrompt, messages } = req.body
 
     if (!conversationId || !Array.isArray(messages)) {
@@ -49,11 +47,8 @@ const handleResponse: RequestHandler = async (req, res) => {
       return
     }
 
-    console.log("Validation passed, preparing to fetch prompt...")
-
     // Recupera prompt
     const promptResult = await getPrompt(idPrompt)
-    console.log("Fetched prompt:", promptResult) // Log dei dettagli del prompt
 
     const { prompt, model, temperature } = promptResult
 
@@ -62,8 +57,6 @@ const handleResponse: RequestHandler = async (req, res) => {
       role: msg.role || "user",
       content: msg.content,
     }))
-
-    console.log("Conversation history length:", conversationHistory.length)
 
     // Payload per OpenRouter
     const requestPayload = {
@@ -77,8 +70,6 @@ const handleResponse: RequestHandler = async (req, res) => {
       temperature: Number(temperature),
     }
 
-    console.log("Request payload for OpenRouter:", requestPayload)
-
     // Chiamata a OpenRouter
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
@@ -88,8 +79,6 @@ const handleResponse: RequestHandler = async (req, res) => {
         timeout: 30000,
       }
     )
-
-    console.log("OpenRouter response:", openaiResponse.data) // Log risposta OpenRouter
 
     if (openaiResponse.data.error) {
       console.log("Error in OpenRouter response:", openaiResponse.data.error)
