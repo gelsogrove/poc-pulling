@@ -67,7 +67,13 @@ const handleChat: RequestHandler = async (req, res) => {
     })
 
     // ANALYSIS
-    if (["analysis", "trend", "analisi"].includes(userMessage.toLowerCase())) {
+    const hasAnalysisKeywords = conversationHistory.some((msg) =>
+      ["analysis", "trend", "analisi"].some((keyword) =>
+        msg.content.toLowerCase().includes(keyword)
+      )
+    )
+
+    if (hasAnalysisKeywords) {
       try {
         const { data: analysis } = await axios.get(
           "https://ai.dairy-tools.com/api/stats.php"
