@@ -9,12 +9,12 @@ import { getUserIdByToken } from "./validateUser.js"
 const authRouter = Router()
 
 const validateRequest = async (req: any, res: any): Promise<string | null> => {
-  console.log("Request headers:", req.headers)
-
   const authHeader = req.headers["authorization"] as string | undefined
+  console.log("Authorization Header ricevuto:", authHeader) // <--- Log importante
   const token = authHeader?.startsWith("Bearer ")
     ? authHeader.split(" ")[1]
     : null
+  console.log("token:", token)
 
   if (!token) {
     res.status(401).json({ message: "Missing or invalid token." })
@@ -29,7 +29,10 @@ const validateRequest = async (req: any, res: any): Promise<string | null> => {
     }
     return userId
   } catch (error) {
-    console.error("Error during token validation:", error)
+    console.error(
+      "Error during token validation:",
+      error instanceof Error ? error.message : error
+    )
     res
       .status(500)
       .json({ message: "Internal server error during validation." })

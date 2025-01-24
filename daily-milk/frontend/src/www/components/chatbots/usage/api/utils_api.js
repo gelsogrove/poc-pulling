@@ -22,7 +22,6 @@ export const response = async (
         name,
         conversationId,
         messages,
-        // model: "google/gemini-2.0-flash-exp:free",
       }),
     })
 
