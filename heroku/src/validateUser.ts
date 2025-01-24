@@ -81,12 +81,9 @@ export const extractValuesFromPrompt = (
 export const validateRequest = async (req: any, res: any): Promise<any> => {
   const authHeader = req.headers["authorization"] as string | undefined
 
-  console.log("authHeader request:", authHeader) // Log del payload ricevuto
-
   const token = authHeader?.startsWith("Bearer ")
     ? authHeader.split(" ")[1]
     : null
-  console.log("token request:", token)
 
   if (!token) {
     res.status(401).json({ message: "Missing or invalid token." })

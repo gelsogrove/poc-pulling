@@ -5,8 +5,8 @@ export const API_URL = `${process.env.REACT_APP_API_URL}/auth/is-expired`
 
 export const IsExpired = async () => {
   const token = Cookies.get("token") // Ottieni il token dai cookie
-  const API_URL = "https://poulin-bd075425a92c.herokuapp.com/auth/is-expired" // Assicurati che l'URL sia corretto
 
+  const API_URL = `${process.env.REACT_APP_API_URL}/auth/is-expired`
   try {
     const headers = {
       "Content-Type": "application/json",
