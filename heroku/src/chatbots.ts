@@ -6,6 +6,7 @@ import {
   cleanResponse,
   executeSqlQuery,
   getPrompt,
+  sendUsageData,
 } from "./chatbots_utility.js"
 import { validateRequest } from "./validateUser.js"
 
