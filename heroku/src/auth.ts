@@ -4,10 +4,39 @@ import qrcode from "qrcode"
 import speakeasy from "speakeasy"
 import { v4 as uuidv4 } from "uuid" // Importa uuid
 import { pool } from "../server.js" // Importa il pool dal file principale
-
 import { getUserIdByToken } from "./validateUser.js"
 
 const authRouter = Router()
+
+const validateRequest = async (req: any, res: any): Promise<string | null> => {
+  const authHeader = req.headers["authorization"] as string | undefined
+  const token = authHeader?.startsWith("Bearer ")
+    ? authHeader.split(" ")[1]
+    : null
+
+  if (!token) {
+    res.status(401).json({ message: "Missing or invalid token." })
+    return null
+  }
+
+  try {
+    const userId = await getUserIdByToken(token)
+    if (!userId) {
+      res.status(403).json({ message: "Invalid or expired token." })
+      return null
+    }
+    return userId
+  } catch (error) {
+    console.error(
+      "Error during token validation:",
+      error instanceof Error ? error.message : error
+    )
+    res
+      .status(500)
+      .json({ message: "Internal server error during validation." })
+    return null
+  }
+}
 
 // Handler per il login
 const loginHandler: RequestHandler = async (req, res) => {
@@ -154,16 +183,10 @@ const setExpire: RequestHandler = async (req, res) => {
 
 // Handler per verificare se l'utente è scaduto
 const isExpired: RequestHandler = async (req, res) => {
-  const { token } = req.body
+  const userId = await validateRequest(req, res)
+  if (!userId) return
 
   try {
-    // Estrai l'userId dal token
-    const userId = await getUserIdByToken(token)
-    if (!userId) {
-      res.status(400).json({ message: "Token non valido" })
-      return
-    }
-
     // Esegui una query per cercare la data di scadenza
     const { rows } = await pool.query(
       "SELECT expire_date FROM users WHERE userId = $1",
@@ -189,16 +212,10 @@ const isExpired: RequestHandler = async (req, res) => {
 
 // Handler per il logout
 const logoutHandler: RequestHandler = async (req, res) => {
-  const { token } = req.body
+  const userId = await validateRequest(req, res)
+  if (!userId) return
 
   try {
-    // Estrai l'userId dal token
-    const userId = await getUserIdByToken(token)
-    if (!userId) {
-      res.status(400).json({ message: "Token non valido" })
-      return
-    }
-
     // Aggiorna il campo token e expire_date nel database
     await pool.query(
       "UPDATE users SET token = NULL, expire_date = NULL WHERE userid = $1",
