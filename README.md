@@ -10,12 +10,11 @@ daily-milk BE: 80% > todo
 - come gestiamo no surprice ne Heroku ?
 - salviamo le conversazioni
 - dobbiamo arrivare a due chats DUE UNLIKE DUE PROMP
-- token dovrebbe essere dento Header delle chiamate come barrer
-- pulire codice funzioni dengfo utils
 - user admin e user normale admin sessions
 - usage dovewbbe salvarmi anche il promptId
 - texarea grigia'
 - chatbot bottoni troppi distazionati
+- pulire codice funzioni dengfo utils
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - pulire test folder perche' c'e import
