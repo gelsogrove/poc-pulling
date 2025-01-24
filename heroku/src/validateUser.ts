@@ -102,7 +102,7 @@ export const validateRequest = async (req: any, res: any): Promise<any> => {
       return null
     }
     console.log("********* PRIMA DI RETURN *******", userId)
-    return userId
+    return { userId, token }
   } catch (error) {
     console.error(
       "Error during token validation:",
