@@ -10,7 +10,7 @@ const unlikeRouter = Router()
 unlikeRouter.post(
   "/new",
   async (req: Request, res: Response): Promise<void> => {
-    const userId = await validateRequest(req, res)
+    const { userId, token } = await validateRequest(req, res)
     if (!userId) return
 
     const { conversationId, msgId, dataTime, conversationHistory, idPrompt } =
