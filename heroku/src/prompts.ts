@@ -50,13 +50,16 @@ const GetPromptHandler: RequestHandler = async (req, res) => {
   const userId = await validateRequest(req, res)
   if (!userId) return
 
-  const { idPrompt } = req.query
+  const { idPrompt, noprompt } = req.query
 
   try {
-    const result = await pool.query(
-      "SELECT prompt, model, temperature FROM prompts WHERE idPrompt = $1",
-      [idPrompt]
-    )
+    let sql =
+      "SELECT prompt, model, temperature FROM prompts WHERE idPrompt = $1"
+    if (noprompt) {
+      sql = "SELECT  model, temperature FROM prompts WHERE idPrompt = $1"
+    }
+
+    const result = await pool.query(sql, [idPrompt])
 
     if (result.rows.length === 0) {
       res.status(404).json({ message: "Prompt non trovato." })
@@ -64,6 +67,7 @@ const GetPromptHandler: RequestHandler = async (req, res) => {
     }
 
     const content = result.rows[0]
+
     res.status(200).json({ content })
   } catch (error) {
     console.error(

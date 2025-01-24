@@ -51,7 +51,8 @@ export const getPromptDetails = async (idPrompt) => {
 
   try {
     const params = {
-      idPrompt, // Passa idPrompt come parametro nella query string
+      idPrompt,
+      noprompt: true,
     }
 
     const response = await axios.get(API_URL, { headers, params })
