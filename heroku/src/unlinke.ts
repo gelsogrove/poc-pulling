@@ -78,7 +78,7 @@ unlikeRouter.get("/", async (req: Request, res: Response): Promise<void> => {
   if (!userId) return
 
   // Estrai il parametro idPrompt dal corpo della richiesta (payload)
-  const { idPrompt } = req.body
+  const { idPrompt } = req.query
 
   try {
     const query = `

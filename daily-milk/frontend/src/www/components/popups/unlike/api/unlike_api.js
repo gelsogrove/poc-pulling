@@ -2,26 +2,29 @@
 import axios from "axios"
 import Cookies from "js-cookie"
 
-export const fetchUnlikeData = async () => {
+export const fetchUnlikeData = async (idPrompt) => {
   const API_URL = `${process.env.REACT_APP_API_URL}/unlike`
   const token = Cookies.get("token")
+
   try {
+    // Configura gli headers e i parametri della richiesta
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     }
 
-    const response = await axios.get(API_URL, { headers })
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`)
+    const params = {
+      idPrompt, // Passa idPrompt come parametro nella query string
     }
 
-    const data = await response.json()
-    return data
+    // Effettua la richiesta GET con axios
+    const response = await axios.get(API_URL, { headers, params })
+
+    // axios converte automaticamente la risposta in JSON
+    return response.data
   } catch (error) {
-    console.error("Error during initialize data fetch:", error)
-    throw error
+    console.error("Error fetching unlike data:", error)
+    throw error // Rilancia l'errore per una gestione successiva
   }
 }
 

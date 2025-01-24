@@ -1,9 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react"
 import ChatHistory from "../shared/ChatHistory"
 import { deleteUnlikeRecord, fetchUnlikeData } from "./api/unlike_api"
 import "./UnlikePopup.css"
 
-const UnlikePopup = ({ onClose }) => {
+const UnlikePopup = ({ idPrompt, onClose }) => {
   const [data, setData] = useState([])
   const [selectedItem, setSelectedItem] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -11,7 +12,7 @@ const UnlikePopup = ({ onClose }) => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const fetchedData = await fetchUnlikeData()
+        const fetchedData = await fetchUnlikeData(idPrompt)
         setData(fetchedData || [])
         if (fetchedData && fetchedData.length > 0) {
           setSelectedItem(fetchedData[0])
