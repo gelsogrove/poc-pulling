@@ -77,7 +77,7 @@ unlikeRouter.get("/", async (req: Request, res: Response): Promise<void> => {
   const userId = await validateRequest(req, res)
   if (!userId) return
 
-  const { idPrompt } = req.query // Cambiato da req.params a req.query
+  const { idPrompt } = req.params // Cambiato da req.params a req.query
 
   try {
     const query = `
