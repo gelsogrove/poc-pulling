@@ -34,13 +34,7 @@ axiosRetry(axios, {
 
 const handleResponse: RequestHandler = async (req, res) => {
   try {
-    console.log("Received request:", req.body) // Log del payload ricevuto
-
     const { userId, token } = await validateRequest(req, res)
-
-    console.log("userId request:", userId) // Log del payload ricevuto
-    console.log("token request:", token)
-
     if (!userId || !token) {
       console.log("Validation failed for token or userId.") // Log in caso di fallimento validazione
       res.status(200).json({
