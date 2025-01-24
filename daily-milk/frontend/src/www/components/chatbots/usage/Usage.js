@@ -25,7 +25,7 @@ ChartJS.register(
   Legend
 )
 
-const Usage = ({ IdConversation, refresh }) => {
+const Usage = ({ idPrompt, IdConversation, refresh }) => {
   const [usageData, setUsageData] = useState(null)
   const [initialTotalCurrentMonth, setInitialTotalCurrentMonth] = useState(null)
   const [currentChatDifference, setCurrentChatDifference] = useState(0)
@@ -38,25 +38,27 @@ const Usage = ({ IdConversation, refresh }) => {
     const data = await fetchUsageData()
     setUsageData(data)
 
-    // Calcola la differenza
-    if (data && data.totalCurrentMonth) {
-      if (initialTotalCurrentMonth === null) {
-        setInitialTotalCurrentMonth(data.totalCurrentMonth)
-      } else {
-        const difference = data.totalCurrentMonth - initialTotalCurrentMonth
-        setCurrentChatDifference(difference)
-      }
-    }
-
     // Fetch Temperature and Model
-    const { temperature, model } = await getPromptDetails()
+    const { temperature, model } = await getPromptDetails(idPrompt)
     setTemperature(temperature)
     setModel(model)
-  }, [initialTotalCurrentMonth])
+  }, [idPrompt])
 
   useEffect(() => {
     fetchData()
-  }, [fetchData, refresh])
+  }, [fetchData, refresh, idPrompt])
+
+  useEffect(() => {
+    if (usageData && usageData.totalCurrentMonth) {
+      if (initialTotalCurrentMonth === null) {
+        setInitialTotalCurrentMonth(usageData.totalCurrentMonth)
+      } else {
+        const difference =
+          usageData.totalCurrentMonth - initialTotalCurrentMonth
+        setCurrentChatDifference(difference)
+      }
+    }
+  }, [usageData, initialTotalCurrentMonth])
 
   return (
     <div className="usage-container">
@@ -81,7 +83,7 @@ const Usage = ({ IdConversation, refresh }) => {
           <div>{temperature}</div>
           <hr />
           PromptId:
-          <div>a2c502db-9425-4c66-9d92-acd3521b38b5</div>
+          <div>{idPrompt}</div>
           <hr />
           ConversationId:
           <div>{IdConversation}</div>

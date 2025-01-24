@@ -36,7 +36,7 @@ export const response = async (
   }
 }
 
-export const getPromptDetails = async () => {
+export const getPromptDetails = async (idPrompt) => {
   const token = getCookie("token")
 
   const API_URL = `${process.env.REACT_APP_API_URL}/prompt`
@@ -48,6 +48,7 @@ export const getPromptDetails = async () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        idPrompt,
         token,
       }),
     })

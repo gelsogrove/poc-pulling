@@ -5,19 +5,19 @@ daily-milk BE: 80% > todo
 
 ===================== TODO =====================
 
-- provare analisi funziona bene?
-- grafico dei costi ?
-- pulire codice
+- HTTP error! Status: 404 quando clicco su usare
+- provare analisi perche' non viene messa nello storico vedo
+- cerca e sistema getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
 - heroku e se ho piu' chatbots?
-- PROMPT CON ID FIJO COS FACCIAMO
-- salviamo le conversazioni
-- puliamo le conversazioni vecchie
-- doblle query
-- token dovrebbe essere dento Header delle chiamate come barrer
+- PROMPT CON ID FIJO COS FACCIAMO (unlike)
 - unlike filter per promptID
-- user admin e user normale
 - come gestiamo no surprice ne Heroku ?
 - unlike get deve avere prompt id come filtro
+- salviamo le conversazioni
+- dobbiamo arrivare a due chats DUE UNLIKE DUE PROMP
+- token dovrebbe essere dento Header delle chiamate come barrer
+- pulire codice funzioni dengfo utils
+- user admin e user normale
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - pulire test folder perche' c'e import
