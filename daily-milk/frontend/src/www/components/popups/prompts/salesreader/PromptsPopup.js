@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import "codemirror/lib/codemirror.css" // CSS per l'editor
 import "codemirror/mode/javascript/javascript" // Modalità per il linguaggio
 import "codemirror/theme/dracula.css" // Tema dell'editor

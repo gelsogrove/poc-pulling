@@ -12,7 +12,7 @@ const MessageList = ({
 }) => {
   const [debugModes, setDebugModes] = useState({})
   const [showScrollButton, setShowScrollButton] = useState(false)
-  const [buttonPosition, setButtonPosition] = useState("50%")
+  const [buttonPosition] = useState("50%")
   const messagesEndRef = useRef(null)
 
   const toggleDebugMode = (id) => {
