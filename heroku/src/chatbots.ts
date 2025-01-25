@@ -149,7 +149,7 @@ const handleResponse: RequestHandler = async (req, res) => {
       const sqlData = await executeSqlQuery(sqlQuery)
 
       /* 2 PASSAGGIO */
-      if (sqlQuery.includes("count") || sqlQuery.includes("sum")) {
+      if (sqlQuery.includes("COUNT") || sqlQuery.includes("SUM")) {
         console.log("*********************")
         const requestPayload2 = {
           model,
