@@ -122,7 +122,7 @@ export const generateDetailedSentence = async (
         {
           role: "user",
           content:
-            "Please summarize the result of the query in one sentence using the <uL> <li> and <b> for list or importnt message WITHOUT '\n' PLEASE ",
+            "Please summarize the result of the query in one sentence using the <b> for   important values.",
         },
       ],
       max_tokens: 1000,
