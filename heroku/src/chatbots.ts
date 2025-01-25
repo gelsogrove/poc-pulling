@@ -152,7 +152,8 @@ const handleResponse: RequestHandler = async (req, res) => {
       /* 2 PASSAGGIO */
       if (sqlQuery.toUpperCase().includes("COUNT")) {
         console.log(
-          "Second pass: creating a complete sentence for COUNT or SUM results."
+          "Second pass: creating a complete sentence for COUNT or SUM results.",
+          sqlQuery
         )
 
         // Chiamata alla funzione per generare una frase dettagliata
