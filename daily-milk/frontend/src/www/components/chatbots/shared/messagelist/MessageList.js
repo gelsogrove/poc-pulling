@@ -126,73 +126,79 @@ const MessageList = ({
         {messages
           .filter((msg) => msg.sender !== "system")
           .map((msg, index) => (
-            <div
-              data-id={msg.id}
-              key={msg.id}
-              className={`chat-message ${
-                msg.sender === "user" ? "user-message" : "bot-message"
-              }`}
-            >
-              <span className="message-text">
-                {msg.text === "Typing..." ? (
-                  <div className="typing-indicator">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
-                ) : (
-                  renderMessageText(
-                    msg,
-                    msg.text,
-                    msg.sender,
-                    debugModes[msg.id] || false
-                  )
-                )}
-              </span>
+            <>
+              <div
+                data-id={msg.id}
+                key={msg.id}
+                className={`chat-message ${
+                  msg.sender === "user" ? "user-message" : "bot-message"
+                }`}
+              >
+                <span className="message-text">
+                  {msg.text === "Typing..." ? (
+                    <div className="typing-indicator">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                  ) : (
+                    renderMessageText(
+                      msg,
+                      msg.text,
+                      msg.sender,
+                      debugModes[msg.id] || false
+                    )
+                  )}
+                </span>
 
-              {msg.data && <pre>{createDynamicAsciiTable(msg.data)}</pre>}
+                {msg.data && <pre>{createDynamicAsciiTable(msg.data)}</pre>}
 
-              {msg.sender === "bot" &&
-                msg.text !== "Typing..." &&
-                index !== 0 && (
-                  <div className="like-unlike-icons" data-id={msg.id}>
-                    <span
-                      role="img"
-                      aria-label="unlike"
-                      className="unlike-icon"
-                      onClick={() =>
-                        handleUnlike(
-                          msg.id,
-                          conversationHistory,
-                          IdConversation
-                        )
-                      }
-                      title="Dislike this answer"
-                      style={{ cursor: "pointer", marginRight: "8px" }}
-                    >
-                      👎
-                    </span>
-                    <span
-                      role="img"
-                      aria-label="debug"
-                      onClick={() => toggleDebugMode(msg.id)}
-                      title="Toggle debug mode"
-                      style={{ cursor: "pointer", marginRight: "8px" }}
-                    >
-                      🐞
-                    </span>
-                    <span
-                      role="img"
-                      aria-label="copy"
-                      onClick={() => copyContent(msg.id)}
-                      title="Copy this message"
-                      style={{ cursor: "pointer" }}
-                    >
-                      📄
-                    </span>
-                  </div>
-                )}
-            </div>
+                {msg.sender === "bot" &&
+                  msg.text !== "Typing..." &&
+                  index !== 0 && (
+                    <>
+                      <div className="like-unlike-icons" data-id={msg.id}>
+                        <span
+                          role="img"
+                          aria-label="unlike"
+                          className="unlike-icon"
+                          onClick={() =>
+                            handleUnlike(
+                              msg.id,
+                              conversationHistory,
+                              IdConversation
+                            )
+                          }
+                          title="Dislike this answer"
+                          style={{ cursor: "pointer", marginRight: "8px" }}
+                        >
+                          👎
+                        </span>
+                        <span
+                          role="img"
+                          aria-label="debug"
+                          onClick={() => toggleDebugMode(msg.id)}
+                          title="Toggle debug mode"
+                          style={{ cursor: "pointer", marginRight: "8px" }}
+                        >
+                          🐞
+                        </span>
+                        <span
+                          role="img"
+                          aria-label="copy"
+                          onClick={() => copyContent(msg.id)}
+                          title="Copy this message"
+                          style={{ cursor: "pointer" }}
+                        >
+                          📄
+                        </span>
+                      </div>
+                    </>
+                  )}
+              </div>
+
+              <hr className="message-divider" />
+            </>
           ))}
         <div ref={messagesEndRef} />
       </div>

@@ -86,7 +86,7 @@ export const sendUsageData = async (
 ) => {
   try {
     const query =
-      'INSERT INTO usage (day, total, "user", service, "idPrompt") VALUES ($1, $2, $3, $4, $5) RETURNING *'
+      'INSERT INTO usage (day, total, "user", service, idprompt) VALUES ($1, $2, $3, $4, $5) RETURNING *'
     const values = [day, total, userId, service, idPrompt]
 
     const fullQuery = query.replace(/\$1/g, `'${values[0]}'`)

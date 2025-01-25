@@ -10,8 +10,8 @@ daily-milk BE: 80% > todo
 - user admin e user normale admin sessions
 - pulire codice funzioni dengfo utils
 - &issuer=Poulin Secretkey`
+- Usage non va!!!
 - dislike togli 20 centimi
-- dislike mettere commento
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - come gestiamo no surprice ne Heroku ?

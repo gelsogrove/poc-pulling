@@ -205,6 +205,13 @@ li {
   transform: scale(1.2);
 }
 
+.message-divider {
+  border: none;
+  border-top: 1px solid #ccc; /* Linea grigia chiara */
+  height: 2px;
+  width: 100%; /* Assicura che la linea occupi tutta la larghezza del contenitore */
+}
+
 .unlike-icon.selected {
   color: red; /* Cambia colore per lo stato selezionato */
   filter: grayscale(0%); /* Rimuovi il filtro grigio */
