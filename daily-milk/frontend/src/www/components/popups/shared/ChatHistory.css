@@ -2,11 +2,11 @@
   width: 100%;
   background: #f9f9f9;
   border-radius: 8px;
-  overflow-y: auto;
+
   position: relative;
   border: 1px solid grey;
   min-height: 540px;
-  max-height: 540px;
+  max-height: 630px;
   border: 1px solid #ccc;
 }
 
@@ -131,40 +131,52 @@
   opacity: 1;
   visibility: visible;
 }
-
 .delete-chat-button {
-  font-size: 22px;
-  margin-left: 94%;
-  position: relative;
-  cursor: pointer;
-  border: none;
+  position: relative; /* Necessario per i tooltip */
   background: none;
-  transition: transform 0.3s ease, color 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 5px;
+  margin-left: 90%;
 }
 
-.delete-chat-button:hover {
-  transform: scale(1.1);
-  color: #ff4d4d;
+.comment-chat-button {
+  position: relative; /* Necessario per i tooltip */
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 5px;
+}
+.delete-chat-button:hover,
+.comment-chat-button:hover {
+  opacity: 0.8; /* Leggero effetto hover */
 }
 
-.delete-chat-button::after {
-  content: attr(title);
+/* Tooltip comune */
+.delete-chat-button::after,
+.comment-chat-button::after {
+  content: attr(title); /* Usa l'attributo title */
   position: absolute;
-  bottom: -30px;
+  bottom: -30px; /* Posiziona il tooltip sotto il pulsante */
   left: 50%;
   transform: translateX(-50%);
-  background: black;
-  color: white;
+  background-color: rgba(0, 0, 0, 0.8); /* Sfondo scuro */
+  color: white; /* Testo bianco */
   padding: 5px 10px;
   border-radius: 5px;
-  font-size: 12px;
-  opacity: 0;
-  visibility: hidden;
   white-space: nowrap;
+  font-size: 12px;
+  visibility: hidden;
+  opacity: 0;
   transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 10; /* Porta il tooltip in primo piano */
 }
 
-.delete-chat-button:hover::after {
-  opacity: 1;
+/* Mostra il tooltip al passaggio del mouse */
+.delete-chat-button:hover::after,
+.comment-chat-button:hover::after {
   visibility: visible;
+  opacity: 1;
 }

@@ -8,12 +8,10 @@ daily-milk BE: 80% > todo
 - heroku e se ho piu' chatbots?
 - salviamo le conversazioni
 - user admin e user normale admin sessions
-- usage dovewbbe salvarmi anche il promptId
 - pulire codice funzioni dengfo utils
 - &issuer=Poulin Secretkey`
 - dislike togli 20 centimi
 - dislike mettere commento
-- idona dislike fuori dalla scrollbar
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - come gestiamo no surprice ne Heroku ?

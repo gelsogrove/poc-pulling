@@ -73,6 +73,9 @@ const ChatHistory = ({ msgIds, messages, onDeleteChat }) => {
         >
           🗑️
         </button>
+        <button className="comment-chat-button" title="Comment">
+          ✏️
+        </button>
       </div>
       <div className="chat-history">
         {messages.map((msg, index) => (
