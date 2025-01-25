@@ -177,6 +177,7 @@ const handleResponse: RequestHandler = async (req, res) => {
           triggerAction,
           response: rawResponse1,
         })
+        return
       }
 
       // RESPONSE
