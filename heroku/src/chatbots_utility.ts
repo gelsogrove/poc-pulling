@@ -100,3 +100,57 @@ export const sendUsageData = async (
     return error
   }
 }
+
+export const generateDetailedSentence = async (
+  model: any,
+  sqlData: any,
+  temperature: any,
+  OPENROUTER_API_URL: any,
+  OPENROUTER_HEADERS: any
+) => {
+  try {
+    // Preparare il payload per OpenRouter
+    const requestPayload = {
+      model,
+      messages: [
+        {
+          role: "system",
+          content:
+            "Generate a clear and complete sentence based on the SQL query results provided below.",
+        },
+        { role: "system", content: `SQL Result: ${JSON.stringify(sqlData)}` },
+        {
+          role: "user",
+          content: "Please summarize the result of the query in one sentence.",
+        },
+      ],
+      max_tokens: 1000,
+      temperature: Number(temperature),
+    }
+
+    // Chiamata ad OpenRouter
+    const openaiResponse = await axios.post(
+      OPENROUTER_API_URL,
+      requestPayload,
+      {
+        headers: OPENROUTER_HEADERS,
+        timeout: 30000,
+      }
+    )
+
+    // Pulire e verificare la risposta
+    const rawResponse = cleanResponse(
+      openaiResponse.data.choices[0]?.message?.content
+    )
+
+    if (!rawResponse) {
+      console.error("Second pass: Empty response from OpenRouter.")
+      return "Failed to generate a detailed sentence for the result."
+    }
+
+    return rawResponse
+  } catch (error) {
+    console.error("Error in generateDetailedSentence:", error)
+    return "An error occurred while creating a detailed sentence for the result."
+  }
+}

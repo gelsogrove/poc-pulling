@@ -5,6 +5,7 @@ import { RequestHandler, Router } from "express"
 import {
   cleanResponse,
   executeSqlQuery,
+  generateDetailedSentence,
   getPrompt,
   sendUsageData,
 } from "./chatbots_utility.js"
@@ -149,34 +150,26 @@ const handleResponse: RequestHandler = async (req, res) => {
       const sqlData = await executeSqlQuery(sqlQuery)
 
       /* 2 PASSAGGIO */
-      if (sqlQuery.includes("COUNT") || sqlQuery.includes("SUM")) {
-        console.log("*********************")
-        const requestPayload2 = {
-          model,
-          messages: [
-            { role: "system", content: "return a complete sentence" },
-            ...conversationHistory,
-            { role: "user", content: userMessage },
-            { role: "system", content: sqlData },
-          ],
-          max_tokens: MAX_TOKENS,
-          temperature: Number(temperature),
-        }
-        const openaiResponse1 = await axios.post(
-          OPENROUTER_API_URL,
-          requestPayload2,
-          {
-            headers: OPENROUTER_HEADERS,
-            timeout: 30000,
-          }
+      if (
+        sqlQuery.toUpperCase().includes("COUNT") ||
+        sqlQuery.toUpperCase().includes("SUM")
+      ) {
+        console.log(
+          "Second pass: creating a complete sentence for COUNT or SUM results."
         )
-        const rawResponse1 = cleanResponse(
-          openaiResponse1.data.choices[0]?.message?.content
+
+        // Chiamata alla funzione per generare una frase dettagliata
+        const detailedSentence = await generateDetailedSentence(
+          model,
+          sqlData,
+          temperature,
+          OPENROUTER_API_URL,
+          OPENROUTER_HEADERS
         )
 
         res.status(200).json({
           triggerAction,
-          response: rawResponse1,
+          response: detailedSentence,
         })
         return
       }
