@@ -116,12 +116,12 @@ export const generateDetailedSentence = async (
         {
           role: "system",
           content:
-            "Generate a clear and complete sentence based on the SQL query results provided below.",
+            "Generate a clear and complete sentence based on the SQL query results provided below ,
         },
-        { role: "system", content: `SQL Result: ${JSON.stringify(sqlData)}` },
+        { role: "system", content: `SQ Result: ${JSON.stringify(sqlData)}` },
         {
           role: "user",
-          content: "Please summarize the result of the query in one sentence.",
+          content: "Please summarize the result of the query in one sentence using the <uL> <li> and <b> for list or importnt message",
         },
       ],
       max_tokens: 1000,
