@@ -132,7 +132,6 @@ const handleResponse: RequestHandler = async (req, res) => {
       finalResponse = parsedResponse.response || "No response provided."
       triggerAction = parsedResponse.triggerAction || ""
 
-      console.log("**************SQL", sqlQuery)
       if (sqlQuery !== null) {
         const day = new Date().toISOString().split("T")[0]
         await sendUsageData(day, 0.2, token, triggerAction, userId, idPrompt)
@@ -148,6 +147,39 @@ const handleResponse: RequestHandler = async (req, res) => {
 
       // EXECUTE QUERY
       const sqlData = await executeSqlQuery(sqlQuery)
+
+      /* 2 PASSAGGIO */
+      if (sqlQuery.includes("count")) {
+        const requestPayload2 = {
+          model,
+          messages: [
+            { role: "system", content: "return a complete sentence" },
+            ...conversationHistory,
+            { role: "user", content: userMessage },
+            { role: "system", content: sqlData },
+          ],
+          max_tokens: MAX_TOKENS,
+          temperature: Number(temperature),
+        }
+        const openaiResponse1 = await axios.post(
+          OPENROUTER_API_URL,
+          requestPayload2,
+          {
+            headers: OPENROUTER_HEADERS,
+            timeout: 30000,
+          }
+        )
+        const rawResponse1 = cleanResponse(
+          openaiResponse1.data.choices[0]?.message?.content
+        )
+
+        res.status(200).json({
+          triggerAction,
+          response: rawResponse1,
+        })
+      }
+
+      // RESPONSE
       res.status(200).json({
         triggerAction,
         response: finalResponse,

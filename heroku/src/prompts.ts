@@ -14,7 +14,7 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
   const { content, model, temperature, idPrompt } = req.body
 
   try {
-    if (content.length > 25000) {
+    if (content.length > 50000) {
       res
         .status(400)
         .json({ message: "Il contenuto è troppo lungo: " + content.length })
