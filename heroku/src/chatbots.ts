@@ -150,10 +150,7 @@ const handleResponse: RequestHandler = async (req, res) => {
       const sqlData = await executeSqlQuery(sqlQuery)
 
       /* 2 PASSAGGIO */
-      if (
-        sqlQuery.toUpperCase().includes("COUNT") ||
-        sqlQuery.toUpperCase().includes("SUM")
-      ) {
+      if (sqlQuery.toUpperCase().includes("COUNT")) {
         console.log(
           "Second pass: creating a complete sentence for COUNT or SUM results.",
           sqlQuery
