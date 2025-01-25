@@ -6,23 +6,23 @@ daily-milk BE: 80% > todo
 ===================== TODO =====================
 
 - heroku e se ho piu' chatbots?
-- unlike filter per promptID
-- come gestiamo no surprice ne Heroku ?
 - salviamo le conversazioni
-- dobbiamo arrivare a due chats DUE UNLIKE DUE PROMP
 - user admin e user normale admin sessions
 - usage dovewbbe salvarmi anche il promptId
-- texarea grigia'
-- chatbot bottoni troppi distazionati
 - pulire codice funzioni dengfo utils
 - &issuer=Poulin Secretkey`
+- dislike togli 20 centimi
+- dislike mettere commento
+- idona dislike fuori dalla scrollbar
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
+- come gestiamo no surprice ne Heroku ?
 - pulire test folder perche' c'e import
 - LOGIN WITH DAILIYMILK (todo)
 - upload (todo)
 - togliere page dall'import e dalla tabella
 - mettere last update nel panell con chiamata ultimo record
+- ci sono codice 10040170
 
 ===================== NIC$ TO HAVE =====================
 

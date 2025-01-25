@@ -103,12 +103,10 @@ const handleResponse: RequestHandler = async (req, res) => {
     )
 
     if (openaiResponse.data.error) {
-      res
-        .status(200)
-        .json({
-          response: "Empty response from OpenRouter",
-          error: openaiResponse.data.error.message,
-        })
+      res.status(200).json({
+        response: "Empty response from OpenRouter",
+        error: openaiResponse.data.error.message,
+      })
       return
     }
 
@@ -139,7 +137,7 @@ const handleResponse: RequestHandler = async (req, res) => {
         const day = new Date().toISOString().split("T")[0]
         console.log("**************", token)
         console.log("**************", userId)
-        await sendUsageData(day, 0.2, token, triggerAction, userId)
+        await sendUsageData(day, 0.2, token, triggerAction, userId, idPrompt)
       }
 
       if (!sqlQuery) {

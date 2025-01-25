@@ -163,6 +163,7 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
       <div className="chatbot-main">
         <div className="chatbot-messages">
           <MessageList
+            openPanel={openPanel}
             idPrompt={idPrompt}
             IdConversation={IdConversation}
             conversationHistory={conversationHistory}

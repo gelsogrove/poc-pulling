@@ -8,6 +8,7 @@ const MessageList = ({
   conversationHistory,
   messages,
   refresh,
+  openPanel,
 }) => {
   const [debugModes, setDebugModes] = useState({})
   const [showScrollButton, setShowScrollButton] = useState(false)
@@ -34,16 +35,8 @@ const MessageList = ({
   }, [messages])
 
   useEffect(() => {
-    setShowScrollButton(messages.length > 10)
+    setShowScrollButton(messages.length > 8)
   }, [messages])
-
-  useEffect(() => {
-    if (refresh) {
-      setButtonPosition("140px")
-    } else {
-      setButtonPosition("50%")
-    }
-  }, [refresh])
 
   const handleUnlike = async (msgId, conversationHistory, IdConversation) => {
     try {

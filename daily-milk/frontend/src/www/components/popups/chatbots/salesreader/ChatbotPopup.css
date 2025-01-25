@@ -1,4 +1,4 @@
-.chatbot-popup-poulin {
+.chatbot-popup {
   display: flex;
   flex-direction: row;
   height: 90vh;
@@ -9,6 +9,11 @@
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border: 2px solid #ccc;
+}
+
+.openclose {
+  margin-right: 30px;
+  border: 1px solid red;
 }
 
 .chat-section-source {
@@ -68,4 +73,8 @@
   color: #007bff;
   transform: scale(1.2);
   transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.chatbot-popup .btn {
+  margin-right: 0px !important;
 }

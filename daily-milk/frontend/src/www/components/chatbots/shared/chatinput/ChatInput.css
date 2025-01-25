@@ -12,13 +12,14 @@
 .input-wide {
   flex-grow: 1; /* L'input occupa tutto lo spazio disponibile */
   padding: 8px;
-  border: 1px solid #ddd;
+  border: 2px solid #ccc;
   border-radius: 4px;
   resize: vertical; /* Permette di ridimensionare il textarea in verticale */
   min-height: 40px; /* Altezza minima del campo di input */
   font-family: Arial, sans-serif;
   min-width: 260px !important; /* Puoi regolare la larghezza */
   box-sizing: border-box; /* Assicura che padding e border siano inclusi nelle dimensioni */
+  background-color: #ddd;
 }
 textarea::placeholder {
   color: #6c757d; /* Colore grigio chiaro */

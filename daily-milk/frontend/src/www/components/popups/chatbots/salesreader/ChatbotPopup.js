@@ -12,9 +12,9 @@ const ChatbotPopup = ({ idPrompt, onClose }) => {
 
   return (
     <div>
-      <div className="chatbot-popup-poulin">
+      <div className="chatbot-popup">
         <button
-          className="visible-panel btn hover-effect"
+          className="visible-panel btn hover-effect openclose "
           onClick={onTogglePanel}
         >
           {openPanel ? (

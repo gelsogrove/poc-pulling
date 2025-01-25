@@ -5,6 +5,7 @@
   margin-top: 0px;
   padding: 90px;
   position: relative;
+  max-height: 300px;
 }
 
 .header {
@@ -35,12 +36,14 @@
   justify-content: center;
   gap: 50px;
   margin-top: 40px;
+  max-height: 300px;
 }
 
 .feature-item {
   padding: 1px;
   border-radius: 10px;
   max-width: 500px;
+  max-height: 450px;
   flex: 1 1 300px;
   position: relative;
   overflow: hidden;

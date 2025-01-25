@@ -23,10 +23,10 @@
 
 .scroll-to-bottom {
   position: fixed;
-  bottom: 830px; /* Posizionata 180px sopra il bordo inferiore */
-  left: 890px !important; /* Centrata rispetto alla larghezza del container */
+  bottom: 135px; /* Posizionata 180px sopra il bordo inferiore */
+  left: 230px !important; /* Centrata rispetto alla larghezza del container */
   transform: translateX(-50%);
-  background-color: #d3d3d3; /* Grigio chiaro */
+  background-color: #ce4f4f; /* Grigio chiaro */
   color: #fff;
   border: none;
   border-radius: 50%;
@@ -40,14 +40,12 @@
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
   z-index: 1000;
+  opacity: 0.4;
 }
 
 .scroll-to-bottom:hover {
-  background-color: #a9a9a9; /* Grigio scuro */
-}
-
-.scroll-to-bottom:active {
-  transform: scale(1); /* Nessun movimento visibile durante il clic */
+  background-color: #ce4f4f; /* Grigio chiaro */
+  opacity: 1;
 }
 
 /* Individual message bubble */
