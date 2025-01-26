@@ -15,6 +15,7 @@ daily-milk BE: 80% > todo
   userId nel diskike
 - usage non va se chiudo la chat
 - tabla usage mettere sales-reader
+- unlike non e' html
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - come gestiamo no surprice ne Heroku ?
@@ -35,7 +36,7 @@ daily-milk BE: 80% > todo
 ...openrouter (50 euro)
 
 ===================== COMANDI HREOKU =====================
-heroku pg:psql HEROKU_POSTGRESQL_AMBER_URL -a poulin
+
 heroku logs --tail --app poulin
 heroku restart -a poulin
 
