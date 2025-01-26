@@ -1,62 +1,20 @@
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
+import { createDynamicAsciiTable } from "../../shared/utils"
+import { handleUnlikeApi } from "./api/MessageList_api"
 import "./MessageList.css"
 
-export const createDynamicAsciiTable = (data) => {
-  if (!Array.isArray(data) || data.length === 0) {
-    return "No data available"
-  }
-
-  // Get headers as column names
-  const headers = Object.keys(data[0])
-
-  // Function to format numbers in Italian style without decimals
-  const formatNumber = (value) => {
-    if (!isNaN(value) && value !== null && value !== "") {
-      return parseInt(value, 10).toLocaleString("it-IT")
-    }
-    return value
-  }
-
-  // Find the maximum width for each column
-  const columnWidths = headers.map((header) =>
-    Math.max(
-      header.length,
-      ...data.map((row) => String(formatNumber(row[header]) || "").length)
-    )
-  )
-
-  // Function to create a formatted row
-  const createRow = (row) =>
-    "| " +
-    headers
-      .map((header, i) =>
-        String(formatNumber(row[header]) || "").padEnd(columnWidths[i])
-      )
-      .join(" | ") +
-    " |"
-
-  // Generate header row
-  const headerRow = createRow(Object.fromEntries(headers.map((h) => [h, h])))
-  const separatorRow =
-    "+-" + columnWidths.map((width) => "-".repeat(width)).join("-+-") + "-+"
-
-  // Generate data rows
-  const dataRows = data.map((row) => createRow(row))
-
-  // Combine all parts to create the table
-  const table = [
-    separatorRow,
-    headerRow,
-    separatorRow,
-    ...dataRows,
-    separatorRow,
-  ].join("\n")
-
-  return table
-}
-
-const MessageList = ({ messages }) => {
+const MessageList = ({
+  idPrompt,
+  IdConversation,
+  conversationHistory,
+  messages,
+  refresh,
+  openPanel,
+}) => {
   const [debugModes, setDebugModes] = useState({})
+  const [showScrollButton, setShowScrollButton] = useState(false)
+  const [buttonPosition] = useState("50%")
+  const messagesEndRef = useRef(null)
 
   const toggleDebugMode = (id) => {
     setDebugModes((prev) => {
@@ -69,8 +27,42 @@ const MessageList = ({ messages }) => {
     })
   }
 
-  const handleUnlike = (id) => {
-    console.log(`Unliked message with id: ${id}`)
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(() => {
+    setTimeout(scrollToBottom, 0)
+  }, [messages])
+
+  useEffect(() => {
+    setShowScrollButton(messages.length > 8)
+  }, [messages])
+
+  const handleUnlike = async (msgId, conversationHistory, IdConversation) => {
+    try {
+      const response = await handleUnlikeApi(
+        msgId,
+        conversationHistory,
+        IdConversation,
+        idPrompt
+      )
+      if (response) {
+        const unlikeIcon = document.querySelector(
+          `[data-id='${msgId}'] .unlike-icon`
+        )
+
+        if (!unlikeIcon) {
+          console.error(`Icon with data-id='${msgId}' not found!`)
+          return
+        }
+
+        unlikeIcon.classList.toggle("selected")
+        console.log(unlikeIcon)
+      }
+    } catch (error) {
+      console.error("Error in unliking message:", error)
+    }
   }
 
   const copyContent = (id) => {
@@ -130,66 +122,98 @@ const MessageList = ({ messages }) => {
   }
 
   return (
-    <div className="chat-messages">
-      {messages
-        .filter((msg) => msg.sender !== "system")
-        .map((msg, index) => (
-          <div
-            data-id={msg.id}
-            key={msg.id}
-            className={`chat-message ${
-              msg.sender === "user" ? "user-message" : "bot-message"
-            }`}
-          >
-            <span className="message-text">
-              {renderMessageText(
-                msg,
-                msg.text,
-                msg.sender,
-                debugModes[msg.id] || false
-              )}
-            </span>
+    <div className="chat-container">
+      <div className="chat-messages">
+        {messages
+          .filter((msg) => msg.sender !== "system")
+          .map((msg, index) => (
+            <>
+              <div
+                data-id={msg.id}
+                key={msg.id}
+                className={`chat-message ${
+                  msg.sender === "user" ? "user-message" : "bot-message"
+                }`}
+              >
+                <span className="message-text">
+                  {msg.text === "Typing..." ? (
+                    <div className="typing-indicator">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                  ) : (
+                    renderMessageText(
+                      msg,
+                      msg.text,
+                      msg.sender,
+                      debugModes[msg.id] || false
+                    )
+                  )}
+                </span>
 
-            {/* Display data if available */}
-            {msg.data && (
-              <pre>{createDynamicAsciiTable(msg.data)}</pre> // Directly use data as array of objects
-            )}
+                {msg.data && <pre>{createDynamicAsciiTable(msg.data)}</pre>}
 
-            {msg.sender === "bot" &&
-              msg.text !== "Typing..." &&
-              index !== 0 && (
-                <div className="like-unlike-icons">
-                  <span
-                    role="img"
-                    aria-label="unlike"
-                    onClick={() => handleUnlike(msg.id)}
-                    title="Dislike this message"
-                    style={{ cursor: "pointer", marginRight: "8px" }}
-                  >
-                    👎
-                  </span>
-                  <span
-                    role="img"
-                    aria-label="debug"
-                    onClick={() => toggleDebugMode(msg.id)}
-                    title="Toggle debug mode"
-                    style={{ cursor: "pointer", marginRight: "8px" }}
-                  >
-                    🐞
-                  </span>
-                  <span
-                    role="img"
-                    aria-label="copy"
-                    onClick={() => copyContent(msg.id)}
-                    title="Copy this message"
-                    style={{ cursor: "pointer" }}
-                  >
-                    📄
-                  </span>
-                </div>
-              )}
-          </div>
-        ))}
+                {msg.sender === "bot" &&
+                  msg.text !== "Typing..." &&
+                  index !== 0 && (
+                    <>
+                      <div className="like-unlike-icons" data-id={msg.id}>
+                        <span
+                          role="img"
+                          aria-label="unlike"
+                          className="unlike-icon"
+                          onClick={() =>
+                            handleUnlike(
+                              msg.id,
+                              conversationHistory,
+                              IdConversation
+                            )
+                          }
+                          title="Dislike this answer"
+                          style={{ cursor: "pointer", marginRight: "8px" }}
+                        >
+                          👎
+                        </span>
+                        <span
+                          role="img"
+                          aria-label="debug"
+                          onClick={() => toggleDebugMode(msg.id)}
+                          title="Toggle debug mode"
+                          style={{ cursor: "pointer", marginRight: "8px" }}
+                        >
+                          🐞
+                        </span>
+                        <span
+                          role="img"
+                          aria-label="copy"
+                          onClick={() => copyContent(msg.id)}
+                          title="Copy this message"
+                          style={{ cursor: "pointer" }}
+                        >
+                          📄
+                        </span>
+                      </div>
+                    </>
+                  )}
+              </div>
+
+              <hr className="message-divider" />
+            </>
+          ))}
+        <div ref={messagesEndRef} />
+      </div>
+      {showScrollButton && (
+        <button
+          className="scroll-to-bottom"
+          onClick={scrollToBottom}
+          title="Scroll to bottom"
+          style={{ left: buttonPosition }}
+        >
+          ↓
+        </button>
+      )}
+      <div className="info-message"></div>
     </div>
   )
 }

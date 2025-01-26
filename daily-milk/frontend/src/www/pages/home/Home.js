@@ -3,10 +3,10 @@ import React, { useState } from "react"
 import { Helmet } from "react-helmet"
 import { useTranslation } from "react-i18next"
 import Navbar from "../../components/navbar/Navbar"
-import ChatbotSource from "../../components/popups/chatbot-poulin/ChatbotPoulinPopup"
+import ChatbotSource from "../../components/popups/chatbots/salesreader/ChatbotPopup.js"
 import InvoicePopup from "../../components/popups/invoices/InvoicePopup.js"
 import Popup from "../../components/popups/Popup"
-import PromptsPopup from "../../components/popups/prompts/PromptsPopup.js"
+import PromptsPopup from "../../components/popups/prompts/salesreader/PromptsPopup.js"
 import UnlikePopup from "../../components/popups/unlike/UnlikePopup.js"
 import UploadPopup from "../../components/popups/upload/UploadPopup.js"
 import "./Home.css"
@@ -35,15 +35,24 @@ const Home = () => {
       <Navbar />
 
       <Popup isOpen={activePopup === "chatbotsource"}>
-        <ChatbotSource onClose={closePopup} />
+        <ChatbotSource
+          idPrompt="a2c502db-9425-4c66-9d92-acd3521b38b5"
+          onClose={closePopup}
+        />
       </Popup>
 
       <Popup isOpen={activePopup === "prompts"}>
-        <PromptsPopup onClose={closePopup} />
+        <PromptsPopup
+          idPrompt="a2c502db-9425-4c66-9d92-acd3521b38b5"
+          onClose={closePopup}
+        />
       </Popup>
 
       <Popup isOpen={activePopup === "unliked"}>
-        <UnlikePopup onClose={closePopup} />
+        <UnlikePopup
+          idPrompt="a2c502db-9425-4c66-9d92-acd3521b38b5"
+          onClose={closePopup}
+        />
       </Popup>
 
       <Popup isOpen={activePopup === "upload"}>

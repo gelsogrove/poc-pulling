@@ -1,0 +1,182 @@
+.chat-history-container {
+  width: 100%;
+  background: #f9f9f9;
+  border-radius: 8px;
+
+  position: relative;
+  border: 1px solid grey;
+  min-height: 540px;
+  max-height: 630px;
+  border: 1px solid #ccc;
+}
+
+/* Azioni sui messaggi (Debug e Dislike) */
+.message-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  margin-top: 5px;
+}
+
+/* Header della Chat */
+.chat-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px;
+  gap: 10px;
+  border-bottom: 1px solid grey;
+}
+
+/* Stile Messaggi */
+.chat-history {
+  padding: 10px;
+  overflow-y: auto;
+  height: 60vh !important;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-message {
+  padding: 10px;
+  border-radius: 8px;
+  max-width: 70%;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  display: block;
+}
+
+.chat-message.user {
+  background-color: #007bff;
+  color: white !important;
+  text-align: right;
+  margin-left: auto;
+}
+.text-user {
+  color: white !important;
+}
+
+.text-assistant {
+  color: black !important;
+}
+
+.chat-message.assistant {
+  background-color: #e0e0e0;
+  color: black;
+  text-align: left;
+  margin-right: auto;
+}
+
+/* Stile per le icone */
+
+.dislike-icon {
+  font-size: 22px;
+  filter: grayscale(0%);
+  cursor: pointer;
+  transition: filter 0.3s ease, transform 0.3s ease;
+  position: relative;
+}
+
+.dislike-icon::after {
+  content: attr(title);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: black;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  opacity: 0;
+  visibility: hidden;
+  white-space: nowrap;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.dislike-icon:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.debug-icon {
+  font-size: 22px;
+  filter: grayscale(100%);
+  cursor: pointer;
+  transition: filter 0.3s ease, transform 0.3s ease;
+  position: relative;
+}
+
+.debug-icon::after {
+  content: attr(title);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: black;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  opacity: 0;
+  visibility: hidden;
+  white-space: nowrap;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.debug-icon:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+.delete-chat-button {
+  position: relative; /* Necessario per i tooltip */
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 5px;
+  margin-left: 90%;
+}
+
+.comment-chat-button {
+  position: relative; /* Necessario per i tooltip */
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 5px;
+}
+.delete-chat-button:hover,
+.comment-chat-button:hover {
+  opacity: 0.8; /* Leggero effetto hover */
+}
+
+/* Tooltip comune */
+.delete-chat-button::after,
+.comment-chat-button::after {
+  content: attr(title); /* Usa l'attributo title */
+  position: absolute;
+  bottom: -30px; /* Posiziona il tooltip sotto il pulsante */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8); /* Sfondo scuro */
+  color: white; /* Testo bianco */
+  padding: 5px 10px;
+  border-radius: 5px;
+  white-space: nowrap;
+  font-size: 12px;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 10; /* Porta il tooltip in primo piano */
+}
+
+/* Mostra il tooltip al passaggio del mouse */
+.delete-chat-button:hover::after,
+.comment-chat-button:hover::after {
+  visibility: visible;
+  opacity: 1;
+}

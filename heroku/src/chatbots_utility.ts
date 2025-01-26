@@ -1,30 +1,9 @@
 import axios from "axios"
 import dotenv from "dotenv"
 import { pool } from "../server.js"
-import { getUserIdByToken } from "./validateUser.js"
 
 dotenv.config()
 
-const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-const OPENROUTER_HEADERS = {
-  Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-  "Content-Type": "application/json",
-}
-
-export const validateToken = async (token: string) => {
-  try {
-    const userId = await getUserIdByToken(token)
-    if (!userId) {
-      return null
-    }
-    return userId
-  } catch (error) {
-    return null
-  }
-}
-/**
- * Fetches the prompt along with its model and temperature from the database.
- */
 export const getPrompt = async (idPrompt: string) => {
   try {
     const result = await pool.query(
@@ -83,9 +62,7 @@ export const handleError = (error: unknown): { message: string } => {
     }
   }
 }
-/**
- * Executes a query via the SQL API and returns the results.
- */
+
 export const executeSqlQuery = async (sqlQuery: string) => {
   try {
     const sqlApiUrl = `https://ai.dairy-tools.com/api/sql.php?query=${encodeURIComponent(
@@ -104,17 +81,74 @@ export const sendUsageData = async (
   total: any,
   token: string,
   service: string,
-  userId: string
+  userId: string,
+  idPrompt: string
 ) => {
   try {
     const query =
-      'INSERT INTO usage (day, total, "user", service) VALUES ($1, $2, $3, $4) RETURNING *'
-    const values = [day, total, userId, service]
+      'INSERT INTO usage (day, total, "user", service, idprompt) VALUES ($1, $2, $3, $4, $5) RETURNING *'
+    const values = [day, total, userId, service, idPrompt]
+
+    const fullQuery = query.replace(/\$1/g, `'${values[0]}'`)
+    console.log("Generated query for testing:", fullQuery)
 
     const result = await pool.query(query, values)
 
     return result
   } catch (error) {
+    console.log(error)
     return error
+  }
+}
+
+export const generateDetailedSentence = async (
+  model: any,
+  sqlData: any,
+  temperature: any,
+  OPENROUTER_API_URL: any,
+  OPENROUTER_HEADERS: any,
+  userMessage: any
+) => {
+  try {
+    // Preparare il payload per OpenRouter
+    const requestPayload = {
+      model: "openai/gpt-3.5-turbo",
+      messages: [
+        { role: "user", content: userMessage },
+        { role: "system", content: `Result: ${JSON.stringify(sqlData)}` },
+        {
+          role: "user",
+          content:
+            "Please summarize the result of the query repeating the question so it's more clear  in one sentence using the <b> for   important values if we are showing the moeny don't forget to put the $ char , AGGIUNGO ANCHE CHE I NUMERI DEVONO AVERE LE MIGLIAIA ES 2.676, please round if the numer is $674,342.60. show only $674,342",
+        },
+      ],
+      max_tokens: 1000,
+      temperature: Number(temperature),
+    }
+
+    // Chiamata ad OpenRouter
+    const openaiResponse = await axios.post(
+      OPENROUTER_API_URL,
+      requestPayload,
+      {
+        headers: OPENROUTER_HEADERS,
+        timeout: 30000,
+      }
+    )
+
+    // Pulire e verificare la risposta
+    const rawResponse = cleanResponse(
+      openaiResponse.data.choices[0]?.message?.content
+    )
+
+    if (!rawResponse) {
+      console.error("Second pass: Empty response from OpenRouter.")
+      return "Failed to generate a detailed sentence for the result."
+    }
+
+    return rawResponse
+  } catch (error) {
+    console.error("Error in generateDetailedSentence:", error)
+    return "An error occurred while creating a detailed sentence for the result."
   }
 }

@@ -74,3 +74,51 @@ export const extractValuesFromPrompt = (
     return { temperature: null, model: null }
   }
 }
+
+/**
+ * Funzione generica per validare il token e l'utente.
+ */
+export const validateRequest = async (req: any, res: any): Promise<any> => {
+  const authHeader = req.headers["authorization"] as string | undefined
+
+  const token = authHeader?.startsWith("Bearer ")
+    ? authHeader.split(" ")[1]
+    : null
+
+  if (!token) {
+    res.status(401).json({ message: "Missing or invalid token." })
+    return null
+  }
+
+  try {
+    const userId = await getUserIdByToken(token)
+
+    if (!userId) {
+      console.log("105 entrato", userId)
+      res.status(403).json({ message: "Invalid or expired token." })
+      return null
+    }
+    return { userId, token }
+  } catch (error) {
+    console.error(
+      "Error during token validation:",
+      error instanceof Error ? error.message : error
+    )
+    res
+      .status(500)
+      .json({ message: "Internal server error during validation." })
+    return null
+  }
+}
+
+export const validateToken = async (token: string) => {
+  try {
+    const userId = await getUserIdByToken(token)
+    if (!userId) {
+      return null
+    }
+    return userId
+  } catch (error) {
+    return null
+  }
+}

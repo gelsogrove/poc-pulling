@@ -8,6 +8,7 @@ import pkg from "pg"
 import authRouter from "./src/auth.js"
 import chatbotRouter from "./src/chatbots.js"
 import promptRouter from "./src/prompts.js"
+import unlikeRouter from "./src/unlinke.js"
 import usageRouter from "./src/usage.js"
 import welcomeRouter from "./src/welcome.js"
 
@@ -50,6 +51,7 @@ app.use(
           "'self'",
           "https://ai.dairy-tools.com/",
           "http://localhost:3000",
+          "http://localhost:3001",
         ],
       },
     },
@@ -59,7 +61,11 @@ app.use(
 // Configurazione CORS
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://ai.dairy-tools.com"], // Permetti richieste da questi domini
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "https://ai.dairy-tools.com",
+    ], // Permetti richieste da questi domini
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
@@ -93,6 +99,7 @@ app.use("/auth", limiter, authRouter)
 app.use("/usage", limiter, usageRouter)
 app.use("/prompt", limiter, promptRouter)
 app.use("/chatbot", limiter, chatbotRouter)
+app.use("/unlike", limiter, unlikeRouter)
 
 // Forza HTTPS in produzione
 if (process.env.NODE_ENV === "production") {

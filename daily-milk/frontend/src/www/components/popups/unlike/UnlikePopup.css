@@ -1,0 +1,109 @@
+.unlike-popup {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 8px;
+
+  margin: auto;
+  height: 80vh;
+  width: 1400px;
+  padding-top: 15px;
+  padding-left: 25px;
+  padding-right: 25px;
+  overflow: hidden;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 43px;
+  cursor: pointer;
+}
+
+.content-container {
+  display: flex;
+  flex-direction: row; /* Layout orizzontale */
+  height: 100%;
+}
+
+.unlike-table-container {
+  width: 30%;
+}
+
+.unlike-table {
+  width: 90%;
+
+  margin-top: 13px;
+  border-collapse: collapse;
+}
+
+.unlike-table td,
+.unlike-table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.unlike-table tr {
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+.unlike-table tr:nth-child(even) {
+  background-color: #f1f1f1;
+}
+
+.unlike-table tr:hover {
+  background-color: #e0e0e0;
+}
+
+.unlike-table tr.selected {
+  background-color: #007bff;
+  color: white;
+}
+
+.chat {
+  flex: 1 1;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.chat-history {
+  padding: 10px;
+  overflow-y: auto;
+  height: 50vh;
+}
+
+.chat-message {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.chat-message.user {
+  background-color: #007bff;
+  color: white;
+  text-align: right;
+}
+
+.chat-message.assistant {
+  background-color: #e0e0e0;
+  color: black;
+  text-align: left;
+  max-width: 660px;
+}

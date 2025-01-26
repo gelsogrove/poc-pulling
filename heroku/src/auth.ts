@@ -4,10 +4,40 @@ import qrcode from "qrcode"
 import speakeasy from "speakeasy"
 import { v4 as uuidv4 } from "uuid" // Importa uuid
 import { pool } from "../server.js" // Importa il pool dal file principale
-
 import { getUserIdByToken } from "./validateUser.js"
 
 const authRouter = Router()
+
+const validateRequest = async (req: any, res: any): Promise<string | null> => {
+  const authHeader = req.headers["authorization"] as string | undefined
+
+  const token = authHeader?.startsWith("Bearer ")
+    ? authHeader.split(" ")[1]
+    : null
+
+  if (!token) {
+    res.status(401).json({ message: "Missing or invalid token." })
+    return null
+  }
+
+  try {
+    const userId = await getUserIdByToken(token)
+    if (!userId) {
+      res.status(403).json({ message: "Invalid or expired token." })
+      return null
+    }
+    return userId
+  } catch (error) {
+    console.error(
+      "Error during token validation:",
+      error instanceof Error ? error.message : error
+    )
+    res
+      .status(500)
+      .json({ message: "Internal server error during validation." })
+    return null
+  }
+}
 
 // Handler per il login
 const loginHandler: RequestHandler = async (req, res) => {
@@ -124,7 +154,7 @@ const setExpire: RequestHandler = async (req, res) => {
   const { userId } = req.body
 
   // Calcola la nuova data di scadenza (30 minuti da ora)
-  const newExpireDate = new Date(Date.now() + 59 * 60 * 1000) // Aggiungi 30 minuti
+  const newExpireDate = new Date(Date.now() + 120 * 60 * 1000) // Aggiungi 120 minuti
 
   // Genera un nuovo token
   const token = uuidv4() // Genera un token unico
@@ -154,50 +184,50 @@ const setExpire: RequestHandler = async (req, res) => {
 
 // Handler per verificare se l'utente è scaduto
 const isExpired: RequestHandler = async (req, res) => {
-  const { token } = req.body
+  const userId = await validateRequest(req, res)
+  if (!userId) return
 
-  // Estrai l'userId dal token
-  const userId = await getUserIdByToken(token) // Aggiunta della funzione per estrarre userId
-  if (!userId) {
-    res.status(400).json({ message: "Token non valido" }) // Restituisce errore se il token non è valido
-    return
+  try {
+    // Esegui una query per cercare la data di scadenza
+    const { rows } = await pool.query(
+      "SELECT expire_date FROM users WHERE userId = $1",
+      [userId]
+    )
+
+    if (rows.length === 0) {
+      res.status(404).json({ message: "Utente non trovato" })
+      return
+    }
+
+    const { expire_date } = rows[0]
+    const isExpired = new Date(expire_date) < new Date()
+
+    res.status(200).json({ isExpired })
+  } catch (error) {
+    console.error("Error checking expiration:", error)
+    res
+      .status(500)
+      .json({ message: "Errore durante il controllo della scadenza" })
   }
-
-  // Esegui una query per cercare la data di scadenza
-  const { rows } = await pool.query(
-    "SELECT expire_date FROM users WHERE userId = $1",
-    [userId]
-  )
-
-  if (rows.length === 0) {
-    res.status(404).json({ message: "Utente non trovato" })
-    return
-  }
-
-  const { expire_date } = rows[0]
-  const isExpired = new Date(expire_date) < new Date()
-
-  res.status(200).json({ isExpired })
 }
 
 // Handler per il logout
 const logoutHandler: RequestHandler = async (req, res) => {
-  const { token } = req.body // Estrae il token dal corpo della richiesta
+  const userId = await validateRequest(req, res)
+  if (!userId) return
 
-  // Estrai l'userId dal token
-  const userId = await getUserIdByToken(token) // Aggiunta della funzione per estrarre userId
-  if (!userId) {
-    res.status(400).json({ message: "Token non valido" }) // Restituisce errore se il token non è valido
-    return
+  try {
+    // Aggiorna il campo token e expire_date nel database
+    await pool.query(
+      "UPDATE users SET token = NULL, expire_date = NULL WHERE userid = $1",
+      [userId]
+    )
+
+    res.status(200).json({ message: "Logout effettuato con successo" })
+  } catch (error) {
+    console.error("Error during logout:", error)
+    res.status(500).json({ message: "Errore durante il logout" })
   }
-
-  // Aggiorna il campo token e expire_date nel database
-  await pool.query(
-    "UPDATE users SET token = NULL, expire_date = NULL WHERE userid = $1",
-    [userId]
-  )
-
-  res.status(200).json({ message: "Logout" }) // Risposta di successo
 }
 
 // Definisci le rotte per il router di autenticazione

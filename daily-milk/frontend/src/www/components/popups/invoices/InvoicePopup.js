@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react"
 import { Bar } from "react-chartjs-2"
-import { fetchUsageData } from "../../chatbots/chat-poulin/usage/api/usageApi"
-import monthlyData from "./api/monthlyData"
+import { fetchUsageData } from "../../chatbots/usage/api/utils_api"
+import monthlyData from "./api/monthlyData_api"
 import "./InvoicePopup.css"
 
 const InvoicePopup = ({ onClose }) => {

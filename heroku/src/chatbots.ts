@@ -2,14 +2,14 @@ import axios from "axios"
 import axiosRetry from "axios-retry"
 import dotenv from "dotenv"
 import { RequestHandler, Router } from "express"
-// Importazione delle funzioni utilitarie dal modulo chatbot_utility
 import {
   cleanResponse,
   executeSqlQuery,
+  generateDetailedSentence,
   getPrompt,
   sendUsageData,
-  validateToken,
 } from "./chatbots_utility.js"
+import { validateRequest } from "./validateUser.js"
 
 dotenv.config()
 
@@ -27,46 +27,36 @@ if (!process.env.OPENROUTER_API_KEY) {
 
 axiosRetry(axios, {
   retries: 3,
-  retryDelay: (retryCount) => {
-    return retryCount * 1000
-  },
+  retryDelay: (retryCount) => retryCount * 1000,
   retryCondition: (error) => {
     const status = error.response?.status ?? 0
     return error.code === "ECONNRESET" || status >= 500
   },
 })
 
-const handleChat: RequestHandler = async (req, res) => {
-  const { conversationId, token, messages } = req.body
+const handleResponse: RequestHandler = async (req, res) => {
+  const { userId, token } = await validateRequest(req, res)
+  if (!userId) return
+  const { conversationId, idPrompt, messages } = req.body
+
+  if (!conversationId || !Array.isArray(messages)) {
+    console.log("Validation failed for conversationId or messages.") // Log input non valido
+    res.status(400).json({
+      message: "conversationId and messages array are required.",
+    })
+    return
+  }
 
   try {
-    // VALIDATION
-    if (!conversationId || !token || !Array.isArray(messages)) {
-      res.status(400).json({
-        message: "conversationId, token, and messages array are required.",
-      })
-      return
-    }
-
-    // TOKEN
-    const userId = await validateToken(token)
-    if (!userId) {
-      res.status(403).json({ message: "Invalid token." })
-      return
-    }
-
     // USER MESSAGE
     const userMessage = messages[messages.length - 1]?.content
-    console.log("Message", userMessage)
 
     // PROMPT
-    const promptResult = await getPrompt("a2c502db-9425-4c66-9d92-acd3521b38b5")
+    const promptResult = await getPrompt(idPrompt)
     const { prompt, model, temperature } = promptResult
-    const truncatedPrompt = prompt.split("=== ENDPROMPT ===")[0].trim()
-    console.log("Prompt:", truncatedPrompt.slice(0, 20))
 
     // HISTORY
-    const conversationHistory = messages.map((msg) => {
+    const conversationHistory = messages.map((msg: any) => {
       return { role: msg.role || "user", content: msg.content }
     })
 
@@ -77,15 +67,19 @@ const handleChat: RequestHandler = async (req, res) => {
           "https://ai.dairy-tools.com/api/stats.php"
         )
 
-        console.log("Analysis Data:", analysis)
-
         res.status(200).json({
           response: `Here is the analysis: ${JSON.stringify(analysis)}`,
         })
         return
       } catch (analysisError) {
         console.error("Error fetching analysis data:", analysisError)
+<<<<<<< HEAD
         res.status(200).json({ message: analysisError })
+=======
+        res.status(200).json({
+          response: "Failed to fetch analysis data.",
+        })
+>>>>>>> main
         return
       }
     }
@@ -94,7 +88,7 @@ const handleChat: RequestHandler = async (req, res) => {
     const requestPayload = {
       model,
       messages: [
-        { role: "system", content: truncatedPrompt },
+        { role: "system", content: prompt },
         ...conversationHistory,
         { role: "user", content: userMessage },
         { role: "system", content: `Language: eng` },
@@ -113,15 +107,27 @@ const handleChat: RequestHandler = async (req, res) => {
       }
     )
 
+    if (openaiResponse.data.error) {
+      res.status(200).json({
+        response: "Empty response from OpenRouter",
+        error: openaiResponse.data.error.message,
+      })
+      return
+    }
+
     // ANSWER
     const rawResponse = cleanResponse(
       openaiResponse.data.choices[0]?.message?.content
     )
+
     if (!rawResponse) {
-      res.status(204).json({ response: "Empty response from OpenRouter" })
+      res
+        .status(200)
+        .json({ response: "Empty response from OpenRouter", rawResponse })
       return
     }
 
+    // PARSE RESPONSE
     let sqlQuery: string | null = null
     let finalResponse: string = ""
     let triggerAction: string = ""
@@ -133,7 +139,7 @@ const handleChat: RequestHandler = async (req, res) => {
 
       if (sqlQuery !== null) {
         const day = new Date().toISOString().split("T")[0]
-        const resp = await sendUsageData(day, 0.2, token, triggerAction, userId)
+        await sendUsageData(day, 0.2, token, triggerAction, userId, idPrompt)
       }
 
       if (!sqlQuery) {
@@ -146,6 +152,30 @@ const handleChat: RequestHandler = async (req, res) => {
 
       // EXECUTE QUERY
       const sqlData = await executeSqlQuery(sqlQuery)
+
+      /* 2 PASSAGGIO */
+      if (sqlData.length === 1) {
+        console.log("**** generateDetailedSentence ***", sqlQuery)
+
+        // Chiamata alla funzione per generare una frase dettagliata
+        const detailedSentence = await generateDetailedSentence(
+          model,
+          sqlData,
+          temperature,
+          OPENROUTER_API_URL,
+          OPENROUTER_HEADERS,
+          userMessage
+        )
+
+        res.status(200).json({
+          triggerAction: "COUNT",
+          response: detailedSentence,
+          query: sqlQuery,
+        })
+        return
+      }
+
+      // RESPONSE
       res.status(200).json({
         triggerAction,
         response: finalResponse,
@@ -157,11 +187,16 @@ const handleChat: RequestHandler = async (req, res) => {
       return
     }
   } catch (error) {
+<<<<<<< HEAD
     console.error("Error in handleChat1:", error)
 
     res.status(200).json({ message: error })
+=======
+    console.log("******** ERROR **********", error)
+    res.status(200).json({ response: "error:" + error })
+>>>>>>> main
   }
 }
 
-chatbotRouter.post("/response", handleChat)
+chatbotRouter.post("/response", handleResponse)
 export default chatbotRouter

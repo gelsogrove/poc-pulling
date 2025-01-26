@@ -1,13 +1,51 @@
-/* Container for messages */
+.chat-container {
+  position: relative;
+  height: 100%;
+}
+
 .chat-messages {
   flex-grow: 1;
-  overflow-y: scroll;
+  overflow-y: auto;
   padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   background-color: white;
   border-right: 1px solid #ddd;
+}
+
+.info-message {
+  font-size: 0.75rem; /* Dimensione del testo piccola */
+  color: #6c757d; /* Grigio chiaro */
+  text-align: center; /* Centra il testo */
+  margin-top: 9px; /* Distanza dal textarea */
+}
+
+.scroll-to-bottom {
+  position: fixed;
+  bottom: 135px; /* Posizionata 180px sopra il bordo inferiore */
+  left: 230px !important; /* Centrata rispetto alla larghezza del container */
+  transform: translateX(-50%);
+  background-color: #ce4f4f; /* Grigio chiaro */
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  z-index: 1000;
+  opacity: 0.4;
+}
+
+.scroll-to-bottom:hover {
+  background-color: #ce4f4f; /* Grigio chiaro */
+  opacity: 1;
 }
 
 /* Individual message bubble */
@@ -72,23 +110,24 @@ li {
   transform: scale(1.2);
 }
 
-/* Tooltip for icons */
-.like-unlike-icons span::after {
-  content: attr(title);
-  position: absolute;
-  top: -30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.75);
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 12px;
-  white-space: nowrap;
-  z-index: 10;
-  opacity: 0;
-  transition: opacity 0.2s ease-in-out;
-}
+/* Tooltip for icons 
+  .like-unlike-icons span::after {
+    content: attr(title);
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+    */
 
 .like-unlike-icons span:hover::after {
   opacity: 1;
@@ -114,4 +153,67 @@ li {
   margin-top: 10px;
   border: 1px solid #ffcccc;
   border-radius: 5px;
+}
+
+/* Typing indicator */
+.typing-indicator {
+  display: flex;
+  gap: 5px;
+  justify-content: flex-start;
+  align-items: center;
+  height: 20px;
+}
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  background-color: #007bff;
+  border-radius: 50%;
+  animation: typing-bounce 1.5s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing-bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* Icona di Unlike */
+.unlike-icon {
+  cursor: pointer;
+  font-size: 16px;
+  color: #007bff; /* Colore di default */
+  transition: color 0.3s ease, transform 0.3s ease;
+  border: 0px solid red;
+}
+
+.unlike-icon:hover {
+  color: #0056b3; /* Colore durante il passaggio del mouse */
+  transform: scale(1.2);
+}
+
+.message-divider {
+  border: none;
+  border-top: 1px solid #ccc; /* Linea grigia chiara */
+  height: 2px;
+  width: 100%; /* Assicura che la linea occupi tutta la larghezza del contenitore */
+}
+
+.unlike-icon.selected {
+  color: red; /* Cambia colore per lo stato selezionato */
+  filter: grayscale(0%); /* Rimuovi il filtro grigio */
+  transform: scale(1.2); /* Leggera animazione */
 }

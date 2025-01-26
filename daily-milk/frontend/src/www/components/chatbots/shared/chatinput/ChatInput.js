@@ -1,15 +1,7 @@
 import React, { useState } from "react"
 import "./ChatInput.css"
 
-const ChatInput = ({
-  inputValue,
-  setInputValue,
-  isLoading,
-  handleSend,
-  handleQuickReply,
-  onClickMicro,
-  isMenuVisible,
-}) => {
+const ChatInput = ({ inputValue, setInputValue, isLoading, handleSend }) => {
   const [, setTranscript] = useState("")
 
   const handleSendClick = () => {
