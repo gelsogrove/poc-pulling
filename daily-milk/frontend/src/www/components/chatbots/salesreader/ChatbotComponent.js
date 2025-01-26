@@ -75,6 +75,8 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
       },
     ])
 
+    debugger
+
     try {
       setRefreshUsage(!refreshUsage)
 
@@ -99,12 +101,13 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
             id,
             sender: "bot",
             text: responseText,
-            data: botResponse?.data?.data,
-            query: botResponse?.data?.query,
-            triggerAction: botResponse?.data?.triggerAction,
+            data: botResponse?.data,
+            query: botResponse?.query,
+            triggerAction: botResponse?.triggerAction,
           },
         ]
       })
+      debugger
 
       // Update conversation history
       setConversationHistory((prevHistory) => [
@@ -113,11 +116,12 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
           id,
           role: "assistant",
           content: responseText,
-          triggerAction: botResponse?.data?.triggerAction,
-          query: botResponse?.data?.query,
-          data: botResponse?.data?.data,
+          triggerAction: botResponse?.triggerAction,
+          query: botResponse?.query,
+          data: botResponse?.data,
         },
       ])
+      debugger
     } catch (error) {
       console.error("Error in handleSend:", error)
       const { updatedMessages: errMsgs, updatedHistory: errHist } = handleError(

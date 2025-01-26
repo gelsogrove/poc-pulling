@@ -1,63 +1,46 @@
-import {
-  BarElement,
-  CategoryScale,
-  Chart as ChartJS,
-  Legend,
-  LinearScale,
-  LineElement,
-  PointElement,
-  Title,
-  Tooltip,
-} from "chart.js"
+import Cookies from "js-cookie"
 import React, { useCallback, useEffect, useState } from "react"
-import "./Usage.css"
-
 import { fetchUsageData, getPromptDetails } from "./api/utils_api"
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-)
+import "./Usage.css"
 
 const Usage = ({ idPrompt, IdConversation, refresh }) => {
   const [usageData, setUsageData] = useState(null)
-  const [initialTotalCurrentMonth, setInitialTotalCurrentMonth] = useState(null)
   const [currentChatDifference, setCurrentChatDifference] = useState(0)
   const [temperature, setTemperature] = useState(null)
   const [model, setModel] = useState(null)
+  const [error, setError] = useState(null)
 
-  // Memorizza fetchData per evitare che venga ricreata ad ogni render
+  const cookieKey = `initialTotal_${IdConversation}` // Chiave univoca per ogni conversazione
+  const initialTotalCurrentMonth = parseFloat(Cookies.get(cookieKey) || "0")
+
   const fetchData = useCallback(async () => {
-    // Fetch Usage Data
-    const data = await fetchUsageData()
-    setUsageData(data)
+    try {
+      const data = await fetchUsageData()
+      setUsageData(data)
 
-    // Fetch Temperature and Model
+      const prompt = await getPromptDetails(idPrompt)
+      setTemperature(prompt.temperature)
+      setModel(prompt.model)
 
-    const prompt = await getPromptDetails(idPrompt)
-    setTemperature(prompt.temperature)
-    setModel(prompt.model)
-  }, [idPrompt])
+      // Resetta il valore iniziale se la conversazione è nuova
+      if (!Cookies.get(cookieKey)) {
+        Cookies.set(cookieKey, data.totalCurrentMonth || 0, { expires: 7 })
+        setCurrentChatDifference(0) // Resetta la differenza
+      }
+    } catch (err) {
+      console.error("Error fetching data:", err)
+      setError("Failed to load data. Please try again.")
+    }
+  }, [idPrompt, cookieKey])
 
   useEffect(() => {
     fetchData()
   }, [fetchData, refresh, idPrompt])
 
   useEffect(() => {
-    if (usageData && usageData.totalCurrentMonth) {
-      if (initialTotalCurrentMonth === null) {
-        setInitialTotalCurrentMonth(usageData.totalCurrentMonth)
-      } else {
-        const difference =
-          usageData.totalCurrentMonth - initialTotalCurrentMonth
-        setCurrentChatDifference(difference)
-      }
+    if (usageData?.totalCurrentMonth) {
+      const difference = usageData.totalCurrentMonth - initialTotalCurrentMonth
+      setCurrentChatDifference(difference)
     }
   }, [usageData, initialTotalCurrentMonth])
 

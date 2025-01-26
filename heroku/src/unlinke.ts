@@ -1,5 +1,6 @@
 import { Request, Response, Router } from "express"
 import { pool } from "../server.js" // Presuppone che pool sia correttamente configurato
+import { sendUsageData } from "./chatbots_utility.js"
 import { validateRequest, validateUser } from "./validateUser.js" // Presuppone che queste funzioni esistano
 
 const unlikeRouter = Router()
@@ -11,12 +12,8 @@ const createUnlikeHandler = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  console.log("SQL14")
-
   const { userId, token } = await validateRequest(req, res)
   if (!userId) return
-
-  console.log("SQL14", userId)
 
   const { conversationId, msgId, dataTime, conversationHistory, idPrompt } =
     req.body
@@ -26,9 +23,7 @@ const createUnlikeHandler = async (
     return
   }
 
-  console.log("SQL30")
   try {
-    console.log("SQL31")
     const checkQuery = `
     SELECT 1 FROM unlike
     WHERE conversationId = $1 AND msgid = $2
@@ -66,9 +61,11 @@ const createUnlikeHandler = async (
     ]
 
     const fullQuery = query.replace(/\$1/g, `'${values[0]}'`)
-    console.log("SQL", fullQuery)
 
     await pool.query(query, values)
+
+    const day = new Date().toISOString().split("T")[0]
+    await sendUsageData(day, -0.2, token, "dislike", userId, idPrompt)
 
     res.status(201).json({
       message: "Record inserted successfully",
