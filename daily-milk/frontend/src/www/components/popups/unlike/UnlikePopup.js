@@ -32,10 +32,10 @@ const UnlikePopup = ({ idPrompt, onClose }) => {
     getData()
   }, [])
 
-  const handleRowClick = (item) => {
+  const handleRowClick = async (item) => {
     setSelectedItem(item)
     console.log(item)
-    const resp = fetchUserName(item.userId)
+    const resp = await fetchUserName(item.userId)
     setUsername(resp.username)
   }
 

@@ -19,7 +19,10 @@ const ChatHistory = ({ msgIds, username, messages, onDeleteChat }) => {
   return (
     <div className="chat-history-container">
       <div className="chat-header">
-        <div class="owner">{username}</div>
+        <div class="owner">
+          <b>Username: </b>
+          {username}
+        </div>
         <div>
           <button
             className="delete-chat-button"
