@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import { createDynamicAsciiTable } from "../../../components/chatbots/shared/utils"
 import "./ChatHistory.css"
-const ChatHistory = ({ msgIds, userId, messages, onDeleteChat }) => {
+const ChatHistory = ({ msgIds, username, messages, onDeleteChat }) => {
   const [debugModes, setDebugModes] = useState({})
   const chatEndRef = useRef(null)
 
@@ -19,7 +19,7 @@ const ChatHistory = ({ msgIds, userId, messages, onDeleteChat }) => {
   return (
     <div className="chat-history-container">
       <div className="chat-header">
-        <div class="owner">{userId}</div>
+        <div class="owner">{username}</div>
         <div>
           <button
             className="delete-chat-button"

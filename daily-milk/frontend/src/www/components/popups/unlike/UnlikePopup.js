@@ -1,13 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react"
 import ChatHistory from "../shared/ChatHistory"
-import { deleteUnlikeRecord, fetchUnlikeData } from "./api/unlike_api"
+import {
+  deleteUnlikeRecord,
+  fetchUnlikeData,
+  fetchUserName,
+} from "./api/unlike_api"
 import "./UnlikePopup.css"
 
 const UnlikePopup = ({ idPrompt, onClose }) => {
   const [data, setData] = useState([])
   const [selectedItem, setSelectedItem] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [username, setUsername] = useState("")
 
   useEffect(() => {
     const getData = async () => {
@@ -30,6 +35,8 @@ const UnlikePopup = ({ idPrompt, onClose }) => {
   const handleRowClick = (item) => {
     setSelectedItem(item)
     console.log(item)
+    const resp = fetchUserName(item.userId)
+    setUsername(resp.username)
   }
 
   const handleDeleteChat = async () => {
@@ -108,7 +115,7 @@ const UnlikePopup = ({ idPrompt, onClose }) => {
                 <div>
                   <ChatHistory
                     msgIds={[selectedItem.msgid]} // Passa un array contenente il msgId
-                    userId={[selectedItem.userId]}
+                    username={username}
                     messages={JSON.parse(selectedItem.conversationhistory)}
                     onDeleteChat={handleDeleteChat}
                   />

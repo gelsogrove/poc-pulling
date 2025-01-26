@@ -230,6 +230,32 @@ const logoutHandler: RequestHandler = async (req, res) => {
   }
 }
 
+const getClientHandler: RequestHandler = async (req, res) => {
+  try {
+    // Validazione del token
+    const userId = await validateRequest(req, res)
+    if (!userId) return
+
+    // Recupera l'utente dal database usando userId
+    const { rows } = await pool.query("SELECT * FROM users WHERE userid = $1", [
+      userId,
+    ])
+
+    if (rows.length === 0) {
+      res.status(404).json({ message: "Utente non trovato" }) // Restituisce un errore 404 se l'utente non esiste
+      return
+    }
+
+    // Restituisce l'oggetto completo dell'utente
+    res.status(200).json({
+      row: rows[0], // Restituisce l'oggetto utente completo
+    })
+  } catch (error) {
+    console.error("Error fetching client data:", error)
+    res.status(500).json({ message: "Errore durante il recupero dell'utente" })
+  }
+}
+
 // Definisci le rotte per il router di autenticazione
 authRouter.post("/login", loginHandler) // Rotta per il login
 authRouter.post("/register", registerHandler) // Rotta per la registrazione
@@ -237,5 +263,6 @@ authRouter.post("/verify-otp", verifyOtpHandler) // Rotta per la verifica dell'O
 authRouter.put("/set-expire", setExpire) // Rotta per aggiornare la data di scadenza
 authRouter.post("/is-expired/", isExpired) // Rotta per verificare se l'utente è scaduto
 authRouter.post("/logout", logoutHandler) // Rotta per il logout
+authRouter.get("/getclient", getClientHandler)
 
 export default authRouter // Esporta il router di autenticazione

@@ -45,7 +45,10 @@ const validateRequest = async (
   }
 }
 
-usageRouter.post("/new", async (req, res) => {
+const createUsageHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const userId = await validateRequest(req, res)
   if (!userId) return
 
@@ -65,9 +68,9 @@ usageRouter.post("/new", async (req, res) => {
     )
     res.status(500).json({ error: "Internal server error." })
   }
-})
+}
 
-usageRouter.post("/", async (req, res) => {
+const getUsageHandler = async (req: Request, res: Response): Promise<void> => {
   const userId = await validateRequest(req, res)
   if (!userId) return
 
@@ -173,9 +176,12 @@ usageRouter.post("/", async (req, res) => {
     )
     res.status(500).json({ error: "Internal server error." })
   }
-})
+}
 
-usageRouter.put("/:id", async (req, res) => {
+const updateUsageHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const userId = await validateRequest(req, res)
   if (!userId) return
 
@@ -201,9 +207,12 @@ usageRouter.put("/:id", async (req, res) => {
     console.error("Error during update:", error)
     res.status(500).json({ error: "Internal server error." })
   }
-})
+}
 
-usageRouter.delete("/:id", async (req, res) => {
+const deleteUsageHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const userId = await validateRequest(req, res)
   if (!userId) return
 
@@ -223,10 +232,12 @@ usageRouter.delete("/:id", async (req, res) => {
     console.error("Error during deletion:", error)
     res.status(500).json({ error: "Internal server error." })
   }
-})
+}
 
-// Endpoint per ottenere il totale per ogni mese
-usageRouter.post("/monthly-totals", async (req, res) => {
+const getMonthlyTotalsHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const userId = await validateRequest(req, res)
   if (!userId) return
 
@@ -255,6 +266,13 @@ usageRouter.post("/monthly-totals", async (req, res) => {
     console.error("Error during monthly totals retrieval:", error)
     res.status(500).json({ error: "Internal server error." })
   }
-})
+}
+
+// Definizione delle rotte con i rispettivi handler
+usageRouter.post("/new", createUsageHandler) // Rotta per creare un nuovo record di utilizzo
+usageRouter.post("/", getUsageHandler) // Rotta per ottenere i dati di utilizzo
+usageRouter.put("/:id", updateUsageHandler) // Rotta per aggiornare un record di utilizzo
+usageRouter.delete("/:id", deleteUsageHandler) // Rotta per eliminare un record di utilizzo
+usageRouter.post("/monthly-totals", getMonthlyTotalsHandler) // Rotta per ottenere i totali mensili
 
 export default usageRouter
