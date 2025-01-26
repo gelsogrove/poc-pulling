@@ -166,7 +166,7 @@ const handleResponse: RequestHandler = async (req, res) => {
         res.status(200).json({
           triggerAction: "COUNT",
           response: detailedSentence,
-          sqlQuery,
+          query: sqlQuery,
         })
         return
       }
