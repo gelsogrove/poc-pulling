@@ -47,7 +47,7 @@ unlikeRouter.post(
       const conversationHistoryString = JSON.stringify(conversationHistory)
 
       const query = `
-      INSERT INTO unlike (conversationId, msgId, dataTime, conversationHistory,idPrompt,userId)
+      INSERT INTO unlike (conversationId, msgId, dataTime, conversationHistory,idPrompt,userid)
       VALUES ($1, $2, $3, $4, $5, $6)
     `
       const values = [

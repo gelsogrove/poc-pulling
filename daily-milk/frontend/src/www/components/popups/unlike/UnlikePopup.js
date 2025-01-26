@@ -16,7 +16,6 @@ const UnlikePopup = ({ idPrompt, onClose }) => {
         setData(fetchedData || [])
         if (fetchedData && fetchedData.length > 0) {
           setSelectedItem(fetchedData[0])
-          console.log(fetchedData[0])
         }
       } catch (error) {
         console.error("Error fetching data:", error)
@@ -30,6 +29,7 @@ const UnlikePopup = ({ idPrompt, onClose }) => {
 
   const handleRowClick = (item) => {
     setSelectedItem(item)
+    console.log(item)
   }
 
   const handleDeleteChat = async () => {
