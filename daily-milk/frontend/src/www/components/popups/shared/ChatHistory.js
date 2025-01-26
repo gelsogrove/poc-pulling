@@ -1,14 +1,18 @@
 import React, { useEffect, useRef, useState } from "react"
 import "./ChatHistory.css"
 
-export const createDynamicAsciiTable = (data) => {
+export const createDynamicAsciiTable = (data, nonFormattedFields = []) => {
   if (!Array.isArray(data) || data.length === 0) {
     return "No data available..."
   }
 
   const headers = Object.keys(data[0])
 
-  const formatNumber = (value) => {
+  const formatNumber = (header, value) => {
+    if (nonFormattedFields.includes(header)) {
+      // Non formattare i campi specificati
+      return value
+    }
     if (!isNaN(value) && value !== null && value !== "") {
       return parseInt(value, 10).toLocaleString("it-IT")
     }
@@ -18,7 +22,9 @@ export const createDynamicAsciiTable = (data) => {
   const columnWidths = headers.map((header) =>
     Math.max(
       header.length,
-      ...data.map((row) => String(formatNumber(row[header]) || "").length)
+      ...data.map(
+        (row) => String(formatNumber(header, row[header]) || "").length
+      )
     )
   )
 
@@ -26,7 +32,7 @@ export const createDynamicAsciiTable = (data) => {
     "| " +
     headers
       .map((header, i) =>
-        String(formatNumber(row[header]) || "").padEnd(columnWidths[i])
+        String(formatNumber(header, row[header]) || "").padEnd(columnWidths[i])
       )
       .join(" | ") +
     " |"
