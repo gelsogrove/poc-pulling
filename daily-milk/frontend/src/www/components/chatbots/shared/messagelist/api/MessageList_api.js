@@ -6,11 +6,19 @@ export const createDynamicAsciiTable = (data) => {
     return "No data available..."
   }
 
+  // Campi da non formattare
+  const nonFormattedFields = ["item_number", "description"]
+
   const headers = Object.keys(data[0])
 
-  const formatNumber = (value) => {
+  const formatNumber = (header, value) => {
+    // Evita la formattazione dei campi specificati
+    if (nonFormattedFields.includes(header)) {
+      return value
+    }
+    // Applica la formattazione solo ai valori numerici
     if (!isNaN(value) && value !== null && value !== "") {
-      return parseInt(value, 10).toLocaleString("it-IT")
+      return parseFloat(value).toLocaleString("it-IT")
     }
     return value
   }
@@ -18,7 +26,9 @@ export const createDynamicAsciiTable = (data) => {
   const columnWidths = headers.map((header) =>
     Math.max(
       header.length,
-      ...data.map((row) => String(formatNumber(row[header]) || "").length)
+      ...data.map(
+        (row) => String(formatNumber(header, row[header]) || "").length
+      )
     )
   )
 
@@ -26,7 +36,7 @@ export const createDynamicAsciiTable = (data) => {
     "| " +
     headers
       .map((header, i) =>
-        String(formatNumber(row[header]) || "").padEnd(columnWidths[i])
+        String(formatNumber(header, row[header]) || "").padEnd(columnWidths[i])
       )
       .join(" | ") +
     " |"

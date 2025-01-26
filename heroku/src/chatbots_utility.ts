@@ -112,7 +112,7 @@ export const generateDetailedSentence = async (
   try {
     // Preparare il payload per OpenRouter
     const requestPayload = {
-      model,
+      model: "openai/gpt-3.5-turbo",
       messages: [
         { role: "user", content: userMessage },
         { role: "system", content: `Result: ${JSON.stringify(sqlData)}` },
