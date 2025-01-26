@@ -8,7 +8,7 @@ const Usage = ({ idPrompt, IdConversation, refresh }) => {
   const [currentChatDifference, setCurrentChatDifference] = useState(0)
   const [temperature, setTemperature] = useState(null)
   const [model, setModel] = useState(null)
-  const [error, setError] = useState(null)
+  const [, setError] = useState(null)
 
   const cookieKey = `initialTotal_${IdConversation}` // Chiave univoca per ogni conversazione
   const initialTotalCurrentMonth = parseFloat(Cookies.get(cookieKey) || "0")

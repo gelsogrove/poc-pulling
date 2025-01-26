@@ -5,16 +5,15 @@ daily-milk BE: 80% > todo
 
 ===================== TODO =====================
 
-- dislike togli 20 centimi
-- unlike mettere commento
-- salviamo le conversazioni
-- pulire codice funzioni dengfo utils
+- chat price funziona solo se apro il pannello?
+- &issuer=Poulin Secretkey` (nome app facciamo env)
 - heroku e se ho piu' chatbots?
 - tabla usage mettere sales-reader
 - manage users
 - user admin e user normale
-- &issuer=Poulin Secretkey`
-- mettere seconda chat libera
+- salviamo le conversazioni
+- pulire codice funzioni dengfo utils
+- mettere seconda chat libera e vediamo se va tutto
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - come gestiamo no surprice ne Heroku ?

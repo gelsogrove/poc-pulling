@@ -32,10 +32,6 @@ const ChatHistory = ({ msgIds, username, messages, onDeleteChat }) => {
           >
             🗑️
           </button>
-
-          <button className="comment-chat-button" title="Comment">
-            ✏️
-          </button>
         </div>
       </div>
       <div className="chat-history">

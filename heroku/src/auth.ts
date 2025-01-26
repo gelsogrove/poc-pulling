@@ -6,6 +6,10 @@ import { v4 as uuidv4 } from "uuid" // Importa uuid
 import { pool } from "../server.js" // Importa il pool dal file principale
 import { getUserIdByToken } from "./validateUser.js"
 
+import dotenv from "dotenv"
+
+dotenv.config() // Carica le variabili d'ambiente dal file .env
+
 const authRouter = Router()
 
 const validateRequest = async (req: any, res: any): Promise<string | null> => {
@@ -80,7 +84,7 @@ const loginHandler: RequestHandler = async (req, res) => {
 
 // Handler per la registrazione
 const registerHandler: RequestHandler = async (req, res) => {
-  const { username, name, surname, password, email } = req.body // Estrae email dal corpo della richiesta
+  const { username, name, surname, password, email } = req.body
 
   // Controlla se l'utente esiste già nel database
   const { rows } = await pool.query("SELECT * FROM users WHERE username = $1", [
@@ -94,13 +98,14 @@ const registerHandler: RequestHandler = async (req, res) => {
   // Genera il segreto OTP
   const secret = speakeasy.generateSecret({ length: 20 })
 
-  // Genera l'URL otpauth con un nome specifico
-  const otpauthUrl = `otpauth://totp/${username}?secret=${secret.base32}&issuer=Poulin Secretkey` // Sostituisci "NomeDelServizio" con il nome desiderato
+  // Genera l'URL otpauth utilizzando la variabile APP_NAME
+  const appName = process.env.APP_NAME || "DefaultAppName"
+  const otpauthUrl = `otpauth://totp/${username}?secret=${secret.base32}&issuer=${appName}`
 
   // Cripta la password
-  const hashedPassword = await bcrypt.hash(password, 10) // Usa bcrypt per criptare la password
+  const hashedPassword = await bcrypt.hash(password, 10)
 
-  // Inserisci utente con il segreto OTP nel database
+  // Inserisci l'utente nel database
   const result = await pool.query(
     "INSERT INTO users (username, name, surname, password, expire_date, role, otp_secret) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING userId, username, name, role",
     [username, name, surname, hashedPassword, null, null, secret.base32]
@@ -116,7 +121,6 @@ const registerHandler: RequestHandler = async (req, res) => {
     name,
   })
 }
-
 // Handler per la verifica dell'OTP
 const verifyOtpHandler: RequestHandler = async (req, res) => {
   const { userId, otpCode } = req.body // Estrae username e OTP dal corpo della richiesta
