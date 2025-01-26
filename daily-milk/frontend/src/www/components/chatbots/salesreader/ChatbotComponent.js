@@ -98,7 +98,8 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
         {
           name: Cookies.get("name"),
           conversationId: IdConversation,
-          messages: sanitizedHistory,
+          //messages: sanitizedHistory,
+          messages,
           idPrompt,
         },
         { headers }
