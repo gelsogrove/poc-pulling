@@ -47,8 +47,8 @@ unlikeRouter.post(
       const conversationHistoryString = JSON.stringify(conversationHistory)
 
       const query = `
-      INSERT INTO unlike (conversationId, msgId, dataTime, conversationHistory,idPrompt)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO unlike (conversationId, msgId, dataTime, conversationHistory,idPrompt,userId)
+      VALUES ($1, $2, $3, $4, $5, $6)
     `
       const values = [
         conversationId,
@@ -56,7 +56,11 @@ unlikeRouter.post(
         dataTime,
         conversationHistoryString,
         idPrompt,
+        userId,
       ]
+
+      const fullQuery = query.replace(/\$1/g, `'${values[0]}'`)
+      console.log(fullQuery)
 
       await pool.query(query, values)
 
@@ -88,7 +92,7 @@ unlikeRouter.get("/", async (req: Request, res: Response): Promise<void> => {
 
     // Genera una query completa per il debug
     const fullQuery = query.replace(/\$1/g, `'${values[0]}'`)
-    console.log("Generated query for testing:", fullQuery)
+    console.log(fullQuery)
 
     const result = await pool.query(query, values)
 
@@ -120,6 +124,12 @@ unlikeRouter.delete(
       DELETE FROM unlike
       WHERE idUnlike = $1
     `
+
+      // Genera una query completa per il debug
+      const values = [id]
+      const fullQuery = query.replace(/\$1/g, `'${values[0]}'`)
+      console.log(fullQuery)
+
       const result = await pool.query(query, [id])
 
       if (result.rowCount === 0) {

@@ -73,13 +73,9 @@ const handleResponse: RequestHandler = async (req, res) => {
         return
       } catch (analysisError) {
         console.error("Error fetching analysis data:", analysisError)
-<<<<<<< HEAD
-        res.status(200).json({ message: analysisError })
-=======
         res.status(200).json({
           response: "Failed to fetch analysis data.",
         })
->>>>>>> main
         return
       }
     }
@@ -187,14 +183,7 @@ const handleResponse: RequestHandler = async (req, res) => {
       return
     }
   } catch (error) {
-<<<<<<< HEAD
-    console.error("Error in handleChat1:", error)
-
-    res.status(200).json({ message: error })
-=======
-    console.log("******** ERROR **********", error)
     res.status(200).json({ response: "error:" + error })
->>>>>>> main
   }
 }
 

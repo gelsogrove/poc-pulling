@@ -5,7 +5,6 @@ daily-milk BE: 80% > todo
 
 ===================== TODO =====================
 
-- update and push other branch
 - heroku e se ho piu' chatbots?
 - salviamo le conversazioni
 - user admin e user normale admin sessions
@@ -13,8 +12,9 @@ daily-milk BE: 80% > todo
 - &issuer=Poulin Secretkey`
 - dislike togli 20 centimi
 - mettere seconda chat...
-- funzione createAscii deve essere 1
-- conservare fn sanitizedHistory
+  userId nel diskike
+- usage non va se chiudo la chat
+- tabla usage mettere sales-reader
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - come gestiamo no surprice ne Heroku ?
