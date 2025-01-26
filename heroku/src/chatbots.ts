@@ -151,10 +151,7 @@ const handleResponse: RequestHandler = async (req, res) => {
 
       /* 2 PASSAGGIO */
       if (sqlData.length === 1) {
-        console.log(
-          "Second pass: creating a complete sentence for COUNT results.",
-          sqlQuery
-        )
+        console.log("**** generateDetailedSentence ***", sqlQuery)
 
         // Chiamata alla funzione per generare una frase dettagliata
         const detailedSentence = await generateDetailedSentence(
@@ -162,7 +159,8 @@ const handleResponse: RequestHandler = async (req, res) => {
           sqlData,
           temperature,
           OPENROUTER_API_URL,
-          OPENROUTER_HEADERS
+          OPENROUTER_HEADERS,
+          userMessage
         )
 
         res.status(200).json({

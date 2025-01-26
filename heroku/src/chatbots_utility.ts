@@ -106,18 +106,20 @@ export const generateDetailedSentence = async (
   sqlData: any,
   temperature: any,
   OPENROUTER_API_URL: any,
-  OPENROUTER_HEADERS: any
+  OPENROUTER_HEADERS: any,
+  userMessage: any
 ) => {
   try {
     // Preparare il payload per OpenRouter
     const requestPayload = {
       model,
       messages: [
+        { role: "user", content: userMessage },
         { role: "system", content: `SQ Result: ${JSON.stringify(sqlData)}` },
         {
           role: "user",
           content:
-            "Please summarize the result of the query in one sentence using the <b> for   important values if we are showing the moeny don't forget to put the $ char.",
+            "Please summarize the result of the query repeating the question so it's more clear  in one sentence using the <b> for   important values if we are showing the moeny don't forget to put the $ char.",
         },
       ],
       max_tokens: 1000,
