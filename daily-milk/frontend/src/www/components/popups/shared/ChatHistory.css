@@ -138,7 +138,7 @@
   cursor: pointer;
   font-size: 20px;
   padding: 5px;
-  margin-left: 90%;
+  margin-left: 400px;
 }
 
 .comment-chat-button {
@@ -179,4 +179,8 @@
 .comment-chat-button:hover::after {
   visibility: visible;
   opacity: 1;
+}
+
+.owner {
+  border: 1px solid red;
 }

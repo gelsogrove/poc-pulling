@@ -5,7 +5,6 @@ daily-milk BE: 80% > todo
 
 ===================== TODO =====================
 
-- update and push other branch
 - heroku e se ho piu' chatbots?
 - salviamo le conversazioni
 - user admin e user normale admin sessions
@@ -13,6 +12,10 @@ daily-milk BE: 80% > todo
 - &issuer=Poulin Secretkey`
 - dislike togli 20 centimi
 - mettere seconda chat...
+  userId nel diskike
+- usage non va se chiudo la chat
+- tabla usage mettere sales-reader
+- unlike non e' html
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - come gestiamo no surprice ne Heroku ?
@@ -20,7 +23,8 @@ daily-milk BE: 80% > todo
 - LOGIN WITH DAILIYMILK (todo)
 - upload (todo)
 - togliere page dall'import e dalla tabella
-- mettere last update nel panell con chiamata ultimo record
+- mettere last update nel panell con chiamata ulti
+  mo record
 - ci sono codice 10040170
 
 ===================== NIC$ TO HAVE =====================
@@ -33,7 +37,7 @@ daily-milk BE: 80% > todo
 ...openrouter (50 euro)
 
 ===================== COMANDI HREOKU =====================
-heroku pg:psql HEROKU_POSTGRESQL_AMBER_URL -a poulin
+
 heroku logs --tail --app poulin
 heroku restart -a poulin
 

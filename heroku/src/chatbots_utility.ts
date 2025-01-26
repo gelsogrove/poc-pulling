@@ -90,7 +90,7 @@ export const sendUsageData = async (
     const values = [day, total, userId, service, idPrompt]
 
     const fullQuery = query.replace(/\$1/g, `'${values[0]}'`)
-    console.log("Generated query for testing:", fullQuery)
+    console.log(fullQuery)
 
     const result = await pool.query(query, values)
 

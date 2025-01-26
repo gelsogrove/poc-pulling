@@ -1,5 +1,7 @@
+import Cookies from "js-cookie"
 import React, { useEffect, useRef, useState } from "react"
-import { createDynamicAsciiTable, handleUnlikeApi } from "./api/MessageList_api"
+import { createDynamicAsciiTable } from "../../shared/utils"
+import { handleUnlikeApi } from "./api/MessageList_api"
 import "./MessageList.css"
 
 const MessageList = ({
@@ -38,13 +40,19 @@ const MessageList = ({
     setShowScrollButton(messages.length > 8)
   }, [messages])
 
-  const handleUnlike = async (msgId, conversationHistory, IdConversation) => {
+  const handleUnlike = async (
+    msgId,
+    conversationHistory,
+    IdConversation,
+    userId
+  ) => {
     try {
       const response = await handleUnlikeApi(
         msgId,
         conversationHistory,
         IdConversation,
-        idPrompt
+        idPrompt,
+        userId
       )
       if (response) {
         const unlikeIcon = document.querySelector(
@@ -166,7 +174,8 @@ const MessageList = ({
                             handleUnlike(
                               msg.id,
                               conversationHistory,
-                              IdConversation
+                              IdConversation,
+                              Cookies.get("userId")
                             )
                           }
                           title="Dislike this answer"

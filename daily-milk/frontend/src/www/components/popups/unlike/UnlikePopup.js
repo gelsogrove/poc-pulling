@@ -29,6 +29,7 @@ const UnlikePopup = ({ idPrompt, onClose }) => {
 
   const handleRowClick = (item) => {
     setSelectedItem(item)
+    console.log(item)
   }
 
   const handleDeleteChat = async () => {
@@ -107,6 +108,7 @@ const UnlikePopup = ({ idPrompt, onClose }) => {
                 <div>
                   <ChatHistory
                     msgIds={[selectedItem.msgid]} // Passa un array contenente il msgId
+                    userId={[selectedItem.userId]}
                     messages={JSON.parse(selectedItem.conversationhistory)}
                     onDeleteChat={handleDeleteChat}
                   />
