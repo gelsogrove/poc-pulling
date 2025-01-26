@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from "react"
 import "./ChatHistory.css"
 
-export const createDynamicAsciiTable = (data, nonFormattedFields = []) => {
+export const createDynamicAsciiTable = (data) => {
   if (!Array.isArray(data) || data.length === 0) {
     return "No data available..."
   }
+
+  // Campi da non formattare
+  const nonFormattedFields = ["item_number", "description"]
 
   const headers = Object.keys(data[0])
 
