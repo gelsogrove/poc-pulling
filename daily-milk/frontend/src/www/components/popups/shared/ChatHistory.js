@@ -1,62 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
+import { createDynamicAsciiTable } from "../../../components/chatbots/shared/utils"
 import "./ChatHistory.css"
-
-export const createDynamicAsciiTable = (data) => {
-  if (!Array.isArray(data) || data.length === 0) {
-    return "No data available..."
-  }
-
-  // Campi da non formattare
-  const nonFormattedFields = ["item_number", "description"]
-
-  const headers = Object.keys(data[0])
-
-  const formatNumber = (header, value) => {
-    if (nonFormattedFields.includes(header)) {
-      // Non formattare i campi specificati
-      return value
-    }
-    if (!isNaN(value) && value !== null && value !== "") {
-      return parseInt(value, 10).toLocaleString("it-IT")
-    }
-    return value
-  }
-
-  const columnWidths = headers.map((header) =>
-    Math.max(
-      header.length,
-      ...data.map(
-        (row) => String(formatNumber(header, row[header]) || "").length
-      )
-    )
-  )
-
-  const createRow = (row) =>
-    "| " +
-    headers
-      .map((header, i) =>
-        String(formatNumber(header, row[header]) || "").padEnd(columnWidths[i])
-      )
-      .join(" | ") +
-    " |"
-
-  const headerRow = createRow(Object.fromEntries(headers.map((h) => [h, h])))
-  const separatorRow =
-    "+-" + columnWidths.map((width) => "-".repeat(width)).join("-+-") + "-+"
-
-  const dataRows = data.map((row) => createRow(row))
-
-  const table = [
-    separatorRow,
-    headerRow,
-    separatorRow,
-    ...dataRows,
-    separatorRow,
-  ].join("\n")
-
-  return table
-}
-
 const ChatHistory = ({ msgIds, messages, onDeleteChat }) => {
   const [debugModes, setDebugModes] = useState({})
   const chatEndRef = useRef(null)

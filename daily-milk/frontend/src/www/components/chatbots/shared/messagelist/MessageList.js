@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
-import { createDynamicAsciiTable, handleUnlikeApi } from "./api/MessageList_api"
+import { createDynamicAsciiTable } from "../../shared/utils"
+import { handleUnlikeApi } from "./api/MessageList_api"
 import "./MessageList.css"
 
 const MessageList = ({

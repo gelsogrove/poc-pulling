@@ -9,11 +9,6 @@ export const getUserName = () => {
   return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()
 }
 
-/**
- * Updates both `messages` (UI) and `conversationHistory` (for the bot),
- * adding an array of updates in the format:
- * [ { sender, content, role }, ... ]
- */
 export const updateChatState = (messages, conversationHistory, updates) => {
   const updatedMessages = [...messages]
   const updatedHistory = [...conversationHistory]
@@ -46,10 +41,6 @@ export const extractJsonFromMessage = (message) => {
   }
 }
 
-/**
- * Handles a global error, creating an "assistant" error message in both
- * `messages` and `conversationHistory`.
- */
 export const handleError = (error, messages, conversationHistory) => {
   const errorMsg = error.message || "An error occurred."
   const updatedMessages = [
@@ -63,3 +54,9 @@ export const handleError = (error, messages, conversationHistory) => {
 
   return { updatedMessages, updatedHistory }
 }
+
+export const sanitizedHistory = (updatedHistory) =>
+  updatedHistory.map((message) => {
+    const { data, ...rest } = message // Rimuove il campo "data"
+    return rest
+  })

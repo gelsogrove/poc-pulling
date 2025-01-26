@@ -1,5 +1,3 @@
-import axios from "axios"
-import Cookies from "js-cookie"
 import React, { useEffect, useRef, useState } from "react"
 import { v4 as uuidv4 } from "uuid"
 
@@ -8,6 +6,7 @@ import MessageList from "../shared/messagelist/MessageList"
 import Usage from "../usage/Usage"
 import "./ChatbotComponent.css"
 
+import { sendMessageToChatbot } from "./api/chatbot_api"
 import {
   extractJsonFromMessage,
   getUserName,
@@ -17,16 +16,13 @@ import {
 
 const ChatBotComponent = ({ idPrompt, openPanel }) => {
   const [refreshUsage, setRefreshUsage] = useState(false)
-  // Messages displayed in the chat
   const [messages, setMessages] = useState([])
   const [, setData] = useState([])
-  // Actual conversation history sent/received
   const [conversationHistory, setConversationHistory] = useState([])
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef(null)
-  const apiUrl = `${process.env.REACT_APP_API_URL}/chatbot/response`
-  const [IdConversation] = useState(uuidv4()) // Si inizializza una sola volta
+  const [IdConversation] = useState(uuidv4()) // Initialize conversation ID once
 
   // Scroll to the bottom automatically
   const scrollToBottom = () => {
@@ -57,8 +53,6 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
 
   // Function to send a message
   const handleSend = async (message) => {
-    const token = Cookies.get("token")
-
     if (!message.trim()) return
     setInputValue("")
     setIsLoading(true)
@@ -84,27 +78,13 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
     try {
       setRefreshUsage(!refreshUsage)
 
-      const sanitizedHistory = updatedHistory.map((message) => {
-        const { data, ...rest } = message // Rimuove il campo "data"
-        return rest
-      })
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      }
-
-      const botResponse = await axios.post(
-        apiUrl,
-        {
-          name: Cookies.get("name"),
-          conversationId: IdConversation,
-          messages: updatedHistory,
-          idPrompt,
-        },
-        { headers }
+      const botResponse = await sendMessageToChatbot(
+        IdConversation,
+        updatedHistory,
+        idPrompt
       )
 
-      const parsedResponse = extractJsonFromMessage(botResponse.data.response)
+      const parsedResponse = extractJsonFromMessage(botResponse.response)
       setData(botResponse?.data)
 
       const responseText = parsedResponse || "I couldn’t understand that."
@@ -127,23 +107,17 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
       })
 
       // Update conversation history
-
-      setConversationHistory((prevHistory) => {
-        // Inizia con gli elementi obbligatori
-        const newHistory = [
-          ...prevHistory,
-          {
-            id,
-            role: "assistant",
-            content: responseText,
-            triggerAction: botResponse?.data?.triggerAction,
-            query: botResponse?.data?.query,
-            data: botResponse?.data?.data,
-          },
-        ]
-
-        return newHistory
-      })
+      setConversationHistory((prevHistory) => [
+        ...prevHistory,
+        {
+          id,
+          role: "assistant",
+          content: responseText,
+          triggerAction: botResponse?.data?.triggerAction,
+          query: botResponse?.data?.query,
+          data: botResponse?.data?.data,
+        },
+      ])
     } catch (error) {
       console.error("Error in handleSend:", error)
       const { updatedMessages: errMsgs, updatedHistory: errHist } = handleError(

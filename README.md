@@ -13,6 +13,8 @@ daily-milk BE: 80% > todo
 - &issuer=Poulin Secretkey`
 - dislike togli 20 centimi
 - mettere seconda chat...
+- funzione createAscii deve essere 1
+- conservare fn sanitizedHistory
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - come gestiamo no surprice ne Heroku ?
