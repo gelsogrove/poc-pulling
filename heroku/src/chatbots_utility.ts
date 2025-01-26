@@ -115,11 +115,11 @@ export const generateDetailedSentence = async (
       model,
       messages: [
         { role: "user", content: userMessage },
-        { role: "system", content: `SQ Result: ${JSON.stringify(sqlData)}` },
+        { role: "system", content: `Result: ${JSON.stringify(sqlData)}` },
         {
           role: "user",
           content:
-            "Please summarize the result of the query repeating the question so it's more clear  in one sentence using the <b> for   important values if we are showing the moeny don't forget to put the $ char.",
+            "Please summarize the result of the query repeating the question so it's more clear  in one sentence using the <b> for   important values if we are showing the moeny don't forget to put the $ char , AGGIUNGO ANCHE CHE I NUMERI DEVONO AVERE LE MIGLIAIA ES 2.676",
         },
       ],
       max_tokens: 1000,
