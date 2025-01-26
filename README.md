@@ -5,17 +5,17 @@ daily-milk BE: 80% > todo
 
 ===================== TODO =====================
 
-- heroku e se ho piu' chatbots?
-- salviamo le conversazioni
-- user admin e user normale admin sessions
-- pulire codice funzioni dengfo utils
-- &issuer=Poulin Secretkey`
+- unlike non e' html
 - dislike togli 20 centimi
-- mettere seconda chat...
-  userId nel diskike
+- salviamo le conversazioni
+- unlike mettere commento
+- user admin e user normale admin sessions
+- &issuer=Poulin Secretkey`
 - usage non va se chiudo la chat
 - tabla usage mettere sales-reader
-- unlike non e' html
+- mettere seconda chat libera
+- pulire codice funzioni dengfo utils
+- heroku e se ho piu' chatbots?
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - come gestiamo no surprice ne Heroku ?
@@ -25,7 +25,6 @@ daily-milk BE: 80% > todo
 - togliere page dall'import e dalla tabella
 - mettere last update nel panell con chiamata ulti
   mo record
-- ci sono codice 10040170
 
 ===================== NIC$ TO HAVE =====================
 
