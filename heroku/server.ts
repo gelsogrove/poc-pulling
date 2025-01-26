@@ -51,6 +51,7 @@ app.use(
           "'self'",
           "https://ai.dairy-tools.com/",
           "http://localhost:3000",
+          "http://localhost:3001",
         ],
       },
     },
