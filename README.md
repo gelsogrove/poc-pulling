@@ -23,7 +23,8 @@ daily-milk BE: 80% > todo
 - LOGIN WITH DAILIYMILK (todo)
 - upload (todo)
 - togliere page dall'import e dalla tabella
-- mettere last update nel panell con chiamata ultimo record
+- mettere last update nel panell con chiamata ulti
+  mo record
 - ci sono codice 10040170
 
 ===================== NIC$ TO HAVE =====================
