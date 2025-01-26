@@ -10,8 +10,12 @@ const unlikeRouter = Router()
 unlikeRouter.post(
   "/new",
   async (req: Request, res: Response): Promise<void> => {
+    console.log("SQL14")
+
     const { userId, token } = await validateRequest(req, res)
     if (!userId) return
+
+    console.log("SQL14", userId)
 
     const { conversationId, msgId, dataTime, conversationHistory, idPrompt } =
       req.body
@@ -21,9 +25,9 @@ unlikeRouter.post(
       return
     }
 
+    console.log("SQL30")
     try {
-      await validateUser(userId)
-
+      console.log("SQL31")
       const checkQuery = `
       SELECT 1 FROM unlike
       WHERE conversationId = $1 AND msgid = $2
@@ -46,6 +50,7 @@ unlikeRouter.post(
 
       const conversationHistoryString = JSON.stringify(conversationHistory)
 
+      console.log("SQL53")
       const query = `
       INSERT INTO unlike (conversationId, msgId, dataTime, conversationHistory,idPrompt,userid)
       VALUES ($1, $2, $3, $4, $5, $6)
@@ -60,7 +65,7 @@ unlikeRouter.post(
       ]
 
       const fullQuery = query.replace(/\$1/g, `'${values[0]}'`)
-      console.log(fullQuery)
+      console.log("SQL", fullQuery)
 
       await pool.query(query, values)
 
