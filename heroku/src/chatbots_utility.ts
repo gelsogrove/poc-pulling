@@ -113,16 +113,11 @@ export const generateDetailedSentence = async (
     const requestPayload = {
       model,
       messages: [
-        {
-          role: "system",
-          content:
-            "Generate a clear and complete sentence based on the SQL query results provided below",
-        },
         { role: "system", content: `SQ Result: ${JSON.stringify(sqlData)}` },
         {
           role: "user",
           content:
-            "Please summarize the result of the query in one sentence using the <b> for   important values.",
+            "Please summarize the result of the query in one sentence using the <b> for   important values if we are showing the moeny don't forget to put the $ char.",
         },
       ],
       max_tokens: 1000,
