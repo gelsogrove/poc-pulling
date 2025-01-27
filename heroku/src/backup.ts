@@ -4,7 +4,7 @@ import { Request, Response, Router } from "express"
 import fileUpload, { UploadedFile } from "express-fileupload"
 import fs from "fs"
 import path from "path"
-import { validateRequest } from "./validateUser"
+import { validateRequest } from "./validateUser.js"
 
 const backupRouter = Router()
 
