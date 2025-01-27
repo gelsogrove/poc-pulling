@@ -5,8 +5,8 @@ import express from "express"
 import rateLimit from "express-rate-limit"
 import helmet from "helmet"
 import pkg from "pg"
+//import backupRouter from "../test/backup.tmp/index.js"
 import authRouter from "./src/auth.js"
-import backupRouter from "./src/backup.tmp"
 import chatbotRouter from "./src/chatbots.js"
 import promptRouter from "./src/prompts.js"
 import unlikeRouter from "./src/unlinke.js"
@@ -101,7 +101,7 @@ app.use("/usage", limiter, usageRouter)
 app.use("/prompt", limiter, promptRouter)
 app.use("/chatbot", limiter, chatbotRouter)
 app.use("/unlike", limiter, unlikeRouter)
-app.use("/backup", limiter, backupRouter)
+//app.use("/backup", limiter, backupRouter)
 
 // Forza HTTPS in produzione
 if (process.env.NODE_ENV === "production") {
