@@ -7,7 +7,6 @@ daily-milk BE: 80% > todo
 
 - salviamo le conversazioni
 - statistiche
-
 - tabla usage mettere sales-reader
 - manage users
 - user admin e user normale
@@ -40,6 +39,7 @@ daily-milk BE: 80% > todo
 
 heroku logs --tail --app poulin
 heroku restart -a poulin
+heroku run bash -a poulin
 
 ===================== NEW PROMPT =====================
 
