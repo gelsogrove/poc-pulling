@@ -8,7 +8,7 @@ export const downloadBackup = async () => {
 
   const headers = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`, // Aggiungi il token per l'autenticazione
+    Authorization: `Bearer ${token}`,
   }
 
   try {
