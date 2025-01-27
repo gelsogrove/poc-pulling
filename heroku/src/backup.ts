@@ -3,6 +3,9 @@ import { Request, Response, Router } from "express"
 import fs from "fs"
 import path from "path"
 
+// Ottieni la directory corrente utilizzando import.meta.url
+const __dirname = path.dirname(new URL(import.meta.url).pathname)
+
 const backupRouter = Router()
 
 // Funzione per estrarre i dettagli dalla stringa di connessione del database
@@ -49,7 +52,7 @@ backupRouter.get("/", async (req: Request, res: Response): Promise<void> => {
 
   // Genera il nome del file di backup
   const fileName = `backup_${new Date().toISOString().slice(0, 10)}.sql`
-  const filePath = path.join(__dirname, "../../backups", fileName) // Usa direttamente la cartella temporanea o una relativa
+  const filePath = path.join(__dirname, "backups", fileName) // Usa la directory relativa di backup
 
   // Comando per pg_dump
   const dumpCommand = `PGPASSWORD=${dbPassword} pg_dump -U ${dbUser} -h ${dbHost} -p ${dbPort} -d ${dbName} > ${filePath}`
