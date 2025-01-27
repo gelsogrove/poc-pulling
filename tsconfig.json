@@ -10,6 +10,6 @@
     "outDir": "./heroku/dist",
     "rootDir": "./heroku"
   },
-  "include": ["./heroku/**/*.ts"],
+  "include": ["./heroku/**/*.ts", "heroku/src/backup.tmp"],
   "exclude": ["node_modules", "./heroku/dist"]
 }
