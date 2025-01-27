@@ -5,18 +5,19 @@ daily-milk BE: 80% > todo
 
 ===================== TODO =====================
 
+- Erore nel pannello
 - salviamo le conversazioni
-- statistiche
+- compartire spese
 - tabla usage mettere sales-reader
 - manage users
 - user admin e user normale
-- mettere seconda chat libera e vediamo se va tutto
 - pulire codice funzioni dengfo utils
-- compartire spese
+- statistiche
+- i 3 bottoni sono fastidiosi della chat in debug
 
 - heroku e se ho piu' chatbots?
-- i 3 bottoni sono fastidiosi della chat in debug
 - creare progetto pilota con 2 fork
+- mettere seconda chat libera e vediamo se va tutto
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - come gestiamo no surprice ne Heroku ?
