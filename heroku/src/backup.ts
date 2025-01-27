@@ -26,6 +26,34 @@ const parseDatabaseUrl = (url: string) => {
   }
 }
 
+// Funzione per pulire i file di backup più vecchi di un mese
+const cleanupOldBackups = () => {
+  const backupDir = path.join(__dirname, "backups") // Percorso della cartella di backup
+
+  if (!fs.existsSync(backupDir)) {
+    console.log("La cartella di backup non esiste.")
+    return
+  }
+
+  const files = fs.readdirSync(backupDir) // Ottieni tutti i file nella cartella
+
+  const currentDate = new Date()
+
+  files.forEach((file) => {
+    const filePath = path.join(backupDir, file)
+    const stats = fs.statSync(filePath)
+
+    const fileAgeInMs = currentDate.getTime() - stats.mtime.getTime()
+    const fileAgeInDays = fileAgeInMs / (1000 * 3600 * 24) // Calcola l'età del file in giorni
+
+    if (fileAgeInDays > 30) {
+      // Se il file è più vecchio di 30 giorni
+      console.log(`Cancellando il file: ${file}`)
+      fs.unlinkSync(filePath) // Elimina il file
+    }
+  })
+}
+
 // Handler per il backup del database
 backupRouter.get("/", async (req: Request, res: Response): Promise<void> => {
   const databaseUrl = process.env.HEROKU_POSTGRESQL_AMBER_URL // URL del database
@@ -76,6 +104,9 @@ backupRouter.get("/", async (req: Request, res: Response): Promise<void> => {
       }
 
       fs.unlinkSync(filePath) // Elimina il file dopo il download
+
+      // Esegui la pulizia dei file più vecchi di un mese
+      cleanupOldBackups()
     })
   })
 })
