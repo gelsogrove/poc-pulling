@@ -26,34 +26,6 @@ const parseDatabaseUrl = (url: string) => {
   }
 }
 
-// Funzione per pulire i file di backup più vecchi di un mese
-const cleanupOldBackups = () => {
-  const backupDir = path.join(__dirname, "backups") // Percorso della cartella di backup (modifica questo per essere fuori dal dist)
-
-  if (!fs.existsSync(backupDir)) {
-    console.log("La cartella di backup non esiste.")
-    return
-  }
-
-  const files = fs.readdirSync(backupDir) // Ottieni tutti i file nella cartella
-
-  const currentDate = new Date()
-
-  files.forEach((file) => {
-    const filePath = path.join(backupDir, file)
-    const stats = fs.statSync(filePath)
-
-    const fileAgeInMs = currentDate.getTime() - stats.mtime.getTime()
-    const fileAgeInDays = fileAgeInMs / (1000 * 3600 * 24) // Calcola l'età del file in giorni
-
-    if (fileAgeInDays > 30) {
-      // Se il file è più vecchio di 30 giorni
-      console.log(`Cancellando il file: ${file}`)
-      fs.unlinkSync(filePath) // Elimina il file
-    }
-  })
-}
-
 // Handler per il backup del database
 backupRouter.get("/", async (req: Request, res: Response): Promise<void> => {
   const databaseUrl = process.env.HEROKU_POSTGRESQL_AMBER_URL // URL del database
@@ -78,8 +50,13 @@ backupRouter.get("/", async (req: Request, res: Response): Promise<void> => {
     return
   }
 
-  // Genera il nome del file di backup
-  const fileName = `backup_${new Date().toISOString().slice(0, 10)}.sql`
+  // Ottieni il nome dell'app dal file .env
+  const appName = process.env.APP_NAME || "default" // Se APP_NAME non è definito, usa "default"
+
+  // Genera il nome del file di backup (APP_NAME_YYYY-MM-DD.sql)
+  const currentDate = new Date()
+  const formattedDate = currentDate.toISOString().slice(0, 10) // YYYY-MM-DD
+  const fileName = `${appName}_${formattedDate}.sql` // Usa APP_NAME per il nome del file
 
   // Usa la cartella temporanea /tmp per il backup su Heroku
   const filePath = path.join("/tmp", fileName) // Usando /tmp su Heroku
@@ -105,9 +82,7 @@ backupRouter.get("/", async (req: Request, res: Response): Promise<void> => {
         return
       }
 
-      // Esegui la pulizia dei file più vecchi di un mese
-      cleanupOldBackups() // Pulizia immediata dopo l'invio del backup
-
+      // Elimina il file dal server (dopo che è stato scaricato)
       fs.unlinkSync(filePath) // Elimina il file dopo il download
     })
   })

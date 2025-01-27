@@ -8,8 +8,6 @@ daily-milk BE: 80% > todo
 - salviamo le conversazioni
 - statistiche
 
-- backpup manca il nome del file ? si deve salvare con il nome del chatbots
-
 - tabla usage mettere sales-reader
 - manage users
 - user admin e user normale
