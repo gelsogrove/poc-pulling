@@ -209,7 +209,8 @@ li {
   border: none;
   border-top: 1px solid #ccc; /* Linea grigia chiara */
   height: 2px;
-  width: 100%; /* Assicura che la linea occupi tutta la larghezza del contenitore */
+  width: 98%; /* Assicura che la linea occupi tutta la larghezza del contenitore */
+  margin-top: -5px;
 }
 
 .unlike-icon.selected {

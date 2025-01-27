@@ -132,6 +132,9 @@ const PromptsForm = ({ idPrompt, onClose }) => {
               <option value="aleph-alpha/luminous-supreme">
                 Aleph Alpha Luminous Supreme
               </option>
+              <option value="google/gemini-2.0-flash-thinking-exp">
+                gemini-2.0-flash-thinking-exp
+              </option>
               <option value="nvidia/megatron-11b">NVIDIA Megatron 11B</option>
               <option value="openai/davinci">OpenAI Davinci</option>
               <option value="google/palm-2">Google PaLM 2</option>

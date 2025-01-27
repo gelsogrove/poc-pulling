@@ -6,13 +6,34 @@ import Popup from "../../components/popups/Popup"
 import { LogOut } from "./api/LogoutApi"
 import "./Navbar.css"
 
-import { downloadBackup } from "./api/BackupApi"
+import { downloadBackup, uploadBackup } from "./api/BackupApi"
 
 const handleBackup = async () => {
   const success = await downloadBackup()
   if (!success) {
     alert("Failed to download the backup. Please try again.")
+  } else {
+    console.log("EXPORT DONE")
   }
+}
+
+const handleImport = async () => {
+  const input = document.createElement("input")
+  input.type = "file"
+  input.accept = ".zip"
+  input.onchange = async (event) => {
+    const file = event.target.files[0]
+    if (!file) return
+
+    const success = await uploadBackup(file)
+    if (success) {
+      alert("Backup imported successfully.")
+      console.log("IMPORT DONE")
+    } else {
+      alert("Failed to import the backup. Please try again.")
+    }
+  }
+  input.click()
 }
 
 const Navbar = () => {
@@ -69,10 +90,15 @@ const Navbar = () => {
         </button>
         {/* Pulsante per il backup */}
         <button className="btn" onClick={handleBackup}>
-          <i className="fas fa-database"></i>
-          <div className="tooltip">Backup</div>
+          <i className="fas fa-file-export"></i>
+          <div className="tooltip">Export</div>
         </button>
-        >{/* Pulsante per il logout */}
+        {/* Pulsante per l'import */}
+        <button className="btn" onClick={handleImport}>
+          <i className="fas fa-file-import"></i>
+          <div className="tooltip">Import</div>
+        </button>
+        {/* Pulsante per il logout */}
         <button onClick={clearAllCookies} className="btn logout-btn">
           <i className="fa-solid fa-right-from-bracket"></i>
           <div className="tooltip">Logout</div>

@@ -24,8 +24,11 @@ const parseDatabaseUrl = (url: string) => {
   }
 }
 
-// Handler per il backup del database
-backupRouter.get("/", async (req: Request, res: Response): Promise<void> => {
+// Handler per scaricare il backup del database
+const handleDownloadBackup = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   // Validazione dell'utente prima di procedere
   const userId = await validateRequest(req, res)
   if (!userId) return // Se l'utente non è valido, interrompi l'esecuzione
@@ -86,6 +89,65 @@ backupRouter.get("/", async (req: Request, res: Response): Promise<void> => {
       }
     })
   })
-})
+}
+
+// Handler per importare un backup nel database
+const handleImportBackup = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  // Validazione dell'utente prima di procedere
+  const userId = await validateRequest(req, res)
+  if (!userId) return // Se l'utente non è valido, interrompi l'esecuzione
+
+  const databaseUrl = process.env.HEROKU_POSTGRESQL_AMBER_URL // URL del database
+
+  if (!databaseUrl) {
+    res.status(500).json({ message: "Database URL is missing" })
+    return
+  }
+
+  const { file } = req.body // Assumi che il file venga passato nel body della richiesta
+
+  if (!file) {
+    res.status(400).json({ message: "Backup file is missing" })
+    return
+  }
+
+  // Estrai i dettagli della connessione dalla stringa di connessione
+  let dbUser, dbPassword, dbHost, dbPort, dbName
+  try {
+    ;({
+      user: dbUser,
+      password: dbPassword,
+      host: dbHost,
+      port: dbPort,
+      dbname: dbName,
+    } = parseDatabaseUrl(databaseUrl))
+  } catch (err) {
+    res.status(500).json({ message: "Error parsing DATABASE_URL." })
+    return
+  }
+
+  // Comando per importare il file di backup nel database
+  const importCommand = `PGPASSWORD=${dbPassword} psql -U ${dbUser} -h ${dbHost} -p ${dbPort} -d ${dbName} < "${file}"`
+
+  // Esegui il comando di importazione
+  exec(importCommand, (error: Error | null) => {
+    if (error) {
+      console.error("Error during import:", error.message)
+      res
+        .status(500)
+        .json({ message: "Errore durante l'importazione del database." })
+      return
+    }
+
+    res.status(200).json({ message: "Importazione completata con successo." })
+  })
+}
+
+// Definisci le rotte
+backupRouter.get("/", handleDownloadBackup)
+backupRouter.post("/import", handleImportBackup)
 
 export default backupRouter
