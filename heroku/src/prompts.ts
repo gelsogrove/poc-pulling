@@ -2,11 +2,7 @@ import { exec } from "child_process"
 import { Request, Response, Router } from "express"
 import fs from "fs"
 import path from "path"
-
-// Importa la funzione per validare l'utente
-import { validateRequest } from "./validateUser.js" // Assicurati che il percorso sia corretto
-
-const __dirname = path.dirname(new URL(import.meta.url).pathname)
+import { validateRequest } from "./validateUser.js"
 
 const backupRouter = Router()
 
@@ -80,16 +76,19 @@ backupRouter.get("/", async (req: Request, res: Response): Promise<void> => {
       return
     }
 
+    // Imposta manualmente l'header per garantire il nome corretto del file
+    res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`)
+    res.setHeader("Content-Type", "application/octet-stream")
+
     // Invia il file al client
-    res.download(filePath, fileName, (err: Error) => {
+    res.sendFile(filePath, (err: Error) => {
       if (err) {
         console.error("Error sending file:", err.message)
         res.status(500).json({ message: "Errore durante l'invio del file." })
-        return
+      } else {
+        // Elimina il file dal server dopo l'invio
+        fs.unlinkSync(filePath)
       }
-
-      // Elimina il file dal server (dopo che è stato scaricato)
-      fs.unlinkSync(filePath) // Elimina il file dopo il download
     })
   })
 })
