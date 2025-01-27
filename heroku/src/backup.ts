@@ -80,6 +80,12 @@ const handleExport = async (req: Request, res: Response): Promise<void> => {
 
     output.on("close", () => {
       console.log("EXPORT DONE")
+
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${appName}_${currentDate}.zip"`
+      )
+      res.setHeader("Content-Type", "application/zip")
       res.download(zipFilePath, `${appName}_${currentDate}.zip`, (err) => {
         if (err) {
           console.error("Error sending file:", err.message)
