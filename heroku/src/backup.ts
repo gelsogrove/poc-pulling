@@ -16,15 +16,15 @@ backupRouter.use(
   })
 )
 
-const parseDatabaseUrl = (
-  url: string
-): {
+interface DatabaseConfig {
   user: string
   password: string
   host: string
   port: string
   dbname: string
-} => {
+}
+
+const parseDatabaseUrl = (url: string): DatabaseConfig => {
   const regex = /^postgres:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.+)$/
   const matches = url.match(regex)
 
@@ -51,15 +51,9 @@ const handleExport = async (req: Request, res: Response): Promise<void> => {
     return
   }
 
-  let dbUser, dbPassword, dbHost, dbPort, dbName
+  let dbConfig: DatabaseConfig
   try {
-    ;({
-      user: dbUser,
-      password: dbPassword,
-      host: dbHost,
-      port: dbPort,
-      dbname: dbName,
-    } = parseDatabaseUrl(databaseUrl))
+    dbConfig = parseDatabaseUrl(databaseUrl)
   } catch (err) {
     res.status(500).json({ message: "Error parsing DATABASE_URL." })
     return
@@ -70,7 +64,7 @@ const handleExport = async (req: Request, res: Response): Promise<void> => {
   const sqlFilePath = path.join("/tmp", fileName)
   const zipFilePath = path.join("/tmp", `backup_${currentDate}.zip`)
 
-  const dumpCommand = `PGPASSWORD=${dbPassword} pg_dump -U ${dbUser} -h ${dbHost} -p ${dbPort} -d ${dbName} > "${sqlFilePath}"`
+  const dumpCommand = `PGPASSWORD=${dbConfig.password} pg_dump -U ${dbConfig.user} -h ${dbConfig.host} -p ${dbConfig.port} -d ${dbConfig.dbname} > "${sqlFilePath}"`
 
   exec(dumpCommand, (error) => {
     if (error) {
@@ -90,7 +84,6 @@ const handleExport = async (req: Request, res: Response): Promise<void> => {
           res.status(500).json({ message: "Error sending the ZIP file." })
         }
 
-        // Rimuove i file temporanei
         fs.unlinkSync(sqlFilePath)
         fs.unlinkSync(zipFilePath)
       })
@@ -107,7 +100,6 @@ const handleExport = async (req: Request, res: Response): Promise<void> => {
   })
 }
 
-// Importa il backup
 const handleImport = async (req: Request, res: Response): Promise<void> => {
   const userId = await validateRequest(req, res)
   if (!userId) return
@@ -118,15 +110,9 @@ const handleImport = async (req: Request, res: Response): Promise<void> => {
     return
   }
 
-  let dbUser, dbPassword, dbHost, dbPort, dbName
+  let dbConfig: DatabaseConfig
   try {
-    ;({
-      user: dbUser,
-      password: dbPassword,
-      host: dbHost,
-      port: dbPort,
-      dbname: dbName,
-    } = parseDatabaseUrl(databaseUrl))
+    dbConfig = parseDatabaseUrl(databaseUrl)
   } catch (err) {
     res.status(500).json({ message: "Error parsing DATABASE_URL." })
     return
@@ -147,7 +133,7 @@ const handleImport = async (req: Request, res: Response): Promise<void> => {
       return
     }
 
-    const importCommand = `PGPASSWORD=${dbPassword} psql -U ${dbUser} -h ${dbHost} -p ${dbPort} -d ${dbName} < "${uploadPath}"`
+    const importCommand = `PGPASSWORD=${dbConfig.password} psql -U ${dbConfig.user} -h ${dbConfig.host} -p ${dbConfig.port} -d ${dbConfig.dbname} < "${uploadPath}"`
 
     exec(importCommand, (error) => {
       fs.unlinkSync(uploadPath)
