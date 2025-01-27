@@ -8,10 +8,9 @@ import { validateRequest } from "./validateUser"
 
 const backupRouter = Router()
 
-// Configura express-fileupload
 backupRouter.use(
   fileUpload({
-    limits: { fileSize: 50 * 1024 * 1024 }, // Limite 50MB
+    limits: { fileSize: 50 * 1024 * 1024 }, // Limite di 50MB
     useTempFiles: true,
     tempFileDir: "/tmp/",
   })
@@ -42,7 +41,6 @@ const parseDatabaseUrl = (
   }
 }
 
-// Esporta il database in formato ZIP
 const handleExport = async (req: Request, res: Response): Promise<void> => {
   const userId = await validateRequest(req, res)
   if (!userId) return
@@ -92,6 +90,7 @@ const handleExport = async (req: Request, res: Response): Promise<void> => {
           res.status(500).json({ message: "Error sending the ZIP file." })
         }
 
+        // Rimuove i file temporanei
         fs.unlinkSync(sqlFilePath)
         fs.unlinkSync(zipFilePath)
       })
