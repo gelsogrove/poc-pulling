@@ -3,8 +3,11 @@ import { Request, Response, Router } from "express"
 import fs from "fs"
 import path from "path"
 
-// Ottieni la directory corrente utilizzando import.meta.url
+// Ottieni la directory corrente usando `import.meta.url`
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
+
+// Definisci il percorso della cartella di backup fuori da dist
+const backupDir = path.join(__dirname, "../../backups") // Cartella 'backups' fuori dalla cartella dist
 
 const backupRouter = Router()
 
@@ -28,8 +31,6 @@ const parseDatabaseUrl = (url: string) => {
 
 // Funzione per pulire i file di backup più vecchi di un mese
 const cleanupOldBackups = () => {
-  const backupDir = path.join(__dirname, "backups") // Percorso della cartella di backup
-
   if (!fs.existsSync(backupDir)) {
     console.log("La cartella di backup non esiste.")
     return
@@ -80,7 +81,7 @@ backupRouter.get("/", async (req: Request, res: Response): Promise<void> => {
 
   // Genera il nome del file di backup
   const fileName = `backup_${new Date().toISOString().slice(0, 10)}.sql`
-  const filePath = path.join(__dirname, "backups", fileName) // Usa la directory relativa di backup
+  const filePath = path.join(backupDir, fileName) // Usa la cartella di backup fuori da dist
 
   // Comando per pg_dump
   const dumpCommand = `PGPASSWORD=${dbPassword} pg_dump -U ${dbUser} -h ${dbHost} -p ${dbPort} -d ${dbName} > ${filePath}`
@@ -103,10 +104,10 @@ backupRouter.get("/", async (req: Request, res: Response): Promise<void> => {
         return
       }
 
-      fs.unlinkSync(filePath) // Elimina il file dopo il download
-
       // Esegui la pulizia dei file più vecchi di un mese
-      cleanupOldBackups()
+      cleanupOldBackups() // Pulizia immediata dopo l'invio del backup
+
+      fs.unlinkSync(filePath) // Elimina il file dopo il download
     })
   })
 })
