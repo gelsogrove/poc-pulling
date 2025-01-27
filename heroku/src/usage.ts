@@ -1,49 +1,9 @@
 import { Request, Response, Router } from "express"
 import { pool } from "../server.js" // Importa il pool dal file principale
 
-import { validateToken, validateUser } from "./validateUser.js"
+import { validateRequest } from "./validateUser.js"
 
 const usageRouter = Router()
-
-const validateRequest = async (
-  req: Request,
-  res: Response
-): Promise<string | null> => {
-  const authHeader = req.headers["authorization"] as string | undefined
-  const token = authHeader?.startsWith("Bearer ")
-    ? authHeader.split(" ")[1]
-    : null
-
-  if (!token) {
-    res.status(401).json({ message: "Missing or invalid token." })
-    return null
-  }
-
-  try {
-    const userId = await validateToken(token)
-    if (!userId) {
-      res.status(403).json({ message: "Invalid or expired token." })
-      return null
-    }
-
-    const isUserValid = await validateUser(userId)
-    if (!isUserValid) {
-      res.status(403).json({ message: "User is not authorized." })
-      return null
-    }
-
-    return userId
-  } catch (error) {
-    console.error(
-      "Error during token validation:",
-      error instanceof Error ? error.message : error
-    )
-    res
-      .status(500)
-      .json({ message: "Internal server error during validation." })
-    return null
-  }
-}
 
 const createUsageHandler = async (
   req: Request,
