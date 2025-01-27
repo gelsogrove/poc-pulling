@@ -4,9 +4,8 @@ body {
   margin: 0;
 
   /* Imposta l'immagine di sfondo */
-  background-image: url("../public/images/background.jpg");
   background-size: cover; /* L'immagine copre l'intero sfondo */
-  background-repeat: no-repeat; /* Impedisce che l'immagine si ripeta */
+  background-repeat: repeat; /* Impedisce che l'immagine si ripeta */
 
   /* Imposta un colore di sfondo nero */
   background-color: black; /* Colore di sfondo nero */
@@ -20,10 +19,11 @@ body {
 
 .main-content {
   flex: 1; /* Permette al contenuto di espandersi */
-  margin-top: 40px;
+  margin: 10px;
+  height: 100%;
 }
 
 .footer {
-  padding: 20px; /* Spaziatura interna del footer */
+  padding: 0px; /* Spaziatura interna del footer */
   text-align: center; /* Centra il testo nel footer */
 }

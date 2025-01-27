@@ -6,6 +6,15 @@ import Popup from "../../components/popups/Popup"
 import { LogOut } from "./api/LogoutApi"
 import "./Navbar.css"
 
+import { downloadBackup } from "./api/BackupApi"
+
+const handleBackup = async () => {
+  const success = await downloadBackup()
+  if (!success) {
+    alert("Failed to download the backup. Please try again.")
+  }
+}
+
 const Navbar = () => {
   const navigate = useNavigate()
 
@@ -36,7 +45,7 @@ const Navbar = () => {
     LogOut()
 
     setTimeout(() => {
-      //clear all
+      // Clear all cookies
       document.cookie.split(";").forEach((cookie) => {
         const name = cookie.split("=")[0].trim()
         document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`
@@ -53,11 +62,17 @@ const Navbar = () => {
       </Popup>
 
       <nav className="navbar">
+        {/* Pulsante per le fatture */}
         <button className="btn" onClick={() => openPopup("invoices")}>
           <i className="fas fa-file-invoice"></i>
           <div className="tooltip">Invoices</div>
         </button>
-
+        {/* Pulsante per il backup */}
+        <button className="btn" onClick={handleBackup}>
+          <i className="fas fa-database"></i>
+          <div className="tooltip">Backup</div>
+        </button>
+        >{/* Pulsante per il logout */}
         <button onClick={clearAllCookies} className="btn logout-btn">
           <i className="fa-solid fa-right-from-bracket"></i>
           <div className="tooltip">Logout</div>

@@ -5,14 +5,16 @@ daily-milk BE: 80% > todo
 
 ===================== TODO =====================
 
-- chat price funziona solo se apro il pannello?
+- invoice non funziona
+- salviamo le conversazioni
 - heroku e se ho piu' chatbots?
 - tabla usage mettere sales-reader
 - manage users
 - user admin e user normale
-- salviamo le conversazioni
-- pulire codice funzioni dengfo utils
 - mettere seconda chat libera e vediamo se va tutto
+- pulire codice funzioni dengfo utils
+- statistiche
+- compartire spese
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - come gestiamo no surprice ne Heroku ?
@@ -20,7 +22,7 @@ daily-milk BE: 80% > todo
 - LOGIN WITH DAILIYMILK (todo)
 - upload (todo)
 - togliere page dall'import e dalla tabella
-- mettere last update nel panell
+- mettere last update nel panello
 
 ===================== NIC$ TO HAVE =====================
 

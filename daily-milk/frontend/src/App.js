@@ -2,7 +2,6 @@ import React from "react"
 import { Navigate, Route, Routes } from "react-router-dom"
 import "./App.css"
 import ProtectedRoute from "./ProtectedRoute"
-import Footer from "./www/components/footer/Footer"
 import Home from "./www/pages/home/Home"
 import Login from "./www/pages/login/Login"
 
@@ -23,7 +22,6 @@ const App = () => {
           <Route path="/" element={<Navigate to="/login" />} />
         </Routes>
       </div>
-      <Footer />
     </div>
   )
 }

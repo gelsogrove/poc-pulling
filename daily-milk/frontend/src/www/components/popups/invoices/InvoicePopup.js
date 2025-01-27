@@ -1,9 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import {
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from "chart.js"
 import React, { useEffect, useState } from "react"
 import { Bar } from "react-chartjs-2"
 import { fetchUsageData } from "../../chatbots/usage/api/utils_api"
 import monthlyData from "./api/monthlyData_api"
 import "./InvoicePopup.css"
+
+// Register Chart.js components
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const InvoicePopup = ({ onClose }) => {
   const [data, setData] = useState([])
@@ -36,7 +48,7 @@ const InvoicePopup = ({ onClose }) => {
     const getData = async () => {
       const usageData = await fetchUsageData()
 
-      // Ordina i mesi per anno e mese
+      // Sort months by year and month
       usageData.lastmonths.sort((a, b) => {
         const dateA = new Date(
           `${a.year}-${monthNames.indexOf(a.month) + 1}-01`
@@ -52,7 +64,7 @@ const InvoicePopup = ({ onClose }) => {
     getData()
   }, [])
 
-  // Preparazione dei dati per il grafico
+  // Prepare data for the chart
   const barData = {
     labels: usageData?.lastmonths
       ? usageData.lastmonths
@@ -74,7 +86,7 @@ const InvoicePopup = ({ onClose }) => {
     ],
   }
 
-  // Opzioni per il grafico
+  // Chart options
   const barOptions = {
     responsive: true,
     maintainAspectRatio: false,

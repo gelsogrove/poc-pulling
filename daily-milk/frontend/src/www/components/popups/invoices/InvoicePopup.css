@@ -54,3 +54,35 @@
 .btnInvoice :hover {
   background-color: #005f73; /* Colore di sfondo al passaggio del mouse per il pulsante */
 }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: #f4f4f4;
+  position: sticky; /* Mantiene l'header fisso */
+  top: 0;
+  z-index: 1;
+}
+
+tbody {
+  display: block;
+  max-height: 200px; /* Altezza massima del corpo della tabella */
+  overflow-y: auto; /* Scorrimento verticale */
+  width: 100%;
+}
+
+tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed; /* Per allineare correttamente le colonne */
+}
+
+th,
+td {
+  padding: 8px 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+}

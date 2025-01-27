@@ -15,12 +15,12 @@
   border: 2px solid #fff; /* Bordo bianco */
   border-radius: 50%; /* Cerchio perfetto */
   cursor: pointer;
-  font-size: 18px; /* Dimensione dell'icona */
+  font-size: 16px; /* Ridotta dimensione del font */
   display: flex;
   align-items: center; /* Centra l'icona verticalmente */
   justify-content: center; /* Centra l'icona orizzontalmente */
-  width: 50px; /* Larghezza del pulsante */
-  height: 50px; /* Altezza del pulsante */
+  width: 40px; /* Ridotta larghezza del pulsante */
+  height: 40px; /* Ridotta altezza del pulsante */
   color: #333; /* Colore dell'icona */
   transition: transform 0.3s ease; /* Effetto all'hover */
 }
@@ -30,10 +30,15 @@
   transform: scale(1.1); /* Ingrandisce leggermente il pulsante */
 }
 
+/* Icona all'interno dei pulsanti */
+.navbar .btn i {
+  font-size: 18px; /* Dimensione ridotta dell'icona */
+}
+
 /* Tooltip per i pulsanti */
 .navbar .btn .tooltip {
   font-size: 12px; /* Testo più piccolo per i tooltip */
-  margin-top: 5px; /* Spazio tra l'icona e il tooltip */
+  margin-top: -15px; /* Spazio tra l'icona e il tooltip */
   color: #fff; /* Colore del tooltip */
   text-align: center;
 }
@@ -48,5 +53,11 @@
   .navbar .btn {
     margin-left: 0;
     margin-top: 10px; /* Spazio tra i pulsanti su mobile */
+    width: 35px; /* Pulsanti più piccoli su mobile */
+    height: 35px;
+  }
+
+  .navbar .btn i {
+    font-size: 14px; /* Icone più piccole su mobile */
   }
 }
