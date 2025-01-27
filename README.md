@@ -5,16 +5,20 @@ daily-milk BE: 80% > todo
 
 ===================== TODO =====================
 
-- invoice non funziona
 - salviamo le conversazioni
-- heroku e se ho piu' chatbots?
+- statistiche
+
+- backpup manca il nome del file ? si deve salvare con il nome del chatbots
+
 - tabla usage mettere sales-reader
 - manage users
 - user admin e user normale
 - mettere seconda chat libera e vediamo se va tutto
 - pulire codice funzioni dengfo utils
-- statistiche
 - compartire spese
+- creare progetto pilota con 2 fork
+- heroku e se ho piu' chatbots?
+- i 3 bottoni sono fastidiosi
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - come gestiamo no surprice ne Heroku ?
