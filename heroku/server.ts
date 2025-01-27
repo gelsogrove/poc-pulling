@@ -101,7 +101,7 @@ app.use("/usage", limiter, usageRouter)
 app.use("/prompt", limiter, promptRouter)
 app.use("/chatbot", limiter, chatbotRouter)
 app.use("/unlike", limiter, unlikeRouter)
-app.use("/navbar", limiter, backupRouter)
+app.use("/backup", limiter, backupRouter)
 
 // Forza HTTPS in produzione
 if (process.env.NODE_ENV === "production") {

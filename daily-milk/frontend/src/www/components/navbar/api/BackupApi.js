@@ -1,7 +1,7 @@
 import axios from "axios"
 import Cookies from "js-cookie"
 
-const API_URL = `${process.env.REACT_APP_API_URL}/navbar/backup`
+const API_URL = `${process.env.REACT_APP_API_URL}/backup`
 
 export const downloadBackup = async () => {
   const token = Cookies.get("token") // Ottieni il token dai cookie
