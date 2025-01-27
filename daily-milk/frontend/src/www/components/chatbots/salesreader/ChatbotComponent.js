@@ -14,6 +14,9 @@ import {
   updateChatState,
 } from "./utils"
 
+import Cookies from "js-cookie"
+import { fetchUsageData, getPromptDetails } from "../usage/api/utils_api"
+
 const ChatBotComponent = ({ idPrompt, openPanel }) => {
   const [refreshUsage, setRefreshUsage] = useState(false)
   const [messages, setMessages] = useState([])
@@ -24,12 +27,22 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
   const messagesEndRef = useRef(null)
   const [IdConversation] = useState(uuidv4()) // Initialize conversation ID once
 
-  // Scroll to the bottom automatically
+  // ---- Stati per Usage ----
+  const [usageData, setUsageData] = useState(null)
+  const [currentChatDifference, setCurrentChatDifference] = useState(0)
+  const [temperature, setTemperature] = useState(null)
+  const [model, setModel] = useState(null)
+  const [error, setError] = useState(null)
+
+  // Nome fisso del cookie
+  const cookieKey = "initialChatTotal"
+
+  // Scroll to bottom
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }
 
-  // Initial welcome message
+  // Messaggio iniziale di benvenuto
   useEffect(() => {
     const userName = getUserName()
     const { updatedMessages, updatedHistory } = updateChatState(
@@ -51,7 +64,55 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
     scrollToBottom()
   }, [messages])
 
-  // Function to send a message
+  /**
+   * [1] RESET del cookie appena la chat si "apre" (monta il componente).
+   *     Così, ogni volta che ricarichi/riapri la chat,
+   *     parti senza cookie.
+   */
+  useEffect(() => {
+    Cookies.remove(cookieKey)
+  }, [])
+
+  /**
+   * [2] Fetch usage e calcolo differenza.
+   *     - Se il cookie NON c'è, lo creiamo con totalCurrentMonth
+   *     - Se il cookie C'È, calcoliamo differenza
+   *
+   * Si richiama inizialmente (montaggio) e ogni volta che cambiamo idPrompt
+   * o facciamo toggle di refreshUsage (cioè inviando un messaggio).
+   */
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // 1) Dati di usage
+        const data = await fetchUsageData()
+        setUsageData(data)
+
+        // 2) Dettagli del prompt
+        const prompt = await getPromptDetails(idPrompt)
+        setTemperature(prompt.temperature)
+        setModel(prompt.model)
+
+        // 3) Se il cookie non esiste, lo creiamo (session cookie)
+        if (!Cookies.get(cookieKey)) {
+          Cookies.set(cookieKey, data.totalCurrentMonth)
+          setCurrentChatDifference(0)
+        } else {
+          // Se esiste, calcoliamo la differenza
+          const initialTotal = parseFloat(Cookies.get(cookieKey))
+          const difference = data.totalCurrentMonth - initialTotal
+          setCurrentChatDifference(difference)
+        }
+      } catch (err) {
+        console.error("Error fetching usage data:", err)
+        setError("Failed to load data. Please try again.")
+      }
+    }
+
+    fetchData()
+  }, [idPrompt, refreshUsage])
+
+  // Funzione per inviare un messaggio
   const handleSend = async (message) => {
     if (!message.trim()) return
     setInputValue("")
@@ -65,7 +126,7 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
     setMessages(updatedMessages)
     setConversationHistory(updatedHistory)
 
-    // Show a temporary loading message
+    // Aggiungo "Typing..."
     setMessages((prevMessages) => [
       ...prevMessages,
       {
@@ -75,11 +136,7 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
       },
     ])
 
-    debugger
-
     try {
-      setRefreshUsage(!refreshUsage)
-
       const botResponse = await sendMessageToChatbot(
         IdConversation,
         updatedHistory,
@@ -91,7 +148,7 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
 
       const responseText = parsedResponse || "I couldn’t understand that."
 
-      // Replace the loading message with the response text
+      // Rimuovo "Typing..." e aggiungo risposta
       const id = uuidv4()
       setMessages((prevMessages) => {
         const updated = prevMessages.filter((msg) => msg.text !== "Typing...")
@@ -107,9 +164,8 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
           },
         ]
       })
-      debugger
 
-      // Update conversation history
+      // Aggiorno conversationHistory
       setConversationHistory((prevHistory) => [
         ...prevHistory,
         {
@@ -121,7 +177,6 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
           data: botResponse?.data,
         },
       ])
-      debugger
     } catch (error) {
       console.error("Error in handleSend:", error)
       const { updatedMessages: errMsgs, updatedHistory: errHist } = handleError(
@@ -134,6 +189,9 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
     } finally {
       setIsLoading(false)
     }
+
+    // Questo toggle forzerà un nuovo fetch usage nel useEffect precedente
+    setRefreshUsage((prev) => !prev)
   }
 
   return (
@@ -169,9 +227,13 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
           }}
         >
           <Usage
+            usageData={usageData}
+            currentChatDifference={currentChatDifference}
+            temperature={temperature}
+            model={model}
             idPrompt={idPrompt}
             IdConversation={IdConversation}
-            refresh={refreshUsage}
+            error={error}
           />
         </div>
       )}

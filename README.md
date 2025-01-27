@@ -6,7 +6,6 @@ daily-milk BE: 80% > todo
 ===================== TODO =====================
 
 - chat price funziona solo se apro il pannello?
-- &issuer=Poulin Secretkey` (nome app facciamo env)
 - heroku e se ho piu' chatbots?
 - tabla usage mettere sales-reader
 - manage users
