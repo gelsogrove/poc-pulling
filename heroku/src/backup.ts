@@ -40,6 +40,7 @@ const parseDatabaseUrl = (url: string): DatabaseConfig => {
     dbname: matches[5],
   }
 }
+/* test */
 
 const handleExport = async (req: Request, res: Response): Promise<void> => {
   const userId = await validateRequest(req, res)
