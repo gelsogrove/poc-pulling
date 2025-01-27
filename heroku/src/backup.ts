@@ -2,8 +2,6 @@ import { exec } from "child_process"
 import { Request, Response, Router } from "express"
 import fs from "fs"
 import path from "path"
-
-// Importa la funzione per validare l'utente
 import { validateRequest } from "./validateUser.js" // Assicurati che il percorso sia corretto
 
 const backupRouter = Router()
