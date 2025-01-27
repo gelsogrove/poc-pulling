@@ -76,16 +76,14 @@ backupRouter.get("/", async (req: Request, res: Response): Promise<void> => {
       return
     }
 
-    // Invia il file al client
+    res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`)
     res.download(filePath, fileName, (err: Error) => {
       if (err) {
         console.error("Error sending file:", err.message)
         res.status(500).json({ message: "Errore durante l'invio del file." })
-        return
+      } else {
+        fs.unlinkSync(filePath)
       }
-
-      // Elimina il file dal server (dopo che è stato scaricato)
-      fs.unlinkSync(filePath) // Elimina il file dopo il download
     })
   })
 })
