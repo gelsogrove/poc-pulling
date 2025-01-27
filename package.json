@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "nodemon   --exec node --loader ts-node/esm ./heroku/server.ts",
     "start": "node heroku/dist/server.js",
-    "build": "tsc"
+    "build": "tsc",
+    "heroku-postbuild": "tsc"
   },
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
