@@ -61,8 +61,8 @@ backupRouter.get("/", async (req: Request, res: Response): Promise<void> => {
   // Usa la cartella temporanea /tmp per il backup su Heroku
   const filePath = path.join("/tmp", fileName) // Usando /tmp su Heroku
 
-  // Comando per pg_dump
-  const dumpCommand = `PGPASSWORD=${dbPassword} pg_dump -U ${dbUser} -h ${dbHost} -p ${dbPort} -d ${dbName} > ${filePath}`
+  // Comando per pg_dump, con gestione delle virgolette per il nome del file
+  const dumpCommand = `PGPASSWORD=${dbPassword} pg_dump -U ${dbUser} -h ${dbHost} -p ${dbPort} -d ${dbName} > "${filePath}"`
 
   // Esegui il comando pg_dump
   exec(dumpCommand, (error: Error | null) => {
