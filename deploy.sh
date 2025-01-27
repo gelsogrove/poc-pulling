@@ -15,7 +15,7 @@ COMMIT_MESSAGE=$1
 sftp_upload() {
   SFTP_HOST="home744730785.1and1-data.host"
   SFTP_USER="u94121824"
-  SFTP_PASSWORD="Almogavers123@"
+  SFTP_PASSWORD="Almogavers@123"
   LOCAL_DIR="/Users/gelso/workspace/pulling/daily-milk"
   REMOTE_DIR="/ai"
 
