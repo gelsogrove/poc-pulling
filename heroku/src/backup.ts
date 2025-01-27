@@ -3,7 +3,9 @@ import { Request, Response, Router } from "express"
 import fs from "fs"
 import path from "path"
 
-// Ottieni la directory corrente utilizzando import.meta.url
+// Importa la funzione per validare l'utente
+import { validateRequest } from "./validateUser" // Assicurati che il percorso sia corretto
+
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
 
 const backupRouter = Router()
@@ -28,6 +30,10 @@ const parseDatabaseUrl = (url: string) => {
 
 // Handler per il backup del database
 backupRouter.get("/", async (req: Request, res: Response): Promise<void> => {
+  // Validazione dell'utente prima di procedere
+  const userId = await validateRequest(req, res)
+  if (!userId) return // Se l'utente non è valido, interrompi l'esecuzione
+
   const databaseUrl = process.env.HEROKU_POSTGRESQL_AMBER_URL // URL del database
 
   if (!databaseUrl) {
