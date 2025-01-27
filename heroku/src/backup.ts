@@ -1,13 +1,31 @@
+import archiver from "archiver"
 import { exec } from "child_process"
 import { Request, Response, Router } from "express"
+import fileUpload, { UploadedFile } from "express-fileupload"
 import fs from "fs"
 import path from "path"
-import { validateRequest } from "./validateUser.js"
+import { validateRequest } from "./validateUser"
 
 const backupRouter = Router()
 
-// Funzione per estrarre i dettagli dalla stringa di connessione del database
-const parseDatabaseUrl = (url: string) => {
+// Configura express-fileupload
+backupRouter.use(
+  fileUpload({
+    limits: { fileSize: 50 * 1024 * 1024 }, // Limite 50MB
+    useTempFiles: true,
+    tempFileDir: "/tmp/",
+  })
+)
+
+const parseDatabaseUrl = (
+  url: string
+): {
+  user: string
+  password: string
+  host: string
+  port: string
+  dbname: string
+} => {
   const regex = /^postgres:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.+)$/
   const matches = url.match(regex)
 
@@ -24,23 +42,17 @@ const parseDatabaseUrl = (url: string) => {
   }
 }
 
-// Handler per scaricare il backup del database
-const handleDownloadBackup = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  // Validazione dell'utente prima di procedere
+// Esporta il database in formato ZIP
+const handleExport = async (req: Request, res: Response): Promise<void> => {
   const userId = await validateRequest(req, res)
-  if (!userId) return // Se l'utente non è valido, interrompi l'esecuzione
+  if (!userId) return
 
-  const databaseUrl = process.env.HEROKU_POSTGRESQL_AMBER_URL // URL del database
-
+  const databaseUrl = process.env.HEROKU_POSTGRESQL_AMBER_URL
   if (!databaseUrl) {
     res.status(500).json({ message: "Database URL is missing" })
     return
   }
 
-  // Estrai i dettagli della connessione dalla stringa di connessione
   let dbUser, dbPassword, dbHost, dbPort, dbName
   try {
     ;({
@@ -55,99 +67,104 @@ const handleDownloadBackup = async (
     return
   }
 
-  // Ottieni il nome dell'app dal file .env
-  const appName = process.env.APP_NAME || "default" // Se APP_NAME non è definito, usa "default"
+  const currentDate = new Date().toISOString().slice(0, 10)
+  const fileName = `backup_${currentDate}.sql`
+  const sqlFilePath = path.join("/tmp", fileName)
+  const zipFilePath = path.join("/tmp", `backup_${currentDate}.zip`)
 
-  // Genera il nome del file di backup (APP_NAME_YYYY-MM-DD.sql)
-  const currentDate = new Date()
-  const formattedDate = currentDate.toISOString().slice(0, 10) // YYYY-MM-DD
-  const fileName = `${appName}_${formattedDate}.sql` // Usa APP_NAME per il nome del file
+  const dumpCommand = `PGPASSWORD=${dbPassword} pg_dump -U ${dbUser} -h ${dbHost} -p ${dbPort} -d ${dbName} > "${sqlFilePath}"`
 
-  // Usa la cartella temporanea /tmp per il backup su Heroku
-  const filePath = path.join("/tmp", fileName) // Usando /tmp su Heroku
-
-  // Comando per pg_dump, con gestione delle virgolette per il nome del file
-  const dumpCommand = `PGPASSWORD=${dbPassword} pg_dump -U ${dbUser} -h ${dbHost} -p ${dbPort} -d ${dbName} > "${filePath}"`
-
-  // Esegui il comando pg_dump
-  exec(dumpCommand, (error: Error | null) => {
+  exec(dumpCommand, (error) => {
     if (error) {
       console.error("Error during backup:", error.message)
-      res
-        .status(500)
-        .json({ message: "Errore durante il backup del database." })
+      res.status(500).json({ message: "Error during database backup." })
       return
     }
 
-    res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`)
-    res.download(filePath, fileName, (err: Error) => {
-      if (err) {
-        console.error("Error sending file:", err.message)
-        res.status(500).json({ message: "Errore durante l'invio del file." })
-      } else {
-        fs.unlinkSync(filePath)
+    const output = fs.createWriteStream(zipFilePath)
+    const archive = archiver("zip")
+
+    output.on("close", () => {
+      console.log("EXPORT DONE")
+      res.download(zipFilePath, `backup_${currentDate}.zip`, (err) => {
+        if (err) {
+          console.error("Error sending file:", err.message)
+          res.status(500).json({ message: "Error sending the ZIP file." })
+        }
+
+        fs.unlinkSync(sqlFilePath)
+        fs.unlinkSync(zipFilePath)
+      })
+    })
+
+    archive.on("error", (err) => {
+      console.error("Error creating ZIP archive:", err.message)
+      res.status(500).json({ message: "Error creating ZIP archive." })
+    })
+
+    archive.pipe(output)
+    archive.file(sqlFilePath, { name: fileName })
+    archive.finalize()
+  })
+}
+
+// Importa il backup
+const handleImport = async (req: Request, res: Response): Promise<void> => {
+  const userId = await validateRequest(req, res)
+  if (!userId) return
+
+  const databaseUrl = process.env.HEROKU_POSTGRESQL_AMBER_URL
+  if (!databaseUrl) {
+    res.status(500).json({ message: "Database URL is missing" })
+    return
+  }
+
+  let dbUser, dbPassword, dbHost, dbPort, dbName
+  try {
+    ;({
+      user: dbUser,
+      password: dbPassword,
+      host: dbHost,
+      port: dbPort,
+      dbname: dbName,
+    } = parseDatabaseUrl(databaseUrl))
+  } catch (err) {
+    res.status(500).json({ message: "Error parsing DATABASE_URL." })
+    return
+  }
+
+  if (!req.files || !req.files.file) {
+    res.status(400).json({ message: "No file uploaded." })
+    return
+  }
+
+  const file = req.files.file as UploadedFile
+  const uploadPath = path.join("/tmp", file.name)
+
+  file.mv(uploadPath, (err: Error) => {
+    if (err) {
+      console.error("Error saving uploaded file:", err.message)
+      res.status(500).json({ message: "Error saving uploaded file." })
+      return
+    }
+
+    const importCommand = `PGPASSWORD=${dbPassword} psql -U ${dbUser} -h ${dbHost} -p ${dbPort} -d ${dbName} < "${uploadPath}"`
+
+    exec(importCommand, (error) => {
+      fs.unlinkSync(uploadPath)
+      if (error) {
+        console.error("Error during import:", error.message)
+        res.status(500).json({ message: "Error during database import." })
+        return
       }
+
+      console.log("IMPORT DONE")
+      res.status(200).json({ message: "Import completed successfully." })
     })
   })
 }
 
-// Handler per importare un backup nel database
-const handleImportBackup = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  // Validazione dell'utente prima di procedere
-  const userId = await validateRequest(req, res)
-  if (!userId) return // Se l'utente non è valido, interrompi l'esecuzione
-
-  const databaseUrl = process.env.HEROKU_POSTGRESQL_AMBER_URL // URL del database
-
-  if (!databaseUrl) {
-    res.status(500).json({ message: "Database URL is missing" })
-    return
-  }
-
-  const { file } = req.body // Assumi che il file venga passato nel body della richiesta
-
-  if (!file) {
-    res.status(400).json({ message: "Backup file is missing" })
-    return
-  }
-
-  // Estrai i dettagli della connessione dalla stringa di connessione
-  let dbUser, dbPassword, dbHost, dbPort, dbName
-  try {
-    ;({
-      user: dbUser,
-      password: dbPassword,
-      host: dbHost,
-      port: dbPort,
-      dbname: dbName,
-    } = parseDatabaseUrl(databaseUrl))
-  } catch (err) {
-    res.status(500).json({ message: "Error parsing DATABASE_URL." })
-    return
-  }
-
-  // Comando per importare il file di backup nel database
-  const importCommand = `PGPASSWORD=${dbPassword} psql -U ${dbUser} -h ${dbHost} -p ${dbPort} -d ${dbName} < "${file}"`
-
-  // Esegui il comando di importazione
-  exec(importCommand, (error: Error | null) => {
-    if (error) {
-      console.error("Error during import:", error.message)
-      res
-        .status(500)
-        .json({ message: "Errore durante l'importazione del database." })
-      return
-    }
-
-    res.status(200).json({ message: "Importazione completata con successo." })
-  })
-}
-
-// Definisci le rotte
-backupRouter.get("/", handleDownloadBackup)
-backupRouter.post("/import", handleImportBackup)
+backupRouter.get("/", handleExport)
+backupRouter.post("/import", handleImport)
 
 export default backupRouter
