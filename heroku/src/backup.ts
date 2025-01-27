@@ -4,7 +4,7 @@ import { Request, Response, Router } from "express"
 import fileUpload, { UploadedFile } from "express-fileupload"
 import fs from "fs"
 import path from "path"
-import { validateRequest } from "./validateUser.js"
+import { validateRequest } from "./validateUser"
 
 const backupRouter = Router()
 
@@ -46,6 +46,7 @@ const handleExport = async (req: Request, res: Response): Promise<void> => {
   if (!userId) return
 
   const databaseUrl = process.env.HEROKU_POSTGRESQL_AMBER_URL
+  const appName = process.env.APP_NAME || "app"
   if (!databaseUrl) {
     res.status(500).json({ message: "Database URL is missing" })
     return
@@ -59,10 +60,10 @@ const handleExport = async (req: Request, res: Response): Promise<void> => {
     return
   }
 
-  const currentDate = new Date().toISOString().slice(0, 10)
-  const fileName = `backup_${currentDate}.sql`
+  const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, "")
+  const fileName = `${appName}_${currentDate}.sql`
   const sqlFilePath = path.join("/tmp", fileName)
-  const zipFilePath = path.join("/tmp", `backup_${currentDate}.zip`)
+  const zipFilePath = path.join("/tmp", `${appName}_${currentDate}.zip`)
 
   const dumpCommand = `PGPASSWORD=${dbConfig.password} pg_dump -U ${dbConfig.user} -h ${dbConfig.host} -p ${dbConfig.port} -d ${dbConfig.dbname} > "${sqlFilePath}"`
 
@@ -78,12 +79,13 @@ const handleExport = async (req: Request, res: Response): Promise<void> => {
 
     output.on("close", () => {
       console.log("EXPORT DONE")
-      res.download(zipFilePath, `backup_${currentDate}.zip`, (err) => {
+      res.download(zipFilePath, `${appName}_${currentDate}.zip`, (err) => {
         if (err) {
           console.error("Error sending file:", err.message)
           res.status(500).json({ message: "Error sending the ZIP file." })
         }
 
+        // Rimuove i file temporanei
         fs.unlinkSync(sqlFilePath)
         fs.unlinkSync(zipFilePath)
       })
