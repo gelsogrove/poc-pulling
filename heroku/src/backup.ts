@@ -6,8 +6,6 @@ import path from "path"
 // Importa la funzione per validare l'utente
 import { validateRequest } from "./validateUser.js" // Assicurati che il percorso sia corretto
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname)
-
 const backupRouter = Router()
 
 // Funzione per estrarre i dettagli dalla stringa di connessione del database
