@@ -4,7 +4,7 @@ import fs from "fs"
 import path from "path"
 
 // Importa la funzione per validare l'utente
-import { validateRequest } from "./validateUser" // Assicurati che il percorso sia corretto
+import { validateRequest } from "./validateUser.js" // Assicurati che il percorso sia corretto
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
 
