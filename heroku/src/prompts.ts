@@ -80,6 +80,8 @@ backupRouter.get("/", async (req: Request, res: Response): Promise<void> => {
     res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`)
     res.setHeader("Content-Type", "application/octet-stream")
 
+    console.log(fileName)
+
     // Invia il file al client
     res.sendFile(filePath, (err: Error) => {
       if (err) {
