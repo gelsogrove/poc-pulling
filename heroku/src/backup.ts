@@ -2,7 +2,7 @@ import { exec } from "child_process"
 import { Request, Response, Router } from "express"
 import fs from "fs"
 import path from "path"
-import { validateRequest } from "../heroku/src/validateUser.js"
+import { validateRequest } from "./validateUser.js"
 
 const backupRouter = Router()
 
