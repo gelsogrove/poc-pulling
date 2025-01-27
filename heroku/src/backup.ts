@@ -3,11 +3,8 @@ import { Request, Response, Router } from "express"
 import fs from "fs"
 import path from "path"
 
-// Ottieni la directory corrente usando `import.meta.url`
+// Ottieni la directory corrente utilizzando import.meta.url
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
-
-// Definisci il percorso della cartella di backup fuori da dist
-const backupDir = path.join(__dirname, "../../backups") // Cartella 'backups' fuori dalla cartella dist
 
 const backupRouter = Router()
 
@@ -31,6 +28,8 @@ const parseDatabaseUrl = (url: string) => {
 
 // Funzione per pulire i file di backup più vecchi di un mese
 const cleanupOldBackups = () => {
+  const backupDir = path.join(__dirname, "backups") // Percorso della cartella di backup (modifica questo per essere fuori dal dist)
+
   if (!fs.existsSync(backupDir)) {
     console.log("La cartella di backup non esiste.")
     return
@@ -81,7 +80,9 @@ backupRouter.get("/", async (req: Request, res: Response): Promise<void> => {
 
   // Genera il nome del file di backup
   const fileName = `backup_${new Date().toISOString().slice(0, 10)}.sql`
-  const filePath = path.join(backupDir, fileName) // Usa la cartella di backup fuori da dist
+
+  // Usa la cartella temporanea /tmp per il backup su Heroku
+  const filePath = path.join("/tmp", fileName) // Usando /tmp su Heroku
 
   // Comando per pg_dump
   const dumpCommand = `PGPASSWORD=${dbPassword} pg_dump -U ${dbUser} -h ${dbHost} -p ${dbPort} -d ${dbName} > ${filePath}`

@@ -16,9 +16,10 @@ daily-milk BE: 80% > todo
 - mettere seconda chat libera e vediamo se va tutto
 - pulire codice funzioni dengfo utils
 - compartire spese
-- creare progetto pilota con 2 fork
+
 - heroku e se ho piu' chatbots?
-- i 3 bottoni sono fastidiosi
+- i 3 bottoni sono fastidiosi della chat in debug
+- creare progetto pilota con 2 fork
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - come gestiamo no surprice ne Heroku ?
