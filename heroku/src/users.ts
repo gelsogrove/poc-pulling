@@ -66,11 +66,11 @@ usersRouter.delete("/delete/:id", async (req: Request, res: Response) => {
 })
 
 // Cambia stato isActive
-usersRouter.get("/toggle/:id", async (req: Request, res: Response) => {
+usersRouter.get("/isactive/:id", async (req: Request, res: Response) => {
   const { id } = req.params
   const { isActive } = req.body
   try {
-    const query = "UPDATE users SET isActive = $1 WHERE id = $2 RETURNING *"
+    const query = "UPDATE users SET isActive = $1 WHERE userid = $2 RETURNING *"
     const values = [isActive, id]
     const result = await pool.query(query, values)
     if (result.rowCount === 0) {
