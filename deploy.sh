@@ -20,7 +20,6 @@ git push || { echo "Git push fallito"; exit 1; }
 echo 'Running npm build...'
 cd daily-milk/frontend || exit 1
 npm install || { echo "npm install fallito"; exit 1; }
-npm run build || { echo "Build fallita"; exit 1; }
 cd ../../
 
 # Mostra i log di Heroku
