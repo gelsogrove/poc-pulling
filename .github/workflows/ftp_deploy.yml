@@ -13,18 +13,18 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: dairy-milk/frontend
+        working-directory: ./dairy-milk/frontend
 
       - name: Build project
         run: |
           npm run build
-        working-directory: dairy-milk/frontend
+        working-directory: ./dairy-milk/frontend
 
       - name: Debug build path
         run: ls -R dairy-milk/frontend/
 
       - name: Check build output
-        run: ls -la dairy-milk/frontend/build/
+        run: ls -la ./dairy-milk/frontend
 
       - name: Verify if `myftp.txt` exists on FTP
         run: |
