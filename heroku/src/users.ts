@@ -39,7 +39,7 @@ usersRouter.put("/update/:id", async (req: Request, res: Response) => {
   }
   try {
     const query =
-      "UPDATE users SET name = $1, role = $2, username = $3, surname = $4, isactive = $5 WHERE userid = $7 RETURNING *"
+      "UPDATE users SET name = $1, role = $2, username = $3, surname = $4, isactive = $5 WHERE userid = $6 RETURNING *"
     const values = [name, role, username, surname, isActive, id]
     const result = await pool.query(query, values)
     if (result.rowCount === 0) {
