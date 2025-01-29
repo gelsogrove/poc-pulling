@@ -22,31 +22,6 @@
   cursor: pointer;
 }
 
-/* Popup Layout */
-.user-manager-popup {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 20px;
-  max-width: 1200px;
-  margin: auto;
-}
-
-/* Content Sections */
-.content-left {
-  flex: 0 0 40%;
-  display: flex;
-  flex-direction: column;
-}
-
-.content-right {
-  flex: 0 0 60%;
-  display: flex;
-  flex-direction: column;
-}
-
 /* Table Styles */
 .table-container {
   max-height: 500px;
@@ -71,98 +46,65 @@
   background-color: #f4f4f4;
 }
 
-.users-table tbody {
-  display: block;
-  max-height: 260px;
-  overflow-y: auto;
+/* Adjusting column sizes */
+.username-col {
+  width: 250px;
 }
 
-.users-table tbody tr {
-  display: table;
-  width: 100%;
-  table-layout: fixed;
+.status-col {
+  width: 120px;
+  text-align: center;
 }
 
-/* Action Icons */
-.users-table td i {
-  margin-right: 8px;
-  cursor: pointer;
+/* Action Buttons */
+.toggle-btn,
+.delete-btn {
+  padding: 5px 10px;
   font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 4px;
 }
 
-.users-table td i:hover {
-  color: #007bff;
+.toggle-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
 }
 
 /* Form Styles */
-.edit-form {
+.create-user-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   padding: 15px;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
+  background-color: #f9f9f9;
   border-radius: 8px;
-  margin-right: 0px;
 }
 
-.edit-form label {
-  display: block;
-  margin-bottom: 10px;
-}
-
-.edit-form input,
-.edit-form select {
-  width: 100%;
-  padding: 6px;
-  margin-top: 5px;
-  margin-bottom: 10px;
+.create-user-form input {
+  padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
-/* Form Buttons */
 .form-actions {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-top: 20px;
-  gap: 10px;
-  width: 100%;
+  margin-top: 10px;
 }
 
-.form-actions button {
-  padding: 10px 20px;
-  font-size: 14px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  flex: 1;
-  text-align: center;
-  min-width: 150px; /* Ensures all buttons have the same width */
-}
-
-.form-actions button:first-of-type {
-  background-color: #d6d6d6; /* Light gray for Back */
+.cancel-btn {
+  background-color: #d6d6d6;
   color: black;
 }
 
-.form-actions button:nth-last-of-type(2) {
-  background-color: #dc3545; /* Red for Delete */
+.save-btn {
+  background-color: #007bff;
   color: white;
-}
-
-.form-actions button:last-of-type {
-  background-color: #007bff; /* Blue for Save */
-  color: white;
-}
-
-/* Close Button */
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #333;
-}
-
-.close-btn:hover {
-  color: #ff4d4d;
 }

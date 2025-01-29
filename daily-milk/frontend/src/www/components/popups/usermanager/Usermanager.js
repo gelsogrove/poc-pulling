@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react"
+import "./Usermanager.css"
 import {
   createUser,
   deleteUser,
   fetchUsers,
   toggleUserActive,
-  updateUser,
 } from "./api/usermanager_api"
-import EditForm from "./component/Editform"
-import "./Usermanager.css"
 
 const UserManager = ({ onClose }) => {
   const [users, setUsers] = useState([])
-  const [editingUser, setEditingUser] = useState(null)
+  const [, setEditingUser] = useState(null)
   const [creatingUser, setCreatingUser] = useState(false)
   const [newUser, setNewUser] = useState({
     name: "",
@@ -19,7 +17,7 @@ const UserManager = ({ onClose }) => {
     username: "",
     role: "User",
     active: true,
-    isActive: true,
+    isactive: true,
   })
 
   useEffect(() => {
@@ -53,7 +51,7 @@ const UserManager = ({ onClose }) => {
         username: "",
         role: "User",
         active: true,
-        isActive: true,
+        isactive: true,
       })
     } catch (error) {
       console.error("Error creating user:", error)
@@ -69,121 +67,93 @@ const UserManager = ({ onClose }) => {
         </button>
       </div>
 
-      {editingUser ? (
-        <EditForm
-          editedUser={editingUser}
-          handleEditInputChange={(e) =>
-            setEditingUser({ ...editingUser, [e.target.name]: e.target.value })
-          }
-          handleSaveEdit={async () => {
-            try {
-              const updatedUser = await updateUser(editingUser.id, editingUser)
-              setUsers((prevUsers) =>
-                prevUsers.map((user) =>
-                  user.id === updatedUser.id ? updatedUser : user
-                )
-              )
-              setEditingUser(null)
-            } catch (error) {
-              console.error("Error updating user:", error)
-            }
-          }}
-          handleCancelEdit={() => setEditingUser(null)}
-        />
+      {!creatingUser ? (
+        <button className="create-user-btn" onClick={handleCreateUserClick}>
+          Create User
+        </button>
       ) : (
-        <>
-          {!creatingUser ? (
-            <button className="create-user-btn" onClick={handleCreateUserClick}>
-              Create User
+        <div className="create-user-form">
+          <input
+            type="text"
+            placeholder="Name"
+            value={newUser.name}
+            onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+          />
+          <input
+            type="text"
+            placeholder="Surname"
+            value={newUser.surname}
+            onChange={(e) =>
+              setNewUser({ ...newUser, surname: e.target.value })
+            }
+          />
+          <input
+            type="text"
+            placeholder="Username"
+            value={newUser.username}
+            onChange={(e) =>
+              setNewUser({ ...newUser, username: e.target.value })
+            }
+          />
+          <div className="form-actions">
+            <button
+              className="cancel-btn"
+              onClick={() => setCreatingUser(false)}
+            >
+              Cancel
             </button>
-          ) : (
-            <div className="create-user-form">
-              <input
-                type="text"
-                placeholder="Name"
-                value={newUser.name}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, name: e.target.value })
-                }
-              />
-              <input
-                type="text"
-                placeholder="Surname"
-                value={newUser.surname}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, surname: e.target.value })
-                }
-              />
-              <input
-                type="text"
-                placeholder="Username"
-                value={newUser.username}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, username: e.target.value })
-                }
-              />
-              <div className="form-actions">
-                <button
-                  className="cancel-btn"
-                  onClick={() => setCreatingUser(false)}
-                >
-                  Cancel
-                </button>
-                <button className="save-btn" onClick={handleCreateUserSubmit}>
-                  Save
-                </button>
-              </div>
-            </div>
-          )}
-          <div className="table-container">
-            <table className="users-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Surname</th>
-                  <th className="username-col">Username</th>
-                  <th>Role</th>
-                  <th className="status-col">Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user.id} onClick={() => handleEditUser(user)}>
-                    <td>{user.name}</td>
-                    <td>{user.surname}</td>
-                    <td>{user.username}</td>
-                    <td>{user.role}</td>
-                    <td style={{ color: user.isActive ? "green" : "red" }}>
-                      {user.isActive ? "Active" : "Not Active"}
-                    </td>
-                    <td>
-                      <button
-                        className="toggle-btn"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          toggleUserActive(user.id, !user.isActive)
-                        }}
-                      >
-                        {user.isActive ? "Deactivate" : "Activate"}
-                      </button>
-                      <button
-                        className="delete-btn"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          deleteUser(user.id)
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <button className="save-btn" onClick={handleCreateUserSubmit}>
+              Save
+            </button>
           </div>
-        </>
+        </div>
       )}
+
+      <div className="table-container">
+        <table className="users-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Surname</th>
+              <th>Username</th>
+              <th>Role</th>
+
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user.id} onClick={() => handleEditUser(user)}>
+                <td>{user.name}</td>
+                <td>{user.surname}</td>
+                <td>{user.username}</td>
+                <td>{user.role}</td>
+
+                <td>
+                  <button
+                    className="toggle-btn"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      toggleUserActive(user.userid, !user.isactive)
+                    }}
+                  >
+                    {user.isactive ? "Deactivate" : "Activate"}
+                  </button>
+                  <button
+                    className="delete-btn"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      deleteUser(user.id)
+                    }}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }

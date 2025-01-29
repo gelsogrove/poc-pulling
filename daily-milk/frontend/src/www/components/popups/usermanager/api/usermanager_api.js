@@ -91,7 +91,7 @@ export const createUser = async (userData) => {
  * @param {boolean} isActive - New active status
  * @returns {Promise<Object>} Updated user object
  */
-export const toggleUserActive = async (userId, isActive) => {
+export const toggleUserActive = async (userId, isactive) => {
   const token = Cookies.get("token")
   try {
     const headers = {
@@ -99,8 +99,8 @@ export const toggleUserActive = async (userId, isActive) => {
       Authorization: `Bearer ${token}`,
     }
     const response = await axios.patch(
-      `${API_URL}/${userId}/isActive`,
-      { isActive },
+      `${API_URL}/${userId}/isactive`,
+      { isactive },
       { headers }
     )
     return response.data

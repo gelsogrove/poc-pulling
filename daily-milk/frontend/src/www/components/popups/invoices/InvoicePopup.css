@@ -67,7 +67,7 @@ thead {
   z-index: 1;
 }
 
-tbody {
+.invoices-container tbody {
   display: block;
   max-height: 200px; /* Altezza massima del corpo della tabella */
   overflow-y: auto; /* Scorrimento verticale */
