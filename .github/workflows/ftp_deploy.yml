@@ -13,11 +13,16 @@ jobs:
         with:
           submodules: true  # Se usi submodules, altrimenti rimuovilo
 
-      - name: Debug cartella frontend/build
-        run: ls -R daily-milk/frontend/build || echo "⚠️ La cartella build non esiste ancora"
-
       - name: Print current directory
         run: pwd
+
+      - name: Debug percorso repository
+        run: ls -R || echo "⚠️ La cartella non esiste ancora"
+
+      - name: Debug URL di origine e destinazione
+        run: |
+          echo "📂 Origine: daily-milk/frontend/build/"
+          echo "📂 Destinazione su FTP: /ai"
 
       - name: Install dependencies
         run: npm install
@@ -36,29 +41,27 @@ jobs:
             exit 1
           fi
 
-      - name: Debug FTP credentials
+      - name: Debug contenuto della build
+        run: ls -R daily-milk/frontend/build/
+
+      - name: Debug FTP credentials (senza password)
         run: |
           echo "FTP Username: '${{ secrets.FTP_USERNAME }}'"
           echo "FTP Host: '${{ secrets.FTP_HOST }}'"
 
-      - name: List files in FTP directory
-        run: |
-          sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-            "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }}" "ls -la /ai"
-
-      - name: Verify if `myftp.txt` exists on FTP
+      - name: Controllo file `myftp.txt` su FTP
         run: |
           if sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
             "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }}" "ls /ai/myftp.txt"; then
-            echo "✅ File myftp.txt found on FTP. Proceeding with deployment."
+            echo "✅ File myftp.txt trovato su FTP. Procedo con l'upload."
           else
-            echo "❌ File myftp.txt NOT found on FTP. Skipping deployment."
+            echo "❌ File myftp.txt NON trovato su FTP. Blocchiamo il deploy per sicurezza."
             exit 1
           fi
         env:
           SSHPASS: ${{ secrets.FTP_PASSWORD }}
 
-      - name: Upload files via SFTP
+      - name: Upload files via SFTP (solo se i controlli sono passati)
         if: success()
         uses: appleboy/scp-action@master
         with:
