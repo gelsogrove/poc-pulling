@@ -42,9 +42,14 @@ jobs:
           fi
 
           echo ""
-          echo "🔍 **Step 8: Controllo file myftp.txt su FTP**"
+          echo "🔍 **Step 8: Controllo contenuto della cartella remota /ai/**"
+          sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }}" "ls -la /ai/"
+
+          echo ""
+          echo "🔍 **Step 9: Controllo file myftp.txt su FTP con grep**"
           if sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-            "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }}" "ls /ai/myftp.txt"; then
+            "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }}" "ls -la /ai/ | grep myftp.txt"; then
             echo "✅ File myftp.txt trovato su FTP. Procedo con l'upload."
           else
             echo "❌ File myftp.txt NON trovato su FTP. Blocchiamo il deploy per sicurezza."
