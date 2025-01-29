@@ -10,6 +10,15 @@ import {
 const UserManager = ({ onClose }) => {
   const [users, setUsers] = useState([])
   const [editingUser, setEditingUser] = useState(null)
+  const [creatingUser, setCreatingUser] = useState(false)
+  const [newUser, setNewUser] = useState({
+    name: "",
+    surname: "",
+    username: "",
+    role: "User",
+    active: true,
+    isActive: true,
+  })
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -20,7 +29,6 @@ const UserManager = ({ onClose }) => {
         console.error("Failed to fetch users:", error)
       }
     }
-
     loadUsers()
   }, [])
 
@@ -28,61 +36,88 @@ const UserManager = ({ onClose }) => {
     setEditingUser({ ...user })
   }
 
-  const handleCreateUser = async () => {
+  const handleCreateUserClick = () => {
+    setCreatingUser(true)
+  }
+
+  const handleCreateUserSubmit = async () => {
     try {
-      const newUser = {
-        name: "New User",
-        surname: "Default",
-        username: `user${Date.now()}`,
+      const createdUser = await createUser(newUser)
+      setUsers((prevUsers) => [...prevUsers, createdUser])
+      setCreatingUser(false)
+      setNewUser({
+        name: "",
+        surname: "",
+        username: "",
         role: "User",
         active: true,
         isActive: true,
-      }
-      const createdUser = await createUser(newUser)
-      setUsers((prevUsers) => [...prevUsers, createdUser])
+      })
     } catch (error) {
       console.error("Error creating user:", error)
     }
   }
 
-  const handleDeleteUser = async (userId) => {
-    try {
-      await deleteUser(userId)
-      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId))
-    } catch (error) {
-      console.error("Error deleting user:", error)
-    }
-  }
-
-  const handleToggleActive = async (userId, isActive) => {
-    try {
-      const updatedUser = await toggleUserActive(userId, isActive)
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === updatedUser.id ? updatedUser : user
-        )
-      )
-    } catch (error) {
-      console.error("Error toggling user active status:", error)
-    }
-  }
-
   return (
     <div className="user-manager-container">
-      <button className="close-button" onClick={onClose}>
-        ×
-      </button>
-      <h2>Manage Users</h2>
-      <button onClick={handleCreateUser}>Create User</button>
+      <div className="header">
+        <h2>Manage Users</h2>
+        <button className="close-button" onClick={onClose}>
+          ×
+        </button>
+      </div>
+
+      {!creatingUser ? (
+        <button className="create-user-btn" onClick={handleCreateUserClick}>
+          Create User
+        </button>
+      ) : (
+        <div className="create-user-form">
+          <input
+            type="text"
+            placeholder="Name"
+            value={newUser.name}
+            onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+          />
+          <input
+            type="text"
+            placeholder="Surname"
+            value={newUser.surname}
+            onChange={(e) =>
+              setNewUser({ ...newUser, surname: e.target.value })
+            }
+          />
+          <input
+            type="text"
+            placeholder="Username"
+            value={newUser.username}
+            onChange={(e) =>
+              setNewUser({ ...newUser, username: e.target.value })
+            }
+          />
+          <div className="form-actions">
+            <button
+              className="cancel-btn"
+              onClick={() => setCreatingUser(false)}
+            >
+              Cancel
+            </button>
+            <button className="save-btn" onClick={handleCreateUserSubmit}>
+              Save
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="table-container">
         <table className="users-table">
           <thead>
             <tr>
               <th>Name</th>
               <th>Surname</th>
-              <th style={{ width: "200px" }}>Username</th>
+              <th className="username-col">Username</th>
               <th>Role</th>
-              <th style={{ width: "100px" }}>Status</th>
+              <th className="status-col">Status</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -98,17 +133,19 @@ const UserManager = ({ onClose }) => {
                 </td>
                 <td>
                   <button
+                    className="toggle-btn"
                     onClick={(e) => {
                       e.stopPropagation()
-                      handleToggleActive(user.id, !user.isActive)
+                      toggleUserActive(user.id, !user.isActive)
                     }}
                   >
                     {user.isActive ? "Deactivate" : "Activate"}
                   </button>
                   <button
+                    className="delete-btn"
                     onClick={(e) => {
                       e.stopPropagation()
-                      handleDeleteUser(user.id)
+                      deleteUser(user.id)
                     }}
                   >
                     Delete

@@ -10,14 +10,12 @@ const API_URL = `${process.env.REACT_APP_API_URL}/users`
  */
 export const fetchUsers = async () => {
   const token = Cookies.get("token")
-
   try {
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     }
-
-    const response = await axios.get(API_URL, { headers })
+    const response = await axios.get(`${API_URL}/list`, { headers })
     return response.data
   } catch (error) {
     console.error("Error fetching users:", error)
@@ -32,14 +30,12 @@ export const fetchUsers = async () => {
  */
 export const deleteUser = async (userId) => {
   const token = Cookies.get("token")
-
   try {
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     }
-
-    await axios.delete(`${API_URL}/${userId}`, { headers })
+    await axios.delete(`${API_URL}/delete/${userId}`, { headers })
   } catch (error) {
     console.error("Error deleting user:", error)
     throw error
@@ -54,14 +50,12 @@ export const deleteUser = async (userId) => {
  */
 export const updateUser = async (userId, userData) => {
   const token = Cookies.get("token")
-
   try {
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     }
-
-    const response = await axios.put(`${API_URL}/${userId}`, userData, {
+    const response = await axios.put(`${API_URL}/update/${userId}`, userData, {
       headers,
     })
     return response.data
@@ -78,14 +72,14 @@ export const updateUser = async (userId, userData) => {
  */
 export const createUser = async (userData) => {
   const token = Cookies.get("token")
-
   try {
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     }
-
-    const response = await axios.post(API_URL, userData, { headers })
+    const response = await axios.post(`${API_URL}/create`, userData, {
+      headers,
+    })
     return response.data
   } catch (error) {
     console.error("Error creating user:", error)
@@ -101,15 +95,13 @@ export const createUser = async (userData) => {
  */
 export const toggleUserActive = async (userId, isActive) => {
   const token = Cookies.get("token")
-
   try {
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     }
-
     const response = await axios.patch(
-      `${API_URL}/${userId}/isActive`,
+      `${API_URL}/toggle/${userId}`,
       { isActive },
       { headers }
     )
