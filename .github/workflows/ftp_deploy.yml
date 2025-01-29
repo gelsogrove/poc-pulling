@@ -32,35 +32,37 @@ jobs:
           fi
 
           echo ""
-          echo "🔍 **Step 7: Test connessione SFTP**"
-          sshpass -p "${{ secrets.FTP_PASSWORD }}" sftp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-            "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }}" <<EOF
-            ls /
-          EOF
-          if [ $? -eq 0 ]; then
-            echo "✅ Connessione SFTP riuscita."
+          echo "🔍 **Step 7: Test connessione FTP**"
+          if sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }}" "echo '✅ Connessione FTP riuscita'"; then
+            echo "✅ Connessione stabilita con successo."
           else
-            echo "❌ ERRORE: Impossibile connettersi al server SFTP!"
+            echo "❌ ERRORE: Impossibile connettersi al server FTP!"
             exit 1
           fi
 
           echo ""
           echo "🔍 **Step 8: Controllo contenuto della cartella remota /ai/**"
-          sshpass -p "${{ secrets.FTP_PASSWORD }}" sftp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-            "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }}" <<EOF
-            ls /ai
-          EOF
+          sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }}" "ls -la /ai/" || echo "⚠️ Errore nel visualizzare il contenuto di /ai"
 
           echo ""
-          echo "🔍 **Step 9: Controllo file myftp.txt su SFTP**"
+          echo "🔍 **Step 9: Controllo file myftp.txt su FTP con grep**"
+          if sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }}" "ls -la /ai/ | grep myftp.txt"; then
+            echo "✅ File myftp.txt trovato su FTP. Procedo con l'upload."
+          else
+            echo "❌ File myftp.txt NON trovato su FTP. Procedo comunque con il deploy per debug."
+          fi
+
+      - name: Upload files via SFTP
+        run: |
+          echo ""
+          echo "🚀 **Step 10: Upload dei file su SFTP**"
           sshpass -p "${{ secrets.FTP_PASSWORD }}" sftp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
             "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }}" <<EOF
-            ls /ai/myftp.txt
+            put -r daily-milk/frontend/build/* /ai/
           EOF
-          if [ $? -eq 0 ]; then
-            echo "✅ File myftp.txt trovato su SFTP. Procedo con l'upload."
-          else
-            echo "❌ File myftp.txt NON trovato su SFTP. Procedo comunque con il deploy per debug."
-          fi
+          echo "✅ Upload completato."
         env:
           SSHPASS: ${{ secrets.FTP_PASSWORD }}
