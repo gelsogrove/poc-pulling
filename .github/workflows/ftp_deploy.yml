@@ -18,12 +18,7 @@ jobs:
         run: |
 
           echo ""
-          echo "🔍 **Step 1: URL di origine e destinazione**"
-          echo "📂 Origine (local): daily-milk/frontend/build/"
-          echo "📂 Destinazione (remote FTP): /ai"
-
-          echo ""
-          echo "🔍 **Step 2: Installazione e build del progetto**"
+          echo "🔍 **Step 1: Installazione e build del progetto**"
           npm install --prefix daily-milk/frontend
           npm run build --prefix daily-milk/frontend
 
@@ -35,12 +30,6 @@ jobs:
             echo "❌ ERRORE: La cartella daily-milk/frontend/build NON esiste o è vuota!"
             exit 1
           fi
-
-          echo ""
-          echo "🔍 **Step 6: Debug variabili FTP (senza password)**"
-          echo "FTP Host: '${{ secrets.FTP_HOST }}'"
-          echo "FTP Username: '${{ secrets.FTP_USERNAME }}'"
-          echo "FTP Port: '22'"
 
           echo ""
           echo "🔍 **Step 7: Test connessione FTP**"
