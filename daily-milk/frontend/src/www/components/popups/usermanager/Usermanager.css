@@ -1,25 +1,13 @@
 /* General Container */
 .user-manager-container {
-  width: 98%;
+  min-width: 1000px;
+  width: 1000px;
   margin: auto;
   padding: 20px;
   border-radius: 8px;
   background-color: #fff;
-  min-width: 1150px;
   max-width: 1150px;
   height: 550px;
-}
-
-/* Selected Row Effect */
-.users-table tbody tr.selected {
-  background-color: #f0f8ff;
-  border-left: 4px solid #007bff;
-}
-
-/* Hover Effect for Rows */
-.users-table tbody tr:hover {
-  background-color: #f9f9f9;
-  cursor: pointer;
 }
 
 /* Table Styles */
@@ -46,7 +34,18 @@
   background-color: #f4f4f4;
 }
 
-/* Adjusting column sizes */
+/* Row Effects */
+.users-table tbody tr:hover {
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+.users-table tbody tr.selected {
+  background-color: #f0f8ff;
+  border-left: 4px solid #007bff;
+}
+
+/* Column Sizes */
 .username-col {
   width: 250px;
 }
@@ -56,7 +55,7 @@
   text-align: center;
 }
 
-/* Action Buttons */
+/* Buttons */
 .toggle-btn,
 .delete-btn {
   padding: 5px 10px;
@@ -64,17 +63,30 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
   margin-left: 4px;
 }
 
-.toggle-btn {
-  background-color: #28a745;
+/* Toggle Button */
+.toggle-btn.activate {
+  background-color: rgb(68, 202, 93);
   color: white;
 }
 
+.toggle-btn.deactivate {
+  background-color: red;
+  color: white;
+}
+
+/* Delete Button */
 .delete-btn {
   background-color: #dc3545;
   color: white;
+}
+
+.delete-btn:hover {
+  background-color: #b52b37;
 }
 
 /* Form Styles */
@@ -93,6 +105,7 @@
   border-radius: 4px;
 }
 
+/* Form Actions */
 .form-actions {
   display: flex;
   justify-content: space-between;
@@ -107,4 +120,23 @@
 .save-btn {
   background-color: #007bff;
   color: white;
+}
+
+/* Column Sizes */
+.small-col {
+  width: 130px; /* Puoi ridurre ulteriormente se necessario */
+  min-width: 80px;
+  text-align: left;
+}
+
+.small-col1 {
+  width: 200px; /* Puoi ridurre ulteriormente se necessario */
+  min-width: 80px;
+  text-align: left;
+}
+
+.disabled-btn {
+  background-color: #bdbdbd !important;
+  cursor: not-allowed;
+  opacity: 0.6;
 }

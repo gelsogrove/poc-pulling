@@ -1,5 +1,5 @@
 import React from "react"
-import { deleteUser } from "../api/usermanager_api"
+import "./Editform.css"
 
 const EditForm = ({
   editedUser,
@@ -18,99 +18,60 @@ const EditForm = ({
     handleSaveEdit()
   }
 
-  const toggleActiveStatus = () => {
-    handleEditInputChange({
-      target: { name: "active", value: !editedUser.active },
-    })
-  }
-
-  const handleDeleteUser = async (e) => {
-    e.stopPropagation() // Evita la propagazione dell'evento
-
-    if (window.confirm(`Are you sure you want to delete ${editedUser.name}?`)) {
-      try {
-        await deleteUser(editedUser.userid) // DELETE request
-        handleCancelEdit() // Chiude il form dopo la cancellazione
-      } catch (error) {
-        console.error("Failed to delete user:", error)
-      }
-    }
-  }
-
   return (
     <form className="edit-form" onSubmit={handleFormSubmit}>
-      <label>
-        Name:
-        <input
-          type="text"
-          name="name"
-          value={editedUser.name || ""}
-          onChange={handleEditInputChange}
-          required
-        />
-      </label>
-      <label>
-        Surname:
-        <input
-          type="text"
-          name="surname"
-          value={editedUser.surname || ""}
-          onChange={handleEditInputChange}
-          required
-        />
-      </label>
-      <label>
-        Username:
-        <input
-          type="text"
-          name="username"
-          value={editedUser.username || ""}
-          onChange={handleEditInputChange}
-          required
-        />
-      </label>
-      <label>
-        Role:
-        <select
-          name="role"
-          value={editedUser.role || ""}
-          onChange={handleEditInputChange}
-        >
-          <option value="Admin">Admin</option>
-          <option value="User">User</option>
-        </select>
-      </label>
-      <div
-        className="form-actions"
-        style={{ display: "flex", justifyContent: "space-between" }}
-      >
-        <div style={{ display: "flex", gap: "10px" }}>
-          <button type="button" onClick={handleCancelEdit}>
-            &lt;&lt; Back
-          </button>
-        </div>
+      <div className="input-group">
+        <label>
+          Name:
+          <input
+            type="text"
+            name="name"
+            value={editedUser.name || ""}
+            onChange={handleEditInputChange}
+            required
+          />
+        </label>
+        <label>
+          Surname:
+          <input
+            type="text"
+            name="surname"
+            value={editedUser.surname || ""}
+            onChange={handleEditInputChange}
+            required
+          />
+        </label>
+        <label className="role-container">
+          Username:
+          <input
+            type="text"
+            name="username"
+            value={editedUser.username || ""}
+            onChange={handleEditInputChange}
+            required
+          />
+        </label>
+        <label className="role-container">
+          Role:
+          <select
+            name="role"
+            value={editedUser.role || ""}
+            onChange={handleEditInputChange}
+          >
+            <option value="Admin">Admin</option>
+            <option value="User">User</option>
+          </select>
+        </label>
+      </div>
 
-        <button type="button">Change Password</button>
-        <button
-          type="button"
-          onClick={toggleActiveStatus}
-          style={{
-            backgroundColor: editedUser.active ? "#28a745" : "#6c757d",
-            color: "#fff",
-            border: "none",
-            padding: "8px 16px",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          {editedUser.active ? "Active" : "Not Active"}
+      <div className="form-actions">
+        <button type="button" className="cancel-btn" onClick={handleCancelEdit}>
+          Cancel
         </button>
 
-        <button className="delete-btn" onClick={handleDeleteUser}>
-          Delete
+        <button type="submit" className="save-btn">
+          Save
         </button>
-
-        <button type="button">Save</button>
       </div>
     </form>
   )
