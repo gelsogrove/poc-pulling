@@ -11,11 +11,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Debug repository structure (Check if `dairy-milk/frontend` exists)
+      - name: Debug repository structure (verifica contenuto)
         run: ls -R
 
       - name: Print current directory
         run: pwd
+
+      - name: Verifica se `dairy-milk/frontend` esiste
+        run: |
+          if [ -d "dairy-milk/frontend" ]; then
+            echo "✅ La cartella dairy-milk/frontend esiste."
+          else
+            echo "❌ ERRORE: La cartella dairy-milk/frontend NON esiste!"
+            exit 1
+          fi
 
       - name: Install dependencies
         run: npm install
