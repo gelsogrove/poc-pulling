@@ -8,14 +8,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository (with submodules)
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Debug repository structure (verifica contenuto)
         run: ls -R
 
       - name: Print current directory
         run: pwd
+
+      - name: Ensure frontend directory exists
+        run: mkdir -p dairy-milk/frontend
 
       - name: Verifica se `dairy-milk/frontend` esiste
         run: |
