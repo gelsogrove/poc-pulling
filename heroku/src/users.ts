@@ -6,25 +6,12 @@ const usersRouter = Router()
 // Ottieni tutti gli utenti
 usersRouter.get("/", async (req: Request, res: Response) => {
   try {
-    const result = await pool.query("SELECT * FROM users ORDER BY name ASC")
+    const result = await pool.query(
+      "SELECT name,role,username,isactive, FROM users ORDER BY name ASC"
+    )
     res.json(result.rows)
   } catch (error) {
     console.error("Error fetching users:", error)
-    res.status(500).json({ error: "Internal server error." })
-  }
-})
-
-// Crea un nuovo utente
-usersRouter.post("/create", async (req: Request, res: Response) => {
-  const { name, role, username, surname, active, isActive } = req.body
-  try {
-    const query =
-      "INSERT INTO users (name, role, username, surname, active, isActive) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *"
-    const values = [name, role, username, surname, active, isActive]
-    const result = await pool.query(query, values)
-    res.status(201).json(result.rows[0])
-  } catch (error) {
-    console.error("Error creating user:", error)
     res.status(500).json({ error: "Internal server error." })
   }
 })
@@ -39,7 +26,7 @@ usersRouter.put("/update/:id", async (req: Request, res: Response) => {
   }
   try {
     const query =
-      "UPDATE users SET name = $1, role = $2, username = $3, surname = $4, isactive = $5 WHERE userid = $6 RETURNING *"
+      "UPDATE users SET name = $1, role = $2, username = $3, username = $4, isactive = $5 WHERE userid = $6 RETURNING *"
     const values = [name, role, username, surname, isActive, id]
     const result = await pool.query(query, values)
     if (result.rowCount === 0) {
