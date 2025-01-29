@@ -1,7 +1,7 @@
 name: Deploy via SFTP
 
 on:
-  workflow_dispatch: # Permette l'avvio manuale da GitHub Actions
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -11,20 +11,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Debug repository structure (Check if `dairy-milk/frontend` exists)
+        run: ls -R
+
+      - name: Print current directory
+        run: pwd
+
       - name: Install dependencies
         run: npm install
-        working-directory: ./dairy-milk/frontend
+        working-directory: dairy-milk/frontend
 
       - name: Build project
-        run: |
-          npm run build
-        working-directory: ./dairy-milk/frontend
+        run: npm run build
+        working-directory: dairy-milk/frontend
 
       - name: Debug build path
         run: ls -R dairy-milk/frontend/
 
       - name: Check build output
-        run: ls -la ./dairy-milk/frontend
+        run: ls -la dairy-milk/frontend/
 
       - name: Verify if `myftp.txt` exists on FTP
         run: |
@@ -45,7 +50,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: 22
-          source: "./dairy-milk/frontend/build/*"
+          source: "dairy-milk/frontend/build/*"
           target: "/ai"
           strip_components: 3
           script: |
