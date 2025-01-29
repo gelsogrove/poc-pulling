@@ -13,25 +13,62 @@ jobs:
         with:
           submodules: true  # Se usi submodules, altrimenti rimuovilo
 
-      - name: Debug repository structure (verifica dopo il checkout)
-        run: ls -R
+      - name: Debug cartella frontend/build
+        run: ls -R daily-milk/frontend/build || echo "⚠️ La cartella build non esiste ancora"
 
       - name: Print current directory
         run: pwd
 
-      - name: Verifica se `dairy-milk/frontend` esiste
-        run: |
-          if [ -d "dairy-milk/frontend" ]; then
-            echo "✅ La cartella dairy-milk/frontend esiste."
-          else
-            echo "❌ ERRORE: La cartella dairy-milk/frontend NON esiste!"
-            exit 1
-          fi
-
       - name: Install dependencies
         run: npm install
-        working-directory: dairy-milk/frontend
+        working-directory: daily-milk/frontend
 
       - name: Build project
         run: npm run build
-        working-directory: dairy-milk/frontend
+        working-directory: daily-milk/frontend
+
+      - name: Verifica se `daily-milk/frontend/build/` esiste ed è popolata
+        run: |
+          if [ -d "daily-milk/frontend/build" ] && [ "$(ls -A daily-milk/frontend/build)" ]; then
+            echo "✅ La cartella daily-milk/frontend/build esiste ed è popolata."
+          else
+            echo "❌ ERRORE: La cartella daily-milk/frontend/build NON esiste o è vuota!"
+            exit 1
+          fi
+
+      - name: Debug FTP credentials
+        run: |
+          echo "FTP Username: '${{ secrets.FTP_USERNAME }}'"
+          echo "FTP Host: '${{ secrets.FTP_HOST }}'"
+
+      - name: List files in FTP directory
+        run: |
+          sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }}" "ls -la /ai"
+
+      - name: Verify if `myftp.txt` exists on FTP
+        run: |
+          if sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }}" "ls /ai/myftp.txt"; then
+            echo "✅ File myftp.txt found on FTP. Proceeding with deployment."
+          else
+            echo "❌ File myftp.txt NOT found on FTP. Skipping deployment."
+            exit 1
+          fi
+        env:
+          SSHPASS: ${{ secrets.FTP_PASSWORD }}
+
+      - name: Upload files via SFTP
+        if: success()
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 22
+          source: "daily-milk/frontend/build/*"
+          target: "/ai"
+          strip_components: 3
+          script: |
+            StrictHostKeyChecking=no
+            UserKnownHostsFile=/dev/null
