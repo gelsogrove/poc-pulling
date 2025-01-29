@@ -66,7 +66,7 @@ usersRouter.delete("/delete/:id", async (req: Request, res: Response) => {
 })
 
 // Cambia stato isActive
-usersRouter.patch("/toggle/:id", async (req: Request, res: Response) => {
+usersRouter.get("/toggle/:id", async (req: Request, res: Response) => {
   const { id } = req.params
   const { isActive } = req.body
   try {
