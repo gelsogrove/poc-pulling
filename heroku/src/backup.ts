@@ -70,7 +70,8 @@ const handleExport = async (req: Request, res: Response): Promise<void> => {
   const sqlFilePath = path.join("/tmp", fileName)
   const zipFilePath = path.join("/tmp", `${appName}_${currentDate}.zip`)
 
-  const dumpCommand = `PGPASSWORD=${dbConfig.password} pg_dump -U ${dbConfig.user} -h ${dbConfig.host} -p ${dbConfig.port} -d ${dbConfig.dbname} > "${sqlFilePath}"`
+  // ✅ Export con INSERT INTO invece di COPY FROM stdin;
+  const dumpCommand = `PGPASSWORD=${dbConfig.password} pg_dump -U ${dbConfig.user} -h ${dbConfig.host} -p ${dbConfig.port} -d ${dbConfig.dbname} --column-inserts --data-only > "${sqlFilePath}"`
 
   console.log("🔄 Running dump command:", dumpCommand)
 
@@ -160,7 +161,8 @@ const handleImport = async (req: Request, res: Response): Promise<void> => {
       return
     }
 
-    const importCommand = `PGPASSWORD=${dbConfig.password} psql -U ${dbConfig.user} -h ${dbConfig.host} -p ${dbConfig.port} -d ${dbConfig.dbname} < "${uploadPath}"`
+    // ✅ Import con \i per eseguire il file riga per riga
+    const importCommand = `PGPASSWORD=${dbConfig.password} psql -U ${dbConfig.user} -h ${dbConfig.host} -p ${dbConfig.port} -d ${dbConfig.dbname} -c "\\i '${uploadPath}'"`
 
     console.log("🔄 Running import command:", importCommand)
 
