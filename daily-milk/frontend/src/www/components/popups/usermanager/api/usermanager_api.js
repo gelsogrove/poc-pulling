@@ -55,6 +55,7 @@ export const updateUser = async (userId, userData) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     }
+    alert(userId)
     const response = await axios.put(`${API_URL}/update/${userId}`, userData, {
       headers,
     })

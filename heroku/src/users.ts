@@ -7,7 +7,7 @@ const usersRouter = Router()
 usersRouter.get("/", async (req: Request, res: Response) => {
   try {
     const result = await pool.query(
-      "SELECT name,surname, role,username,isactive FROM users ORDER BY name ASC"
+      "SELECT userid, name,surname, role,username,isactive FROM users ORDER BY name ASC"
     )
     res.json(result.rows)
   } catch (error) {
@@ -19,7 +19,7 @@ usersRouter.get("/", async (req: Request, res: Response) => {
 // Aggiorna un utente
 usersRouter.put("/update/:id", async (req: Request, res: Response) => {
   const { id } = req.params
-  let { name, role, username, surname, active, isActive } = req.body
+  let { name, role, username, surname, isActive } = req.body
 
   if (isActive === null) {
     isActive = true
