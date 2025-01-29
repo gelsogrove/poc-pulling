@@ -4,7 +4,7 @@ import { pool } from "../server.js" // Importa il pool dal file principale
 const usersRouter = Router()
 
 // Ottieni tutti gli utenti
-usersRouter.get("/list", async (req: Request, res: Response) => {
+usersRouter.get("/", async (req: Request, res: Response) => {
   try {
     const result = await pool.query("SELECT * FROM users ORDER BY name ASC")
     res.json(result.rows)

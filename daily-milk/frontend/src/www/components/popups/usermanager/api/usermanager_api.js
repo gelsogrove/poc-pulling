@@ -15,7 +15,7 @@ export const fetchUsers = async () => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     }
-    const response = await axios.get(`${API_URL}/list`, { headers })
+    const response = await axios.get(`${API_URL}`, { headers })
     return response.data
   } catch (error) {
     console.error("Error fetching users:", error)
@@ -35,7 +35,7 @@ export const deleteUser = async (userId) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     }
-    await axios.delete(`${API_URL}/delete/${userId}`, { headers })
+    await axios.delete(`${API_URL}/${userId}`, { headers })
   } catch (error) {
     console.error("Error deleting user:", error)
     throw error
@@ -55,7 +55,7 @@ export const updateUser = async (userId, userData) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     }
-    const response = await axios.put(`${API_URL}/update/${userId}`, userData, {
+    const response = await axios.put(`${API_URL}/${userId}`, userData, {
       headers,
     })
     return response.data
@@ -77,9 +77,7 @@ export const createUser = async (userData) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     }
-    const response = await axios.post(`${API_URL}/create`, userData, {
-      headers,
-    })
+    const response = await axios.post(`${API_URL}`, userData, { headers })
     return response.data
   } catch (error) {
     console.error("Error creating user:", error)
@@ -101,7 +99,7 @@ export const toggleUserActive = async (userId, isActive) => {
       Authorization: `Bearer ${token}`,
     }
     const response = await axios.patch(
-      `${API_URL}/toggle/${userId}`,
+      `${API_URL}/${userId}/isActive`,
       { isActive },
       { headers }
     )
