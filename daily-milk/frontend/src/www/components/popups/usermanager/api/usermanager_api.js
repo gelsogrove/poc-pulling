@@ -98,8 +98,8 @@ export const toggleUserActive = async (userId, isactive) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     }
-    const response = await axios.patch(
-      `${API_URL}/${userId}/isactive`,
+    const response = await axios.get(
+      `${API_URL}/isactive/${userId}/`,
       { isactive },
       { headers }
     )
