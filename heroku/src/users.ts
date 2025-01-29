@@ -32,10 +32,14 @@ usersRouter.post("/create", async (req: Request, res: Response) => {
 // Aggiorna un utente
 usersRouter.put("/update/:id", async (req: Request, res: Response) => {
   const { id } = req.params
-  const { name, role, username, surname, active, isActive } = req.body
+  let { name, role, username, surname, active, isActive } = req.body
+
+  if (isActive === null) {
+    isActive = true
+  }
   try {
     const query =
-      "UPDATE users SET name = $1, role = $2, username = $3, surname = $4, active = $5, isActive = $6 WHERE userid = $7 RETURNING *"
+      "UPDATE users SET name = $1, role = $2, username = $3, surname = $4, isactive = $5, isActive = $6 WHERE userid = $7 RETURNING *"
     const values = [name, role, username, surname, active, isActive, id]
     const result = await pool.query(query, values)
     if (result.rowCount === 0) {
