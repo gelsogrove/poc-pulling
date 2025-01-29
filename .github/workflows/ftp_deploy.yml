@@ -1,4 +1,4 @@
-name: Deploy via SFTP
+name: Deploy via SFTP (DEBUG MODE)
 
 on:
   workflow_dispatch:
@@ -13,27 +13,24 @@ jobs:
         with:
           submodules: true  # Se usi submodules, altrimenti rimuovilo
 
-      - name: Print current directory
-        run: pwd
-
-      - name: Debug percorso repository
-        run: ls -R || echo "⚠️ La cartella non esiste ancora"
-
-      - name: Debug URL di origine e destinazione
+      - name: Debug completo (directory locali, FTP e variabili)
         run: |
-          echo "📂 Origine: daily-milk/frontend/build/"
-          echo "📂 Destinazione su FTP: /ai"
+          echo "🔍 **Step 1: Verifica struttura repository**"
+          pwd
+          ls -R || echo "⚠️ La cartella non esiste ancora"
 
-      - name: Install dependencies
-        run: npm install
-        working-directory: daily-milk/frontend
+          echo ""
+          echo "🔍 **Step 2: URL di origine e destinazione**"
+          echo "📂 Origine (local): daily-milk/frontend/build/"
+          echo "📂 Destinazione (remote FTP): /ai"
 
-      - name: Build project
-        run: npm run build
-        working-directory: daily-milk/frontend
+          echo ""
+          echo "🔍 **Step 3: Installazione e build del progetto**"
+          npm install --prefix daily-milk/frontend
+          npm run build --prefix daily-milk/frontend
 
-      - name: Verifica se `daily-milk/frontend/build/` esiste ed è popolata
-        run: |
+          echo ""
+          echo "🔍 **Step 4: Verifica directory build locale**"
           if [ -d "daily-milk/frontend/build" ] && [ "$(ls -A daily-milk/frontend/build)" ]; then
             echo "✅ La cartella daily-milk/frontend/build esiste ed è popolata."
           else
@@ -41,16 +38,23 @@ jobs:
             exit 1
           fi
 
-      - name: Debug contenuto della build
-        run: ls -R daily-milk/frontend/build/
+          echo ""
+          echo "📂 **Step 5: Contenuto della directory locale (daily-milk/frontend/build/)**"
+          ls -R daily-milk/frontend/build/
 
-      - name: Debug FTP credentials (senza password)
-        run: |
-          echo "FTP Username: '${{ secrets.FTP_USERNAME }}'"
+          echo ""
+          echo "🔍 **Step 6: Debug variabili FTP (senza password)**"
           echo "FTP Host: '${{ secrets.FTP_HOST }}'"
+          echo "FTP Username: '${{ secrets.FTP_USERNAME }}'"
+          echo "FTP Port: '22'"
 
-      - name: Controllo file `myftp.txt` su FTP
-        run: |
+          echo ""
+          echo "🔍 **Step 7: Controllo contenuto della cartella remota /ai/**"
+          sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }}" "ls -la /ai" || echo "⚠️ Errore nel connettersi all'FTP"
+
+          echo ""
+          echo "🔍 **Step 8: Controllo file myftp.txt su FTP**"
           if sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
             "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }}" "ls /ai/myftp.txt"; then
             echo "✅ File myftp.txt trovato su FTP. Procedo con l'upload."
@@ -61,8 +65,8 @@ jobs:
         env:
           SSHPASS: ${{ secrets.FTP_PASSWORD }}
 
-      - name: Upload files via SFTP (solo se i controlli sono passati)
-        if: success()
+      - name: ❌ Upload files via SFTP (DISATTIVATO)
+        if: false  # Disattiva l'upload per ora
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.FTP_HOST }}
