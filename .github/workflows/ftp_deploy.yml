@@ -1,4 +1,4 @@
-name: Deploy via SFTP (DEBUG MODE)
+name: Deploy via SFTP 
 
 on:
   workflow_dispatch:
