@@ -13,14 +13,11 @@ jobs:
         with:
           submodules: true
 
-      - name: Debug repository structure (verifica contenuto)
+      - name: Debug repository structure (verifica contenuto repo)
         run: ls -R
 
       - name: Print current directory
         run: pwd
-
-      - name: Ensure frontend directory exists
-        run: mkdir -p dairy-milk/frontend
 
       - name: Verifica se `dairy-milk/frontend` esiste
         run: |
@@ -45,9 +42,20 @@ jobs:
       - name: Check build output
         run: ls -la dairy-milk/frontend/
 
+      - name: Debug FTP credentials
+        run: |
+          echo "FTP Username: '${{ secrets.FTP_USERNAME }}'"
+          echo "FTP Host: '${{ secrets.FTP_HOST }}'"
+
+      - name: List files in FTP directory
+        run: |
+          sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }}" "ls -la /ai"
+
       - name: Verify if `myftp.txt` exists on FTP
         run: |
-          if sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }} "test -f /ai/myftp.txt"; then
+          if sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }}" "ls /ai/myftp.txt"; then
             echo "✅ File myftp.txt found on FTP. Proceeding with deployment."
           else
             echo "❌ File myftp.txt NOT found on FTP. Skipping deployment."
