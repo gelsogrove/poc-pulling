@@ -136,7 +136,7 @@ const UserManager = ({ onClose }) => {
                     className="toggle-btn"
                     onClick={(e) => {
                       e.stopPropagation()
-                      toggleUserActive(user.id, !user.isActive)
+                      toggleUserActive(user.userid, !user.isActive)
                     }}
                   >
                     {user.isActive ? "Deactivate" : "Activate"}
@@ -145,7 +145,7 @@ const UserManager = ({ onClose }) => {
                     className="delete-btn"
                     onClick={(e) => {
                       e.stopPropagation()
-                      deleteUser(user.id)
+                      deleteUser(user.userid)
                     }}
                   >
                     Delete
