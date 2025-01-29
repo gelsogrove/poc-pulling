@@ -53,7 +53,7 @@ usersRouter.put("/update/:id", async (req: Request, res: Response) => {
 usersRouter.delete("/delete/:id", async (req: Request, res: Response) => {
   const { id } = req.params
   try {
-    const result = await pool.query("DELETE FROM users WHERE id = $1", [id])
+    const result = await pool.query("DELETE FROM users WHERE userid = $1", [id])
     if (result.rowCount === 0) {
       res.status(404).json({ error: "User not found." })
       return

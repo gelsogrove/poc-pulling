@@ -58,6 +58,22 @@ const UserManager = ({ onClose }) => {
     }
   }
 
+  const handleDeleteUser = async (userId) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this user?"
+    )
+    if (!confirmDelete) return
+
+    try {
+      await deleteUser(userId)
+      setUsers((prevUsers) =>
+        prevUsers.filter((user) => user.userid !== userId)
+      )
+    } catch (error) {
+      console.error("Error deleting user:", error)
+    }
+  }
+
   return (
     <div className="user-manager-container">
       <div className="header">
@@ -117,7 +133,6 @@ const UserManager = ({ onClose }) => {
               <th>Surname</th>
               <th>Username</th>
               <th>Role</th>
-
               <th>Actions</th>
             </tr>
           </thead>
@@ -128,7 +143,6 @@ const UserManager = ({ onClose }) => {
                 <td>{user.surname}</td>
                 <td>{user.username}</td>
                 <td>{user.role}</td>
-
                 <td>
                   <button
                     className="toggle-btn"
@@ -143,7 +157,7 @@ const UserManager = ({ onClose }) => {
                     className="delete-btn"
                     onClick={(e) => {
                       e.stopPropagation()
-                      deleteUser(user.id)
+                      handleDeleteUser(user.userid)
                     }}
                   >
                     Delete

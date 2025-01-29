@@ -1,4 +1,5 @@
 import React from "react"
+import { deleteUser } from "../api/usermanager_api"
 
 const EditForm = ({
   editedUser,
@@ -21,6 +22,19 @@ const EditForm = ({
     handleEditInputChange({
       target: { name: "active", value: !editedUser.active },
     })
+  }
+
+  const handleDeleteUser = async (e) => {
+    e.stopPropagation() // Evita la propagazione dell'evento
+
+    if (window.confirm(`Are you sure you want to delete ${editedUser.name}?`)) {
+      try {
+        await deleteUser(editedUser.userid) // DELETE request
+        handleCancelEdit() // Chiude il form dopo la cancellazione
+      } catch (error) {
+        console.error("Failed to delete user:", error)
+      }
+    }
   }
 
   return (
@@ -76,7 +90,7 @@ const EditForm = ({
           </button>
         </div>
 
-        <button type="button">Change Passsword</button>
+        <button type="button">Change Password</button>
         <button
           type="button"
           onClick={toggleActiveStatus}
@@ -92,7 +106,10 @@ const EditForm = ({
           {editedUser.active ? "Active" : "Not Active"}
         </button>
 
-        <button type="button">Delete</button>
+        <button className="delete-btn" onClick={handleDeleteUser}>
+          Delete
+        </button>
+
         <button type="button">Save</button>
       </div>
     </form>

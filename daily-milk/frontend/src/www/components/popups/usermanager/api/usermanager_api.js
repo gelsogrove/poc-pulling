@@ -35,7 +35,7 @@ export const deleteUser = async (userId) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     }
-    await axios.delete(`${API_URL}/${userId}`, { headers })
+    await axios.delete(`${API_URL}/delete/${userId}`, { headers })
   } catch (error) {
     console.error("Error deleting user:", error)
     throw error
