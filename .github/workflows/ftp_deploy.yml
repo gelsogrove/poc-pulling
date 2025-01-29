@@ -6,6 +6,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: poulin
 
     steps:
       - name: Checkout repository
@@ -39,14 +40,10 @@ jobs:
           fi
 
           echo ""
-          echo "📂 **Step 5: Contenuto della directory locale (daily-milk/frontend/build/)**"
-          ls -R daily-milk/frontend/build/
-
-          echo ""
           echo "🔍 **Step 6: Debug variabili FTP (senza password)**"
           echo "FTP Host: '${{ secrets.FTP_HOST }}'"
           echo "FTP Username: '${{ secrets.FTP_USERNAME }}'"
-          echo "FTP Port: '22'"
+          echo "FTP Port: '{{ secrets.FTP_HOST }}'"
 
           echo ""
           echo "🔍 **Step 7: Controllo contenuto della cartella remota /ai/**"
