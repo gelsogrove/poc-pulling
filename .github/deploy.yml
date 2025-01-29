@@ -1,9 +1,7 @@
 name: Deploy via SFTP
 
 on:
-  push:
-    branches:
-      - main # Cambia con il ramo che preferisci
+  workflow_dispatch: # Permette l'avvio manuale da GitHub Actions
 
 jobs:
   deploy:
@@ -18,16 +16,35 @@ jobs:
         working-directory: dairy-milk/frontend
 
       - name: Build project
-        run: npm run build
+        run: |
+          npm run build
         working-directory: dairy-milk/frontend
 
+      - name: Debug build path
+        run: ls -R dairy-milk/frontend/
+
+      - name: Check build output
+        run: ls -la dairy-milk/frontend/build/
+
+      - name: Verify if `myftp.txt` exists on FTP
+        run: |
+          if sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }} "test -f /ai/myftp.txt"; then
+            echo "✅ File myftp.txt found on FTP. Proceeding with deployment."
+          else
+            echo "❌ File myftp.txt NOT found on FTP. Skipping deployment."
+            exit 1
+          fi
+        env:
+          SSHPASS: ${{ secrets.FTP_PASSWORD }}
+
       - name: Upload files via SFTP
+        if: success()
         uses: appleboy/scp-action@master
         with:
-          host: home744730785.1and1-data.host
-          username: u94121824
+          host: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: 22
           source: "dairy-milk/frontend/build/*"
           target: "/ai"
-          strip_components: 3 # Rimuove i primi livelli di directory
+          strip_components: 3
