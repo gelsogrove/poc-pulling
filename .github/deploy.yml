@@ -28,7 +28,7 @@ jobs:
 
       - name: Verify if `myftp.txt` exists on FTP
         run: |
-          if sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }} "test -f /ai/myftp.txt"; then
+          if sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_HOST }} "test -f /ai/myftp.txt"; then
             echo "✅ File myftp.txt found on FTP. Proceeding with deployment."
           else
             echo "❌ File myftp.txt NOT found on FTP. Skipping deployment."
@@ -48,3 +48,6 @@ jobs:
           source: "dairy-milk/frontend/build/*"
           target: "/ai"
           strip_components: 3
+          script: |
+            StrictHostKeyChecking=no
+            UserKnownHostsFile=/dev/null
