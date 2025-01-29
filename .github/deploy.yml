@@ -1,0 +1,33 @@
+name: Deploy via SFTP
+
+on:
+  push:
+    branches:
+      - main # Cambia con il ramo che preferisci
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: dairy-milk/frontend
+
+      - name: Build project
+        run: npm run build
+        working-directory: dairy-milk/frontend
+
+      - name: Upload files via SFTP
+        uses: appleboy/scp-action@master
+        with:
+          host: home744730785.1and1-data.host
+          username: u94121824
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 22
+          source: "dairy-milk/frontend/build/*"
+          target: "/ai"
+          strip_components: 3 # Rimuove i primi livelli di directory

@@ -5,19 +5,20 @@ daily-milk BE: 80% > todo
 
 ===================== TODO =====================
 
-- Erore nel pannello
-- salviamo le conversazioni
-- compartire spese
-- tabla usage mettere sales-reader
 - manage users
+- edit - new - change-pwd
 - user admin e user normale
+- il databse potrebbe eseere su visual code
+- cacenllare a cascata
+- user active
+-
+
 - pulire codice funzioni dengfo utils
-- statistiche
-- i 3 bottoni sono fastidiosi della chat in debug
 - heroku e se ho piu' chatbots?
+- tabla usage mettere sales-reader
 - creare progetto pilota con 2 fork
-- mettere seconda chat libera e vediamo se va tutto
-- import backup?
+- statistiche
+
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - come gestiamo no surprice ne Heroku ?
@@ -41,6 +42,8 @@ daily-milk BE: 80% > todo
 heroku logs --tail --app poulin
 heroku restart -a poulin
 heroku run bash -a poulin
+heroku pg:psql HEROKU_POSTGRESQL_AMBER_URL -a poulin
+heroku logs --tail --app poulin heroku restart -a poulin
 
 ===================== NEW PROMPT =====================
 

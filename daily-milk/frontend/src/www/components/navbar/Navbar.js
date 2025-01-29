@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import i18n from "../../../i18n"
 import InvoicePopup from "../../components/popups/invoices/InvoicePopup.js"
 import Popup from "../../components/popups/Popup"
+import UserManager from "../../components/popups/usermanager/Usermanager.js"
 import { LogOut } from "./api/LogoutApi"
 import "./Navbar.css"
 
@@ -82,6 +83,10 @@ const Navbar = () => {
         <InvoicePopup onClose={closePopup} />
       </Popup>
 
+      <Popup isOpen={activePopup === "manageUsers"}>
+        <UserManager onClose={closePopup}></UserManager>
+      </Popup>
+
       <nav className="navbar">
         {/* Pulsante per le fatture */}
         <button className="btn" onClick={() => openPopup("invoices")}>
@@ -98,11 +103,18 @@ const Navbar = () => {
           <i className="fas fa-file-import"></i>
           <div className="tooltip">Import</div>
         </button>
+
+        <button className="btn" onClick={() => openPopup("manageUsers")}>
+          <i className="fas fa-users"></i>
+          <div className="tooltip">Manage Users</div>
+        </button>
+
         {/* Pulsante per il logout */}
         <button onClick={clearAllCookies} className="btn logout-btn">
           <i className="fa-solid fa-right-from-bracket"></i>
           <div className="tooltip">Logout</div>
         </button>
+        {/* Pulsante per gestire gli utenti */}
       </nav>
     </div>
   )

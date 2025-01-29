@@ -1,0 +1,168 @@
+/* General Container */
+.user-manager-container {
+  width: 98%;
+  margin: auto;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #fff;
+  min-width: 1150px;
+  max-width: 1150px;
+  height: 550px;
+}
+
+/* Selected Row Effect */
+.users-table tbody tr.selected {
+  background-color: #f0f8ff;
+  border-left: 4px solid #007bff;
+}
+
+/* Hover Effect for Rows */
+.users-table tbody tr:hover {
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+/* Popup Layout */
+.user-manager-popup {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Content Sections */
+.content-left {
+  flex: 0 0 40%;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-right {
+  flex: 0 0 60%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Table Styles */
+.table-container {
+  max-height: 500px;
+  overflow-y: auto;
+  padding-left: 15px;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.users-table th,
+.users-table td {
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.users-table thead th {
+  background-color: #f4f4f4;
+}
+
+.users-table tbody {
+  display: block;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.users-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* Action Icons */
+.users-table td i {
+  margin-right: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.users-table td i:hover {
+  color: #007bff;
+}
+
+/* Form Styles */
+.edit-form {
+  padding: 15px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-right: 0px;
+}
+
+.edit-form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.edit-form input,
+.edit-form select {
+  width: 100%;
+  padding: 6px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Form Buttons */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  gap: 10px;
+  width: 100%;
+}
+
+.form-actions button {
+  padding: 10px 20px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  flex: 1;
+  text-align: center;
+  min-width: 150px; /* Ensures all buttons have the same width */
+}
+
+.form-actions button:first-of-type {
+  background-color: #d6d6d6; /* Light gray for Back */
+  color: black;
+}
+
+.form-actions button:nth-last-of-type(2) {
+  background-color: #dc3545; /* Red for Delete */
+  color: white;
+}
+
+.form-actions button:last-of-type {
+  background-color: #007bff; /* Blue for Save */
+  color: white;
+}
+
+/* Close Button */
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+}
+
+.close-btn:hover {
+  color: #ff4d4d;
+}
