@@ -7,7 +7,7 @@ const usersRouter = Router()
 usersRouter.get("/", async (req: Request, res: Response) => {
   try {
     const result = await pool.query(
-      "SELECT name,role,username,isactive, FROM users ORDER BY name ASC"
+      "SELECT name,role,username,isactive FROM users ORDER BY name ASC"
     )
     res.json(result.rows)
   } catch (error) {
