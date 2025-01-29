@@ -6,6 +6,7 @@ const EditForm = ({
   handleEditInputChange,
   handleSaveEdit,
   handleCancelEdit,
+  isLastAdmin, // Aggiunto per verificare se è l'ultimo Admin
 }) => {
   if (!editedUser) return null
 
@@ -57,6 +58,7 @@ const EditForm = ({
             name="role"
             value={editedUser.role || ""}
             onChange={handleEditInputChange}
+            disabled={isLastAdmin} // Disabilita la selezione se è l'ultimo Admin
           >
             <option value="Admin">Admin</option>
             <option value="User">User</option>
@@ -68,7 +70,6 @@ const EditForm = ({
         <button type="button" className="cancel-btn" onClick={handleCancelEdit}>
           Cancel
         </button>
-
         <button type="submit" className="save-btn">
           Save
         </button>

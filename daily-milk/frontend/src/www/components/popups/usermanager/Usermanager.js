@@ -96,6 +96,7 @@ const UserManager = ({ onClose }) => {
           }
           handleSaveEdit={() => handleSaveEdit(editingUser)}
           handleCancelEdit={handleEditCancel}
+          isLastAdmin={editingUser.role === "Admin" && adminCount === 1}
         />
       ) : (
         <div className="table-container">
