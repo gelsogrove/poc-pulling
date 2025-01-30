@@ -89,7 +89,7 @@ usersRouter.put(
       return
     }
 
-    const { newPassword } = req.body
+    const { newPassword, userid } = req.body
 
     if (!newPassword) {
       res.status(400).json({ error: "New password is required." })
@@ -100,7 +100,7 @@ usersRouter.put(
       const hashedPassword = await bcrypt.hash(newPassword, 10) // Encrypt the new password
       const query =
         "UPDATE users SET password = $1 WHERE userid = $2 RETURNING *"
-      const values = [hashedPassword, userId]
+      const values = [hashedPassword, userid]
 
       console.log(query, "with", values)
 

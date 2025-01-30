@@ -58,6 +58,7 @@ const UserManager = ({ onClose }) => {
 
       // Se la password è stata cambiata, chiama la funzione changePassword
       if (newPassword) {
+        alert(updateUser.userid)
         await changePassword(newPassword, updatedUser.userid) // Chiamata per cambiare la password
         setNewPassword("") // Resetta il campo di input della password
         setShowChangePassword(false) // Nasconde il campo di cambio password
