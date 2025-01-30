@@ -58,7 +58,6 @@ const UserManager = ({ onClose }) => {
 
       // Se la password è stata cambiata, chiama la funzione changePassword
       if (newPassword) {
-        alert(updateUser.userid)
         await changePassword(newPassword, updatedUser.userid) // Chiamata per cambiare la password
         setNewPassword("") // Resetta il campo di input della password
         setShowChangePassword(false) // Nasconde il campo di cambio password
@@ -92,6 +91,8 @@ const UserManager = ({ onClose }) => {
     )
   }
 
+  const isOnlyAdmin = users.filter((user) => user.role === "Admin").length === 1
+
   return (
     <div className="user-manager-container">
       <div className="header">
@@ -122,19 +123,27 @@ const UserManager = ({ onClose }) => {
               <tr>
                 <th className="small-col">Name</th>
                 <th className="small-col">Surname</th>
-                <th>Username</th>
-                <th className="small-col1">Role</th>
-                <th className="small-col1">Actions</th>
+                <th className="small-col2">Username</th>
+                <th className="small-col2">Role</th>
+                <th className="small-col1"></th>
               </tr>
             </thead>
             <tbody>
               {users.map((user) => (
-                <tr key={user.id} onClick={() => handleEditUser(user)}>
+                <tr
+                  key={user.userid}
+                  onClick={(e) => {
+                    if (e.target.closest(".small-col1")) {
+                      return
+                    }
+                    handleEditUser(user)
+                  }}
+                >
                   <td className="small-col">{user.name}</td>
                   <td className="small-col">{user.surname}</td>
-                  <td>{user.username}</td>
-                  <td className="small-col1">{user.role}</td>
-                  <td className="small-col1">
+                  <td className="small-col2">{user.username}</td>
+                  <td className="small-col2">{user.role}</td>
+                  <td className="small-col1" style={{ cursor: "default" }}>
                     <button
                       className={`toggle-btn ${
                         user.isactive ? "deactivate" : "activate"
@@ -144,17 +153,44 @@ const UserManager = ({ onClose }) => {
                         handleToggleUserActive(user)
                       }}
                       disabled={user.role === "Admin"}
+                      title={
+                        user.isactive
+                          ? "Click to deactivate"
+                          : "Click to activate"
+                      }
+                      style={{
+                        backgroundColor:
+                          user.role === "Admin"
+                            ? "lightgray"
+                            : user.isactive
+                            ? "green"
+                            : "",
+                        color:
+                          user.role === "Admin"
+                            ? "black"
+                            : user.isactive
+                            ? "white"
+                            : "white",
+                        cursor:
+                          user.role === "Admin" ? "not-allowed" : "pointer",
+                      }}
                     >
                       {user.isactive ? "Deactivate" : "Activate"}
                     </button>
                     <button
                       className="delete-btn"
                       onClick={(e) => {
-                        if (user.role === "Admin") return
                         e.stopPropagation()
                         handleDeleteUser(user.userid)
                       }}
                       disabled={user.role === "Admin"}
+                      style={{
+                        backgroundColor:
+                          user.role === "Admin" ? "lightgray" : "",
+                        color: user.role === "Admin" ? "black" : "white",
+                        cursor:
+                          user.role === "Admin" ? "not-allowed" : "pointer",
+                      }}
                     >
                       Delete
                     </button>

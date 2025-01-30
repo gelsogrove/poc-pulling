@@ -66,6 +66,9 @@
   font-weight: bold;
   transition: background-color 0.3s ease;
   margin-left: 4px;
+  min-width: 90px;
+  width: 30%;
+  margin-right: 4px;
 }
 
 /* Toggle Button */
@@ -131,6 +134,12 @@
 
 .small-col1 {
   width: 200px; /* Puoi ridurre ulteriormente se necessario */
+  min-width: 80px;
+  text-align: left;
+}
+
+.small-col2 {
+  width: 100px; /* Puoi ridurre ulteriormente se necessario */
   min-width: 80px;
   text-align: left;
 }

@@ -105,7 +105,7 @@ const PromptsForm = ({ idPrompt, onClose, onSave }) => {
 
       {/* Sezione titolo + campi + pulsante Save */}
       <div className="header-row">
-        <h3 className="title">Prompt Composer - {formData.promptname} </h3>
+        <h3 className="title">Prompt Composer </h3>
         <div className="fields-container">
           <div className="form-section">
             <label className="form-label">Prompt Name</label>
