@@ -116,7 +116,7 @@ export const toggleUserActive = async (userId, isactive) => {
  * @param {string} newPassword - The new password to set
  * @returns {Promise<Object>} Response from the server
  */
-export const changePassword = async (newPassword) => {
+export const changePassword = async (newPassword, userId) => {
   const token = Cookies.get("token")
   try {
     const headers = {
@@ -125,7 +125,7 @@ export const changePassword = async (newPassword) => {
     }
     const response = await axios.put(
       `${API_URL}/change-password`,
-      { newPassword },
+      { newPassword, userId },
       { headers }
     )
     return response.data

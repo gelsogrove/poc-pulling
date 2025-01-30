@@ -105,7 +105,9 @@ const EditForm = ({
         </button>
         <button
           className="change-password-btn"
-          onClick={() => setShowChangePassword(!showChangePassword)}
+          onClick={() =>
+            setShowChangePassword(!showChangePassword, editedUser.userid)
+          }
         >
           {showChangePassword ? "Hide Password" : "Change Password"}
         </button>
