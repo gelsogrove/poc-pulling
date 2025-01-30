@@ -96,6 +96,9 @@ usersRouter.put("/change-password", async (req: Request, res: Response) => {
       [hashedPassword, userId]
     )
 
+    // Aggiunto log per il risultato della query
+    console.log("Result from password change query:", result)
+
     if (result.rowCount === 0) {
       res.status(404).json({ error: "Utente non trovato." })
       return
