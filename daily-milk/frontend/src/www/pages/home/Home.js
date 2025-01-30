@@ -1,5 +1,6 @@
 // Home.js
-import React, { useState } from "react"
+import Cookies from "js-cookie"
+import React, { useEffect, useState } from "react"
 import { Helmet } from "react-helmet"
 import { useTranslation } from "react-i18next"
 import Navbar from "../../components/navbar/Navbar"
@@ -9,11 +10,31 @@ import Popup from "../../components/popups/Popup"
 import PromptsPopup from "../../components/popups/prompts/salesreader/PromptsPopup.js"
 import UnlikePopup from "../../components/popups/unlike/UnlikePopup.js"
 import UploadPopup from "../../components/popups/upload/UploadPopup.js"
+import { getPromptName } from "./api/home_api"
 import "./Home.css"
+
+const PROMPT_ID = "a2c502db-9425-4c66-9d92-acd3521b38b5"
 
 const Home = () => {
   const { t } = useTranslation()
   const [activePopup, setActivePopup] = useState(null)
+  const [promptName, setPromptName] = useState("Sales Reader chatbot")
+
+  useEffect(() => {
+    const fetchPromptName = async () => {
+      try {
+        const token = Cookies.get("token")
+        const name = await getPromptName(PROMPT_ID, token)
+        if (name) {
+          setPromptName(name)
+        }
+      } catch (error) {
+        console.error("Errore durante il recupero del nome del prompt:", error)
+      }
+    }
+
+    fetchPromptName()
+  }, [])
 
   const closePopup = () => {
     setActivePopup(null)
@@ -21,6 +42,18 @@ const Home = () => {
 
   const openPopup = (popupType) => {
     setActivePopup(popupType)
+  }
+
+  const refreshPromptName = async () => {
+    try {
+      const token = Cookies.get("token")
+      const name = await getPromptName(PROMPT_ID, token)
+      if (name) {
+        setPromptName(name)
+      }
+    } catch (error) {
+      console.error("Errore durante il recupero del nome del prompt:", error)
+    }
   }
 
   return (
@@ -35,24 +68,19 @@ const Home = () => {
       <Navbar />
 
       <Popup isOpen={activePopup === "chatbotsource"}>
-        <ChatbotSource
-          idPrompt="a2c502db-9425-4c66-9d92-acd3521b38b5"
-          onClose={closePopup}
-        />
+        <ChatbotSource idPrompt={PROMPT_ID} onClose={closePopup} />
       </Popup>
 
       <Popup isOpen={activePopup === "prompts"}>
         <PromptsPopup
-          idPrompt="a2c502db-9425-4c66-9d92-acd3521b38b5"
+          idPrompt={PROMPT_ID}
           onClose={closePopup}
+          onSave={refreshPromptName}
         />
       </Popup>
 
       <Popup isOpen={activePopup === "unliked"}>
-        <UnlikePopup
-          idPrompt="a2c502db-9425-4c66-9d92-acd3521b38b5"
-          onClose={closePopup}
-        />
+        <UnlikePopup idPrompt={PROMPT_ID} onClose={closePopup} />
       </Popup>
 
       <Popup isOpen={activePopup === "upload"}>
@@ -79,7 +107,7 @@ const Home = () => {
                 className="feature-image"
               />
               <div className="overlay">
-                <h3>Sales Reader chatbot</h3>
+                <h3>{promptName}</h3>
                 <div className="subtitle"> </div>
               </div>
             </div>

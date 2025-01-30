@@ -95,12 +95,12 @@ const Navbar = () => {
         </button>
         {/* Pulsante per il backup */}
         <button className="btn" onClick={handleBackup}>
-          <i className="fas fa-file-export"></i>
+          <i className="fas fa-download"></i>
           <div className="tooltip">Export</div>
         </button>
         {/* Pulsante per l'import */}
         <button className="btn" onClick={handleImport}>
-          <i className="fas fa-file-import"></i>
+          <i className="fas fa-upload"></i>
           <div className="tooltip">Import</div>
         </button>
 

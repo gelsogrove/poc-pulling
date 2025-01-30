@@ -145,3 +145,18 @@
 .promptname-input::placeholder {
   color: #999;
 }
+
+.promptname-input.invalid {
+  border-color: #ff4444;
+  background-color: #fff8f8;
+}
+
+.promptname-input.invalid:focus {
+  box-shadow: 0 0 5px rgba(255, 68, 68, 0.5);
+}
+
+/* Aggiunta dell'asterisco rosso per il campo required */
+.form-label:has(+ .promptname-input)::after {
+  content: " *";
+  color: #ff4444;
+}

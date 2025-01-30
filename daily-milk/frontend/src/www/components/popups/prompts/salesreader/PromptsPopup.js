@@ -8,7 +8,7 @@ import { Controlled as ControlledEditor } from "react-codemirror2"
 import "./PromptsPopup.css"
 import { getPrompt, postPrompt } from "./api/PromptsApi"
 
-const PromptsForm = ({ idPrompt, onClose }) => {
+const PromptsForm = ({ idPrompt, onClose, onSave }) => {
   const [formData, setFormData] = useState({
     content: "",
     temperature: 0.5,
@@ -63,11 +63,15 @@ const PromptsForm = ({ idPrompt, onClose }) => {
     setIsChanged(true)
   }
 
-  const handleSubmit = async () => {
-    if (isLoading) return // Previene clic multipli durante il caricamento
-    setIsLoading(true) // Attiva il loader
+  const isFormValid = () => {
+    return formData.promptname.trim() !== "" && isChanged
+  }
 
-    const startTime = Date.now() // Segna l'inizio della chiamata
+  const handleSubmit = async () => {
+    if (isLoading || !isFormValid()) return
+    setIsLoading(true)
+
+    const startTime = Date.now()
     try {
       const token = Cookies.get("token")
       await postPrompt(
@@ -75,20 +79,21 @@ const PromptsForm = ({ idPrompt, onClose }) => {
         formData.model,
         formData.temperature,
         idPrompt,
+        formData.promptname,
         token
       )
       console.log("Prompt inviato con successo")
 
-      // Calcola il tempo rimanente per raggiungere 3 secondi
       const elapsedTime = Date.now() - startTime
       const remainingTime = Math.max(1500 - elapsedTime, 0)
 
       setTimeout(() => {
         setIsLoading(false)
+        if (onSave) onSave()
       }, remainingTime)
     } catch (error) {
       console.error("Errore durante l'invio del prompt:", error)
-      setIsLoading(false) // Riattiva il pulsante in caso di errore
+      setIsLoading(false)
     }
   }
 
@@ -100,7 +105,7 @@ const PromptsForm = ({ idPrompt, onClose }) => {
 
       {/* Sezione titolo + campi + pulsante Save */}
       <div className="header-row">
-        <h3 className="title">Prompt Composer</h3>
+        <h3 className="title">Prompt Composer - {formData.promptname} </h3>
         <div className="fields-container">
           <div className="form-section">
             <label className="form-label">Prompt Name</label>
@@ -109,7 +114,9 @@ const PromptsForm = ({ idPrompt, onClose }) => {
               name="promptname"
               value={formData.promptname}
               onChange={handleInputChange}
-              className="promptname-input"
+              className={`promptname-input ${
+                !formData.promptname.trim() ? "invalid" : ""
+              }`}
               placeholder="Enter prompt name"
               required
             />
@@ -175,7 +182,7 @@ const PromptsForm = ({ idPrompt, onClose }) => {
             type="submit"
             className="save-button"
             onClick={handleSubmit}
-            disabled={!isChanged || isLoading}
+            disabled={!isFormValid() || isLoading}
           >
             {isLoading ? "Saving..." : "Save prompt"}
           </button>
