@@ -1,14 +1,17 @@
 /* General Form Styling */
 .edit-form {
-  max-width: 650px;
+  max-width: 850px;
+  min-width: 800px;
+  min-height: 450px;
   margin: 20px auto;
-  padding: 20px;
+  padding: 30px;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  justify-content: space-between;
+  gap: 30px;
 }
 
 /* Labels and Inputs */
@@ -24,7 +27,8 @@
 .input-group {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 20px;
+  padding: 20px 0;
 }
 
 /* Full Width Inputs */
@@ -97,4 +101,36 @@
   color: red;
   margin-top: 10px;
   font-weight: bold;
+}
+
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-container input {
+  width: 100%;
+  padding-right: 35px; /* Spazio per l'icona */
+}
+
+.toggle-password-visibility {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  color: #666;
+}
+
+.toggle-password-visibility:hover {
+  color: #333;
+}
+
+.toggle-password-visibility svg {
+  width: 16px;
+  height: 16px;
 }

@@ -1,4 +1,5 @@
-import React from "react"
+import React, { useState } from "react"
+import { FaEye, FaEyeSlash } from "react-icons/fa"
 import "./Editform.css"
 
 const EditForm = ({
@@ -13,6 +14,8 @@ const EditForm = ({
   setShowChangePassword,
   users, // aggiungiamo questa prop
 }) => {
+  const [showPasswordText, setShowPasswordText] = useState(false)
+
   if (!editedUser) return null
 
   const handleFormSubmit = (e) => {
@@ -31,7 +34,6 @@ const EditForm = ({
 
   return (
     <div className="edit-form">
-      <h3>Editing User: {editedUser.username}</h3>
       <div className="input-group">
         <label>
           Name:
@@ -78,26 +80,34 @@ const EditForm = ({
         {showChangePassword && (
           <label className="password-container">
             New Password
-            <input
-              type="password"
-              placeholder="Nuova Password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
+            <div className="password-input-container">
+              <input
+                type={showPasswordText ? "text" : "password"}
+                placeholder="Nuova Password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                className="toggle-password-visibility"
+                onClick={() => setShowPasswordText(!showPasswordText)}
+              >
+                {showPasswordText ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </label>
         )}
       </div>
 
       <div className="form-actions">
+        <button className="cancel-btn" onClick={handleCancelEdit}>
+          &#171; Cancel
+        </button>
         <button
           className="change-password-btn"
           onClick={() => setShowChangePassword(!showChangePassword)}
         >
           {showChangePassword ? "Hide Password" : "Change Password"}
-        </button>
-
-        <button className="cancel-btn" onClick={handleCancelEdit}>
-          Cancel
         </button>
         <button type="submit" className="save-btn" onClick={handleFormSubmit}>
           Save
