@@ -108,7 +108,7 @@ const registerHandler: RequestHandler = async (req, res) => {
   // Inserisci l'utente nel database
   const result = await pool.query(
     "INSERT INTO users (username, name, surname, password, expire_date, role, otp_secret) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING userId, username, name, role",
-    [username, name, surname, hashedPassword, null, null, secret.base32]
+    [username, name, surname, hashedPassword, null, "User", secret.base32]
   )
 
   // Genera QR code per il segreto OTP
@@ -165,7 +165,7 @@ const setExpire: RequestHandler = async (req, res) => {
 
   // Esegui una query per aggiornare la data di scadenza e il token
   await pool.query(
-    "UPDATE users SET expire_date = $1, token = $2, isactive = true WHERE userid = $3",
+    "UPDATE users SET expire_date = $1, token = $2 WHERE userid = $3",
     [
       newExpireDate, // Usa la nuova data di scadenza
       token, // Aggiungi il token all'update
@@ -193,10 +193,14 @@ const isExpired: RequestHandler = async (req, res) => {
 
   try {
     // Esegui una query per cercare la data di scadenza
-    const { rows } = await pool.query(
-      "SELECT expire_date FROM users WHERE userId = $1 AND isactive = true",
-      [userId]
-    )
+
+    const sql =
+      "SELECT expire_date FROM users WHERE userId = $1 AND isactive = true"
+    const { rows } = await pool.query(sql, [userId])
+
+    const values = [userId]
+    const fullQuery = sql.replace(/\$1/g, `'${values[0]}'`)
+    console.log(fullQuery)
 
     if (rows.length === 0) {
       res.status(404).json({ message: "Utente non trovato" })

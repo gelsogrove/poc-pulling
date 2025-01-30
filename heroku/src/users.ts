@@ -94,11 +94,6 @@ usersRouter.put("/change-password", async (req: Request, res: Response) => {
     const query = "UPDATE users SET password = $1 WHERE userid = $2 RETURNING *"
     const values = [hashedPassword, userId]
 
-    const fullQuery = query
-      .replace(/\$1/g, `'${values[0]}'`)
-      .replace(/\$1/g, `'${values[1]}'`)
-    console.log(fullQuery)
-
     const result = await pool.query(query, values)
 
     if (result.rowCount === 0) {
