@@ -78,36 +78,45 @@ usersRouter.get("/isactive/:id", async (req: Request, res: Response) => {
 })
 
 // Cambia la password di un utente
-usersRouter.put("/change-password", async (req: Request, res: Response) => {
-  const userId = await validateRequest(req, res)
-  if (!userId) return
-
-  const { newPassword } = req.body
-
-  if (!newPassword) {
-    res.status(400).json({ error: "New password is required." })
-    return
-  }
-
-  try {
-    const hashedPassword = await bcrypt.hash(newPassword, 10)
-    console.log(hashedPassword)
-    console.log(userId)
-    const query = "UPDATE users SET password = $1 WHERE userid = $2 RETURNING *"
-    const values = [hashedPassword, userId]
-
-    const result = await pool.query(query, values)
-
-    if (result.rowCount === 0) {
-      res.status(404).json({ error: "User not found." })
+usersRouter.put(
+  "/change-password",
+  async (req: Request, res: Response): Promise<void> => {
+    const userId = await validateRequest(req, res)
+    if (!userId) {
       return
     }
 
-    res.status(200).json({ message: "Password changed successfully." })
-  } catch (error) {
-    console.error("Error during password change:", error)
-    res.status(500).json({ error: "Internal server error." })
+    const { newPassword } = req.body
+
+    if (!newPassword) {
+      res.status(400).json({ error: "New password is required." })
+      return
+    }
+
+    try {
+      const hashedPassword = await bcrypt.hash(newPassword, 10) // Encrypt the new password
+      const query =
+        "UPDATE users SET password = $1 WHERE userid = $2 RETURNING *"
+      const values = [hashedPassword, userId]
+
+      console.log("Executing query:", query, "with values:", values) // Log della query e dei valori
+
+      const result = await pool.query(query, values)
+
+      if (result.rowCount === 0) {
+        console.error("No user found with the provided userId:", userId)
+        res.status(404).json({ error: "User not found." })
+        return
+      }
+
+      res.status(200).json({ message: "Password changed successfully." })
+    } catch (error: any) {
+      console.error("Error during password change:", error.message)
+      res
+        .status(500)
+        .json({ error: "Internal server error.", details: error.message })
+    }
   }
-})
+)
 
 export default usersRouter

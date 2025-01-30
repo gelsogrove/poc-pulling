@@ -195,7 +195,7 @@ const isExpired: RequestHandler = async (req, res) => {
     // Esegui una query per cercare la data di scadenza
 
     const sql =
-      "SELECT expire_date FROM users WHERE userId = $1 AND isactive = true"
+      "SELECT expire_date FROM users WHERE userId = $1 AND isactive=true"
     const { rows } = await pool.query(sql, [userId])
 
     const values = [userId]
