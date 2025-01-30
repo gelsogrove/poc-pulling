@@ -21,15 +21,15 @@ usersRouter.get("/", async (req: Request, res: Response) => {
 // Aggiorna un utente
 usersRouter.put("/update/:id", async (req: Request, res: Response) => {
   const { id } = req.params
-  let { name, role, username, surname, isActive } = req.body
+  let { name, role, username, surname, isactive } = req.body
 
-  if (isActive === null) {
-    isActive = true
+  if (isactive === null) {
+    isactive = true
   }
   try {
     const query =
       "UPDATE users SET name = $1, role = $2, username = $3, surname = $4, isactive = $5 WHERE userid = $6 RETURNING *"
-    const values = [name, role, username, surname, isActive, id]
+    const values = [name, role, username, surname, isactive, id]
     const result = await pool.query(query, values)
     if (result.rowCount === 0) {
       res.status(404).json({ error: "User not found." })
@@ -63,7 +63,7 @@ usersRouter.get("/isactive/:id", async (req: Request, res: Response) => {
   const { id } = req.params
   const { isActive } = req.body
   try {
-    const query = "UPDATE users SET isActive = $1 WHERE userid = $2 RETURNING *"
+    const query = "UPDATE users SET isactive = $1 WHERE userid = $2 RETURNING *"
     const values = [isActive, id]
     const result = await pool.query(query, values)
     if (result.rowCount === 0) {
