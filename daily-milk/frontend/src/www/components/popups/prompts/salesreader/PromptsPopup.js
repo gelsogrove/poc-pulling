@@ -13,6 +13,7 @@ const PromptsForm = ({ idPrompt, onClose }) => {
     content: "",
     temperature: 0.5,
     model: "",
+    promptname: "",
   })
   const [isChanged, setIsChanged] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -27,6 +28,7 @@ const PromptsForm = ({ idPrompt, onClose }) => {
           content: prompt.prompt || "ddd",
           model: prompt.model || "",
           temperature: parseFloat(prompt.temperature) || 0.5,
+          promptname: prompt.promptname || "",
         }))
       } catch (error) {
         console.error("Errore durante il recupero del prompt:", error)
@@ -100,6 +102,18 @@ const PromptsForm = ({ idPrompt, onClose }) => {
       <div className="header-row">
         <h3 className="title">Prompt Composer</h3>
         <div className="fields-container">
+          <div className="form-section">
+            <label className="form-label">Prompt Name</label>
+            <input
+              type="text"
+              name="promptname"
+              value={formData.promptname}
+              onChange={handleInputChange}
+              className="promptname-input"
+              placeholder="Enter prompt name"
+              required
+            />
+          </div>
           <div className="form-section">
             <label className="form-label">Model</label>
             <select

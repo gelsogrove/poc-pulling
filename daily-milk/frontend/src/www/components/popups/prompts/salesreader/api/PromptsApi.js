@@ -27,6 +27,7 @@ export const postPrompt = async (
   model,
   temperature,
   idPrompt,
+  promptname,
   token
 ) => {
   try {
@@ -42,6 +43,7 @@ export const postPrompt = async (
         model,
         temperature,
         idPrompt,
+        promptname,
       },
       { headers }
     )

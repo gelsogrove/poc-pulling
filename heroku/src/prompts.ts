@@ -11,7 +11,7 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
   const userId = await validateRequest(req, res)
   if (!userId) return
 
-  const { content, model, temperature, idPrompt } = req.body
+  const { content, model, temperature, idPrompt, promptname } = req.body
 
   try {
     if (content.length > 50000) {
@@ -22,8 +22,8 @@ const UpdatePromptHandler: RequestHandler = async (req, res) => {
     }
 
     const result = await pool.query(
-      "UPDATE prompts SET prompt = $1, model = $2, temperature= $3 WHERE idPrompt = $4 RETURNING *",
-      [content, model, temperature, idPrompt]
+      "UPDATE prompts SET prompt = $1, model = $2, temperature = $3, promptname = $4 WHERE idPrompt = $5 RETURNING *",
+      [content, model, temperature, promptname, idPrompt]
     )
 
     if (result.rowCount === 0) {
@@ -55,9 +55,10 @@ const GetPromptHandler: RequestHandler = async (req, res) => {
   try {
     // QUERY
     let sql =
-      "SELECT prompt, model, temperature FROM prompts WHERE idPrompt = $1"
+      "SELECT prompt, model, temperature, promptname FROM prompts WHERE idPrompt = $1"
     if (noprompt) {
-      sql = "SELECT  model, temperature FROM prompts WHERE idPrompt = $1"
+      sql =
+        "SELECT model, temperature, promptname FROM prompts WHERE idPrompt = $1"
     }
     const values = [idPrompt]
     const result = await pool.query(sql, values)
