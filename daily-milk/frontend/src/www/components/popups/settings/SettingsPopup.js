@@ -101,7 +101,7 @@ const SettingsPopup = ({ onClose }) => {
               </tr>
               <tr>
                 <td>
-                  <label>Save Conversation:</label>
+                  <label>Save Conversations:</label>
                 </td>
                 <td>
                   <input
