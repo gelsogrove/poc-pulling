@@ -19,18 +19,19 @@ usersRouter.get("/", async (req: Request, res: Response) => {
 })
 
 // Aggiorna un utente
-usersRouter.put("/update/:id", async (req: Request, res: Response) => {
-  const { id } = req.params
+usersRouter.put("/update/:userid", async (req: Request, res: Response) => {
+  const { userid } = req.params
   let { name, role, username, surname, isactive } = req.body
 
-  if (isactive === null) {
-    isactive = true
-  }
   try {
     const query =
       "UPDATE users SET name = $1, role = $2, username = $3, surname = $4, isactive = $5 WHERE userid = $6 RETURNING *"
-    const values = [name, role, username, surname, isactive, id]
+    const values = [name, role, username, surname, isactive, userid]
     const result = await pool.query(query, values)
+
+    console.log(query)
+    console.log(values)
+
     if (result.rowCount === 0) {
       res.status(404).json({ error: "User not found." })
       return
@@ -43,10 +44,12 @@ usersRouter.put("/update/:id", async (req: Request, res: Response) => {
 })
 
 // Elimina un utente
-usersRouter.delete("/delete/:id", async (req: Request, res: Response) => {
-  const { id } = req.params
+usersRouter.delete("/delete/:userid", async (req: Request, res: Response) => {
+  const { userid } = req.params
   try {
-    const result = await pool.query("DELETE FROM users WHERE userid = $1", [id])
+    const result = await pool.query("DELETE FROM users WHERE userid = $1", [
+      userid,
+    ])
     if (result.rowCount === 0) {
       res.status(404).json({ error: "User not found." })
       return
@@ -59,12 +62,12 @@ usersRouter.delete("/delete/:id", async (req: Request, res: Response) => {
 })
 
 // Cambia stato isActive
-usersRouter.get("/isactive/:id", async (req: Request, res: Response) => {
-  const { id } = req.params
+usersRouter.get("/isactive/:userid", async (req: Request, res: Response) => {
+  const { userid } = req.params
   const { isActive } = req.body
   try {
     const query = "UPDATE users SET isactive = $1 WHERE userid = $2 RETURNING *"
-    const values = [isActive, id]
+    const values = [isActive, userid]
     const result = await pool.query(query, values)
     if (result.rowCount === 0) {
       res.status(404).json({ error: "User not found." })
@@ -99,7 +102,7 @@ usersRouter.put(
         "UPDATE users SET password = $1 WHERE userid = $2 RETURNING *"
       const values = [hashedPassword, userId]
 
-      console.log("Executing query:", query, "with values:", values) // Log della query e dei valori
+      console.log(query, "with", values)
 
       const result = await pool.query(query, values)
 
