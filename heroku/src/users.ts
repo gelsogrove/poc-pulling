@@ -91,10 +91,16 @@ usersRouter.put("/change-password", async (req: Request, res: Response) => {
 
   try {
     const hashedPassword = await bcrypt.hash(newPassword, 10) // Cripta la nuova password
-    const result = await pool.query(
-      "UPDATE users SET password = $1 WHERE userid = $2 RETURNING *",
-      [hashedPassword, userId]
-    )
+    const query = "UPDATE users SET password = $1 WHERE userid = $2 RETURNING *"
+    const values = [hashedPassword, userId]
+
+    // Costruisci la query completa per il log
+    const fullQuery = query
+      .replace(/\$1/g, `'${values[0]}'`)
+      .replace(/\$2/g, `'${values[1]}'`)
+    console.log("Executing query:", fullQuery)
+
+    const result = await pool.query(query, values)
 
     // Aggiunto log per il risultato della query
     console.log("Result from password change query:", result)
