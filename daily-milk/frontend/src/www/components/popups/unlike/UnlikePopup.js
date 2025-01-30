@@ -42,6 +42,11 @@ const UnlikePopup = ({ idPrompt, onClose }) => {
   const handleDeleteChat = async () => {
     if (!selectedItem) return
 
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete this chat ?"
+    )
+    if (!isConfirmed) return
+
     try {
       const success = await deleteUnlikeRecord(selectedItem.idunlike)
       if (success) {
@@ -69,7 +74,7 @@ const UnlikePopup = ({ idPrompt, onClose }) => {
       <button className="close-button" onClick={onClose}>
         ×
       </button>
-      <h1>Dislike</h1>
+      <h1>Unlike</h1>
       <div className="content-container">
         {loading ? (
           <div className="loading-message">Loading...</div>

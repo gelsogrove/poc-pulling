@@ -17,8 +17,8 @@ import "./Home.css"
 const Home = () => {
   const { t } = useTranslation()
   const [activePopup, setActivePopup] = useState(null)
-  const [promptName, setPromptName] = useState("Sales Reader chatbot")
-  const [hasUnlikes, setHasUnlikes] = useState(false)
+  const [promptName, setPromptName] = useState("")
+  const [hasUnlikes, setHasUnlikes] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,6 +43,7 @@ const Home = () => {
 
   const closePopup = () => {
     setActivePopup(null)
+    window.location.reload()
   }
 
   const openPopup = (popupType) => {

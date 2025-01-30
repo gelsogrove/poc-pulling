@@ -1,0 +1,71 @@
+.settings-popup {
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  min-width: 800px;
+  margin: auto;
+}
+
+.settings-popup-content {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+
+  width: 770px; /* Aumentata la larghezza della popup */
+}
+
+h2 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Spaziatura tra i campi */
+}
+
+table {
+  width: 100%; /* La tabella occupa tutta la larghezza */
+  border-collapse: collapse; /* Rimuove gli spazi tra le celle */
+}
+
+td {
+  padding: 10px; /* Spaziatura interna delle celle */
+}
+
+.form-input {
+  width: 100%; /* Gli input occupano tutta la larghezza della cella */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-checkbox {
+  margin-left: 10px;
+}
+
+.form-button {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.form-button:hover {
+  background-color: #0056b3;
+}
+
+.close-button {
+  margin-top: 15px;
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  text-align: center;
+}

@@ -5,16 +5,14 @@ daily-milk BE: 80% > todo
 
 ===================== TODO =====================
 
+- backup non funziona
 - salvare conversazioni
 - user admin e user normale
+- heroku e se ho piu' chatbots?
+- tabla usage mettere sales-reader
 - il databse potrebbe eseere su visual code
 - pulire codice funzioni dengfo utils
 - statistiche
-
-- heroku e se ho piu' chatbots?
-- tabla usage mettere sales-reader
-- creare progetto pilota con 2 fork
-
 - LOGIN WITH DAILIYMILK (todo)
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
