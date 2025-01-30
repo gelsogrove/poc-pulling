@@ -84,21 +84,24 @@ usersRouter.put("/change-password", async (req: Request, res: Response) => {
 
   const { newPassword } = req.body
 
-  // Aggiunto log per verificare userId e newPassword
+  // Log to verify userId and newPassword
   console.log("User ID:", userId)
+  console.log("Type of userId:", typeof userId)
   console.log("New Password:", newPassword)
+  console.log("Type of newPassword:", typeof newPassword)
+  console.log("Request body:", req.body)
 
   if (!newPassword) {
-    res.status(400).json({ error: "La nuova password è richiesta." })
+    res.status(400).json({ error: "New password is required." })
     return
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(newPassword, 10) // Cripta la nuova password
+    const hashedPassword = await bcrypt.hash(newPassword, 10) // Encrypt the new password
     const query = "UPDATE users SET password = $1 WHERE userid = $2 RETURNING *"
     const values = [hashedPassword, userId]
 
-    // Costruisci la query completa per il log
+    // Build the full query for logging
     const fullQuery = query
       .replace(/\$1/g, `'${values[0]}'`)
       .replace(/\$2/g, `'${values[1]}'`)
@@ -106,15 +109,18 @@ usersRouter.put("/change-password", async (req: Request, res: Response) => {
 
     const result = await pool.query(query, values)
 
+    // Log for the result of the query
+    console.log("Result from password change query:", result)
+
     if (result.rowCount === 0) {
-      res.status(404).json({ error: "User not found" })
+      res.status(404).json({ error: "User not found." })
       return
     }
 
-    res.status(200).json({ message: "Password cambiata con successo." })
+    res.status(200).json({ message: "Password changed successfully." })
   } catch (error) {
-    console.error("Errore durante il cambio della password:", error)
-    res.status(500).json({ error: "Errore interno del server." })
+    console.error("Error during password change:", error)
+    res.status(500).json({ error: "Internal server error." })
   }
 })
 
