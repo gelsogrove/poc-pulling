@@ -10,30 +10,35 @@ import Popup from "../../components/popups/Popup"
 import PromptsPopup from "../../components/popups/prompts/salesreader/PromptsPopup.js"
 import UnlikePopup from "../../components/popups/unlike/UnlikePopup.js"
 import UploadPopup from "../../components/popups/upload/UploadPopup.js"
-import { getPromptName } from "./api/home_api"
+import { PROMPT_ID } from "../../config/constants"
+import { checkUnlikeExists, getPromptName } from "./api/home_api"
 import "./Home.css"
-
-const PROMPT_ID = "a2c502db-9425-4c66-9d92-acd3521b38b5"
 
 const Home = () => {
   const { t } = useTranslation()
   const [activePopup, setActivePopup] = useState(null)
   const [promptName, setPromptName] = useState("Sales Reader chatbot")
+  const [hasUnlikes, setHasUnlikes] = useState(false)
 
   useEffect(() => {
-    const fetchPromptName = async () => {
+    const fetchData = async () => {
       try {
         const token = Cookies.get("token")
-        const name = await getPromptName(PROMPT_ID, token)
+        const [name, unlikeExists] = await Promise.all([
+          getPromptName(PROMPT_ID, token),
+          checkUnlikeExists(PROMPT_ID, token),
+        ])
+
         if (name) {
           setPromptName(name)
         }
+        setHasUnlikes(unlikeExists)
       } catch (error) {
-        console.error("Errore durante il recupero del nome del prompt:", error)
+        console.error("Errore durante il recupero dei dati:", error)
       }
     }
 
-    fetchPromptName()
+    fetchData()
   }, [])
 
   const closePopup = () => {
@@ -122,7 +127,11 @@ const Home = () => {
                 <div className="tooltip">Upload</div>
               </button>
 
-              <button className="btn" onClick={() => openPopup("unliked")}>
+              <button
+                className={`btn ${!hasUnlikes ? "disabled-btn" : ""}`}
+                onClick={() => hasUnlikes && openPopup("unliked")}
+                disabled={!hasUnlikes}
+              >
                 <i className="fas fa-history"></i>
                 <div className="tooltip">Unliked</div>
               </button>

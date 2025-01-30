@@ -118,38 +118,7 @@
   align-items: center;
   width: 50px;
   height: 50px;
-  border-radius: 50%; /* Rende il bottone rotondo */
-  background-color: white;
-  border: 2px solid #ddd;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
-  cursor: pointer;
-  position: relative; /* Necessario per il posizionamento assoluto del tooltip */
-}
-
-.btn:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-  transform: scale(1.1); /* Ingrandisce il bottone */
-}
-
-/* Icone nei bottoni */
-.btn i {
-  font-size: 36px; /* Aumenta la dimensione dell'icona */
-  color: #007bff; /* Colore dell'icona */
-}
-
-.btn:hover i {
-  color: #0056b3; /* Cambia colore dell'icona al passaggio del mouse */
-}
-
-/* Bottone con bordi rotondi */
-.btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 60px; /* Aumenta la larghezza per adattarsi alle icone più grandi */
-  height: 60px; /* Aumenta l'altezza per adattarsi alle icone più grandi */
-  border-radius: 50%; /* Forma rotonda */
+  border-radius: 50%;
   background-color: white;
   border: 2px solid #ddd;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -158,11 +127,39 @@
   position: relative;
 }
 
-/* Effetto al passaggio del mouse sui bottoni */
+.btn:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  transform: scale(1.1);
+}
+
+.btn i {
+  font-size: 36px;
+  color: #007bff;
+}
+
+.btn:hover i {
+  color: #0056b3;
+}
+
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  cursor: pointer;
+  position: relative;
+}
+
 .btn:hover {
   background-color: #f0f0f0;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-  transform: scale(1.1); /* Ingrandisce il bottone */
+  transform: scale(1.1);
 }
 
 .hidden {
@@ -181,42 +178,42 @@
 }
 
 .tooltip {
-  visibility: hidden; /* Nascosto di default */
-  background-color: rgba(0, 0, 0, 0.8); /* Sfondo nero traslucido */
-  color: white; /* Testo bianco */
+  visibility: hidden;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
   text-align: center;
   border-radius: 5px;
   padding: 5px;
   position: absolute;
   z-index: 1;
-  top: 65px; /* Posizionato sotto il bottone */
+  top: 65px;
   left: 50%;
   transform: translateX(-50%);
-  white-space: nowrap; /* Evita che il testo vada a capo */
+  white-space: nowrap;
   font-size: 12px;
-  opacity: 0; /* Invisibile inizialmente */
+  opacity: 0;
   transition: opacity 0.3s ease-in-out;
 }
 
 .btn:hover .tooltip {
-  visibility: visible; /* Mostra il tooltip al passaggio del mouse */
-  opacity: 1; /* Applica un'animazione di dissolvenza */
+  visibility: visible;
+  opacity: 1;
 }
 
 .logout-btn i {
-  color: red; /* Rende l'icona rossa */
-  transition: color 0.3s ease; /* Transizione per il passaggio di colore */
+  color: red;
+  transition: color 0.3s ease;
 }
 
 .logout-btn i:hover {
-  color: darkred; /* Cambia il colore a rosso scuro al passaggio del mouse */
+  color: darkred;
 }
 
 .logout-btn {
-  margin-left: auto; /* Spinge il pulsante completamente a destra */
-  display: flex; /* Assicura che l'icona e il testo siano ben posizionati */
-  align-items: center; /* Allinea verticalmente */
-  justify-content: flex-end; /* Posiziona il contenuto all'interno a destra */
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .logout-btn i {
@@ -237,4 +234,19 @@
   font-size: 30px;
   color: greenyellow;
   display: none;
+}
+
+/* Stili per il bottone disabilitato */
+.disabled-btn {
+  opacity: 0.7;
+  cursor: not-allowed !important;
+}
+
+.disabled-btn:hover {
+  transform: none !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.disabled-btn i {
+  color: #ccc !important;
 }

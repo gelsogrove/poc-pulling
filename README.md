@@ -5,16 +5,16 @@ daily-milk BE: 80% > todo
 
 ===================== TODO =====================
 
-- manage users change-pwd
+- salvare conversazioni
 - user admin e user normale
 - il databse potrebbe eseere su visual code
-- cacenllare a cascata sara da testeare
-
 - pulire codice funzioni dengfo utils
+- statistiche
+
 - heroku e se ho piu' chatbots?
 - tabla usage mettere sales-reader
 - creare progetto pilota con 2 fork
-- statistiche
+
 - LOGIN WITH DAILIYMILK (todo)
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
