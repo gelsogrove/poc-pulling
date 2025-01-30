@@ -165,7 +165,7 @@ const setExpire: RequestHandler = async (req, res) => {
 
   // Esegui una query per aggiornare la data di scadenza e il token
   await pool.query(
-    "UPDATE users SET expire_date = $1, token = $2 WHERE userid = $3",
+    "UPDATE users SET expire_date = $1, token = $2, isactive = true WHERE userid = $3",
     [
       newExpireDate, // Usa la nuova data di scadenza
       token, // Aggiungi il token all'update
@@ -175,7 +175,7 @@ const setExpire: RequestHandler = async (req, res) => {
 
   // Nuova query per ottenere la data di scadenza aggiornata
   const { rows } = await pool.query(
-    "SELECT expire_date FROM users WHERE userid = $1",
+    "SELECT expire_date FROM users WHERE userid = $1 AND isactive = true",
     [userId]
   )
   const updatedExpireDate = rows[0]?.expire_date // Ottieni la data di scadenza aggiornata
@@ -194,7 +194,7 @@ const isExpired: RequestHandler = async (req, res) => {
   try {
     // Esegui una query per cercare la data di scadenza
     const { rows } = await pool.query(
-      "SELECT expire_date FROM users WHERE userId = $1",
+      "SELECT expire_date FROM users WHERE userId = $1 AND isactive = true",
       [userId]
     )
 
@@ -223,7 +223,7 @@ const logoutHandler: RequestHandler = async (req, res) => {
   try {
     // Aggiorna il campo token e expire_date nel database
     await pool.query(
-      "UPDATE users SET token = NULL, expire_date = NULL WHERE userid = $1",
+      "UPDATE users SET token = NULL, expire_date = NULL, isactive = false WHERE userid = $1",
       [userId]
     )
 
@@ -241,9 +241,10 @@ const getClientHandler: RequestHandler = async (req, res) => {
     if (!userId) return
 
     // Recupera l'utente dal database usando userId
-    const { rows } = await pool.query("SELECT * FROM users WHERE userid = $1", [
-      userId,
-    ])
+    const { rows } = await pool.query(
+      "SELECT * FROM users WHERE userid = $1 AND isactive = true",
+      [userId]
+    )
 
     if (rows.length === 0) {
       res.status(404).json({ message: "Utente non trovato" }) // Restituisce un errore 404 se l'utente non esiste
