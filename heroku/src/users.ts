@@ -84,6 +84,10 @@ usersRouter.put("/change-password", async (req: Request, res: Response) => {
 
   const { newPassword } = req.body
 
+  // Aggiunto log per verificare userId e newPassword
+  console.log("User ID:", userId)
+  console.log("New Password:", newPassword)
+
   if (!newPassword) {
     res.status(400).json({ error: "La nuova password è richiesta." })
     return
@@ -102,11 +106,8 @@ usersRouter.put("/change-password", async (req: Request, res: Response) => {
 
     const result = await pool.query(query, values)
 
-    // Aggiunto log per il risultato della query
-    console.log("Result from password change query:", result)
-
     if (result.rowCount === 0) {
-      res.status(404).json({ error: "Utente non trovato." })
+      res.status(404).json({ error: "User not found" })
       return
     }
 
