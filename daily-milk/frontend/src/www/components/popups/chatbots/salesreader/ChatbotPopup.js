@@ -13,22 +13,27 @@ const ChatbotPopup = ({ idPrompt, onClose }) => {
   return (
     <div>
       <div className="chatbot-popup">
-        <button
-          className="visible-panel btn hover-effect openclose "
-          onClick={onTogglePanel}
-        >
-          {openPanel ? (
-            <i className="fa-solid fa-arrow-right icon"></i>
-          ) : (
-            <i className="fa-solid fa-arrow-left icon"></i>
-          )}
-        </button>
+        <div className="buttons-container">
+          <button
+            className="btn-circle"
+            onClick={onTogglePanel}
+            title="Toggle panel"
+          >
+            {openPanel ? (
+              <i className="fa-solid fa-arrow-right icon"></i>
+            ) : (
+              <i className="fa-solid fa-arrow-left icon"></i>
+            )}
+          </button>
 
-        <button onClick={onClose} className="close-popup btn hover-effect">
-          <i className="fa-solid fa-close icon"></i>
-        </button>
+          <button className="btn-circle" onClick={PrintSection} title="Print">
+            <i className="fa-solid fa-print icon"></i>
+          </button>
 
-        <PrintSection />
+          <button className="btn-circle" onClick={onClose} title="Close">
+            <i className="fa-solid fa-close icon"></i>
+          </button>
+        </div>
 
         <div className="chat-section-source">
           <h3>Sales reader chatbot</h3>

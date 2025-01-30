@@ -163,7 +163,7 @@ const PromptsForm = ({ idPrompt, onClose }) => {
             onClick={handleSubmit}
             disabled={!isChanged || isLoading}
           >
-            {isLoading ? "Saving..." : "Submit"}
+            {isLoading ? "Saving..." : "Save prompt"}
           </button>
         </div>
       </div>
