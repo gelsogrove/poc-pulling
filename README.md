@@ -5,28 +5,23 @@ daily-milk BE: 80% > todo
 
 ===================== TODO =====================
 
-- manage users
-- edit - new - change-pwd
+- manage users change-pwd
 - user admin e user normale
 - il databse potrebbe eseere su visual code
-- cacenllare a cascata
-- user active
--
+- cacenllare a cascata sara da testeare
 
 - pulire codice funzioni dengfo utils
 - heroku e se ho piu' chatbots?
 - tabla usage mettere sales-reader
 - creare progetto pilota con 2 fork
 - statistiche
-
+- LOGIN WITH DAILIYMILK (todo)
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - come gestiamo no surprice ne Heroku ?
 - pulire test folder perche' c'e import
-- LOGIN WITH DAILIYMILK (todo)
 - upload (todo)
 - togliere page dall'import e dalla tabella
-- mettere last update nel panello
 
 ===================== NIC$ TO HAVE =====================
 

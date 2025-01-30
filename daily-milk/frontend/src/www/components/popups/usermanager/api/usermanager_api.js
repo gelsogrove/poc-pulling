@@ -110,3 +110,27 @@ export const toggleUserActive = async (userId, isactive) => {
     throw error
   }
 }
+
+/**
+ * Change a user's password
+ * @param {string} newPassword - The new password to set
+ * @returns {Promise<Object>} Response from the server
+ */
+export const changePassword = async (newPassword) => {
+  const token = Cookies.get("token")
+  try {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    }
+    const response = await axios.put(
+      `${API_URL}/change-password`,
+      { newPassword },
+      { headers }
+    )
+    return response.data
+  } catch (error) {
+    console.error("Error changing password:", error)
+    throw error
+  }
+}

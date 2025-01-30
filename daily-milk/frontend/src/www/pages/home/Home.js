@@ -65,6 +65,8 @@ const Home = () => {
 
       <div className="home-container">
         <h1 className="ourservice">AI dairy-tools</h1>
+        <img alt="" className="logo" src="/images/whatsapp.jpg" />
+        <div className="num">+001 646474747</div>
         <section className="features">
           <div className="feature-item">
             <div

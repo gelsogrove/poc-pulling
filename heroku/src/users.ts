@@ -1,5 +1,7 @@
+import bcrypt from "bcrypt"
 import { Request, Response, Router } from "express"
 import { pool } from "../server.js" // Importa il pool dal file principale
+import { validateRequest } from "./validateUser.js"
 
 const usersRouter = Router()
 
@@ -72,6 +74,37 @@ usersRouter.get("/isactive/:id", async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error toggling user active status:", error)
     res.status(500).json({ error: "Internal server error." })
+  }
+})
+
+// Cambia la password di un utente
+usersRouter.put("/change-password", async (req: Request, res: Response) => {
+  const userId = await validateRequest(req, res)
+  if (!userId) return
+
+  const { newPassword } = req.body
+
+  if (!newPassword) {
+    res.status(400).json({ error: "La nuova password è richiesta." })
+    return
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(newPassword, 10) // Cripta la nuova password
+    const result = await pool.query(
+      "UPDATE users SET password = $1 WHERE userid = $2 RETURNING *",
+      [hashedPassword, userId]
+    )
+
+    if (result.rowCount === 0) {
+      res.status(404).json({ error: "Utente non trovato." })
+      return
+    }
+
+    res.status(200).json({ message: "Password cambiata con successo." })
+  } catch (error) {
+    console.error("Errore durante il cambio della password:", error)
+    res.status(500).json({ error: "Errore interno del server." })
   }
 })
 

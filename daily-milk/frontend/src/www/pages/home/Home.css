@@ -225,3 +225,14 @@
 .logout-btn i:hover {
   color: red;
 }
+
+.logo {
+  width: 5%;
+  margin-top: -340px;
+}
+
+.num {
+  font-size: 30px;
+  color: greenyellow;
+  display: none;
+}

@@ -9,7 +9,6 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
-  margin-top: 40px;
 }
 
 /* Labels and Inputs */
@@ -91,4 +90,11 @@
 
 .delete-btn:hover {
   background-color: #b52b37;
+}
+
+/* Error Message */
+.error-message {
+  color: red;
+  margin-top: 10px;
+  font-weight: bold;
 }

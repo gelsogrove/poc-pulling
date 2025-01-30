@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react"
 import {
+  changePassword,
   deleteUser,
   fetchUsers,
   toggleUserActive,
   updateUser,
 } from "./api/usermanager_api.js"
-import EditForm from "./component/Editform.js" // Importiamo il componente EditForm
+import EditForm from "./component/Editform.js"
 import "./Usermanager.css"
 
 const UserManager = ({ onClose }) => {
   const [users, setUsers] = useState([])
   const [editingUser, setEditingUser] = useState(null)
+  const [newPassword, setNewPassword] = useState("")
+  const [showChangePassword, setShowChangePassword] = useState(false)
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -23,6 +26,11 @@ const UserManager = ({ onClose }) => {
     }
     loadUsers()
   }, [])
+
+  const handleEditUser = (user) => {
+    setEditingUser({ ...user })
+    setShowChangePassword(false)
+  }
 
   const handleDeleteUser = async (userId) => {
     const confirmDelete = window.confirm(
@@ -40,18 +48,6 @@ const UserManager = ({ onClose }) => {
     }
   }
 
-  // Conta il numero di admin nel sistema
-  const adminCount = users.filter((user) => user.role === "Admin").length
-
-  // Gestisce l'editing
-  const handleEditUser = (user) => {
-    setEditingUser({ ...user }) // Imposta l'utente in modifica
-  }
-
-  const handleEditCancel = () => {
-    setEditingUser(null) // Chiude la form di editing senza salvare
-  }
-
   const handleSaveEdit = async (updatedUser) => {
     try {
       // Chiama direttamente la funzione updateUser dall'API
@@ -59,6 +55,13 @@ const UserManager = ({ onClose }) => {
         updatedUser.userid,
         updatedUser
       )
+
+      // Se la password è stata cambiata, chiama la funzione changePassword
+      if (newPassword) {
+        await changePassword(newPassword) // Chiamata per cambiare la password
+        setNewPassword("") // Resetta il campo di input della password
+        setShowChangePassword(false) // Nasconde il campo di cambio password
+      }
 
       // Aggiorna lo stato solo se l'API ha avuto successo
       setUsers((prevUsers) =>
@@ -88,15 +91,18 @@ const UserManager = ({ onClose }) => {
       </div>
 
       {editingUser ? (
-        // Usa EditForm invece del codice inline
         <EditForm
           editedUser={editingUser}
           handleEditInputChange={(e) =>
             setEditingUser({ ...editingUser, [e.target.name]: e.target.value })
           }
           handleSaveEdit={() => handleSaveEdit(editingUser)}
-          handleCancelEdit={handleEditCancel}
-          isLastAdmin={editingUser.role === "Admin" && adminCount === 1}
+          handleCancelEdit={() => setEditingUser(null)}
+          newPassword={newPassword}
+          setNewPassword={setNewPassword}
+          showChangePassword={showChangePassword}
+          setShowChangePassword={setShowChangePassword}
+          users={users}
         />
       ) : (
         <div className="table-container">
@@ -111,58 +117,47 @@ const UserManager = ({ onClose }) => {
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => {
-                const isLastAdmin = user.role === "Admin" && adminCount === 1
-
-                return (
-                  <tr key={user.id} onClick={() => handleEditUser(user)}>
-                    <td className="small-col">{user.name}</td>
-                    <td className="small-col">{user.surname}</td>
-                    <td>{user.username}</td>
-                    <td className="small-col1">{user.role}</td>
-                    <td className="small-col1">
-                      <button
-                        className={`toggle-btn ${
-                          user.isactive ? "deactivate" : "activate"
-                        } ${isLastAdmin ? "disabled-btn" : ""}`}
-                        onClick={async (e) => {
-                          e.stopPropagation()
-                          if (isLastAdmin) return
-                          try {
-                            await toggleUserActive(user.userid, !user.isactive)
-                            setUsers((prevUsers) =>
-                              prevUsers.map((u) =>
-                                u.userid === user.userid
-                                  ? { ...u, isactive: !u.isactive }
-                                  : u
-                              )
-                            )
-                          } catch (error) {
-                            console.error("Error toggling user state:", error)
-                          }
-                        }}
-                        disabled={isLastAdmin}
-                      >
-                        {user.isactive ? "Deactivate" : "Activate"}
-                      </button>
-                      <button
-                        className={`delete-btn ${
-                          isLastAdmin ? "disabled-btn" : ""
-                        }`}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          if (!isLastAdmin) {
-                            handleDeleteUser(user.userid)
-                          }
-                        }}
-                        disabled={isLastAdmin}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                )
-              })}
+              {users.map((user) => (
+                <tr key={user.id} onClick={() => handleEditUser(user)}>
+                  <td className="small-col">{user.name}</td>
+                  <td className="small-col">{user.surname}</td>
+                  <td>{user.username}</td>
+                  <td className="small-col1">{user.role}</td>
+                  <td className="small-col1">
+                    <button
+                      className={`toggle-btn ${
+                        user.isactive ? "deactivate" : "activate"
+                      }`}
+                      onClick={async (e) => {
+                        if (user.role === "Admin") return
+                        e.stopPropagation()
+                        await toggleUserActive(user.userid, !user.isactive)
+                        setUsers((prevUsers) =>
+                          prevUsers.map((u) =>
+                            u.userid === user.userid
+                              ? { ...u, isactive: !u.isactive }
+                              : u
+                          )
+                        )
+                      }}
+                      disabled={user.role === "Admin"}
+                    >
+                      {user.isactive ? "Deactivate" : "Activate"}
+                    </button>
+                    <button
+                      className="delete-btn"
+                      onClick={(e) => {
+                        if (user.role === "Admin") return
+                        e.stopPropagation()
+                        handleDeleteUser(user.userid)
+                      }}
+                      disabled={user.role === "Admin"}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
