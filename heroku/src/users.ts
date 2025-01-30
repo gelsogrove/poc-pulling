@@ -84,13 +84,6 @@ usersRouter.put("/change-password", async (req: Request, res: Response) => {
 
   const { newPassword } = req.body
 
-  // Log to verify userId and newPassword
-  console.log("User ID:", userId)
-  console.log("Type of userId:", typeof userId)
-  console.log("New Password:", newPassword)
-  console.log("Type of newPassword:", typeof newPassword)
-  console.log("Request body:", req.body)
-
   if (!newPassword) {
     res.status(400).json({ error: "New password is required." })
     return
@@ -101,16 +94,12 @@ usersRouter.put("/change-password", async (req: Request, res: Response) => {
     const query = "UPDATE users SET password = $1 WHERE userid = $2 RETURNING *"
     const values = [hashedPassword, userId]
 
-    // Build the full query for logging
     const fullQuery = query
       .replace(/\$1/g, `'${values[0]}'`)
-      .replace(/\$2/g, `'${values[1]}'`)
-    console.log("Executing query:", fullQuery)
+      .replace(/\$1/g, `'${values[1]}'`)
+    console.log(fullQuery)
 
     const result = await pool.query(query, values)
-
-    // Log for the result of the query
-    console.log("Result from password change query:", result)
 
     if (result.rowCount === 0) {
       res.status(404).json({ error: "User not found." })

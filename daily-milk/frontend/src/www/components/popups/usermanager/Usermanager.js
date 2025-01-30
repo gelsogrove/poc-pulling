@@ -81,6 +81,16 @@ const UserManager = ({ onClose }) => {
     }
   }
 
+  const handleToggleUserActive = async (user) => {
+    if (user.role === "Admin") return
+    await toggleUserActive(user.userid, !user.isactive)
+    setUsers((prevUsers) =>
+      prevUsers.map((u) =>
+        u.userid === user.userid ? { ...u, isactive: !u.isactive } : u
+      )
+    )
+  }
+
   return (
     <div className="user-manager-container">
       <div className="header">
@@ -128,17 +138,9 @@ const UserManager = ({ onClose }) => {
                       className={`toggle-btn ${
                         user.isactive ? "deactivate" : "activate"
                       }`}
-                      onClick={async (e) => {
-                        if (user.role === "Admin") return
+                      onClick={(e) => {
                         e.stopPropagation()
-                        await toggleUserActive(user.userid, !user.isactive)
-                        setUsers((prevUsers) =>
-                          prevUsers.map((u) =>
-                            u.userid === user.userid
-                              ? { ...u, isactive: !u.isactive }
-                              : u
-                          )
-                        )
+                        handleToggleUserActive(user)
                       }}
                       disabled={user.role === "Admin"}
                     >
