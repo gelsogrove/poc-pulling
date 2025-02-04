@@ -194,7 +194,7 @@ const handleImport = async (req: Request, res: Response): Promise<void> => {
             fs.unlinkSync(uploadPath) // Rimuovi il file ZIP
             if (error) {
               console.error("❌ Error during import:", error.message)
-              console.error("🔴 STDERR:", stderr)
+              console.error("🔴 STDERR:", stderr) // Log degli errori
               res.status(500).json({ message: "Error during database import." })
               return
             }
