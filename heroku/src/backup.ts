@@ -191,7 +191,6 @@ const handleImport = async (req: Request, res: Response): Promise<void> => {
           console.log("🔄 Running import command:", importCommand)
 
           exec(importCommand, (error, stdout, stderr) => {
-            fs.unlinkSync(uploadPath) // Rimuovi il file ZIP
             if (error) {
               console.error("❌ Error during import:", error.message)
               console.error("🔴 STDERR:", stderr) // Log degli errori
@@ -200,7 +199,10 @@ const handleImport = async (req: Request, res: Response): Promise<void> => {
             }
 
             console.log("✅ Import completed successfully!")
-            console.log("🟢 STDOUT:", stdout)
+            console.log("�� STDOUT:", stdout)
+
+            // Rimuovi il file ZIP solo dopo un'importazione riuscita
+            fs.unlinkSync(uploadPath) // Rimuovi il file ZIP
             res.status(200).json({ message: "Import completed successfully." })
           })
         })
