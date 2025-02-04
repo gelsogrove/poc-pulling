@@ -71,7 +71,7 @@ const handleExport = async (req: Request, res: Response): Promise<void> => {
   const zipFilePath = path.join("/tmp", `${appName}_${currentDate}.zip`)
 
   // ✅ Export con INSERT INTO invece di COPY FROM stdin;
-  const dumpCommand = `PGPASSWORD=${dbConfig.password} pg_dump -U ${dbConfig.user} -h ${dbConfig.host} -p ${dbConfig.port} -d ${dbConfig.dbname} --column-inserts --data-only > "${sqlFilePath}"`
+  const dumpCommand = `PGPASSWORD=${dbConfig.password} pg_dump -U ${dbConfig.user} -h ${dbConfig.host} -p ${dbConfig.port} -d ${dbConfig.dbname} --column-inserts --data-only > "${sqlFilePath}" 2> "${sqlFilePath}_error.log"`
 
   console.log("🔄 Running dump command:", dumpCommand)
 

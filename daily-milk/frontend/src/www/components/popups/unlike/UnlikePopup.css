@@ -107,3 +107,9 @@
   text-align: left;
   max-width: 860px;
 }
+
+.close-button-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}

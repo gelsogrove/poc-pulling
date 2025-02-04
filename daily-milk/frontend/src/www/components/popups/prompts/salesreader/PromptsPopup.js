@@ -5,6 +5,7 @@ import "codemirror/theme/dracula.css" // Tema dell'editor
 import Cookies from "js-cookie"
 import React, { useEffect, useState } from "react"
 import { Controlled as ControlledEditor } from "react-codemirror2"
+import CloseButton from "../../../share/CloseButton"
 import "./PromptsPopup.css"
 import { getPrompt, postPrompt } from "./api/PromptsApi"
 
@@ -99,9 +100,9 @@ const PromptsForm = ({ idPrompt, onClose, onSave }) => {
 
   return (
     <div className="prompts-form-container">
-      <button className="close-button" onClick={onClose}>
-        ×
-      </button>
+      <div className="close-button-container">
+        <CloseButton onClose={onClose} />
+      </div>
 
       {/* Sezione titolo + campi + pulsante Save */}
       <div className="header-row">

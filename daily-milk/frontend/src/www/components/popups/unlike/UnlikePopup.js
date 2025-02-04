@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react"
+import CloseButton from "../../share/CloseButton"
 import ChatHistory from "../shared/ChatHistory"
 import {
   deleteUnlikeRecord,
@@ -71,9 +72,9 @@ const UnlikePopup = ({ idPrompt, onClose }) => {
 
   return (
     <div className="unlike-popup">
-      <button className="close-button" onClick={onClose}>
-        ×
-      </button>
+      <div className="close-button-container">
+        <CloseButton onClose={onClose} />
+      </div>
       <h1>Unlike</h1>
       <div className="content-container">
         {loading ? (

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react"
+import CloseButton from "../../share/CloseButton"
 import {
   changePassword,
   deleteUser,
@@ -91,15 +92,13 @@ const UserManager = ({ onClose }) => {
     )
   }
 
-  const isOnlyAdmin = users.filter((user) => user.role === "Admin").length === 1
-
   return (
     <div className="user-manager-container">
       <div className="header">
         <h2>Manage Users</h2>
-        <button className="close-button" onClick={onClose}>
-          ×
-        </button>
+        <div className="close-button-container">
+          <CloseButton onClose={onClose} />
+        </div>
       </div>
 
       {editingUser ? (

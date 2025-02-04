@@ -11,6 +11,7 @@ import {
 import React, { useEffect, useState } from "react"
 import { Bar } from "react-chartjs-2"
 import { fetchUsageData } from "../../chatbots/usage/api/utils_api"
+import CloseButton from "../../share/CloseButton"
 import monthlyData from "./api/monthlyData_api"
 import "./InvoicePopup.css"
 
@@ -110,24 +111,23 @@ const InvoicePopup = ({ onClose }) => {
 
   return (
     <div className="invoices-container">
-      <button className="close-button" onClick={onClose}>
-        ×
-      </button>
-
+      <div className="close-button-container">
+        <CloseButton onClose={onClose} />
+      </div>
       <h3>Invoices</h3>
       <br />
       <div style={{ height: "240px", width: "100%" }}>
         <Bar data={barData} options={barOptions} style={{ marginTop: "0px" }} />
       </div>
       <br />
-      <table border="0" width="97%">
+      <table className="table-invoices">
         <thead>
           <tr>
             <th>Year</th>
             <th>Month</th>
             <th>Total</th>
             <th>Paid</th>
-            <th>Invoice </th>
+            <th>Invoice</th>
           </tr>
         </thead>
         <tbody>

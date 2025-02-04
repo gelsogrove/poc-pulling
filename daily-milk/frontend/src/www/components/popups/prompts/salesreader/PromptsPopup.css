@@ -160,3 +160,13 @@
   content: " *";
   color: #ff4444;
 }
+
+.prompts-popup {
+  position: relative; /* Assicurati che il contenitore sia relativo */
+}
+
+.close-button-container {
+  position: absolute; /* Posiziona il bottone in modo assoluto */
+  top: 10px; /* Distanza dal top */
+  right: 10px; /* Distanza dal lato destro */
+}

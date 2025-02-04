@@ -6,14 +6,15 @@ daily-milk BE: 80% > todo
 ===================== TODO =====================
 
 - backup non funziona
-- salvare conversazioni
-- user admin e user normale
+- unlike fatto bene con nome utente modello utilizzato
 - heroku e se ho piu' chatbots?
 - tabla usage mettere sales-reader
-- il databse potrebbe eseere su visual code
 - pulire codice funzioni dengfo utils
 - statistiche
 - LOGIN WITH DAILIYMILK (todo)
+- salvare conversazioni
+- user admin e user normale
+- il databse potrebbe eseere su visual code
 
 - **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
 - come gestiamo no surprice ne Heroku ?

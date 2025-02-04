@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { Controlled as ControlledEditor } from "react-codemirror2"
+import CloseButton from "../../share/CloseButton"
 import "./SettingsPopup.css"
 
 const SettingsPopup = ({ onClose }) => {
@@ -24,10 +25,9 @@ const SettingsPopup = ({ onClose }) => {
 
   return (
     <div className="settings-popup">
-      <button className="close-button" onClick={onClose}>
-        ×
-      </button>
-
+      <div className="close-button-container">
+        <CloseButton onClose={onClose} />
+      </div>
       <div className="settings-popup-content">
         <div className="left-column">
           <h2>WhatsApp Channel Settings</h2>

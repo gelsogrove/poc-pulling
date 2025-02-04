@@ -22,6 +22,7 @@
   background-color: #ccc; /* Colore di sfondo per l'intestazione */
   color: black; /* Colore del testo per l'intestazione */
   border: 1px solid grey;
+  width: 20%; /* Larghezza fissa per le intestazioni */
 }
 
 .invoices-container tr:nth-child(even) {
@@ -55,34 +56,27 @@
   background-color: #005f73; /* Colore di sfondo al passaggio del mouse per il pulsante */
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
+.table-invoices {
+  width: 100%; /* La tabella occupa tutta la larghezza */
+  border-collapse: collapse; /* Unisce i bordi delle celle */
 }
 
-thead {
-  background-color: #f4f4f4;
-  position: sticky; /* Mantiene l'header fisso */
-  top: 0;
-  z-index: 1;
+.table-invoices td {
+  padding: 10px; /* Spaziatura interna delle celle */
 }
 
-.invoices-container tbody {
-  display: block;
-  max-height: 200px; /* Altezza massima del corpo della tabella */
-  overflow-y: auto; /* Scorrimento verticale */
-  width: 100%;
+.table-invoices th {
+  padding: 12px; /* Padding per le intestazioni */
+  text-align: left; /* Allineamento a sinistra */
+  border: 1px solid #ddd; /* Bordo delle celle */
 }
 
-tr {
-  display: table;
-  width: 100%;
-  table-layout: fixed; /* Per allineare correttamente le colonne */
+.popup {
+  position: relative; /* Assicurati che il contenitore sia relativo */
 }
 
-th,
-td {
-  padding: 8px 12px;
-  text-align: left;
-  border: 1px solid #ddd;
+.close-button-container {
+  position: absolute; /* Posiziona il bottone in modo assoluto */
+  top: 10px; /* Distanza dal top */
+  right: 10px; /* Distanza dal lato destro */
 }
