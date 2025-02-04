@@ -166,25 +166,42 @@ const handleImport = async (req: Request, res: Response): Promise<void> => {
     fs.createReadStream(uploadPath)
       .pipe(unzipper.Extract({ path: "/tmp" }))
       .on("close", () => {
-        const sqlFilePath = "/tmp/your_sql_file.sql" // Cambia con il nome del file estratto
-
-        // ✅ Import con \i per eseguire il file riga per riga
-        const importCommand = `PGPASSWORD=${dbConfig.password} psql -U ${dbConfig.user} -h ${dbConfig.host} -p ${dbConfig.port} -d ${dbConfig.dbname} -c "\\i '${sqlFilePath}'"`
-
-        console.log("🔄 Running import command:", importCommand)
-
-        exec(importCommand, (error, stdout, stderr) => {
-          fs.unlinkSync(uploadPath) // Rimuovi il file ZIP
-          if (error) {
-            console.error("❌ Error during import:", error.message)
-            console.error("🔴 STDERR:", stderr)
-            res.status(500).json({ message: "Error during database import." })
+        // Trova il file SQL estratto
+        fs.readdir("/tmp", (err, files) => {
+          if (err) {
+            console.error("❌ Error reading /tmp directory:", err.message)
+            res.status(500).json({ message: "Error reading /tmp directory." })
             return
           }
 
-          console.log("✅ Import completed successfully!")
-          console.log("🟢 STDOUT:", stdout)
-          res.status(200).json({ message: "Import completed successfully." })
+          // Filtra i file per trovare quello con estensione .sql
+          const sqlFile = files.find((file) => file.endsWith(".sql"))
+          if (!sqlFile) {
+            console.error("❌ No SQL file found in /tmp directory.")
+            res.status(500).json({ message: "No SQL file found." })
+            return
+          }
+
+          const sqlFilePath = path.join("/tmp", sqlFile)
+
+          // ✅ Import con \i per eseguire il file riga per riga
+          const importCommand = `PGPASSWORD=${dbConfig.password} psql -U ${dbConfig.user} -h ${dbConfig.host} -p ${dbConfig.port} -d ${dbConfig.dbname} -c "\\i '${sqlFilePath}'"`
+
+          console.log("🔄 Running import command:", importCommand)
+
+          exec(importCommand, (error, stdout, stderr) => {
+            fs.unlinkSync(uploadPath) // Rimuovi il file ZIP
+            if (error) {
+              console.error("❌ Error during import:", error.message)
+              console.error("🔴 STDERR:", stderr)
+              res.status(500).json({ message: "Error during database import." })
+              return
+            }
+
+            console.log("✅ Import completed successfully!")
+            console.log("🟢 STDOUT:", stdout)
+            res.status(200).json({ message: "Import completed successfully." })
+          })
         })
       })
   })
