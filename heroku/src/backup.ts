@@ -164,13 +164,13 @@ const handleImport = async (req: Request, res: Response): Promise<void> => {
 
     console.log(`📂 File uploaded successfully to ${uploadPath}. Extracting...`)
 
-    // Extract the SQL file from the ZIP
+    // Estrai il file SQL dal file ZIP
     fs.createReadStream(uploadPath)
       .pipe(unzipper.Extract({ path: "/tmp" }))
       .on("close", () => {
         console.log("📦 Extraction complete. Checking for SQL files...")
 
-        // Check for SQL files
+        // Controlla i file nella directory /tmp
         fs.readdir("/tmp", (err, files) => {
           if (err) {
             console.error("❌ Error reading /tmp directory:", err.message)
@@ -206,7 +206,7 @@ const handleImport = async (req: Request, res: Response): Promise<void> => {
             }
 
             console.log("✅ Import completed successfully!")
-            console.log("�� STDOUT:", stdout)
+            console.log("🟢 STDOUT:", stdout)
 
             // Non rimuovere i file temporanei
             // fs.unlinkSync(uploadPath); // Rimuovi il file ZIP solo dopo un'importazione riuscita
