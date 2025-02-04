@@ -162,11 +162,15 @@ const handleImport = async (req: Request, res: Response): Promise<void> => {
       return
     }
 
-    // Estrai il file SQL dal file ZIP
+    console.log(`📂 File uploaded successfully to ${uploadPath}. Extracting...`)
+
+    // Extract the SQL file from the ZIP
     fs.createReadStream(uploadPath)
       .pipe(unzipper.Extract({ path: "/tmp" }))
       .on("close", () => {
-        // Trova il file SQL estratto
+        console.log("📦 Extraction complete. Checking for SQL files...")
+
+        // Check for SQL files
         fs.readdir("/tmp", (err, files) => {
           if (err) {
             console.error("❌ Error reading /tmp directory:", err.message)
@@ -174,7 +178,7 @@ const handleImport = async (req: Request, res: Response): Promise<void> => {
             return
           }
 
-          // Filtra i file per trovare quello con estensione .sql
+          console.log("📂 Files in /tmp directory:", files)
           const sqlFile = files.find((file) => file.endsWith(".sql"))
           if (!sqlFile) {
             console.error("❌ No SQL file found in /tmp directory.")
@@ -185,24 +189,27 @@ const handleImport = async (req: Request, res: Response): Promise<void> => {
           const sqlFilePath = path.join("/tmp", sqlFile)
           console.log(`📂 Found SQL file: ${sqlFilePath}`)
 
-          // ✅ Import con \i per eseguire il file riga per riga
+          // Prepare the import command
           const importCommand = `PGPASSWORD=${dbConfig.password} psql -U ${dbConfig.user} -h ${dbConfig.host} -p ${dbConfig.port} -d ${dbConfig.dbname} -c "\\i '${sqlFilePath}'"`
-
           console.log("🔄 Running import command:", importCommand)
 
+          // Execute the import command
           exec(importCommand, (error, stdout, stderr) => {
             if (error) {
               console.error("❌ Error during import:", error.message)
-              console.error("🔴 STDERR:", stderr) // Log degli errori
-              res.status(500).json({ message: "Error during database import." })
+              console.error("🔴 STDERR:", stderr)
+              res
+                .status(500)
+                .json({
+                  message: "Error during database import.",
+                  error: stderr,
+                })
               return
             }
 
             console.log("✅ Import completed successfully!")
-            console.log("�� STDOUT:", stdout)
-
-            // Rimuovi il file ZIP solo dopo un'importazione riuscita
-            //s.unlinkSync(uploadPath) // Rimuovi il file ZIP
+            console.log("🟢 STDOUT:", stdout)
+            fs.unlinkSync(uploadPath) // Remove the ZIP file only after a successful import
             res.status(200).json({ message: "Import completed successfully." })
           })
         })
