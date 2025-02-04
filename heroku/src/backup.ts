@@ -202,7 +202,7 @@ const handleImport = async (req: Request, res: Response): Promise<void> => {
             console.log("�� STDOUT:", stdout)
 
             // Rimuovi il file ZIP solo dopo un'importazione riuscita
-            fs.unlinkSync(uploadPath) // Rimuovi il file ZIP
+            //s.unlinkSync(uploadPath) // Rimuovi il file ZIP
             res.status(200).json({ message: "Import completed successfully." })
           })
         })
