@@ -216,6 +216,10 @@ const handleImport = async (req: Request, res: Response): Promise<void> => {
           })
         })
       })
+      .on("error", (err) => {
+        console.error("❌ Error during extraction:", err.message)
+        res.status(500).json({ message: "Error during extraction." })
+      })
   })
 }
 
