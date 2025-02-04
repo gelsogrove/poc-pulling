@@ -198,18 +198,20 @@ const handleImport = async (req: Request, res: Response): Promise<void> => {
             if (error) {
               console.error("❌ Error during import:", error.message)
               console.error("🔴 STDERR:", stderr)
-              res
-                .status(500)
-                .json({
-                  message: "Error during database import.",
-                  error: stderr,
-                })
+              res.status(500).json({
+                message: "Error during database import.",
+                error: stderr,
+              })
               return
             }
 
             console.log("✅ Import completed successfully!")
-            console.log("🟢 STDOUT:", stdout)
-            fs.unlinkSync(uploadPath) // Remove the ZIP file only after a successful import
+            console.log("�� STDOUT:", stdout)
+
+            // Non rimuovere i file temporanei
+            // fs.unlinkSync(uploadPath); // Rimuovi il file ZIP solo dopo un'importazione riuscita
+            // fs.unlinkSync(sqlFilePath); // Non rimuovere il file SQL
+
             res.status(200).json({ message: "Import completed successfully." })
           })
         })
