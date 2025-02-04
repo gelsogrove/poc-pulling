@@ -183,6 +183,7 @@ const handleImport = async (req: Request, res: Response): Promise<void> => {
           }
 
           const sqlFilePath = path.join("/tmp", sqlFile)
+          console.log(`📂 Found SQL file: ${sqlFilePath}`)
 
           // ✅ Import con \i per eseguire il file riga per riga
           const importCommand = `PGPASSWORD=${dbConfig.password} psql -U ${dbConfig.user} -h ${dbConfig.host} -p ${dbConfig.port} -d ${dbConfig.dbname} -c "\\i '${sqlFilePath}'"`
