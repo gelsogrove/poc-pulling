@@ -34,6 +34,7 @@
     "openai": "^4.77.3",
     "qrcode": "^1.5.4",
     "speakeasy": "^2.0.0",
+    "unzipper": "^0.12.3",
     "uuid": "^11.0.3"
   },
   "devDependencies": {
