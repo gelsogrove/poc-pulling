@@ -5,7 +5,9 @@ export const handleUnlikeApi = async (
   msgId,
   conversationHistory,
   IdConversation,
-  idPrompt
+  idPrompt,
+  model,
+  temperature
 ) => {
   const payload = {
     conversationHistory: conversationHistory.slice(-3),
@@ -13,6 +15,8 @@ export const handleUnlikeApi = async (
     msgId,
     dataTime: getCurrentDateTime(),
     idPrompt,
+    model,
+    temperature,
   }
 
   try {

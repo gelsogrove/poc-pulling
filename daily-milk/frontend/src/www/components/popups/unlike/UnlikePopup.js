@@ -38,6 +38,7 @@ const UnlikePopup = ({ idPrompt, onClose }) => {
     console.log(item)
     const resp = await fetchUserName(item.userId)
     setUsername(resp.username)
+    console.log(`Model: ${item.model}, Temperature: ${item.temperature}`)
   }
 
   const handleDeleteChat = async () => {
@@ -124,6 +125,8 @@ const UnlikePopup = ({ idPrompt, onClose }) => {
                     username={username}
                     messages={JSON.parse(selectedItem.conversationhistory)}
                     onDeleteChat={handleDeleteChat}
+                    model={selectedItem.model} // Passa il modello
+                    temperature={selectedItem.temperature} // Passa la temperatura
                   />
                 </div>
               ) : (

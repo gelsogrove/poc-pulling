@@ -15,10 +15,24 @@ const createUnlikeHandler = async (
   const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
-  const { conversationId, msgId, dataTime, conversationHistory, idPrompt } =
-    req.body
+  const {
+    conversationId,
+    msgId,
+    dataTime,
+    conversationHistory,
+    idPrompt,
+    model,
+    temperature,
+  } = req.body
 
-  if (!conversationId || !msgId || !dataTime || !conversationHistory) {
+  if (
+    !conversationId ||
+    !msgId ||
+    !dataTime ||
+    !conversationHistory ||
+    !model ||
+    !temperature
+  ) {
     res.status(400).json({ error: "All fields are required." })
     return
   }
@@ -48,8 +62,8 @@ const createUnlikeHandler = async (
 
     console.log("SQL53")
     const query = `
-    INSERT INTO unlike (conversationId, msgId, dataTime, conversationHistory,idPrompt,userid)
-    VALUES ($1, $2, $3, $4, $5, $6)
+    INSERT INTO unlike (conversationId, msgId, dataTime, conversationHistory,idPrompt,userid, model, temperature)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
   `
     const values = [
       conversationId,
@@ -58,6 +72,8 @@ const createUnlikeHandler = async (
       conversationHistoryString,
       idPrompt,
       userId,
+      model,
+      temperature,
     ]
 
     const fullQuery = query.replace(/\$1/g, `'${values[0]}'`)
@@ -86,19 +102,13 @@ const getUnlikeHandler = async (req: Request, res: Response): Promise<void> => {
   const userId = await validateRequest(req, res)
   if (!userId) return
 
-  // Estrai il parametro idPrompt dal corpo della richiesta (payload)
   const { idPrompt } = req.query
 
   try {
     const query = `
       SELECT * FROM unlike WHERE idPrompt = $1 ORDER BY datatime DESC
     `
-    const values = [idPrompt] // Valori di bind
-
-    // Genera una query completa per il debug
-    const fullQuery = query.replace(/\$1/g, `'${values[0]}'`)
-    console.log(fullQuery)
-
+    const values = [idPrompt]
     const result = await pool.query(query, values)
 
     res.status(200).json(result.rows)

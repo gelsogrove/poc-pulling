@@ -44,7 +44,9 @@ const MessageList = ({
     msgId,
     conversationHistory,
     IdConversation,
-    userId
+    userId,
+    model,
+    temperature
   ) => {
     try {
       const response = await handleUnlikeApi(
@@ -52,7 +54,9 @@ const MessageList = ({
         conversationHistory,
         IdConversation,
         idPrompt,
-        userId
+        userId,
+        model,
+        temperature
       )
       if (response) {
         const unlikeIcon = document.querySelector(
@@ -175,7 +179,9 @@ const MessageList = ({
                               msg.id,
                               conversationHistory,
                               IdConversation,
-                              Cookies.get("userId")
+                              Cookies.get("userId"),
+                              msg.model,
+                              msg.temperature
                             )
                           }
                           title="Dislike this answer"
