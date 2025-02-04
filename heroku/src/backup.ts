@@ -4,6 +4,7 @@ import { Request, Response, Router } from "express"
 import fileUpload, { UploadedFile } from "express-fileupload"
 import fs from "fs"
 import path from "path"
+import unzipper from "unzipper"
 import { validateRequest } from "./validateUser.js"
 
 const backupRouter = Router()
@@ -161,24 +162,31 @@ const handleImport = async (req: Request, res: Response): Promise<void> => {
       return
     }
 
-    // ✅ Import con \i per eseguire il file riga per riga
-    const importCommand = `PGPASSWORD=${dbConfig.password} psql -U ${dbConfig.user} -h ${dbConfig.host} -p ${dbConfig.port} -d ${dbConfig.dbname} -c "\\i '${uploadPath}'"`
+    // Estrai il file SQL dal file ZIP
+    fs.createReadStream(uploadPath)
+      .pipe(unzipper.Extract({ path: "/tmp" }))
+      .on("close", () => {
+        const sqlFilePath = "/tmp/your_sql_file.sql" // Cambia con il nome del file estratto
 
-    console.log("🔄 Running import command:", importCommand)
+        // ✅ Import con \i per eseguire il file riga per riga
+        const importCommand = `PGPASSWORD=${dbConfig.password} psql -U ${dbConfig.user} -h ${dbConfig.host} -p ${dbConfig.port} -d ${dbConfig.dbname} -c "\\i '${sqlFilePath}'"`
 
-    exec(importCommand, (error, stdout, stderr) => {
-      fs.unlinkSync(uploadPath)
-      if (error) {
-        console.error("❌ Error during import:", error.message)
-        console.error("🔴 STDERR:", stderr)
-        res.status(500).json({ message: "Error during database import." })
-        return
-      }
+        console.log("🔄 Running import command:", importCommand)
 
-      console.log("✅ Import completed successfully!")
-      console.log("🟢 STDOUT:", stdout)
-      res.status(200).json({ message: "Import completed successfully." })
-    })
+        exec(importCommand, (error, stdout, stderr) => {
+          fs.unlinkSync(uploadPath) // Rimuovi il file ZIP
+          if (error) {
+            console.error("❌ Error during import:", error.message)
+            console.error("🔴 STDERR:", stderr)
+            res.status(500).json({ message: "Error during database import." })
+            return
+          }
+
+          console.log("✅ Import completed successfully!")
+          console.log("🟢 STDOUT:", stdout)
+          res.status(200).json({ message: "Import completed successfully." })
+        })
+      })
   })
 }
 
