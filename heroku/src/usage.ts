@@ -31,7 +31,7 @@ const createUsageHandler = async (
 }
 
 const getUsageHandler = async (req: Request, res: Response): Promise<void> => {
-  const userId = await validateRequest(req, res)
+  const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
   try {

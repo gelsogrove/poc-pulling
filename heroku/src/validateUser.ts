@@ -75,9 +75,6 @@ export const extractValuesFromPrompt = (
   }
 }
 
-/**
- * Funzione generica per validare il token e l'utente.
- */
 export const validateRequest = async (req: any, res: any): Promise<any> => {
   const authHeader = req.headers["authorization"] as string | undefined
 
@@ -95,7 +92,7 @@ export const validateRequest = async (req: any, res: any): Promise<any> => {
   try {
     const userId = await getUserIdByToken(token)
 
-    console.log("userId", userId)
+    console.log("userId:", userId)
 
     if (!userId) {
       console.log("105 entrato", userId)
