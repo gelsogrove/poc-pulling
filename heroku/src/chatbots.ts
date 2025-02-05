@@ -135,7 +135,14 @@ const handleResponse: RequestHandler = async (req, res) => {
 
       if (sqlQuery !== null) {
         const day = new Date().toISOString().split("T")[0]
-        await sendUsageData(day, 0.2, token, triggerAction, userId, idPrompt)
+        await sendUsageData(
+          day,
+          0.2,
+          "sales-reader",
+          triggerAction,
+          userId,
+          idPrompt
+        )
       }
 
       if (!sqlQuery) {
