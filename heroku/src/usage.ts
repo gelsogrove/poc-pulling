@@ -39,7 +39,7 @@ const getUsageHandler = async (req: Request, res: Response): Promise<void> => {
       `
       SELECT total 
       FROM usage 
-      WHERE day = CURRENT_DATE AND userId = $1
+      WHERE day = CURRENT_DATE AND userid = $1
     `,
       [userId]
     )
