@@ -155,7 +155,7 @@ const updateUsageHandler = async (
 
   try {
     const result = await pool.query(
-      'UPDATE usage SET day = $1, total = $2 WHERE idusage = $3 AND "userid" = $4 RETURNING *',
+      "UPDATE usage SET day = $1, total = $2 WHERE idusage = $3 AND userid = $4 RETURNING *",
       [day, total, id, userId]
     )
     if (result.rowCount === 0) {
