@@ -35,14 +35,13 @@ const getUsageHandler = async (req: Request, res: Response): Promise<void> => {
   if (!userId) return
 
   try {
-    const dayResult = await pool.query(
-      `
+    const sql = `
       SELECT total 
       FROM usage 
       WHERE day = CURRENT_DATE AND userid = $1
-    `,
-      [userId]
-    )
+    `
+    console.log("sql", sql)
+    const dayResult = await pool.query(sql, [userId])
 
     const currentMonday = new Date()
     currentMonday.setDate(currentMonday.getDate() - currentMonday.getDay() + 1)
