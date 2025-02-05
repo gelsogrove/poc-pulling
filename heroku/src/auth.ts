@@ -246,7 +246,7 @@ const getClientHandler: RequestHandler = async (req, res) => {
 
     // Recupera l'utente dal database usando userId
     const { rows } = await pool.query(
-      "SELECT * FROM users WHERE userid = $1 AND isactive = true",
+      "SELECT userid,name,role,username,surname,expire_date,token,isactive FROM users WHERE userid = $1 AND isactive = true",
       [userId]
     )
 

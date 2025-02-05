@@ -7,7 +7,6 @@ daily-milk BE: 80% > todo
 
 - settings per ogni chatbot ??
 - heroku e se ho piu' chatbots?
-- tabla usage mettere sales-reader
 - pulire codice funzioni dengfo utils
 - statistiche
 - LOGIN WITH DAILIYMILK (todo)
