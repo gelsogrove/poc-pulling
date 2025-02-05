@@ -16,7 +16,7 @@ const createUsageHandler = async (
 
   try {
     const query =
-      "INSERT INTO usage (day, total, service, idprompt,userId) VALUES ($1, $2, $3, $4, $5) RETURNING *"
+      "INSERT INTO usage (day, total, service, idprompt,userid) VALUES ($1, $2, $3, $4, $5) RETURNING *"
     const values = [day, total, service, idprompt, userId]
 
     const result = await pool.query(query, values)
@@ -155,7 +155,7 @@ const updateUsageHandler = async (
 
   try {
     const result = await pool.query(
-      'UPDATE usage SET day = $1, total = $2 WHERE idusage = $3 AND "user" = $4 RETURNING *',
+      'UPDATE usage SET day = $1, total = $2 WHERE idusage = $3 AND "userid" = $4 RETURNING *',
       [day, total, id, userId]
     )
     if (result.rowCount === 0) {
@@ -180,7 +180,7 @@ const deleteUsageHandler = async (
 
   try {
     const result = await pool.query(
-      'DELETE FROM usage WHERE idusage = $1 AND "user" = $2',
+      "DELETE FROM usage WHERE idusage = $1 AND userid = $2",
       [id, userId]
     )
     if (result.rowCount === 0) {
