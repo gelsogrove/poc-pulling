@@ -78,16 +78,16 @@ export const executeSqlQuery = async (sqlQuery: string) => {
 
 export const sendUsageData = async (
   day: any,
-  total: any,
-  token: string,
+  price: any,
   service: string,
+  triggerAction: string,
   userId: string,
   idPrompt: string
 ) => {
   try {
     const query =
-      'INSERT INTO usage (day, total, "user", service, idprompt) VALUES ($1, $2, $3, $4, $5) RETURNING *'
-    const values = [day, total, userId, service, idPrompt]
+      "INSERT INTO usage (day, total, service,triggerAction, userId, idprompt) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *"
+    const values = [day, price, service, triggerAction, userId, idPrompt]
 
     const fullQuery = query.replace(/\$1/g, `'${values[0]}'`)
     console.log(fullQuery)

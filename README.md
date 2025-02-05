@@ -5,7 +5,6 @@ daily-milk BE: 80% > todo
 
 ===================== TODO =====================
 
-- unlike fatto bene con nome utente modello utilizzato
 - settings per ogni chatbot ??
 - heroku e se ho piu' chatbots?
 - tabla usage mettere sales-reader

@@ -12,12 +12,12 @@ const createUsageHandler = async (
   const userId = await validateRequest(req, res)
   if (!userId) return
 
-  const { day, total, service } = req.body
+  const { day, total, service, idprompt } = req.body
 
   try {
     const query =
-      'INSERT INTO usage (day, total, "user", service) VALUES ($1, $2, $3, $4) RETURNING *'
-    const values = [day, total, userId, service]
+      "INSERT INTO usage (day, total, service, idprompt,userId) VALUES ($1, $2, $3, $4, $5) RETURNING *"
+    const values = [day, total, service, idprompt, userId]
 
     const result = await pool.query(query, values)
     res.status(201).json(result.rows[0])
