@@ -140,26 +140,11 @@ const PromptsForm = ({ idPrompt, onClose, onSave }) => {
               <option value="google/gemini-pro-vision">
                 Google Gemini Pro Vision
               </option>
+              <option value="deepseek/deepseek-r1-distill-qwen-32b">
+                deepseek/deepseek-r1-distill-qwen-32b
+              </option>
               <option value="openai/gpt-4o-mini">OpenAI GPT-4o Mini</option>
               <option value="openai/gpt-3.5-turbo">OpenAI GPT-3.5 Turbo</option>
-              <option value="anthropic/claude-2">Anthropic Claude 2</option>
-              <option value="meta/llama-2-13b">Meta LLaMA 2 13B</option>
-              <option value="meta/llama-2-7b">Meta LLaMA 2 7B</option>
-              <option value="cohere/command-xl">Cohere Command XL</option>
-              <option value="cohere/embed-xl">Cohere Embed XL</option>
-              <option value="huggingface/bigscience-bloom">
-                Hugging Face BigScience BLOOM
-              </option>
-              <option value="mistral/mistral-7b">Mistral 7B</option>
-              <option value="aleph-alpha/luminous-supreme">
-                Aleph Alpha Luminous Supreme
-              </option>
-              <option value="google/gemini-2.0-flash-thinking-exp">
-                gemini-2.0-flash-thinking-exp
-              </option>
-              <option value="nvidia/megatron-11b">NVIDIA Megatron 11B</option>
-              <option value="openai/davinci">OpenAI Davinci</option>
-              <option value="google/palm-2">Google PaLM 2</option>
             </select>
           </div>
 

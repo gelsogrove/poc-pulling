@@ -1,32 +1,19 @@
-===================== STATUS =====================
-heroku : 90%
-daily-milk FE: 80%
-daily-milk BE: 80% > todo
-
 ===================== TODO =====================
 
 - settings per ogni chatbot ??
 - heroku e se ho piu' chatbots?
-- pulire codice funzioni dengfo utils
-- statistiche
-- LOGIN WITH DAILIYMILK (todo)
+- statistiche di usage ?
 - salvare conversazioni
-- user admin e user normale
-- getclient mi da troppo cose
+- last connecteed userManage
 
-> > > > > > DIFFICOLTA'>>>>>>
-
-- il databse potrebbe eseere su visual code
-- backup IMPORT non funziona
-
-- **\*** DUPLICARE X ALTRA ITALIA\***\*\*\*\***
+- **\*** DAILYMILK\***\*\*\*\***
+- pulire codice funzioni dengfo utils
+- LOGIN WITH DAILIYMILK (todo)
 - come gestiamo no surprice ne Heroku ?
 - pulire test folder perche' c'e import
 - upload (todo)
 - togliere page dall'import e dalla tabella
-
-===================== NIC$ TO HAVE =====================
-
+- user admin e user normale
 - BE DI DAIRY-TOLLS mettere allow only from localhost o mio desarrollo
 
 ===================== AI COSTI =====================
