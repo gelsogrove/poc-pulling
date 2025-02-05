@@ -85,6 +85,8 @@ export const validateRequest = async (req: any, res: any): Promise<any> => {
     ? authHeader.split(" ")[1]
     : null
 
+  console.log("token", token)
+
   if (!token) {
     res.status(401).json({ message: "Missing or invalid token." })
     return null
@@ -92,6 +94,8 @@ export const validateRequest = async (req: any, res: any): Promise<any> => {
 
   try {
     const userId = await getUserIdByToken(token)
+
+    console.log("userId", userId)
 
     if (!userId) {
       console.log("105 entrato", userId)
