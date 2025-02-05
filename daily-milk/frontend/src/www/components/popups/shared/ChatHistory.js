@@ -27,16 +27,19 @@ const ChatHistory = ({
   return (
     <div className="chat-history-container">
       <div className="chat-header">
-        <div className="owner">
-          <b>Username: </b>
-          {username}
+        <div className="header-item">
+          <b>Username:</b>
+          <span>{username}</span>
         </div>
-        <div className="model-info">
-          <b>Model: </b>
-          {model} <b>Temperature: </b>
-          {temperature}
+        <div className="header-item">
+          <b>Model:</b>
+          <span>{model}</span>
         </div>
-        <div>
+        <div className="header-item">
+          <b>Temperature:</b>
+          <span>{temperature}</span>
+        </div>
+        <div className="delete-button-container">
           <button
             className="delete-chat-button"
             onClick={onDeleteChat}

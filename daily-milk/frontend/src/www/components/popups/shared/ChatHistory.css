@@ -21,14 +21,6 @@
 }
 
 /* Header della Chat */
-.chat-header {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 10px;
-  gap: 10px;
-  border-bottom: 1px solid grey;
-}
 
 /* Stile Messaggi */
 .chat-history {
@@ -141,7 +133,6 @@
   cursor: pointer;
   font-size: 20px;
   padding: 5px;
-  margin-left: 400px;
 }
 
 .comment-chat-button {
@@ -184,5 +175,48 @@
   opacity: 1;
 }
 
+.model-info {
+  padding-left: 30px !important;
+  padding-right: 30px !important;
+  width: 600px !important;
+}
+
+.model-temperature {
+}
+
 .owner {
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid grey;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.header-item {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  margin-right: 20px;
+}
+
+.header-item b {
+  margin-right: 10px;
+}
+
+.owner,
+.model-info,
+.model-temperature {
+  flex-grow: 1;
+  margin: 0 10px;
+  text-align: center; /* Centra il testo */
+}
+
+.delete-button-container {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
 }

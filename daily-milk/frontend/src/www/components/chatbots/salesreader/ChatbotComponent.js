@@ -146,7 +146,7 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
       const parsedResponse = extractJsonFromMessage(botResponse.response)
       setData(botResponse?.data)
 
-      const responseText = parsedResponse || "I couldn’t understand that."
+      const responseText = parsedResponse || "I couldn't understand that."
 
       // Rimuovo "Typing..." e aggiungo risposta
       const id = uuidv4()
@@ -205,6 +205,8 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
             conversationHistory={conversationHistory}
             messages={messages}
             refresh={refreshUsage}
+            model={model}
+            temperature={temperature}
           />
           <div ref={messagesEndRef} />
         </div>

@@ -11,6 +11,8 @@ const MessageList = ({
   messages,
   refresh,
   openPanel,
+  model,
+  temperature,
 }) => {
   const [debugModes, setDebugModes] = useState({})
   const [showScrollButton, setShowScrollButton] = useState(false)
@@ -31,14 +33,6 @@ const MessageList = ({
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }
-
-  useEffect(() => {
-    setTimeout(scrollToBottom, 0)
-  }, [messages])
-
-  useEffect(() => {
-    setShowScrollButton(messages.length > 8)
-  }, [messages])
 
   const handleUnlike = async (
     msgId,
@@ -132,6 +126,11 @@ const MessageList = ({
     }
   }
 
+  useEffect(() => {
+    setTimeout(scrollToBottom, 0)
+    setShowScrollButton(messages.length > 8)
+  }, [messages])
+
   return (
     <div className="chat-container">
       <div className="chat-messages">
@@ -180,8 +179,8 @@ const MessageList = ({
                               conversationHistory,
                               IdConversation,
                               Cookies.get("userId"),
-                              msg.model,
-                              msg.temperature
+                              model,
+                              temperature
                             )
                           }
                           title="Dislike this answer"

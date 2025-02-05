@@ -19,6 +19,10 @@ const UnlikePopup = ({ idPrompt, onClose }) => {
     const getData = async () => {
       try {
         const fetchedData = await fetchUnlikeData(idPrompt)
+        console.log(fetchedData)
+
+        const resp = await fetchUserName(fetchedData.userId)
+        setUsername(resp.username)
         setData(fetchedData || [])
         if (fetchedData && fetchedData.length > 0) {
           setSelectedItem(fetchedData[0])

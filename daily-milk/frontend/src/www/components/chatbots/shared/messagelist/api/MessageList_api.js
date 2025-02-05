@@ -6,6 +6,7 @@ export const handleUnlikeApi = async (
   conversationHistory,
   IdConversation,
   idPrompt,
+  userId,
   model,
   temperature
 ) => {
