@@ -35,9 +35,12 @@ async function updateUser(req: Request, res: Response) {
 
   try {
     const query =
-      "UPDATE users SET name = $1, role = $2, username = $3, surname = $4, isactive = $5 WHERE userid = $6 RETURNING *"
+      "UPDATE users SET name = $1, role = $2, username = $3, surname = $4, isactive = $5 WHERE userid = $6 RETURNING name, surname, username, role, isactive"
     const values = [name, role, username, surname, isactive, userid]
     const result = await pool.query(query, values)
+
+    console.log(query)
+    console.log(values)
 
     if (result.rowCount === 0) {
       res.status(404).json({ error: "User not found." })

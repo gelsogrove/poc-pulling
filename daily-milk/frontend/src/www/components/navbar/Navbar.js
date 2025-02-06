@@ -5,10 +5,10 @@ import InvoicePopup from "../../components/popups/invoices/InvoicePopup.js"
 import Popup from "../../components/popups/Popup"
 import SettingsPopup from "../../components/popups/settings/SettingsPopup.js"
 import UserManager from "../../components/popups/usermanager/Usermanager.js"
-import { LogOut } from "./api/LogoutApi"
+import { LogOut } from "./api/Logout_api.js"
 import "./Navbar.css"
 
-import { downloadBackup, uploadBackup } from "./api/BackupApi"
+import { downloadBackup, uploadBackup } from "./api/Backup_api.js"
 
 const handleBackup = async () => {
   const success = await downloadBackup()
