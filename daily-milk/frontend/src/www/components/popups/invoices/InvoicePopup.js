@@ -18,7 +18,7 @@ import "./InvoicePopup.css"
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
-const InvoicePopup = ({ onClose, chatbotSelected }) => {
+const InvoicePopup = ({ onClose }) => {
   const [data, setData] = useState([])
   const [usageData, setUsageData] = useState(null)
 
@@ -39,15 +39,15 @@ const InvoicePopup = ({ onClose, chatbotSelected }) => {
 
   useEffect(() => {
     // Fetch monthly data
-    const getMonthlyData = async (chatbotSelected) => {
-      const data = await monthlyData(chatbotSelected)
+    const getMonthlyData = async () => {
+      const data = await monthlyData()
       setData(data)
     }
-    getMonthlyData(chatbotSelected)
+    getMonthlyData()
 
     // Fetch usage statistics
     const getData = async (chatbotSelected) => {
-      const usageData = await fetchUsageData(chatbotSelected)
+      const usageData = await fetchUsageData()
 
       // Sort months by year and month
       usageData.lastmonths.sort((a, b) => {
@@ -62,7 +62,7 @@ const InvoicePopup = ({ onClose, chatbotSelected }) => {
 
       setUsageData(usageData)
     }
-    getData(chatbotSelected)
+    getData()
   }, [])
 
   // Prepare data for the chart
