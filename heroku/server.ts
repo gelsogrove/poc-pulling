@@ -101,6 +101,7 @@ app.options("*", (req, res) => {
 app.use("/", welcomeRouter)
 app.use("/auth", limiter, authRouter)
 app.use("/users", limiter, usersRouter)
+app.use("/usage", limiter, usersRouter) // TODO: da sistemare e' duplicato
 
 app.use("/poulin/sales-reader/usage", limiter, usageRouter)
 app.use("/poulin/sales-reader/prompt", limiter, promptRouter)

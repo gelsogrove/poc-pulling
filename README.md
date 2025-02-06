@@ -1,16 +1,19 @@
 ===================== TODO =====================
 
-- heroku e se ho piu' chatbots?
-  -mettere ora poulin/sales-reader a fuegoç
-  - passare la variabile
 - last connecteed userManage
-  aggiornare backup
-  catalogo di prodotti
-  dove metto i file statici?
+
   <h3>Sales reader chatbot</h3>
   al refresh non deve fare il load di prompt
   prompts/salesreader
   dovrebbero essere globali i calcoli di usage
+  - unlike sparisci 
+  - import commenta
+  - checbpx per ogni utente dei possibili chatcbot prganizzati per roles
+  - tabella dei chatbots disponibili openrouter
+  - non mi piace la configurazione modalit'a popup
+  aggiornare backup
+  catalogo di prodotti
+  dove metto i file statici?
 
 - **\*** DAILYMILK\***\*\*\*\***
 - pulire codice funzioni dengfo utils
