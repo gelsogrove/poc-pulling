@@ -98,12 +98,10 @@ app.options("*", (req, res) => {
   res.sendStatus(200)
 })
 
-// Usa i vari router
 app.use("/", welcomeRouter)
 app.use("/auth", limiter, authRouter)
 app.use("/users", limiter, usersRouter)
-app.use("/usage", limiter, monthlyUsageRouter) // TODO: da sistemare e' duplicato
-
+app.use("/invoices", limiter, monthlyUsageRouter)
 app.use("/poulin/sales-reader/usage", limiter, usageRouter)
 app.use("/poulin/sales-reader/prompt", limiter, promptRouter)
 app.use("/poulin/sales-reader/chatbot", limiter, chatbotRouter)
