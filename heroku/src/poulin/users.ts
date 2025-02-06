@@ -39,9 +39,6 @@ async function updateUser(req: Request, res: Response) {
     const values = [name, role, username, surname, isactive, userid]
     const result = await pool.query(query, values)
 
-    console.log(query)
-    console.log(values)
-
     if (result.rowCount === 0) {
       res.status(404).json({ error: "User not found." })
       return
@@ -84,11 +81,16 @@ async function toggleUserActiveStatus(req: Request, res: Response) {
   }
 
   const { userid } = req.params
-  const { isActive } = req.body
+  const { isactive } = req.body
   try {
-    const query = "UPDATE users SET isactive = $1 WHERE userid = $2 RETURNING *"
-    const values = [isActive, userid]
+    const query =
+      "UPDATE users SET isactive = $1 WHERE userid = $2 RETURNING name, surname, username, role, isactive"
+    const values = [isactive, userid]
     const result = await pool.query(query, values)
+
+    console.log(query)
+    console.log(values)
+
     if (result.rowCount === 0) {
       res.status(404).json({ error: "User not found." })
       return
