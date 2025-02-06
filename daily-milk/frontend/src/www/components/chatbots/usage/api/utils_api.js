@@ -66,7 +66,9 @@ export const getCookie = (name) => {
   if (parts.length === 2) return parts.pop().split(";").shift()
 }
 
-export const fetchUsageData = async (chatbotSelected) => {
+export const fetchUsageData = async (
+  chatbotSelected = "poulin/sales-reader"
+) => {
   const token = getCookie("token")
   const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}/usage`
 

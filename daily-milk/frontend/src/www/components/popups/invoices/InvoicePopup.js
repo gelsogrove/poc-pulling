@@ -39,14 +39,14 @@ const InvoicePopup = ({ onClose, chatbotSelected }) => {
 
   useEffect(() => {
     // Fetch monthly data
-    const getMonthlyData = async () => {
-      const data = await monthlyData()
+    const getMonthlyData = async (chatbotSelected) => {
+      const data = await monthlyData(chatbotSelected)
       setData(data)
     }
-    getMonthlyData()
+    getMonthlyData(chatbotSelected)
 
     // Fetch usage statistics
-    const getData = async () => {
+    const getData = async (chatbotSelected) => {
       const usageData = await fetchUsageData(chatbotSelected)
 
       // Sort months by year and month
@@ -62,7 +62,7 @@ const InvoicePopup = ({ onClose, chatbotSelected }) => {
 
       setUsageData(usageData)
     }
-    getData()
+    getData(chatbotSelected)
   }, [])
 
   // Prepare data for the chart

@@ -9,6 +9,8 @@
   dove metto i file statici?
   <h3>Sales reader chatbot</h3>
   al refresh non deve fare il load di prompt
+  prompts/salesreader
+  dovrebbero essere globali i calcoli di usage
 
 - **\*** DAILYMILK\***\*\*\*\***
 - pulire codice funzioni dengfo utils

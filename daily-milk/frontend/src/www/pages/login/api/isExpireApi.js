@@ -1,8 +1,6 @@
 import axios from "axios"
 import Cookies from "js-cookie"
 
-export const API_URL = `${process.env.REACT_APP_API_URL}/auth/is-expired`
-
 export const IsExpired = async () => {
   const token = Cookies.get("token") // Ottieni il token dai cookie
 
