@@ -99,7 +99,7 @@ export const toggleUserActive = async (userId, isactive) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     }
-    const response = await axios.get(
+    const response = await axios.put(
       `${API_URL}/isactive/${userId}/`,
       { isactive },
       { headers }

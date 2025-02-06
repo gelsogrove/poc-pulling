@@ -59,7 +59,7 @@ usersRouter.delete("/delete/:userid", async (req: Request, res: Response) => {
 })
 
 // Cambia stato isActive
-usersRouter.get("/isactive/:userid", async (req: Request, res: Response) => {
+usersRouter.put("/isactive/:userid", async (req: Request, res: Response) => {
   const { userid } = req.params
   const { isActive } = req.body
   try {
