@@ -5,7 +5,7 @@ import Cookies from "js-cookie"
 const monthyData = async (chatbotSelected = "poulin/sales-reader") => {
   const token = Cookies.get("token")
 
-  const API_URL = `${process.env.REACT_APP_API_URL}/usage/monthly-totals`
+  const API_URL = `${process.env.REACT_APP_API_URL}/invoices/monthly-totals`
 
   const headers = {
     "Content-Type": "application/json",
