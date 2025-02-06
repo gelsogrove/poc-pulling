@@ -16,14 +16,16 @@ const UnlikePopup = ({ idPrompt, onClose, chatbotSelected }) => {
   const [username, setUsername] = useState("")
 
   useEffect(() => {
-    const getData = async () => {
+    const getData = async (chatbotSelected) => {
       try {
         const fetchedData = await fetchUnlikeData(idPrompt, chatbotSelected)
-        console.log(fetchedData)
+        console.log("Fetched Data:", fetchedData)
 
         const resp = await fetchUserName(fetchedData.userId)
         setUsername(resp.username)
         setData(fetchedData || [])
+        console.log("Data State:", fetchedData || [])
+
         if (fetchedData && fetchedData.length > 0) {
           setSelectedItem(fetchedData[0])
         }
@@ -34,13 +36,13 @@ const UnlikePopup = ({ idPrompt, onClose, chatbotSelected }) => {
       }
     }
 
-    getData()
+    getData(chatbotSelected)
   }, [])
 
   const handleRowClick = async (item) => {
     setSelectedItem(item)
     console.log(item)
-    const resp = await fetchUserName(item.userId)
+    const resp = await fetchUserName(item.userId, chatbotSelected)
     setUsername(resp.username)
   }
 

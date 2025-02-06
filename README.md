@@ -1,19 +1,15 @@
 ===================== TODO =====================
 
-- last connecteed userManage
+- <h3>Sales reader chatbot</h3>
+- al refresh non deve fare il load di prompt
+- unlike sparisci
+- checbpx chatbot per ogni role
 
-  - is-expired-error
-
-  - <h3>Sales reader chatbot</h3>
-  - al refresh non deve fare il load di prompt
-  - unlike sparisci
-  - upload commenta
-  - checbpx chatbot per ogni role
-  - non mi piace la configurazione modalit'a popup
-  - tabella dei chatbots disponibili openrouter
-  - dove metto i file statici?
-  - catalogo di prodotti
-  - aggiornare backup
+- dove metto i file statici?
+- catalogo di prodotti
+- aggiornare backup
+- tabella dei chatbots disponibili openrouter
+- non mi piace la configurazione modalit'a popup
 
 - **\*** DAILYMILK\***\*\*\*\***
 - pulire codice funzioni dengfo utils

@@ -55,7 +55,7 @@ export const deleteUnlikeRecord = async (id, chatbotSelected) => {
 }
 
 export const fetchUserName = async (userid) => {
-  const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}/auth/getclient`
+  const API_URL = `${process.env.REACT_APP_API_URL}/auth/getclient`
   const token = Cookies.get("token")
   try {
     // Configura gli headers e i parametri della richiesta

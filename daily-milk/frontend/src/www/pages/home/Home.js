@@ -137,7 +137,7 @@ const Home = () => {
                 <i className="fas fa-cogs"></i>
                 <div className="tooltip">Prompts</div>
               </button>
-
+              {/*
               <button
                 className="btn"
                 onClick={() => openPopup("upload", "poulin/sales-reader")}
@@ -145,6 +145,8 @@ const Home = () => {
                 <i className="fas fa-upload"></i>
                 <div className="tooltip">Upload</div>
               </button>
+
+              */}
 
               <button
                 className={`btn ${!hasUnlikes ? "disabled-btn" : ""}`}
