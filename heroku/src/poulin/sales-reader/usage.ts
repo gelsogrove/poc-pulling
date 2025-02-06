@@ -40,7 +40,7 @@ const getUsageHandler = async (req: Request, res: Response): Promise<void> => {
       FROM usage 
       WHERE day = CURRENT_DATE AND userid = $1
     `
-    console.log("sql", sql)
+
     const dayResult = await pool.query(sql, [userId])
 
     const currentMonday = new Date()

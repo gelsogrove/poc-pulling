@@ -158,8 +158,6 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
 
       /* 2 PASSAGGIO */
       if (sqlData.length === 1) {
-        console.log("**** generateDetailedSentence ***", sqlQuery)
-
         // Chiamata alla funzione per generare una frase dettagliata
         const detailedSentence = await generateDetailedSentence(
           model,

@@ -29,9 +29,6 @@ usersRouter.put("/update/:userid", async (req: Request, res: Response) => {
     const values = [name, role, username, surname, isactive, userid]
     const result = await pool.query(query, values)
 
-    console.log(query)
-    console.log(values)
-
     if (result.rowCount === 0) {
       res.status(404).json({ error: "User not found." })
       return
@@ -101,8 +98,6 @@ usersRouter.put(
       const query =
         "UPDATE users SET password = $1 WHERE userid = $2 RETURNING *"
       const values = [hashedPassword, userid]
-
-      console.log(query, "with", values)
 
       const result = await pool.query(query, values)
 

@@ -14,8 +14,6 @@ const handleBackup = async () => {
   const success = await downloadBackup()
   if (!success) {
     alert("Failed to download the backup. Please try again.")
-  } else {
-    console.log("EXPORT DONE")
   }
 }
 
@@ -30,7 +28,6 @@ const handleImport = async () => {
     const success = await uploadBackup(file)
     if (success) {
       alert("Backup imported successfully.")
-      console.log("IMPORT DONE")
     } else {
       alert("Failed to import the backup. Please try again.")
     }

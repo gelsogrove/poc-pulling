@@ -42,7 +42,6 @@ const UnlikePopup = ({ idPrompt, onClose, chatbotSelected }) => {
     console.log(item)
     const resp = await fetchUserName(item.userId)
     setUsername(resp.username)
-    console.log(`Model: ${item.model}, Temperature: ${item.temperature}`)
   }
 
   const handleDeleteChat = async () => {

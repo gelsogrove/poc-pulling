@@ -60,7 +60,6 @@ const createUnlikeHandler = async (
 
     const conversationHistoryString = JSON.stringify(conversationHistory)
 
-    console.log("SQL53")
     const query = `
     INSERT INTO unlike (conversationId, msgId, dataTime, conversationHistory,idPrompt,userid, model, temperature)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)

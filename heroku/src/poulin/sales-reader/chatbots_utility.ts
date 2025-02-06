@@ -89,9 +89,6 @@ export const sendUsageData = async (
       "INSERT INTO usage (day, total, service,triggerAction, userId, idprompt) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *"
     const values = [day, price, service, triggerAction, userId, idPrompt]
 
-    const fullQuery = query.replace(/\$1/g, `'${values[0]}'`)
-    console.log(fullQuery)
-
     const result = await pool.query(query, values)
 
     return result
