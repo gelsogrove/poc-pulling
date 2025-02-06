@@ -1,7 +1,6 @@
 ===================== TODO =====================
 
 - heroku e se ho piu' chatbots?
-  -BE FATTO ma is-expored and getCliente non vanno
   -mettere ora poulin/sales-reader a fuegoç
   - passare la variabile
 - last connecteed userManage
