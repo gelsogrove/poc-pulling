@@ -164,8 +164,7 @@ const isExpired: RequestHandler = async (req, res) => {
   try {
     // Esegui una query per cercare la data di scadenza
 
-    const sql =
-      "SELECT expire_date FROM users WHERE userid = $1 AND isactive=true"
+    const sql = "SELECT expire_date,isactive FROM users WHERE userid = $1"
     const { rows } = await pool.query(sql, [userId])
 
     const values = [userId]
@@ -175,11 +174,12 @@ const isExpired: RequestHandler = async (req, res) => {
 
     if (rows.length === 0) {
       res.status(404).json({ message: "Utente non trovato..." })
-      return false
+      return
     }
 
     const { expire_date } = rows[0]
-    const isExpired = new Date(expire_date) < new Date()
+    const isExpired =
+      new Date(expire_date) < new Date() && rows[0].isactive === false
 
     res.status(200).json({ isExpired })
   } catch (error) {
