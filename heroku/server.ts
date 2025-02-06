@@ -12,7 +12,7 @@ import authRouter from "./src/poulin/auth.js"
 import backupRouter from "./src/poulin/backup.js"
 import chatbotRouter from "./src/poulin/sales-reader/chatbots.js"
 import promptRouter from "./src/poulin/sales-reader/prompts.js"
-import usageRouter from "./src/poulin/usage.js"
+import usageRouter from "./src/poulin/sales-reader/usage.js"
 import usersRouter from "./src/poulin/users.js"
 import welcomeRouter from "./welcome.js"
 
@@ -100,12 +100,13 @@ app.options("*", (req, res) => {
 // Usa i vari router
 app.use("/", welcomeRouter)
 app.use("/auth", limiter, authRouter)
-app.use("/usage", limiter, usageRouter)
+app.use("/users", limiter, usersRouter)
+
+app.use("/poulin/sales-reader/usage", limiter, usageRouter)
 app.use("/poulin/sales-reader/prompt", limiter, promptRouter)
 app.use("/poulin/sales-reader/chatbot", limiter, chatbotRouter)
 app.use("/poulin/sales-reader/unlike", limiter, unlikeRouter)
 app.use("/poulin/sales-reader/backup", limiter, backupRouter)
-app.use("/users", limiter, usersRouter)
 
 // Forza HTTPS in produzione
 if (process.env.NODE_ENV === "production") {

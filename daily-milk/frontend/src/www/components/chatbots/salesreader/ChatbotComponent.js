@@ -85,7 +85,7 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
     const fetchData = async () => {
       try {
         // 1) Dati di usage
-        const data = await fetchUsageData()
+        const data = await fetchUsageData(chatbotSelected)
         setUsageData(data)
 
         // 2) Dettagli del prompt

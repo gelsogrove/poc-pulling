@@ -68,7 +68,7 @@ export const getCookie = (name) => {
 
 export const fetchUsageData = async (chatbotSelected) => {
   const token = getCookie("token")
-  const API_URL = `${process.env.REACT_APP_API_URL}/usage`
+  const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}/usage`
 
   // Funzione per aggiungere un ritardo
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
