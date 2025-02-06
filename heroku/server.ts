@@ -99,7 +99,7 @@ app.options("*", (req, res) => {
 
 // Usa i vari router
 app.use("/", welcomeRouter)
-app.use("/poulin/sales-reader/auth", limiter, authRouter)
+app.use("/auth", limiter, authRouter)
 app.use("/poulin/sales-reader/usage", limiter, usageRouter)
 app.use("/poulin/sales-reader/prompt", limiter, promptRouter)
 app.use("/poulin/sales-reader/chatbot", limiter, chatbotRouter)

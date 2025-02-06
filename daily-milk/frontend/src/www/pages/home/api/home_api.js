@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const API_URL = `${process.env.REACT_APP_API_URL}/prompt`
+const API_URL = `${process.env.REACT_APP_API_URL}/poulin/sales-reader/prompt`
 
 export const getPromptName = async (idPrompt, token) => {
   try {
@@ -34,7 +34,7 @@ export const checkUnlikeExists = async (idPrompt, token) => {
     }
 
     const response = await axios.get(
-      `${process.env.REACT_APP_API_URL}/unlike/check`,
+      `${process.env.REACT_APP_API_URL}/poulin/sales-reader/unlike/check`,
       {
         headers,
         params,

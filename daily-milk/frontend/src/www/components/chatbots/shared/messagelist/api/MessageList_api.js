@@ -26,7 +26,7 @@ export const handleUnlikeApi = async (
       Authorization: `Bearer ${Cookies.get("token")}`,
     }
 
-    const response = await fetch(`${API_URL}/unlike/new`, {
+    const response = await fetch(`${API_URL}/poulin/sales-reader/unlike/new`, {
       method: "POST",
       headers,
       body: JSON.stringify(payload),
