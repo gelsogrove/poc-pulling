@@ -118,7 +118,6 @@ if (process.env.NODE_ENV === "production") {
   })
 }
 
-// Porta per avviare il server
 const PORT = process.env.PORT || 4999
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
