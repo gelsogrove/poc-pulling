@@ -232,6 +232,5 @@ usageRouter.post("/new", createUsageHandler) // Rotta per creare un nuovo record
 usageRouter.post("/", getUsageHandler) // Rotta per ottenere i dati di utilizzo
 usageRouter.put("/:id", updateUsageHandler) // Rotta per aggiornare un record di utilizzo
 usageRouter.delete("/:id", deleteUsageHandler) // Rotta per eliminare un record di utilizzo
-usageRouter.post("/monthly-totals", getMonthlyTotalsHandler) // Rotta per ottenere i totali mensili
 
 export default usageRouter

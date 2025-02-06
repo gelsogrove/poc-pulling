@@ -173,7 +173,7 @@ const isExpired: RequestHandler = async (req, res) => {
     console.log(fullQuery)
 
     if (rows.length === 0) {
-      res.status(404).json({ message: "Utente non trovato" })
+      res.status(404).json({ message: "Utente non trovato..." })
       return
     }
 

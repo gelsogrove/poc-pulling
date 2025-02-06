@@ -10,6 +10,7 @@ import unlikeRouter from "./src/poulin/sales-reader/unlinke.js"
 
 import authRouter from "./src/poulin/auth.js"
 import backupRouter from "./src/poulin/backup.js"
+import monthlyUsageRouter from "./src/poulin/monthlyUsage.js"
 import chatbotRouter from "./src/poulin/sales-reader/chatbots.js"
 import promptRouter from "./src/poulin/sales-reader/prompts.js"
 import usageRouter from "./src/poulin/sales-reader/usage.js"
@@ -101,7 +102,7 @@ app.options("*", (req, res) => {
 app.use("/", welcomeRouter)
 app.use("/auth", limiter, authRouter)
 app.use("/users", limiter, usersRouter)
-app.use("/usage", limiter, usersRouter) // TODO: da sistemare e' duplicato
+app.use("/usage", limiter, monthlyUsageRouter) // TODO: da sistemare e' duplicato
 
 app.use("/poulin/sales-reader/usage", limiter, usageRouter)
 app.use("/poulin/sales-reader/prompt", limiter, promptRouter)

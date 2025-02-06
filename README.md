@@ -2,18 +2,20 @@
 
 - last connecteed userManage
 
-  <h3>Sales reader chatbot</h3>
-  al refresh non deve fare il load di prompt
-  prompts/salesreader
-  dovrebbero essere globali i calcoli di usage
-  - unlike sparisci 
-  - import commenta
-  - checbpx per ogni utente dei possibili chatcbot prganizzati per roles
-  - tabella dei chatbots disponibili openrouter
+  - is-expired-error
+  - <h3>Sales reader chatbot</h3>
+  - al refresh non deve fare il load di prompt
+  - unlike sparisci
+  - upload commenta
+  - checbpx chatbot per ogni role
   - non mi piace la configurazione modalit'a popup
-  aggiornare backup
-  catalogo di prodotti
-  dove metto i file statici?
+
+  - pulire log
+  - pulire log
+  - tabella dei chatbots disponibili openrouter
+  - dove metto i file statici?
+  - catalogo di prodotti
+  - aggiornare backup
 
 - **\*** DAILYMILK\***\*\*\*\***
 - pulire codice funzioni dengfo utils
