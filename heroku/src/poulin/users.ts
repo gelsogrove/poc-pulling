@@ -84,7 +84,7 @@ usersRouter.get("/isactive/:userid", async (req: Request, res: Response) => {
 usersRouter.put(
   "/change-password",
   async (req: Request, res: Response): Promise<void> => {
-    const userId = await validateRequest(req, res)
+    const { userId, token } = await validateRequest(req, res)
     if (!userId) {
       return
     }

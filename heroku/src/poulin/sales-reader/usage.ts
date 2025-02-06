@@ -9,7 +9,7 @@ const createUsageHandler = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const userId = await validateRequest(req, res)
+  const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
   const { day, total, service, idprompt } = req.body
@@ -141,7 +141,7 @@ const updateUsageHandler = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const userId = await validateRequest(req, res)
+  const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
   const { id } = req.params
@@ -172,7 +172,7 @@ const deleteUsageHandler = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const userId = await validateRequest(req, res)
+  const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
   const { id } = req.params
@@ -197,7 +197,7 @@ const getMonthlyTotalsHandler = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const userId = await validateRequest(req, res)
+  const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
   try {

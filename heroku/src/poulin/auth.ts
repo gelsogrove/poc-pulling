@@ -158,7 +158,7 @@ const setExpire: RequestHandler = async (req, res) => {
 
 // Handler per verificare se l'utente è scaduto
 const isExpired: RequestHandler = async (req, res) => {
-  const userId = await validateRequest(req, res)
+  const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
   try {
@@ -191,7 +191,7 @@ const isExpired: RequestHandler = async (req, res) => {
 
 // Handler per il logout
 const logoutHandler: RequestHandler = async (req, res) => {
-  const userId = await validateRequest(req, res)
+  const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
   try {
@@ -211,7 +211,7 @@ const logoutHandler: RequestHandler = async (req, res) => {
 const getClientHandler: RequestHandler = async (req, res) => {
   try {
     // Validazione del token
-    const userId = await validateRequest(req, res)
+    const { userId, token } = await validateRequest(req, res)
     if (!userId) return
 
     // Recupera l'utente dal database usando userId

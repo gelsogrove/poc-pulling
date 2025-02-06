@@ -99,7 +99,7 @@ const createUnlikeHandler = async (
  * Endpoint per ottenere i record di unlike.
  */
 const getUnlikeHandler = async (req: Request, res: Response): Promise<void> => {
-  const userId = await validateRequest(req, res)
+  const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
   const { idPrompt } = req.query
@@ -170,7 +170,7 @@ const checkUnlikeExistsHandler = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const userId = await validateRequest(req, res)
+  const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
   const { idPrompt } = req.query

@@ -45,7 +45,7 @@ const parseDatabaseUrl = (url: string): DatabaseConfig => {
 /* ✅ Funzione per esportare il database */
 const handleExport = async (req: Request, res: Response): Promise<void> => {
   console.log("📢 Starting database export...")
-  const userId = await validateRequest(req, res)
+  const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
   const databaseUrl = process.env.HEROKU_POSTGRESQL_AMBER_URL
@@ -125,7 +125,7 @@ const handleExport = async (req: Request, res: Response): Promise<void> => {
 /* ✅ Funzione per importare il database */
 const handleImport = async (req: Request, res: Response): Promise<void> => {
   console.log("📢 Starting database import...")
-  const userId = await validateRequest(req, res)
+  const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
   const databaseUrl = process.env.HEROKU_POSTGRESQL_AMBER_URL

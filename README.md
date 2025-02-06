@@ -1,9 +1,9 @@
 ===================== TODO =====================
 
-- settings per ogni chatbot ??
 - heroku e se ho piu' chatbots?
-- statistiche di usage ?
-- salvare conversazioni
+  -BE FATTO ma is-expored and getCliente non vanno
+  -mettere ora poulin/sales-reader a fuegoç
+  - passare la variabile
 - last connecteed userManage
 
 - **\*** DAILYMILK\***\*\*\*\***

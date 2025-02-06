@@ -8,7 +8,7 @@ const promptRouter = Router()
  * Handler per aggiornare un prompt.
  */
 const UpdatePromptHandler: RequestHandler = async (req, res) => {
-  const userId = await validateRequest(req, res)
+  const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
   const { content, model, temperature, idPrompt, promptname } = req.body
