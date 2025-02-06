@@ -89,6 +89,7 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
         setUsageData(data)
 
         // 2) Dettagli del prompt
+
         const prompt = await getPromptDetails(idPrompt, chatbotSelected)
         setTemperature(prompt.temperature)
         setModel(prompt.model)

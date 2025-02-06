@@ -39,7 +39,7 @@ export const response = async (
 export const getPromptDetails = async (idPrompt, chatbotSelected) => {
   const token = getCookie("token")
 
-  const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}r/prompt`
+  const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}/prompt`
 
   const headers = {
     "Content-Type": "application/json",

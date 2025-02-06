@@ -36,7 +36,7 @@ const ChatbotPopup = ({ idPrompt, onClose, chatbotSelected }) => {
         </div>
 
         <div className="chat-section-source">
-          <h3>Sales reader chatbot</h3>
+          <h3>Sales reader chatbot {chatbotSelected}</h3>
           <ChatBotComponent
             chatbotSelected={chatbotSelected}
             idPrompt={idPrompt}
