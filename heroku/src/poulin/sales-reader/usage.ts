@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express"
-import { pool } from "../server.js" // Importa il pool dal file principale
 
-import { validateRequest } from "./validateUser.js"
+import { pool } from "../../../server"
+import { validateRequest } from "../validateUser"
 
 const usageRouter = Router()
 
@@ -74,7 +74,7 @@ const getUsageHandler = async (req: Request, res: Response): Promise<void> => {
 
     const currentWeek = reorderedDays.map((day) => {
       const dayData = lastweekResult.rows.find(
-        (row) => row.weekday.trim() === day
+        (row: any) => row.weekday.trim() === day
       )
       return {
         day: dayData?.weekday.trim(),
@@ -115,7 +115,7 @@ const getUsageHandler = async (req: Request, res: Response): Promise<void> => {
 
     const day = dayResult.rows[0]?.total || "0.00"
 
-    const lastmonths = lastmonthsResult.rows.map((row) => ({
+    const lastmonths = lastmonthsResult.rows.map((row: any) => ({
       month: row.month.trim(),
       year: row.year,
       total: row.total || "0",
@@ -213,7 +213,7 @@ const getMonthlyTotalsHandler = async (
     `
     )
 
-    const monthlyTotals = monthlyResult.rows.map((row) => ({
+    const monthlyTotals = monthlyResult.rows.map((row: any) => ({
       year: row.year,
       month: row.month,
       total: row.total || 0,

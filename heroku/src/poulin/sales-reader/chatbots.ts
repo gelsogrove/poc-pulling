@@ -2,14 +2,14 @@ import axios from "axios"
 import axiosRetry from "axios-retry"
 import dotenv from "dotenv"
 import { RequestHandler, Router } from "express"
+import { validateRequest } from "../validateUser"
 import {
   cleanResponse,
   executeSqlQuery,
   generateDetailedSentence,
   getPrompt,
   sendUsageData,
-} from "./chatbots_utility.js"
-import { validateRequest } from "./validateUser.js"
+} from "./chatbots_utility"
 
 dotenv.config()
 

@@ -1,6 +1,6 @@
 import axios from "axios"
 import dotenv from "dotenv"
-import { pool } from "../server.js"
+import { pool } from "../../../server"
 
 dotenv.config()
 

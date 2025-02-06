@@ -3,10 +3,11 @@ import { RequestHandler, Router } from "express"
 import qrcode from "qrcode"
 import speakeasy from "speakeasy"
 import { v4 as uuidv4 } from "uuid" // Importa uuid
-import { pool } from "../server.js" // Importa il pool dal file principale
+
 import { getUserIdByToken } from "./validateUser.js"
 
 import dotenv from "dotenv"
+import { pool } from "../../server.js"
 
 dotenv.config() // Carica le variabili d'ambiente dal file .env
 

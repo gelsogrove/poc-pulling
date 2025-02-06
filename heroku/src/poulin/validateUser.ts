@@ -1,5 +1,5 @@
 import { QueryResult } from "pg"
-import { pool } from "../server.js" // Assicurati che il percorso sia corretto
+import { pool } from "../../server"
 
 /**
  * Valida un utente controllando se esiste e se la sua sottoscrizione è valida.
