@@ -9,7 +9,7 @@ import {
 } from "./api/unlike_api"
 import "./UnlikePopup.css"
 
-const UnlikePopup = ({ idPrompt, onClose }) => {
+const UnlikePopup = ({ idPrompt, onClose, chatbotSelected }) => {
   const [data, setData] = useState([])
   const [selectedItem, setSelectedItem] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -18,7 +18,7 @@ const UnlikePopup = ({ idPrompt, onClose }) => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const fetchedData = await fetchUnlikeData(idPrompt)
+        const fetchedData = await fetchUnlikeData(idPrompt, chatbotSelected)
         console.log(fetchedData)
 
         const resp = await fetchUserName(fetchedData.userId)
@@ -54,7 +54,10 @@ const UnlikePopup = ({ idPrompt, onClose }) => {
     if (!isConfirmed) return
 
     try {
-      const success = await deleteUnlikeRecord(selectedItem.idunlike)
+      const success = await deleteUnlikeRecord(
+        selectedItem.idunlike,
+        chatbotSelected
+      )
       if (success) {
         const updatedData = data.filter(
           (item) => item.idunlike !== selectedItem.idunlike

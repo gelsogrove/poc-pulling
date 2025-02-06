@@ -2,7 +2,7 @@
 import axios from "axios"
 import Cookies from "js-cookie"
 
-const API_URL = `${process.env.REACT_APP_API_URL}/poulin/sales-reader/users`
+const API_URL = `${process.env.REACT_APP_API_URL}/users`
 
 /**
  * Fetch all users

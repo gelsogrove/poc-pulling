@@ -1,8 +1,6 @@
 import axios from "axios"
 import Cookies from "js-cookie"
 
-const apiUrl = `${process.env.REACT_APP_API_URL}/chatbot/response`
-
 /**
  * Send a message to the chatbot API.
  *
@@ -14,8 +12,11 @@ const apiUrl = `${process.env.REACT_APP_API_URL}/chatbot/response`
 export const sendMessageToChatbot = async (
   conversationId,
   messages,
-  idPrompt
+  idPrompt,
+  chatbotSelected
 ) => {
+  const apiUrl = `${process.env.REACT_APP_API_URL}/${chatbotSelected}/chatbot/response`
+
   const token = Cookies.get("token")
   const name = Cookies.get("name")
 

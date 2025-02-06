@@ -3,7 +3,7 @@ import ChatBotComponent from "../../../chatbots/salesreader/ChatbotComponent"
 import "./ChatbotPopup.css"
 import PrintSection from "./PrintSection"
 
-const ChatbotPopup = ({ idPrompt, onClose }) => {
+const ChatbotPopup = ({ idPrompt, onClose, chatbotSelected }) => {
   const [openPanel, setOpenPanel] = useState(false)
 
   const onTogglePanel = () => {
@@ -37,7 +37,11 @@ const ChatbotPopup = ({ idPrompt, onClose }) => {
 
         <div className="chat-section-source">
           <h3>Sales reader chatbot</h3>
-          <ChatBotComponent idPrompt={idPrompt} openPanel={openPanel} />
+          <ChatBotComponent
+            chatbotSelected={chatbotSelected}
+            idPrompt={idPrompt}
+            openPanel={openPanel}
+          />
         </div>
       </div>
     </div>

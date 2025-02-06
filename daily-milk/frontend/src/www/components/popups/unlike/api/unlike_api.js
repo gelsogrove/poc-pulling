@@ -2,8 +2,8 @@
 import axios from "axios"
 import Cookies from "js-cookie"
 
-export const fetchUnlikeData = async (idPrompt) => {
-  const API_URL = `${process.env.REACT_APP_API_URL}/poulin/sales-reader/unlike`
+export const fetchUnlikeData = async (idPrompt, chatbotSelected) => {
+  const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}/unlike`
   const token = Cookies.get("token")
 
   try {
@@ -28,7 +28,7 @@ export const fetchUnlikeData = async (idPrompt) => {
   }
 }
 
-export const deleteUnlikeRecord = async (id) => {
+export const deleteUnlikeRecord = async (id, chatbotSelected) => {
   try {
     // CHECK TOKE
     const token = Cookies.get("token")
@@ -38,7 +38,7 @@ export const deleteUnlikeRecord = async (id) => {
     }
 
     // RUN QUERY
-    const API_URL = `${process.env.REACT_APP_API_URL}/unlike`
+    const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}/unlike`
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -55,7 +55,7 @@ export const deleteUnlikeRecord = async (id) => {
 }
 
 export const fetchUserName = async (userid) => {
-  const API_URL = `${process.env.REACT_APP_API_URL}/poulin/sales-reader/auth/getclient`
+  const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}/auth/getclient`
   const token = Cookies.get("token")
   try {
     // Configura gli headers e i parametri della richiesta

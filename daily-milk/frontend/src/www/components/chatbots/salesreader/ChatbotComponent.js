@@ -17,7 +17,7 @@ import {
 import Cookies from "js-cookie"
 import { fetchUsageData, getPromptDetails } from "../usage/api/utils_api"
 
-const ChatBotComponent = ({ idPrompt, openPanel }) => {
+const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
   const [refreshUsage, setRefreshUsage] = useState(false)
   const [messages, setMessages] = useState([])
   const [, setData] = useState([])
@@ -89,7 +89,7 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
         setUsageData(data)
 
         // 2) Dettagli del prompt
-        const prompt = await getPromptDetails(idPrompt)
+        const prompt = await getPromptDetails(idPrompt, chatbotSelected)
         setTemperature(prompt.temperature)
         setModel(prompt.model)
 
@@ -110,7 +110,7 @@ const ChatBotComponent = ({ idPrompt, openPanel }) => {
     }
 
     fetchData()
-  }, [idPrompt, refreshUsage])
+  }, [idPrompt, refreshUsage, chatbotSelected])
 
   // Funzione per inviare un messaggio
   const handleSend = async (message) => {

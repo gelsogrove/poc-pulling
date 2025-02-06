@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // Home.js
 import Cookies from "js-cookie"
 import React, { useEffect, useState } from "react"
@@ -17,7 +18,8 @@ import "./Home.css"
 const Home = () => {
   const { t } = useTranslation()
   const [activePopup, setActivePopup] = useState(null)
-  const [promptName, setPromptName] = useState("")
+  const [chatbot, setChatbot] = useState("poulin/sales-reader")
+  const [promptName, setPromptName] = useState("poulin/sales-reader")
   const [hasUnlikes, setHasUnlikes] = useState(true)
 
   useEffect(() => {
@@ -25,8 +27,8 @@ const Home = () => {
       try {
         const token = Cookies.get("token")
         const [name, unlikeExists] = await Promise.all([
-          getPromptName(PROMPT_ID, token),
-          checkUnlikeExists(PROMPT_ID, token),
+          getPromptName(PROMPT_ID, token, chatbot),
+          checkUnlikeExists(PROMPT_ID, token, chatbot),
         ])
 
         if (name) {
@@ -46,14 +48,15 @@ const Home = () => {
     window.location.reload()
   }
 
-  const openPopup = (popupType) => {
+  const openPopup = (popupType, chatbot) => {
     setActivePopup(popupType)
+    setChatbot(chatbot)
   }
 
   const refreshPromptName = async () => {
     try {
       const token = Cookies.get("token")
-      const name = await getPromptName(PROMPT_ID, token)
+      const name = await getPromptName(PROMPT_ID, token, chatbot)
       if (name) {
         setPromptName(name)
       }
@@ -74,11 +77,16 @@ const Home = () => {
       <Navbar />
 
       <Popup isOpen={activePopup === "chatbotsource"}>
-        <ChatbotSource idPrompt={PROMPT_ID} onClose={closePopup} />
+        <ChatbotSource
+          chatbotSelected={chatbot}
+          idPrompt={PROMPT_ID}
+          onClose={closePopup}
+        />
       </Popup>
 
       <Popup isOpen={activePopup === "prompts"}>
         <PromptsPopup
+          chatbotSelected={chatbot}
           idPrompt={PROMPT_ID}
           onClose={closePopup}
           onSave={refreshPromptName}
@@ -86,7 +94,11 @@ const Home = () => {
       </Popup>
 
       <Popup isOpen={activePopup === "unliked"}>
-        <UnlikePopup idPrompt={PROMPT_ID} onClose={closePopup} />
+        <UnlikePopup
+          chatbotSelected={chatbot}
+          idPrompt={PROMPT_ID}
+          onClose={closePopup}
+        />
       </Popup>
 
       <Popup isOpen={activePopup === "upload"}>
@@ -94,7 +106,7 @@ const Home = () => {
       </Popup>
 
       <Popup isOpen={activePopup === "invoices"}>
-        <InvoicePopup onClose={closePopup} />
+        <InvoicePopup chatbotSelected={chatbot} onClose={closePopup} />
       </Popup>
 
       <div className="home-container">
@@ -118,19 +130,27 @@ const Home = () => {
               </div>
             </div>
             <div className="actions-chatbot">
-              <button className="btn" onClick={() => openPopup("prompts")}>
+              <button
+                className="btn"
+                onClick={() => openPopup("prompts", "poulin/sales-reader")}
+              >
                 <i className="fas fa-cogs"></i>
                 <div className="tooltip">Prompts</div>
               </button>
 
-              <button className="btn" onClick={() => openPopup("upload")}>
+              <button
+                className="btn"
+                onClick={() => openPopup("upload", "poulin/sales-reader")}
+              >
                 <i className="fas fa-upload"></i>
                 <div className="tooltip">Upload</div>
               </button>
 
               <button
                 className={`btn ${!hasUnlikes ? "disabled-btn" : ""}`}
-                onClick={() => hasUnlikes && openPopup("unliked")}
+                onClick={() =>
+                  hasUnlikes && openPopup("unliked", "poulin/sales-reader")
+                }
                 disabled={!hasUnlikes}
               >
                 <i className="fas fa-history"></i>

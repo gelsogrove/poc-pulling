@@ -1,8 +1,8 @@
 import axios from "axios"
 
-const API_URL = `${process.env.REACT_APP_API_URL}/prompt`
+export const getPrompt = async (idPrompt, token, chatbotSelected) => {
+  const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}/prompt`
 
-export const getPrompt = async (idPrompt, token) => {
   try {
     const headers = {
       "Content-Type": "application/json",
@@ -28,7 +28,8 @@ export const postPrompt = async (
   temperature,
   idPrompt,
   promptname,
-  token
+  token,
+  chatbotSelected
 ) => {
   try {
     const headers = {
@@ -37,7 +38,7 @@ export const postPrompt = async (
     }
 
     const response = await axios.put(
-      `${process.env.REACT_APP_API_URL}/prompt`,
+      `${process.env.REACT_APP_API_URL}/poulin/${chatbotSelected}/prompt`,
       {
         content,
         model,

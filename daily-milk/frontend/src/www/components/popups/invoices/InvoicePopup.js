@@ -18,7 +18,7 @@ import "./InvoicePopup.css"
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
-const InvoicePopup = ({ onClose }) => {
+const InvoicePopup = ({ onClose, chatbotSelected }) => {
   const [data, setData] = useState([])
   const [usageData, setUsageData] = useState(null)
 

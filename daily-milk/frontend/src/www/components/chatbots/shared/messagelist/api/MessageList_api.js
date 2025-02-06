@@ -8,7 +8,8 @@ export const handleUnlikeApi = async (
   idPrompt,
   userId,
   model,
-  temperature
+  temperature,
+  chatbotSelected
 ) => {
   const payload = {
     conversationHistory: conversationHistory.slice(-3),
@@ -26,7 +27,7 @@ export const handleUnlikeApi = async (
       Authorization: `Bearer ${Cookies.get("token")}`,
     }
 
-    const response = await fetch(`${API_URL}/poulin/sales-reader/unlike/new`, {
+    const response = await fetch(`${API_URL}/${chatbotSelected}/unlike/new`, {
       method: "POST",
       headers,
       body: JSON.stringify(payload),

@@ -1,8 +1,8 @@
 import axios from "axios"
 
-const API_URL = `${process.env.REACT_APP_API_URL}/poulin/sales-reader/prompt`
+export const getPromptName = async (idPrompt, token, chatbotSelected) => {
+  const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}/prompt`
 
-export const getPromptName = async (idPrompt, token) => {
   try {
     const headers = {
       "Content-Type": "application/json",
@@ -22,7 +22,7 @@ export const getPromptName = async (idPrompt, token) => {
   }
 }
 
-export const checkUnlikeExists = async (idPrompt, token) => {
+export const checkUnlikeExists = async (idPrompt, token, chatbotSelected) => {
   try {
     const headers = {
       "Content-Type": "application/json",
@@ -34,7 +34,7 @@ export const checkUnlikeExists = async (idPrompt, token) => {
     }
 
     const response = await axios.get(
-      `${process.env.REACT_APP_API_URL}/poulin/sales-reader/unlike/check`,
+      `${process.env.REACT_APP_API_URL}/${chatbotSelected}/unlike/check`,
       {
         headers,
         params,

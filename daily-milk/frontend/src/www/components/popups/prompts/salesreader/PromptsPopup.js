@@ -9,7 +9,7 @@ import CloseButton from "../../../share/CloseButton"
 import "./PromptsPopup.css"
 import { getPrompt, postPrompt } from "./api/PromptsApi"
 
-const PromptsForm = ({ idPrompt, onClose, onSave }) => {
+const PromptsForm = ({ chatbotSelected, idPrompt, onClose, onSave }) => {
   const [formData, setFormData] = useState({
     content: "",
     temperature: 0.5,
@@ -23,7 +23,7 @@ const PromptsForm = ({ idPrompt, onClose, onSave }) => {
     const fetchPrompt = async () => {
       try {
         const token = Cookies.get("token")
-        const prompt = await getPrompt(idPrompt, token)
+        const prompt = await getPrompt(idPrompt, token, chatbotSelected)
         setFormData((prevData) => ({
           ...prevData,
           content: prompt.prompt || "ddd",
@@ -81,7 +81,8 @@ const PromptsForm = ({ idPrompt, onClose, onSave }) => {
         formData.temperature,
         idPrompt,
         formData.promptname,
-        token
+        token,
+        chatbotSelected
       )
       console.log("Prompt inviato con successo")
 

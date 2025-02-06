@@ -1,9 +1,9 @@
 import axios from "axios"
 import Cookies from "js-cookie"
 
-const API_URL = `${process.env.REACT_APP_API_URL}/poulin/sales-reader/backup`
+export const downloadBackup = async (chatbotSelected) => {
+  const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}/backup`
 
-export const downloadBackup = async () => {
   const token = Cookies.get("token")
 
   const headers = {
@@ -31,7 +31,9 @@ export const downloadBackup = async () => {
   }
 }
 
-export const uploadBackup = async (file) => {
+export const uploadBackup = async (file, chatbotSelected) => {
+  const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}/import`
+
   const token = Cookies.get("token") // Ottieni il token dai cookie
 
   const headers = {

@@ -5,7 +5,8 @@ export const response = async (
   token,
   name,
   conversationId,
-  messages
+  messages,
+  chatbotSelected
 ) => {
   try {
     if (!Array.isArray(messages)) {
@@ -18,7 +19,7 @@ export const response = async (
     }
 
     const response = await axios.post(
-      `${apiUrl}/poulin/sales-reader/chatbot/response`,
+      `${apiUrl}/${chatbotSelected}/chatbot/response`,
       {
         name,
         conversationId,
@@ -35,10 +36,10 @@ export const response = async (
   }
 }
 
-export const getPromptDetails = async (idPrompt) => {
+export const getPromptDetails = async (idPrompt, chatbotSelected) => {
   const token = getCookie("token")
 
-  const API_URL = `${process.env.REACT_APP_API_URL}/poulin/sales-reader/prompt`
+  const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}r/prompt`
 
   const headers = {
     "Content-Type": "application/json",
@@ -65,9 +66,9 @@ export const getCookie = (name) => {
   if (parts.length === 2) return parts.pop().split(";").shift()
 }
 
-export const fetchUsageData = async () => {
+export const fetchUsageData = async (chatbotSelected) => {
   const token = getCookie("token")
-  const API_URL = `${process.env.REACT_APP_API_URL}/poulin/sales-reader/usage`
+  const API_URL = `${process.env.REACT_APP_API_URL}/usage`
 
   // Funzione per aggiungere un ritardo
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
