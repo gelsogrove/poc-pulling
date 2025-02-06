@@ -7,6 +7,8 @@
   aggiornare backup
   catalogo di prodotti
   dove metto i file statici?
+  <h3>Sales reader chatbot</h3>
+  al refresh non deve fare il load di prompt
 
 - **\*** DAILYMILK\***\*\*\*\***
 - pulire codice funzioni dengfo utils

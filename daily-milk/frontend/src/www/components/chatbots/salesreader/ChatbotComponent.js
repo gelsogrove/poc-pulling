@@ -141,7 +141,8 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
       const botResponse = await sendMessageToChatbot(
         IdConversation,
         updatedHistory,
-        idPrompt
+        idPrompt,
+        chatbotSelected
       )
 
       const parsedResponse = extractJsonFromMessage(botResponse.response)
@@ -200,6 +201,7 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
       <div className="chatbot-main">
         <div className="chatbot-messages">
           <MessageList
+            chatbotSelected={chatbotSelected}
             openPanel={openPanel}
             idPrompt={idPrompt}
             IdConversation={IdConversation}
@@ -213,6 +215,7 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
         </div>
 
         <ChatInput
+          chatbotSelected={chatbotSelected}
           inputValue={inputValue}
           setInputValue={setInputValue}
           isLoading={isLoading}
@@ -230,6 +233,7 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
           }}
         >
           <Usage
+            chatbotSelected={chatbotSelected}
             usageData={usageData}
             currentChatDifference={currentChatDifference}
             temperature={temperature}

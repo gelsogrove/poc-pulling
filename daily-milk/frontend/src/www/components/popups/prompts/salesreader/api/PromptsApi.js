@@ -38,7 +38,7 @@ export const postPrompt = async (
     }
 
     const response = await axios.put(
-      `${process.env.REACT_APP_API_URL}/poulin/${chatbotSelected}/prompt`,
+      `${process.env.REACT_APP_API_URL}/${chatbotSelected}/prompt`,
       {
         content,
         model,

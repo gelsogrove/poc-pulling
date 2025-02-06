@@ -47,7 +47,7 @@ const InvoicePopup = ({ onClose, chatbotSelected }) => {
 
     // Fetch usage statistics
     const getData = async () => {
-      const usageData = await fetchUsageData()
+      const usageData = await fetchUsageData(chatbotSelected)
 
       // Sort months by year and month
       usageData.lastmonths.sort((a, b) => {

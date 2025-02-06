@@ -13,6 +13,7 @@ const MessageList = ({
   openPanel,
   model,
   temperature,
+  chatbotSelected,
 }) => {
   const [debugModes, setDebugModes] = useState({})
   const [showScrollButton, setShowScrollButton] = useState(false)
@@ -50,7 +51,8 @@ const MessageList = ({
         idPrompt,
         userId,
         model,
-        temperature
+        temperature,
+        chatbotSelected
       )
       if (response) {
         const unlikeIcon = document.querySelector(
