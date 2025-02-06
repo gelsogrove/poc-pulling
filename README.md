@@ -3,15 +3,13 @@
 - last connecteed userManage
 
   - is-expired-error
+
   - <h3>Sales reader chatbot</h3>
   - al refresh non deve fare il load di prompt
   - unlike sparisci
   - upload commenta
   - checbpx chatbot per ogni role
   - non mi piace la configurazione modalit'a popup
-
-  - pulire log
-  - pulire log
   - tabella dei chatbots disponibili openrouter
   - dove metto i file statici?
   - catalogo di prodotti
