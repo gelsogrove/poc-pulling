@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express"
-import { pool } from "../../server"
+import { pool } from "../../server.js"
 import { validateRequest } from "./validateUser"
 
 const monthlyUsageRouter = Router()
