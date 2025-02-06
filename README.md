@@ -4,6 +4,9 @@
   -mettere ora poulin/sales-reader a fuegoç
   - passare la variabile
 - last connecteed userManage
+  aggiornare backup
+  catalogo di prodotti
+  dove metto i file statici?
 
 - **\*** DAILYMILK\***\*\*\*\***
 - pulire codice funzioni dengfo utils

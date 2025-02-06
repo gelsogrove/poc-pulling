@@ -99,13 +99,13 @@ app.options("*", (req, res) => {
 
 // Usa i vari router
 app.use("/", welcomeRouter)
-app.use("/poulin/salesreader/auth", limiter, authRouter)
-app.use("/poulin/salesreader/usage", limiter, usageRouter)
-app.use("/poulin/salesreader/prompt", limiter, promptRouter)
-app.use("/poulin/salesreader/chatbot", limiter, chatbotRouter)
-app.use("/poulin/salesreader/unlike", limiter, unlikeRouter)
-app.use("/poulin/salesreader/backup", limiter, backupRouter)
-app.use("/poulin/salesreader/users", limiter, usersRouter)
+app.use("/poulin/sales-reader/auth", limiter, authRouter)
+app.use("/poulin/sales-reader/usage", limiter, usageRouter)
+app.use("/poulin/sales-reader/prompt", limiter, promptRouter)
+app.use("/poulin/sales-reader/chatbot", limiter, chatbotRouter)
+app.use("/poulin/sales-reader/unlike", limiter, unlikeRouter)
+app.use("/poulin/sales-reader/backup", limiter, backupRouter)
+app.use("/poulin/sales-reader/users", limiter, usersRouter)
 
 // Forza HTTPS in produzione
 if (process.env.NODE_ENV === "production") {
