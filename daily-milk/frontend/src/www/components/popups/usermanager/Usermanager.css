@@ -156,3 +156,9 @@
   cursor: not-allowed;
   pointer-events: none;
 }
+
+/* Aggiungi questa classe se desideri uno stile specifico per la colonna Last Connected */
+.last-connected-col {
+  width: 150px; /* Imposta la larghezza desiderata */
+  text-align: left;
+}

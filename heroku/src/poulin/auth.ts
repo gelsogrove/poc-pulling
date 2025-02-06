@@ -43,6 +43,10 @@ const loginHandler: RequestHandler = async (req, res) => {
     return
   }
 
+  const lastConnected = new Date() // Ottieni la data e ora attuale
+  const sql = "UPDATE users SET last_connected = $1 WHERE userid = $2"
+  await pool.query(sql, [lastConnected, user.userid])
+
   res.status(200).json({
     username: user.username,
     userId: user.userid,

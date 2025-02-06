@@ -124,6 +124,7 @@ const UserManager = ({ onClose }) => {
                 <th className="small-col">Surname</th>
                 <th className="small-col2">Username</th>
                 <th className="small-col2">Role</th>
+                <th className="small-col">Last Connected</th>
                 <th className="small-col1"></th>
               </tr>
             </thead>
@@ -142,6 +143,11 @@ const UserManager = ({ onClose }) => {
                   <td className="small-col">{user.surname}</td>
                   <td className="small-col2">{user.username}</td>
                   <td className="small-col2">{user.role}</td>
+                  <td className="small-col">
+                    {user.last_connected
+                      ? new Date(user.last_connected).toLocaleString()
+                      : "N/A"}
+                  </td>
                   <td className="small-col1" style={{ cursor: "default" }}>
                     <button
                       className={`toggle-btn ${
