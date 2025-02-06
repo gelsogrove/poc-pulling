@@ -1,6 +1,6 @@
 import { RequestHandler, Router } from "express"
-import { pool } from "../../../server"
-import { validateRequest } from "../validateUser"
+import { pool } from "../../../server.js"
+import { validateRequest } from "../validateUser.js"
 
 const promptRouter = Router()
 

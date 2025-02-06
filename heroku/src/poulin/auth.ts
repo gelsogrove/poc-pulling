@@ -4,45 +4,14 @@ import qrcode from "qrcode"
 import speakeasy from "speakeasy"
 import { v4 as uuidv4 } from "uuid" // Importa uuid
 
-import { getUserIdByToken } from "./validateUser.js"
+import { pool } from "../../server.js"
+import { validateRequest } from "./validateUser.js"
 
 import dotenv from "dotenv"
-import { pool } from "../../server.js"
 
 dotenv.config() // Carica le variabili d'ambiente dal file .env
 
 const authRouter = Router()
-
-const validateRequest = async (req: any, res: any): Promise<string | null> => {
-  const authHeader = req.headers["authorization"] as string | undefined
-
-  const token = authHeader?.startsWith("Bearer ")
-    ? authHeader.split(" ")[1]
-    : null
-
-  if (!token) {
-    res.status(401).json({ message: "Missing or invalid token." })
-    return null
-  }
-
-  try {
-    const userId = await getUserIdByToken(token)
-    if (!userId) {
-      res.status(403).json({ message: "Invalid or expired token." })
-      return null
-    }
-    return userId
-  } catch (error) {
-    console.error(
-      "Error during token validation:",
-      error instanceof Error ? error.message : error
-    )
-    res
-      .status(500)
-      .json({ message: "Internal server error during validation." })
-    return null
-  }
-}
 
 // Handler per il login
 const loginHandler: RequestHandler = async (req, res) => {

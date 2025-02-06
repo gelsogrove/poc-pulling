@@ -1,15 +1,15 @@
 import axios from "axios"
 import axiosRetry from "axios-retry"
 import dotenv from "dotenv"
-import { RequestHandler, Router } from "express"
-import { validateRequest } from "../validateUser"
+import { Request, RequestHandler, Response, Router } from "express"
+import { validateRequest } from "../validateUser.js"
 import {
   cleanResponse,
   executeSqlQuery,
   generateDetailedSentence,
   getPrompt,
   sendUsageData,
-} from "./chatbots_utility"
+} from "./chatbots_utility.js"
 
 dotenv.config()
 
@@ -34,7 +34,7 @@ axiosRetry(axios, {
   },
 })
 
-const handleResponse: RequestHandler = async (req, res) => {
+const handleResponse: RequestHandler = async (req: Request, res: Response) => {
   const { userId, token } = await validateRequest(req, res)
   if (!userId) return
   const { conversationId, idPrompt, messages } = req.body

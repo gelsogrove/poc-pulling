@@ -5,15 +5,15 @@ import express from "express"
 import rateLimit from "express-rate-limit"
 import helmet from "helmet"
 import pkg from "pg"
-import welcomeRouter from "../welcome"
-import authRouter from "./poulin/auth"
+import authRouter from "./poulin/auth.js"
+import welcomeRouter from "./welcome.js"
 
-import backupRouter from "./poulin/backup"
-import chatbotRouter from "./poulin/sales-reader/chatbots"
-import promptRouter from "./poulin/sales-reader/prompts"
-import unlikeRouter from "./poulin/sales-reader/unlinke"
-import usageRouter from "./poulin/sales-reader/usage"
-import usersRouter from "./poulin/users"
+import backupRouter from "./poulin/backup.js"
+import chatbotRouter from "./poulin/sales-reader/chatbots.js"
+import promptRouter from "./poulin/sales-reader/prompts.js"
+import unlikeRouter from "./poulin/sales-reader/unlinke.js"
+import usageRouter from "./poulin/sales-reader/usage.js"
+import usersRouter from "./poulin/users.js"
 
 const { Pool } = pkg
 
