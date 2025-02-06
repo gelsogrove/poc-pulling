@@ -175,7 +175,7 @@ const isExpired: RequestHandler = async (req, res) => {
 
     if (rows.length === 0) {
       res.status(404).json({ message: "Utente non trovato..." })
-      return
+      return false
     }
 
     const { expire_date } = rows[0]
