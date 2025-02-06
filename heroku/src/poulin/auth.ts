@@ -226,7 +226,7 @@ const getClientHandler: RequestHandler = async (req, res) => {
     )
 
     if (rows.length === 0) {
-      res.status(404).json({ message: "Utente non trovato" }) // Restituisce un errore 404 se l'utente non esiste
+      res.status(404).json({ message: "Utente non trovato" })
       return
     }
 
