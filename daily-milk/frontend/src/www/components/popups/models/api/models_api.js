@@ -59,13 +59,10 @@ const deleteModel = async (model) => {
     Authorization: `Bearer ${token}`,
   }
 
-  const response = await axios.delete(
-    `${API_URL}/delete/${model.idmodel}`,
-    { model: model.idmodel },
-    {
-      headers,
-    }
-  )
+  const response = await axios.delete(`${API_URL}/delete/${model.idmodel}`, {
+    headers,
+    data: { name: model.name },
+  })
   return response.data
 }
 
