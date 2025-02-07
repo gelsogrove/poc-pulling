@@ -72,7 +72,6 @@ const updateModel: RequestHandler = async (req, res) => {
   }
 }
 
-// Funzione per eliminare un modello
 const deleteModel: RequestHandler = async (req, res) => {
   const { userId, token } = await validateRequest(req, res)
   if (!userId) return
