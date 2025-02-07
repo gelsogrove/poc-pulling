@@ -58,6 +58,7 @@ const ModelsPopup = ({ onClose }) => {
       )
       setEditingModel(null)
       setError("")
+      setNewNote("")
       fetchModels()
     } catch (err) {
       console.error("Error updating model:", err)
@@ -93,6 +94,7 @@ const ModelsPopup = ({ onClose }) => {
       note: model.note,
     })
     setNewModel("")
+
     setNewNote(model.note || "")
   }
 
@@ -161,7 +163,7 @@ const ModelsPopup = ({ onClose }) => {
               <td>
                 <button onClick={() => handleEditClick(model)}>Edit</button>
                 <button
-                  onClick={() => handleDeleteModel(model.model)}
+                  onClick={() => handleDeleteModel(model)}
                   style={{ backgroundColor: "red", marginLeft: "5px" }}
                 >
                   Delete

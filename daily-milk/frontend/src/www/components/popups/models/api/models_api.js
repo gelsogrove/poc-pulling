@@ -3,7 +3,7 @@ import Cookies from "js-cookie"
 
 const API_URL = `${process.env.REACT_APP_API_URL}/models`
 
-const createModel = async (model) => {
+const createModel = async (model, note) => {
   if (!model) {
     throw new Error("Il campo 'model' non può essere nullo.")
   }
@@ -14,7 +14,11 @@ const createModel = async (model) => {
     Authorization: `Bearer ${token}`,
   }
 
-  const response = await axios.post(API_URL + "/new", { model }, { headers })
+  const response = await axios.post(
+    API_URL + "/new",
+    { model, note },
+    { headers }
+  )
   return response.data
 }
 
@@ -29,7 +33,7 @@ const getModels = async () => {
   return response.data
 }
 
-const updateModel = async (idmodel, model) => {
+const updateModel = async (idmodel, model, note) => {
   if (!model) {
     throw new Error("Il campo 'model' non può essere nullo.")
   }
@@ -42,7 +46,7 @@ const updateModel = async (idmodel, model) => {
 
   const response = await axios.put(
     `${API_URL}/update/${idmodel}`,
-    { model },
+    { model, note },
     { headers }
   )
   return response.data
@@ -55,9 +59,13 @@ const deleteModel = async (model) => {
     Authorization: `Bearer ${token}`,
   }
 
-  const response = await axios.delete(`${API_URL}/delete/${model}`, {
-    headers,
-  })
+  const response = await axios.delete(
+    `${API_URL}/delete/${model.idmodel}`,
+    { model: model.idmodel },
+    {
+      headers,
+    }
+  )
   return response.data
 }
 
