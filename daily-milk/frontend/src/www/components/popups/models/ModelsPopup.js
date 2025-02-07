@@ -5,7 +5,7 @@ import {
   deleteModel,
   getModels,
   updateModel,
-} from "./api/models_api.js"
+} from "./api/models_api"
 import "./ModelsPopup.css"
 
 const ModelsPopup = ({ onClose }) => {
@@ -30,7 +30,7 @@ const ModelsPopup = ({ onClose }) => {
 
   const handleAddModel = async () => {
     if (!newModel.trim()) {
-      setError("Il campo 'model' non può essere vuoto.")
+      setError("The 'model' field cannot be empty.")
       return
     }
     try {
@@ -45,7 +45,7 @@ const ModelsPopup = ({ onClose }) => {
 
   const handleEditModel = async () => {
     if (!editingModel.name.trim()) {
-      setError("Il campo 'model' non può essere vuoto.")
+      setError("The 'model' field cannot be empty.")
       return
     }
     try {
@@ -58,15 +58,15 @@ const ModelsPopup = ({ onClose }) => {
     }
   }
 
-  const handleDeleteModel = async (idmodel) => {
+  const handleDeleteModel = async (model) => {
     const confirmDelete = window.confirm(
-      "Sei sicuro di voler eliminare questo modello?"
+      "Are you sure you want to delete this model?"
     )
     if (confirmDelete) {
       try {
-        const result = await deleteModel(idmodel)
+        const result = await deleteModel(model)
         if (!result) {
-          setError("Modello è in uso, non si può cancellare.")
+          setError("Models cannot be deleted.")
         } else {
           fetchModels()
           setErrorMessage("")
@@ -82,55 +82,62 @@ const ModelsPopup = ({ onClose }) => {
 
   const handleEditClick = (model) => {
     setEditingModel({ idmodel: model.idmodel, name: model.model })
+    setNewModel("")
   }
 
   return (
     <div className="models-popup">
-      <div className="popup-title">
-        <h2>Gestione Modelli</h2>
+      <div className="close-button-container">
         <CloseButton onClose={onClose} />
+      </div>
+
+      <div className="popup-title">
+        <h2>Models</h2>
       </div>
       {error && <div className="error-message">{error}</div>}
       {errorMessage && <div className="error-message">{errorMessage}</div>}
-      <div>
-        <input
-          type="text"
-          value={newModel}
-          onChange={(e) => setNewModel(e.target.value)}
-          placeholder="Aggiungi un nuovo modello"
-        />
-        <button onClick={handleAddModel}>Aggiungi</button>
-      </div>
+      {!editingModel && (
+        <div className="add-model-container">
+          <input
+            type="text"
+            value={newModel}
+            onChange={(e) => setNewModel(e.target.value)}
+            placeholder="Add a new model"
+          />
+          <button onClick={handleAddModel}>Add</button>
+        </div>
+      )}
       {editingModel && (
-        <div>
+        <div className="add-model-container">
           <input
             type="text"
             value={editingModel.name}
             onChange={(e) =>
               setEditingModel({ ...editingModel, name: e.target.value })
             }
-            placeholder="Modifica modello"
+            placeholder="Edit model"
           />
-          <button onClick={handleEditModel}>Aggiorna</button>
+          <button onClick={handleEditModel}>Update</button>
         </div>
       )}
       <table className="models-table">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Modello</th>
-            <th>Azioni</th>
+            <th>AI Models</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           {models.map((model) => (
             <tr key={model.idmodel}>
-              <td>{model.idmodel}</td>
               <td>{model.model}</td>
               <td>
-                <button onClick={() => handleEditClick(model)}>Modifica</button>
-                <button onClick={() => handleDeleteModel(model.idmodel)}>
-                  Elimina
+                <button onClick={() => handleEditClick(model)}>Edit</button>
+                <button
+                  onClick={() => handleDeleteModel(model.model)}
+                  style={{ backgroundColor: "red", marginLeft: "5px" }}
+                >
+                  Delete
                 </button>
               </td>
             </tr>

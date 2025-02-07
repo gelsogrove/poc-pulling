@@ -10,15 +10,15 @@ const createModel: RequestHandler = async (req, res) => {
   const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
-  const { model } = req.body
+  const { model, note } = req.body
   if (!model) {
     res.status(400).json({ error: "Il campo 'model' non può essere nullo." })
     return
   }
   try {
     const result = await pool.query(
-      "INSERT INTO Models (model) VALUES ($1) RETURNING *",
-      [model]
+      "INSERT INTO models (model, note) VALUES ($1, $2) RETURNING *",
+      [model, note || null]
     )
     res.status(201).json(result.rows[0])
   } catch (error) {
@@ -35,7 +35,7 @@ const getModels: RequestHandler = async (req, res) => {
   }
 
   try {
-    const result = await pool.query("SELECT * FROM Models")
+    const result = await pool.query("SELECT * FROM models ORDER BY id DESC")
     res.status(200).json(result.rows)
   } catch (error) {
     console.error("Error fetching models:", error)
@@ -49,15 +49,15 @@ const updateModel: RequestHandler = async (req, res) => {
   if (!userId) return
 
   const { id } = req.params
-  const { model } = req.body
+  const { model, note } = req.body
   if (!model) {
     res.status(400).json({ error: "Il campo 'model' non può essere nullo." })
     return
   }
   try {
     const result = await pool.query(
-      "UPDATE Models SET model = $1 WHERE idmodel = $2 RETURNING *",
-      [model, id]
+      "UPDATE models SET model = $1, note = $2 WHERE idmodel = $3 RETURNING *",
+      [model, note || null, id]
     )
     if (result.rowCount === 0) {
       res.status(404).json({ error: "Modello non trovato." })
@@ -84,11 +84,13 @@ const deleteModel: RequestHandler = async (req, res) => {
       [name]
     )
     if (parseInt(promptCheck.rows[0].count) > 0) {
-      res.status(400).json({ error: "Cannot  delete" })
+      res
+        .status(400)
+        .json({ error: "Cannot delete model because it is in use." })
       return
     }
 
-    const result = await pool.query("DELETE FROM Models WHERE model = $1", [
+    const result = await pool.query("DELETE FROM models WHERE model = $1", [
       name,
     ])
     if (result.rowCount === 0) {

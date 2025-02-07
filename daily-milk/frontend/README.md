@@ -1,5 +1,6 @@
 ===================== TODO =====================
 
+- la stampa non funziona
 - checbpx chatbot per ogni role
 - tabella dei chatbots disponibili openrouter
 - tabla role

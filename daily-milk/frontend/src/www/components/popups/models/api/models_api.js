@@ -1,7 +1,7 @@
 import axios from "axios"
 import Cookies from "js-cookie"
 
-const API_URL = `${process.env.REACT_APP_API_URL}/poulin/models`
+const API_URL = `${process.env.REACT_APP_API_URL}/models`
 
 const createModel = async (model) => {
   if (!model) {
@@ -14,7 +14,7 @@ const createModel = async (model) => {
     Authorization: `Bearer ${token}`,
   }
 
-  const response = await axios.post(API_URL, { model }, { headers })
+  const response = await axios.post(API_URL + "/new", { model }, { headers })
   return response.data
 }
 
@@ -41,21 +41,21 @@ const updateModel = async (idmodel, model) => {
   }
 
   const response = await axios.put(
-    `${API_URL}/${idmodel}`,
+    `${API_URL}/update/${idmodel}`,
     { model },
     { headers }
   )
   return response.data
 }
 
-const deleteModel = async (idmodel) => {
+const deleteModel = async (model) => {
   const token = Cookies.get("token")
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
   }
 
-  const response = await axios.delete(`${API_URL}/delete/${idmodel}`, {
+  const response = await axios.delete(`${API_URL}/delete/${model}`, {
     headers,
   })
   return response.data

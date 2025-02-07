@@ -23,6 +23,12 @@
   border-radius: 4px;
 }
 
+.close-button-container {
+  position: absolute; /* Posiziona il bottone in modo assoluto */
+  top: 10px; /* Distanza dal top */
+  right: 10px; /* Distanza dal lato destro */
+}
+
 .models-table {
   width: 100%;
   border-collapse: collapse;
@@ -45,38 +51,61 @@
   font-weight: bold;
 }
 
-button {
-  padding: 8px 12px;
+.add-model-container button {
+  padding: 10px 15px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.2s;
+  background-color: #007bff;
+  color: white;
 }
-
-button:hover {
+.models-table button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
   background-color: #007bff;
   color: white;
 }
 
-button:focus {
+.models-popup button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.models-popup button:focus {
   outline: none;
 }
 
-input[type="text"] {
+.models-popup input[type="text"] {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 200px;
+  width: 300px;
   margin-right: 10px;
 }
 
-input[type="text"]:focus {
+.models-popup input[type="text"]:focus {
   border-color: #007bff;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 .add-model-container {
   display: flex;
-  gap: 10px;
+  gap: 15px;
   margin-top: 20px;
+  align-items: center;
+}
+
+/* Specifica gli stili per i tag h2, h3, ecc. solo per questo componente */
+.models-popup h2 {
+  font-size: 1.5em; /* Dimensione del font per h2 */
+  margin: 0; /* Rimuove il margine */
+}
+
+.models-popup h3 {
+  font-size: 1.2em; /* Dimensione del font per h3 */
+  margin: 0; /* Rimuove il margine */
 }

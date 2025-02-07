@@ -147,8 +147,8 @@ const PromptsForm = ({ chatbotSelected, idPrompt, onClose, onSave }) => {
                 Select a model
               </option>
               {models.map((model) => (
-                <option key={model.id} value={model.value}>
-                  {model.name}
+                <option key={model.id} value={model.model}>
+                  {model.model}
                 </option>
               ))}
             </select>

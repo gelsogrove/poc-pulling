@@ -57,7 +57,8 @@ export const postPrompt = async (
 }
 
 export const getModels = async (token) => {
-  const response = await fetch("/api/models", {
+  const API_URL = `${process.env.REACT_APP_API_URL}/models`
+  const response = await fetch(API_URL, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
