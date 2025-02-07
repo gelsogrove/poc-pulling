@@ -11,6 +11,7 @@ import "./ModelsPopup.css"
 const ModelsPopup = ({ onClose }) => {
   const [models, setModels] = useState([])
   const [newModel, setNewModel] = useState("")
+  const [newNote, setNewNote] = useState("")
   const [editingModel, setEditingModel] = useState(null)
   const [error, setError] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
@@ -34,8 +35,9 @@ const ModelsPopup = ({ onClose }) => {
       return
     }
     try {
-      await createModel(newModel)
+      await createModel(newModel, newNote)
       setNewModel("")
+      setNewNote("")
       setError("")
       fetchModels()
     } catch (err) {
@@ -49,7 +51,11 @@ const ModelsPopup = ({ onClose }) => {
       return
     }
     try {
-      await updateModel(editingModel.idmodel, editingModel.name)
+      await updateModel(
+        editingModel.idmodel,
+        editingModel.name,
+        editingModel.note
+      )
       setEditingModel(null)
       setError("")
       fetchModels()
@@ -81,8 +87,13 @@ const ModelsPopup = ({ onClose }) => {
   }
 
   const handleEditClick = (model) => {
-    setEditingModel({ idmodel: model.idmodel, name: model.model })
+    setEditingModel({
+      idmodel: model.idmodel,
+      name: model.model,
+      note: model.note,
+    })
     setNewModel("")
+    setNewNote(model.note || "")
   }
 
   return (
@@ -104,6 +115,12 @@ const ModelsPopup = ({ onClose }) => {
             onChange={(e) => setNewModel(e.target.value)}
             placeholder="Add a new model"
           />
+          <input
+            type="text"
+            value={newNote}
+            onChange={(e) => setNewNote(e.target.value)}
+            placeholder="Add a note"
+          />
           <button onClick={handleAddModel}>Add</button>
         </div>
       )}
@@ -117,6 +134,14 @@ const ModelsPopup = ({ onClose }) => {
             }
             placeholder="Edit model"
           />
+          <input
+            type="text"
+            value={editingModel.note}
+            onChange={(e) =>
+              setEditingModel({ ...editingModel, note: e.target.value })
+            }
+            placeholder="Edit note"
+          />
           <button onClick={handleEditModel}>Update</button>
         </div>
       )}
@@ -124,6 +149,7 @@ const ModelsPopup = ({ onClose }) => {
         <thead>
           <tr>
             <th>AI Models</th>
+            <th>Notes</th>
             <th></th>
           </tr>
         </thead>
@@ -131,6 +157,7 @@ const ModelsPopup = ({ onClose }) => {
           {models.map((model) => (
             <tr key={model.idmodel}>
               <td>{model.model}</td>
+              <td>{model.note}</td>
               <td>
                 <button onClick={() => handleEditClick(model)}>Edit</button>
                 <button

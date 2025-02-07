@@ -17,7 +17,7 @@ const createModel: RequestHandler = async (req, res) => {
   }
   try {
     const result = await pool.query(
-      "INSERT INTO models (model, note) VALUES ($1, $2) RETURNING *",
+      "INSERT INTO Models (model, note) VALUES ($1, $2) RETURNING *",
       [model, note || null]
     )
     res.status(201).json(result.rows[0])
@@ -35,11 +35,13 @@ const getModels: RequestHandler = async (req, res) => {
   }
 
   try {
-    const result = await pool.query("SELECT * FROM models ORDER BY id DESC")
+    const result = await pool.query(
+      "SELECT * FROM models ORDER BY idmodel DESC"
+    )
     res.status(200).json(result.rows)
   } catch (error) {
     console.error("Error fetching models:", error)
-    res.status(500).json({ error: "Errore durante il recupero dei modelli." })
+    res.status(500).json({ error })
   }
 }
 
@@ -56,7 +58,7 @@ const updateModel: RequestHandler = async (req, res) => {
   }
   try {
     const result = await pool.query(
-      "UPDATE models SET model = $1, note = $2 WHERE idmodel = $3 RETURNING *",
+      "UPDATE Models SET model = $1, note = $2 WHERE idmodel = $3 RETURNING *",
       [model, note || null, id]
     )
     if (result.rowCount === 0) {
@@ -66,9 +68,7 @@ const updateModel: RequestHandler = async (req, res) => {
     res.status(200).json(result.rows[0])
   } catch (error) {
     console.error("Error updating model:", error)
-    res
-      .status(500)
-      .json({ error: "Errore durante l'aggiornamento del modello." })
+    res.status(500).json({ error })
   }
 }
 
@@ -84,9 +84,7 @@ const deleteModel: RequestHandler = async (req, res) => {
       [name]
     )
     if (parseInt(promptCheck.rows[0].count) > 0) {
-      res
-        .status(400)
-        .json({ error: "Cannot delete model because it is in use." })
+      res.status(400).json({ error: "Cannot delete" })
       return
     }
 
