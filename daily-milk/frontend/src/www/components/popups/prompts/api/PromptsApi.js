@@ -55,3 +55,15 @@ export const postPrompt = async (
     throw error
   }
 }
+
+export const getModels = async (token) => {
+  const response = await fetch("/api/models", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  if (!response.ok) {
+    throw new Error("Failed to fetch models")
+  }
+  return await response.json()
+}

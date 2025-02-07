@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import "codemirror/lib/codemirror.css" // CSS per l'editor
-import "codemirror/mode/javascript/javascript" // Modalità per il linguaggio
-import "codemirror/theme/dracula.css" // Tema dell'editor
+import "codemirror/lib/codemirror.css"
+import "codemirror/mode/javascript/javascript"
+import "codemirror/theme/dracula.css"
 import Cookies from "js-cookie"
 import React, { useEffect, useState } from "react"
 import { Controlled as ControlledEditor } from "react-codemirror2"
-import CloseButton from "../../../share/CloseButton"
+import CloseButton from "../../share/CloseButton"
 import "./PromptsPopup.css"
-import { getPrompt, postPrompt } from "./api/PromptsApi"
+import { getModels, getPrompt, postPrompt } from "./api/PromptsApi.js"
 
 const PromptsForm = ({ chatbotSelected, idPrompt, onClose, onSave }) => {
   const [formData, setFormData] = useState({
@@ -18,6 +18,7 @@ const PromptsForm = ({ chatbotSelected, idPrompt, onClose, onSave }) => {
   })
   const [isChanged, setIsChanged] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [models, setModels] = useState([])
 
   useEffect(() => {
     const fetchPrompt = async () => {
@@ -36,7 +37,18 @@ const PromptsForm = ({ chatbotSelected, idPrompt, onClose, onSave }) => {
       }
     }
 
+    const fetchModels = async () => {
+      try {
+        const token = Cookies.get("token")
+        const modelsList = await getModels(token)
+        setModels(modelsList)
+      } catch (error) {
+        console.error("Errore durante il recupero dei modelli:", error)
+      }
+    }
+
     fetchPrompt()
+    fetchModels()
   }, [])
 
   const handleEditorChange = (name) => (editor, data, value) => {
@@ -134,18 +146,11 @@ const PromptsForm = ({ chatbotSelected, idPrompt, onClose, onSave }) => {
               <option value="" disabled>
                 Select a model
               </option>
-              <option value="openai/chatgpt-4o-latest">
-                OpenAI ChatGPT-4o Latest
-              </option>
-              <option value="openai/gpt-4o">OpenAI GPT-4o</option>
-              <option value="google/gemini-pro-vision">
-                Google Gemini Pro Vision
-              </option>
-              <option value="deepseek/deepseek-r1-distill-qwen-32b">
-                deepseek/deepseek-r1-distill-qwen-32b
-              </option>
-              <option value="openai/gpt-4o-mini">OpenAI GPT-4o Mini</option>
-              <option value="openai/gpt-3.5-turbo">OpenAI GPT-3.5 Turbo</option>
+              {models.map((model) => (
+                <option key={model.id} value={model.value}>
+                  {model.name}
+                </option>
+              ))}
             </select>
           </div>
 

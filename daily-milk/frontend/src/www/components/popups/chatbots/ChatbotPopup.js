@@ -1,9 +1,9 @@
 import React, { useState } from "react"
-import ChatBotComponent from "../../../chatbots/salesreader/ChatbotComponent"
+import ChatBotComponent from "../../chatbots/ChatbotComponent"
 import "./ChatbotPopup.css"
 import PrintSection from "./PrintSection"
 
-const ChatbotPopup = ({ idPrompt, onClose, chatbotSelected }) => {
+const ChatbotPopup = ({ idPrompt, onClose, chatbotSelected, title }) => {
   const [openPanel, setOpenPanel] = useState(false)
 
   const onTogglePanel = () => {
@@ -36,7 +36,7 @@ const ChatbotPopup = ({ idPrompt, onClose, chatbotSelected }) => {
         </div>
 
         <div className="chat-section-source">
-          <h3>Sales reader chatbot</h3>
+          <h3 className="chatbot-title">{title}</h3>
           <ChatBotComponent
             chatbotSelected={chatbotSelected}
             idPrompt={idPrompt}

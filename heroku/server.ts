@@ -10,6 +10,7 @@ import unlikeRouter from "./src/poulin/sales-reader/unlinke.js"
 
 import authRouter from "./src/poulin/auth.js"
 import backupRouter from "./src/poulin/backup.js"
+import modelsRouter from "./src/poulin/models.js"
 import monthlyUsageRouter from "./src/poulin/monthlyUsage.js"
 import chatbotRouter from "./src/poulin/sales-reader/chatbots.js"
 import promptRouter from "./src/poulin/sales-reader/prompts.js"
@@ -102,6 +103,8 @@ app.use("/", welcomeRouter)
 app.use("/auth", limiter, authRouter)
 app.use("/users", limiter, usersRouter)
 app.use("/invoices", limiter, monthlyUsageRouter)
+app.use("/models", limiter, modelsRouter)
+
 app.use("/poulin/sales-reader/usage", limiter, usageRouter)
 app.use("/poulin/sales-reader/prompt", limiter, promptRouter)
 app.use("/poulin/sales-reader/chatbot", limiter, chatbotRouter)

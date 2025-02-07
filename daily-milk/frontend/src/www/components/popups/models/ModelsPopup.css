@@ -1,0 +1,82 @@
+.models-popup {
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  min-width: 650px;
+  margin: auto;
+}
+
+.popup-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.error-message {
+  color: #d32f2f;
+  font-size: 0.9em;
+  margin: 4px 0;
+  padding: 4px 8px;
+  background-color: #ffebee;
+  border-radius: 4px;
+}
+
+.models-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.model-actions {
+  width: 160px;
+}
+
+.models-table th,
+.models-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.models-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+button:focus {
+  outline: none;
+}
+
+input[type="text"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 200px;
+  margin-right: 10px;
+}
+
+input[type="text"]:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.add-model-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}

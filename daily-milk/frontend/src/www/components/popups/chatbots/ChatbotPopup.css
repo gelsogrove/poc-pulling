@@ -44,6 +44,10 @@
 .icon {
   font-size: 21px !important;
 }
+.chatbot-title {
+  padding: -15px;
+  padding-bottom: 15px;
+}
 
 .chat-section-source {
   width: 100%;
@@ -51,7 +55,7 @@
   background-color: #fff;
   box-sizing: border-box;
   height: 85vh;
-  margin-top: 20px;
+  margin-top: 0px;
   padding-right: 0px;
   padding-left: 15px;
 }

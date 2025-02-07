@@ -1,10 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from "react"
 import { v4 as uuidv4 } from "uuid"
 
-import ChatInput from "../shared/chatinput/ChatInput"
-import MessageList from "../shared/messagelist/MessageList"
-import Usage from "../usage/Usage"
 import "./ChatbotComponent.css"
+import ChatInput from "./shared/chatinput/ChatInput"
+import MessageList from "./shared/messagelist/MessageList"
+import Usage from "./shared/usage/Usage"
 
 import { sendMessageToChatbot } from "./api/chatbot_api"
 import {
@@ -15,7 +16,7 @@ import {
 } from "./utils"
 
 import Cookies from "js-cookie"
-import { fetchUsageData, getPromptDetails } from "../usage/api/utils_api"
+import { fetchUsageData, getPromptDetails } from "./shared/usage/api/utils_api"
 
 const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
   const [refreshUsage, setRefreshUsage] = useState(false)
@@ -43,6 +44,8 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
   }
 
   // Messaggio iniziale di benvenuto
+  useEffect(() => {}, [])
+
   useEffect(() => {
     const userName = getUserName()
     const { updatedMessages, updatedHistory } = updateChatState(
@@ -56,32 +59,7 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
         },
       ]
     )
-    setMessages(updatedMessages)
-    setConversationHistory(updatedHistory)
-  }, [])
 
-  useEffect(() => {
-    scrollToBottom()
-  }, [messages])
-
-  /**
-   * [1] RESET del cookie appena la chat si "apre" (monta il componente).
-   *     Così, ogni volta che ricarichi/riapri la chat,
-   *     parti senza cookie.
-   */
-  useEffect(() => {
-    Cookies.remove(cookieKey)
-  }, [])
-
-  /**
-   * [2] Fetch usage e calcolo differenza.
-   *     - Se il cookie NON c'è, lo creiamo con totalCurrentMonth
-   *     - Se il cookie C'È, calcoliamo differenza
-   *
-   * Si richiama inizialmente (montaggio) e ogni volta che cambiamo idPrompt
-   * o facciamo toggle di refreshUsage (cioè inviando un messaggio).
-   */
-  useEffect(() => {
     const fetchData = async () => {
       try {
         // 1) Dati di usage
@@ -111,7 +89,40 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
     }
 
     fetchData()
-  }, [idPrompt, refreshUsage, chatbotSelected])
+    setMessages(updatedMessages)
+    setConversationHistory(updatedHistory)
+    Cookies.remove(cookieKey)
+  }, [])
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // 1) Dati di usage
+        const data = await fetchUsageData(chatbotSelected)
+        setUsageData(data)
+
+        // 3) Se il cookie non esiste, lo creiamo (session cookie)
+        if (!Cookies.get(cookieKey)) {
+          Cookies.set(cookieKey, data.totalCurrentMonth)
+          setCurrentChatDifference(0)
+        } else {
+          // Se esiste, calcoliamo la differenza
+          const initialTotal = parseFloat(Cookies.get(cookieKey))
+          const difference = data.totalCurrentMonth - initialTotal
+          setCurrentChatDifference(difference)
+        }
+      } catch (err) {
+        console.error("Error fetching usage data:", err)
+        setError("Failed to load data. Please try again.")
+      }
+    }
+
+    fetchData()
+  }, [refreshUsage])
 
   // Funzione per inviare un messaggio
   const handleSend = async (message) => {

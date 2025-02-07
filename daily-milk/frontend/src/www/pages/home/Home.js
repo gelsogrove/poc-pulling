@@ -5,22 +5,25 @@ import React, { useEffect, useState } from "react"
 import { Helmet } from "react-helmet"
 import { useTranslation } from "react-i18next"
 import Navbar from "../../components/navbar/Navbar"
-import ChatbotSource from "../../components/popups/chatbots/salesreader/ChatbotPopup.js"
+import ChatbotSource from "../../components/popups/chatbots/ChatbotPopup.js"
 import InvoicePopup from "../../components/popups/invoices/InvoicePopup.js"
 import Popup from "../../components/popups/Popup"
-import PromptsPopup from "../../components/popups/prompts/salesreader/PromptsPopup.js"
+import PromptsPopup from "../../components/popups/prompts/PromptsPopup.js"
 import UnlikePopup from "../../components/popups/unlike/UnlikePopup.js"
 import UploadPopup from "../../components/popups/upload/UploadPopup.js"
-import { PROMPT_ID } from "../../config/constants"
+
 import { checkUnlikeExists, getPromptName } from "./api/home_api"
 import "./Home.css"
+
+export const PROMPT_ID = "a2c502db-9425-4c66-9d92-acd3521b38b5"
 
 const Home = () => {
   const { t } = useTranslation()
   const [activePopup, setActivePopup] = useState(null)
   const [chatbot, setChatbot] = useState("poulin/sales-reader")
   const [promptName, setPromptName] = useState("poulin/sales-reader")
-  const [hasUnlikes, setHasUnlikes] = useState(true)
+  const [hasUnlikes, setHasUnlikes] = useState(false)
+  const [title, setTitle] = useState("")
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,9 +51,10 @@ const Home = () => {
     window.location.reload()
   }
 
-  const openPopup = (popupType, chatbot) => {
+  const openPopup = (popupType, chatbot, title) => {
     setActivePopup(popupType)
     setChatbot(chatbot)
+    setTitle(title)
   }
 
   const refreshPromptName = async () => {
@@ -78,6 +82,7 @@ const Home = () => {
 
       <Popup isOpen={activePopup === "chatbotsource"}>
         <ChatbotSource
+          title={title}
           chatbotSelected={chatbot}
           idPrompt={PROMPT_ID}
           onClose={closePopup}
@@ -117,7 +122,13 @@ const Home = () => {
           <div className="feature-item">
             <div
               className="image-container"
-              onClick={() => openPopup("chatbotsource", "poulin/sales-reader")}
+              onClick={() =>
+                openPopup(
+                  "chatbotsource",
+                  "poulin/sales-reader",
+                  "Sales reader chatbot"
+                )
+              }
             >
               <img
                 src="../images/chatbot.webp"
@@ -132,7 +143,13 @@ const Home = () => {
             <div className="actions-chatbot">
               <button
                 className="btn"
-                onClick={() => openPopup("prompts", "poulin/sales-reader")}
+                onClick={() =>
+                  openPopup(
+                    "prompts",
+                    "poulin/sales-reader",
+                    "Sales reader chatbot"
+                  )
+                }
               >
                 <i className="fas fa-cogs"></i>
                 <div className="tooltip">Prompts</div>
@@ -151,7 +168,12 @@ const Home = () => {
               <button
                 className={`btn ${!hasUnlikes ? "disabled-btn" : ""}`}
                 onClick={() =>
-                  hasUnlikes && openPopup("unliked", "poulin/sales-reader")
+                  hasUnlikes &&
+                  openPopup(
+                    "unliked",
+                    "poulin/sales-reader",
+                    "Sales reader chatbot"
+                  )
                 }
                 disabled={!hasUnlikes}
               >

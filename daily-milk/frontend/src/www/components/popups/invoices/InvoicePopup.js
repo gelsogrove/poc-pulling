@@ -10,7 +10,7 @@ import {
 } from "chart.js"
 import React, { useEffect, useState } from "react"
 import { Bar } from "react-chartjs-2"
-import { fetchUsageData } from "../../chatbots/usage/api/utils_api"
+import { fetchUsageData } from "../../chatbots/shared/usage/api/utils_api"
 import CloseButton from "../../share/CloseButton"
 import monthlyData from "./api/monthlyData_api"
 import "./InvoicePopup.css"

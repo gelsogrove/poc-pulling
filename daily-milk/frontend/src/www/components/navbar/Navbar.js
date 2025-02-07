@@ -8,6 +8,7 @@ import UserManager from "../../components/popups/usermanager/Usermanager.js"
 import { LogOut } from "./api/Logout_api.js"
 import "./Navbar.css"
 
+import ModelsPopup from "../../components/popups/models/ModelsPopup.js"
 import { downloadBackup, uploadBackup } from "./api/Backup_api.js"
 
 const handleBackup = async () => {
@@ -89,7 +90,17 @@ const Navbar = () => {
         <SettingsPopup onClose={closePopup} />
       </Popup>
 
+      <Popup isOpen={activePopup === "models"}>
+        <ModelsPopup onClose={closePopup} />
+      </Popup>
+
       <nav className="navbar">
+        {/* Pulsante per la lista di chatbots */}
+        <button className="btn" onClick={() => openPopup("models")}>
+          <i className="fas fa-robot"></i>
+          <div className="tooltip">Models</div>
+        </button>
+
         {/* Pulsante per le fatture */}
         <button className="btn" onClick={() => openPopup("invoices")}>
           <i className="fas fa-file-invoice"></i>
