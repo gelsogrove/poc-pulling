@@ -77,7 +77,8 @@ const deleteModel: RequestHandler = async (req, res) => {
   const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
-  const { name } = req.params
+  const { name } = req.body
+  const { idmodel } = req.params
   try {
     const promptCheck = await pool.query(
       "SELECT COUNT(*) FROM prompts WHERE model = $1",
@@ -88,8 +89,8 @@ const deleteModel: RequestHandler = async (req, res) => {
       return
     }
 
-    const result = await pool.query("DELETE FROM models WHERE model = $1", [
-      name,
+    const result = await pool.query("DELETE FROM models WHERE idmodel = $1", [
+      idmodel,
     ])
     if (result.rowCount === 0) {
       res.status(404).json({ error: "Modello non trovato." })
@@ -108,6 +109,6 @@ const deleteModel: RequestHandler = async (req, res) => {
 modelsRouter.post("/new", createModel)
 modelsRouter.get("/", getModels)
 modelsRouter.put("/update/:id", updateModel)
-modelsRouter.delete("/delete/:name", deleteModel)
+modelsRouter.delete("/delete/:idmodel", deleteModel)
 
 export default modelsRouter
