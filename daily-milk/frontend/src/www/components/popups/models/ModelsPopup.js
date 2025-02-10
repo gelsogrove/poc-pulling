@@ -71,13 +71,10 @@ const ModelsPopup = ({ onClose }) => {
     )
     if (confirmDelete) {
       try {
-        const result = await deleteModel(model)
-        if (!result) {
-          setError("Models cannot be deleted.")
-        } else {
-          fetchModels()
-          setErrorMessage("")
-        }
+        await deleteModel(model)
+
+        fetchModels()
+        setErrorMessage("")
       } catch (err) {
         console.error("Error deleting model:", err)
         if (err.response?.status === 400) {

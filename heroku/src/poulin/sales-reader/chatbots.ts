@@ -91,6 +91,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
       ],
       max_tokens: MAX_TOKENS,
       temperature: Number(temperature),
+      response_format: { type: "json_object" },
     }
 
     // OPENROUTER
