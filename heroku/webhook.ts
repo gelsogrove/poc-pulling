@@ -150,13 +150,7 @@ async function sendWelcomeMessage(to: string, name: string) {
                   title: "Tracking",
                 },
               },
-              {
-                type: "reply",
-                reply: {
-                  id: "btn-catalog",
-                  title: "Catalogo",
-                },
-              },
+
               {
                 type: "reply",
                 reply: {
