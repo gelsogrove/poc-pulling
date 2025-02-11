@@ -1,6 +1,13 @@
 import axios from "axios"
 import { Request, RequestHandler, Response, Router } from "express"
 
+/* REMEMBER 
+ telefono dura 90 giorni
+ token dura 24 ore
+ da aggionrnare il pagamento ma ler prime 1000 messaaggi al mese sono gratis
+
+*/
+
 const modelWebooksRouter = Router()
 
 // Questa è la password che devi mettere anche nell'interfaccia di Meta
@@ -61,7 +68,7 @@ async function receiveMessage(
           const formattedMessage = words.join(" ").toUpperCase() + " 👋"
 
           // Invia e logga la risposta
-          await sendWhatsAppMessageWithButtons(message.from, formattedMessage)
+          await sendWelcomeMessage(message.from, message.text.body)
           console.log(`Risposta inviata: ${formattedMessage}`)
         }
 
@@ -113,7 +120,7 @@ async function sendWhatsAppMessage(to: string, message: string) {
   }
 }
 
-async function sendWhatsAppMessageWithButtons(to: string, message: string) {
+async function sendWelcomeMessage(to: string, name: string) {
   try {
     await axios.post(
       `${WHATSAPP_API}/${PHONE_NUMBER_ID}/messages`,
@@ -125,22 +132,29 @@ async function sendWhatsAppMessageWithButtons(to: string, message: string) {
         interactive: {
           type: "button",
           body: {
-            text: message,
+            text: `Ciao *${name}*, mi chiamo Eva e sono un assistente virtuale dell'Altra Italia (https://laltrait.com/), sono un assistenza di primo livello se non riusciamo a darti l'informazione che cerchi ti metteremo in contatto con un operatore.\n\nCome ti posso aiutare oggi?`,
           },
           action: {
             buttons: [
               {
                 type: "reply",
                 reply: {
-                  id: "btn-yes",
-                  title: "Sì",
+                  id: "btn-offers",
+                  title: "Offerte della settimana",
                 },
               },
               {
                 type: "reply",
                 reply: {
-                  id: "btn-no",
-                  title: "No",
+                  id: "btn-tracking",
+                  title: "Tracking",
+                },
+              },
+              {
+                type: "reply",
+                reply: {
+                  id: "btn-catalog",
+                  title: "Catalogo",
                 },
               },
             ],
