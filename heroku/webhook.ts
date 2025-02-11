@@ -36,7 +36,7 @@ async function receiveMessage(
   try {
     const data = req.body
     console.log("=== NUOVO MESSAGGIO WHATSAPP ===")
-    console.log("Struttura completa:", JSON.stringify(data, null, 2))
+    console.log(JSON.stringify(data, null, 2))
 
     if (data.entry && data.entry[0].changes) {
       const change = data.entry[0].changes[0]
