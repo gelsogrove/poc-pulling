@@ -1,8 +1,14 @@
+import axios from "axios"
 import { Request, RequestHandler, Response, Router } from "express"
+
 const modelWebooksRouter = Router()
 
 // Questa è la password che devi mettere anche nell'interfaccia di Meta
 const VERIFY_TOKEN = "manfredonia77"
+
+const WHATSAPP_TOKEN = "IL_TUO_TOKEN_QUI"
+const WHATSAPP_API = "https://graph.facebook.com/v17.0"
+const PHONE_NUMBER_ID = "IL_TUO_PHONE_NUMBER_ID" // Sostituisci con il tuo ID
 
 // Funzione per la verifica del webhook (GET)
 async function verifyWebhook(
@@ -51,6 +57,27 @@ async function receiveMessage(
   } catch (error) {
     console.error("Errore:", error)
     res.status(500).json({ error: "Errore del server" })
+  }
+}
+
+async function sendWhatsAppMessage(to: string, message: string) {
+  try {
+    await axios.post(
+      `${WHATSAPP_API}/${PHONE_NUMBER_ID}/messages`,
+      {
+        messaging_product: "whatsapp",
+        to: to,
+        text: { body: message },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${WHATSAPP_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+  } catch (error) {
+    console.error("Errore nell'invio del messaggio:", error)
   }
 }
 
