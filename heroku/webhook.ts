@@ -54,7 +54,6 @@ async function receiveMessage(
   }
 }
 
-// Route separate per GET e POST
 modelWebooksRouter.get("/receive", verifyWebhook as RequestHandler)
 modelWebooksRouter.post("/receive", receiveMessage as RequestHandler)
 
