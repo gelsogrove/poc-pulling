@@ -6,9 +6,10 @@ const modelWebooksRouter = Router()
 // Questa è la password che devi mettere anche nell'interfaccia di Meta
 const VERIFY_TOKEN = "manfredonia77"
 
-const WHATSAPP_TOKEN = "IL_TUO_TOKEN_QUI"
+const WHATSAPP_TOKEN =
+  "EAAQRb5SzSQUBO0Qjup0FrlSayZA5E6HORgvsB859nFo6ANTzt4Ow46V3iPOLxyclQDNequFTAYcBLGq9zhg8nZBFYCD7hm2aSMBbMkOj9oHdaJLT7BJZAdfUDfTEgeLG5uRe33Kq2Am08JgFP9NItFGZBAVYSGqEZBgp1NZBgYOJxmMOvV4IJG3Nc8QJ8kSZBh6myYSFZAGOZClCPw6GJtbhcEUKB"
 const WHATSAPP_API = "https://graph.facebook.com/v17.0"
-const PHONE_NUMBER_ID = "IL_TUO_PHONE_NUMBER_ID" // Sostituisci con il tuo ID
+const PHONE_NUMBER_ID = "539180409282748" // Sostituisci con il tuo ID
 
 // Funzione per la verifica del webhook (GET)
 async function verifyWebhook(
@@ -35,8 +36,6 @@ async function receiveMessage(
 ): Promise<void | Response> {
   try {
     const data = req.body
-    console.log("=== NUOVO MESSAGGIO WHATSAPP ===")
-    console.log(JSON.stringify(data, null, 2))
 
     if (data.entry && data.entry[0].changes) {
       const change = data.entry[0].changes[0]
