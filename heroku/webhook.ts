@@ -36,8 +36,6 @@ async function receiveMessage(
 ): Promise<void | Response> {
   try {
     const data = req.body
-    console.log("=== NUOVO MESSAGGIO WHATSAPP ===")
-    console.log("Struttura completa:", JSON.stringify(data, null, 2))
 
     if (data.entry && data.entry[0].changes) {
       const change = data.entry[0].changes[0]
@@ -45,18 +43,27 @@ async function receiveMessage(
 
       if (value.messages && value.messages[0]) {
         const message = value.messages[0]
-        console.log("=== DETTAGLI MESSAGGIO ===")
-        console.log("Da:", message.from)
-        console.log("Tipo:", message.type)
 
-        // Qui aggiungiamo la risposta automatica
         if (message.text) {
-          console.log("Testo ricevuto:", message.text.body)
-          // Invia il messaggio in maiuscolo
-          await sendWhatsAppMessage(
-            message.from, // numero del mittente
-            message.text.body.toUpperCase() // testo in maiuscolo
+          // Log del messaggio ricevuto
+          console.log(
+            `${new Date().toISOString()} - ${message.from} > ${
+              message.text.body
+            }`
           )
+
+          // Prepara la risposta
+          const words = message.text.body.split(" ")
+          if (words.length > 1) {
+            words[1] = `*${words[1]}*`
+          }
+          const formattedMessage = words.join(" ").toUpperCase() + " 👋"
+
+          // Invia e logga la risposta
+          // await sendWhatsAppMessage(message.from, formattedMessage)
+          await sendWhatsAppMessageWithButtons(message.from, formattedMessage)
+
+          console.log(`Risposta inviata: ${formattedMessage}`)
         }
       }
     }
@@ -76,6 +83,52 @@ async function sendWhatsAppMessage(to: string, message: string) {
         messaging_product: "whatsapp",
         to: to,
         text: { body: message },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${WHATSAPP_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+  } catch (error) {
+    console.error("Errore nell'invio del messaggio:", error)
+  }
+}
+
+async function sendWhatsAppMessageWithButtons(to: string, message: string) {
+  try {
+    await axios.post(
+      `${WHATSAPP_API}/${PHONE_NUMBER_ID}/messages`,
+      {
+        messaging_product: "whatsapp",
+        recipient_type: "individual",
+        to: to,
+        type: "interactive",
+        interactive: {
+          type: "button",
+          body: {
+            text: message,
+          },
+          action: {
+            buttons: [
+              {
+                type: "reply",
+                reply: {
+                  id: "btn-yes",
+                  title: "Sì",
+                },
+              },
+              {
+                type: "reply",
+                reply: {
+                  id: "btn-no",
+                  title: "No",
+                },
+              },
+            ],
+          },
+        },
       },
       {
         headers: {
