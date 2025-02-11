@@ -74,7 +74,7 @@ async function receiveMessage(
     res.status(500).json({ error: "Errore del server" })
   }
 }
-
+//test
 async function sendWhatsAppMessage(to: string, message: string) {
   try {
     await axios.post(
