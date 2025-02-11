@@ -14,9 +14,18 @@ const modelWebooksRouter = Router()
 const VERIFY_TOKEN = "manfredonia77"
 
 const WHATSAPP_TOKEN =
-  "EAAQRb5SzSQUBO0Qjup0FrlSayZA5E6HORgvsB859nFo6ANTzt4Ow46V3iPOLxyclQDNequFTAYcBLGq9zhg8nZBFYCD7hm2aSMBbMkOj9oHdaJLT7BJZAdfUDfTEgeLG5uRe33Kq2Am08JgFP9NItFGZBAVYSGqEZBgp1NZBgYOJxmMOvV4IJG3Nc8QJ8kSZBh6myYSFZAGOZClCPw6GJtbhcEUKB"
+  "EAAQRb5SzSQUBOw08TF8rtPI40PXHNv3ZAvBPHWZCnFjrT8l8p8ZBTqx0zX5iWLpzkqIyWjQKU2RBEbFjOp5c9YpZAdibQJWFajEs2CImDpiDdRvVcmfzBd5TWSROCgDZCkcGZBRdI7siYznzdZCM8c0j7EDzlTg0EKAQGaJsw898yHJ8gIStJfhq6btyEU9KUvMmT1B5EP4PBqZCbjZANqgX1ccIb"
 const WHATSAPP_API = "https://graph.facebook.com/v17.0"
 const PHONE_NUMBER_ID = "539180409282748" // Sostituisci con il tuo ID
+
+// Funzione helper per i log
+function logMessage(type: string, message: string, details?: any) {
+  const timestamp = new Date().toISOString()
+  console.log(`[${timestamp}] ${type}: ${message}`)
+  if (details) {
+    console.log(JSON.stringify(details, null, 2))
+  }
+}
 
 // Funzione per la verifica del webhook (GET)
 async function verifyWebhook(
@@ -51,35 +60,24 @@ async function receiveMessage(
       if (value.messages && value.messages[0]) {
         const message = value.messages[0]
 
-        // Gestione messaggi di testo normali
+        // Gestione messaggi di testo
         if (message.text) {
-          // Log del messaggio ricevuto
-          console.log(
-            `${new Date().toISOString()} - ${message.from} > ${
-              message.text.body
-            }`
-          )
+          const name = message.text.body.trim()
+          logMessage("RECEIVED", `Nuovo utente: ${name}`, {
+            from: message.from,
+            timestamp: new Date().toISOString(),
+          })
 
-          // Prepara la risposta
-          const words = message.text.body.split(" ")
-          if (words.length > 1) {
-            words[1] = `*${words[1]}*`
-          }
-          const formattedMessage = words.join(" ").toUpperCase() + " 👋"
-
-          // Invia e logga la risposta
-          await sendWelcomeMessage(message.from, message.text.body)
-          console.log(`Risposta inviata: ${formattedMessage}`)
+          await sendWelcomeMessage(message.from, name)
         }
 
         // Gestione risposte dai bottoni
         if (message.interactive) {
           const buttonResponse = message.interactive.button_reply
-          console.log(
-            `${new Date().toISOString()} - ${message.from} ha cliccato: ${
-              buttonResponse.id
-            }`
-          )
+          logMessage("BUTTON", `Utente ha cliccato: ${buttonResponse.title}`, {
+            from: message.from,
+            buttonId: buttonResponse.id,
+          })
 
           // Rispondi in base al bottone cliccato
           if (buttonResponse.id === "btn-yes") {
@@ -93,7 +91,7 @@ async function receiveMessage(
 
     res.status(200).json({ message: "OK" })
   } catch (error) {
-    console.error("Errore:", error)
+    logMessage("ERROR", "Errore nel processare il messaggio", error)
     res.status(500).json({ error: "Errore del server" })
   }
 }
@@ -122,7 +120,9 @@ async function sendWhatsAppMessage(to: string, message: string) {
 
 async function sendWelcomeMessage(to: string, name: string) {
   try {
-    await axios.post(
+    logMessage("SENDING", `Invio messaggio di benvenuto a ${name}`, { to })
+
+    const response = (await axios.post(
       `${WHATSAPP_API}/${PHONE_NUMBER_ID}/messages`,
       {
         messaging_product: "whatsapp",
@@ -167,9 +167,17 @@ async function sendWelcomeMessage(to: string, name: string) {
           "Content-Type": "application/json",
         },
       }
-    )
-  } catch (error) {
-    console.error("Errore nell'invio del messaggio:", error)
+    )) as { data: { messages: Array<{ id: string }> } }
+
+    logMessage("SENT", `Messaggio inviato con successo a ${name}`, {
+      to,
+      messageId: response.data?.messages?.[0]?.id,
+    })
+  } catch (error: any) {
+    logMessage("ERROR", `Errore nell'invio del messaggio a ${name}`, {
+      to,
+      error: error.response?.data || error.message,
+    })
   }
 }
 
