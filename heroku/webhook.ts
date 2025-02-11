@@ -36,6 +36,8 @@ async function receiveMessage(
 ): Promise<void | Response> {
   try {
     const data = req.body
+    console.log("=== NUOVO MESSAGGIO WHATSAPP ===")
+    console.log("Struttura completa:", JSON.stringify(data, null, 2))
 
     if (data.entry && data.entry[0].changes) {
       const change = data.entry[0].changes[0]
@@ -46,8 +48,15 @@ async function receiveMessage(
         console.log("=== DETTAGLI MESSAGGIO ===")
         console.log("Da:", message.from)
         console.log("Tipo:", message.type)
+
+        // Qui aggiungiamo la risposta automatica
         if (message.text) {
-          console.log("Testo:", message.text.body)
+          console.log("Testo ricevuto:", message.text.body)
+          // Invia il messaggio in maiuscolo
+          await sendWhatsAppMessage(
+            message.from, // numero del mittente
+            message.text.body.toUpperCase() // testo in maiuscolo
+          )
         }
       }
     }
