@@ -140,7 +140,7 @@ async function sendWelcomeMessage(to: string, name: string) {
                 type: "reply",
                 reply: {
                   id: "btn-offers",
-                  title: "Offerte della settimana",
+                  title: "Offerte",
                 },
               },
               {
@@ -155,6 +155,13 @@ async function sendWelcomeMessage(to: string, name: string) {
                 reply: {
                   id: "btn-catalog",
                   title: "Catalogo",
+                },
+              },
+              {
+                type: "reply",
+                reply: {
+                  id: "btn-catalog",
+                  title: "Altro",
                 },
               },
             ],
