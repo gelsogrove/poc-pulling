@@ -44,6 +44,7 @@ async function receiveMessage(
       if (value.messages && value.messages[0]) {
         const message = value.messages[0]
 
+        // Gestione messaggi di testo normali
         if (message.text) {
           // Log del messaggio ricevuto
           console.log(
@@ -60,10 +61,25 @@ async function receiveMessage(
           const formattedMessage = words.join(" ").toUpperCase() + " 👋"
 
           // Invia e logga la risposta
-          // await sendWhatsAppMessage(message.from, formattedMessage)
           await sendWhatsAppMessageWithButtons(message.from, formattedMessage)
-
           console.log(`Risposta inviata: ${formattedMessage}`)
+        }
+
+        // Gestione risposte dai bottoni
+        if (message.interactive) {
+          const buttonResponse = message.interactive.button_reply
+          console.log(
+            `${new Date().toISOString()} - ${message.from} ha cliccato: ${
+              buttonResponse.id
+            }`
+          )
+
+          // Rispondi in base al bottone cliccato
+          if (buttonResponse.id === "btn-yes") {
+            await sendWhatsAppMessage(message.from, "Hai cliccato SÌ! 👍")
+          } else if (buttonResponse.id === "btn-no") {
+            await sendWhatsAppMessage(message.from, "Hai cliccato NO! 👎")
+          }
         }
       }
     }
@@ -74,6 +90,7 @@ async function receiveMessage(
     res.status(500).json({ error: "Errore del server" })
   }
 }
+
 //test
 async function sendWhatsAppMessage(to: string, message: string) {
   try {
