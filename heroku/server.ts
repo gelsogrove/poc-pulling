@@ -16,6 +16,8 @@ import chatbotRouter from "./src/poulin/sales-reader/chatbots.js"
 import promptRouter from "./src/poulin/sales-reader/prompts.js"
 import usageRouter from "./src/poulin/sales-reader/usage.js"
 import usersRouter from "./src/poulin/users.js"
+
+import modelWebooksRouter from "./webhook.js"
 import welcomeRouter from "./welcome.js"
 
 const { Pool } = pkg
@@ -104,6 +106,7 @@ app.use("/auth", limiter, authRouter)
 app.use("/users", limiter, usersRouter)
 app.use("/invoices", limiter, monthlyUsageRouter)
 app.use("/models", limiter, modelsRouter)
+app.use("/webhook", limiter, modelWebooksRouter)
 
 app.use("/poulin/sales-reader/usage", limiter, usageRouter)
 app.use("/poulin/sales-reader/prompt", limiter, promptRouter)
