@@ -5,7 +5,9 @@ import {
   deletePrompt,
   getModels,
   getPrompts,
+  movePromptOrder,
   togglePromptActive,
+  togglePromptHide,
 } from "./api/promptmanager_api"
 import PromptForm from "./component/PromptForm"
 import "./PromptManager.css"
@@ -103,6 +105,26 @@ const PromptManager = ({ onClose }) => {
     }
   }
 
+  const handleToggleHide = async (prompt) => {
+    try {
+      await togglePromptHide(prompt.idprompt)
+      fetchPrompts()
+    } catch (err) {
+      console.error("Error toggling prompt hide state:", err)
+      setError(err.response?.data?.error || "Error updating prompt hide state")
+    }
+  }
+
+  const handleMoveOrder = async (prompt, direction) => {
+    try {
+      await movePromptOrder(prompt.idprompt, direction)
+      fetchPrompts()
+    } catch (err) {
+      console.error("Error moving prompt order:", err)
+      setError(err.response?.data?.error || "Error updating prompt order")
+    }
+  }
+
   return (
     <div className="prompt-manager">
       <div className="close-button-container">
@@ -144,6 +166,30 @@ const PromptManager = ({ onClose }) => {
                 <td>{prompt.model}</td>
                 <td>{prompt.temperature}</td>
                 <td className="actions-cell">
+                  <button
+                    onClick={() => handleMoveOrder(prompt, "up")}
+                    className="order-btn"
+                  >
+                    <i className="fas fa-chevron-up"></i>
+                  </button>
+                  <button
+                    onClick={() => handleMoveOrder(prompt, "down")}
+                    className="order-btn"
+                  >
+                    <i className="fas fa-chevron-down"></i>
+                  </button>
+                  <button
+                    onClick={() => handleToggleHide(prompt)}
+                    className={`hide-btn ${
+                      prompt.ishide ? "hidden" : "visible"
+                    }`}
+                  >
+                    <i
+                      className={`fas fa-${
+                        prompt.ishide ? "eye-slash" : "eye"
+                      }`}
+                    ></i>
+                  </button>
                   <button
                     onClick={() => handleToggleActive(prompt)}
                     className={`status-btn ${

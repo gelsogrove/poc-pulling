@@ -81,11 +81,43 @@ const togglePromptActive = async (idPrompt) => {
   return response.data
 }
 
+const togglePromptHide = async (idPrompt) => {
+  const token = Cookies.get("token")
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  }
+
+  const response = await axios.put(
+    `${API_URL}/toggle-hide/${idPrompt}`,
+    {},
+    { headers }
+  )
+  return response.data
+}
+
+const movePromptOrder = async (idPrompt, direction) => {
+  const token = Cookies.get("token")
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  }
+
+  const response = await axios.put(
+    `${API_URL}/move-order/${idPrompt}/${direction}`,
+    {},
+    { headers }
+  )
+  return response.data
+}
+
 export {
   createPrompt,
   deletePrompt,
   getModels,
   getPrompts,
+  movePromptOrder,
   togglePromptActive,
+  togglePromptHide,
   updatePrompt,
 }

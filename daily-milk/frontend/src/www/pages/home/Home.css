@@ -22,9 +22,8 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 .disabled-image {
-  filter: grayscale(100%);
-  opacity: 0.6;
-  pointer-events: none; /* Disabilita interazioni */
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .techweuse {

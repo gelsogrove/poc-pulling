@@ -8,11 +8,12 @@ import Navbar from "../../components/navbar/Navbar"
 import ChatbotSource from "../../components/popups/chatbots/ChatbotPopup.js"
 import InvoicePopup from "../../components/popups/invoices/InvoicePopup.js"
 import Popup from "../../components/popups/Popup"
+import { getPrompts } from "../../components/popups/promptmanager/api/promptmanager_api"
 import PromptsPopup from "../../components/popups/prompts/PromptsPopup.js"
 import UnlikePopup from "../../components/popups/unlike/UnlikePopup.js"
 import UploadPopup from "../../components/popups/upload/UploadPopup.js"
 
-import { checkUnlikeExists, getPromptName } from "./api/home_api"
+import { checkUnlikeExists } from "./api/home_api"
 import "./Home.css"
 
 export const PROMPT_ID = "a2c502db-9425-4c66-9d92-acd3521b38b5"
@@ -21,22 +22,15 @@ const Home = () => {
   const { t } = useTranslation()
   const [activePopup, setActivePopup] = useState(null)
   const [chatbot, setChatbot] = useState("poulin/sales-reader")
-  const [promptName, setPromptName] = useState("poulin/sales-reader")
   const [hasUnlikes, setHasUnlikes] = useState(false)
   const [title, setTitle] = useState("")
+  const [prompts, setPrompts] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const token = Cookies.get("token")
-        const [name, unlikeExists] = await Promise.all([
-          getPromptName(PROMPT_ID, token, chatbot),
-          checkUnlikeExists(PROMPT_ID, token, chatbot),
-        ])
-
-        if (name) {
-          setPromptName(name)
-        }
+        const unlikeExists = await checkUnlikeExists(PROMPT_ID, token, chatbot)
         setHasUnlikes(unlikeExists)
       } catch (error) {
         console.error("Errore durante il recupero dei dati:", error)
@@ -45,6 +39,19 @@ const Home = () => {
 
     fetchData()
   }, [])
+
+  useEffect(() => {
+    fetchPrompts()
+  }, [])
+
+  const fetchPrompts = async () => {
+    try {
+      const data = await getPrompts()
+      setPrompts(data)
+    } catch (err) {
+      console.error("Error fetching prompts:", err)
+    }
+  }
 
   const closePopup = () => {
     setActivePopup(null)
@@ -55,18 +62,6 @@ const Home = () => {
     setActivePopup(popupType)
     setChatbot(chatbot)
     setTitle(title)
-  }
-
-  const refreshPromptName = async () => {
-    try {
-      const token = Cookies.get("token")
-      const name = await getPromptName(PROMPT_ID, token, chatbot)
-      if (name) {
-        setPromptName(name)
-      }
-    } catch (error) {
-      console.error("Errore durante il recupero del nome del prompt:", error)
-    }
   }
 
   return (
@@ -94,7 +89,6 @@ const Home = () => {
           chatbotSelected={chatbot}
           idPrompt={PROMPT_ID}
           onClose={closePopup}
-          onSave={refreshPromptName}
         />
       </Popup>
 
@@ -119,114 +113,68 @@ const Home = () => {
         <img alt="" className="logo" src="/images/whatsapp.jpg" />
         <div className="num">+001 646474747</div>
         <section className="features">
-          <div className="feature-item">
-            <div
-              className="image-container"
-              onClick={() =>
-                openPopup(
-                  "chatbotsource",
-                  "poulin/sales-reader",
-                  "Sales reader chatbot"
-                )
-              }
-            >
-              <img
-                src="../images/chatbot.webp"
-                alt={t("home.features.chatbot.title")}
-                className="feature-image"
-              />
-              <div className="overlay">
-                <h3>{promptName}</h3>
-                <div className="subtitle"> </div>
-              </div>
-            </div>
-            <div className="actions-chatbot">
-              <button
-                className="btn"
-                onClick={() =>
-                  openPopup(
-                    "prompts",
-                    "poulin/sales-reader",
-                    "Sales reader chatbot"
-                  )
-                }
+          {prompts
+            .filter((prompt) => !prompt.ishide)
+            .map((prompt) => (
+              <div
+                key={prompt.idprompt}
+                className={`feature-item ${
+                  !prompt.isactive ? "disabled-image" : ""
+                }`}
               >
-                <i className="fas fa-cogs"></i>
-                <div className="tooltip">Prompts</div>
-              </button>
-              {/*
-              <button
-                className="btn"
-                onClick={() => openPopup("upload", "poulin/sales-reader")}
-              >
-                <i className="fas fa-upload"></i>
-                <div className="tooltip">Upload</div>
-              </button>
+                <div
+                  className="image-container"
+                  onClick={() =>
+                    openPopup(
+                      "chatbotsource",
+                      "poulin/" + prompt.path,
+                      `${prompt.promptname} chatbot`
+                    )
+                  }
+                >
+                  <img
+                    src="../images/chatbot.webp"
+                    alt={t("home.features.chatbot.title")}
+                    className="feature-image"
+                  />
+                  <div className="overlay">
+                    <h3>{prompt.promptname}</h3>
+                    <div className="subtitle"> </div>
+                  </div>
+                </div>
+                <div className="actions-chatbot">
+                  <button
+                    className="btn"
+                    onClick={() =>
+                      openPopup(
+                        "chatbotsource",
+                        "poulin/sales-reader",
+                        "Sales reader chatbot"
+                      )
+                    }
+                  >
+                    <i className="fas fa-cogs"></i>
+                    <div className="tooltip">Prompts</div>
+                  </button>
 
-              */}
-
-              <button
-                className={`btn ${!hasUnlikes ? "disabled-btn" : ""}`}
-                onClick={() =>
-                  hasUnlikes &&
-                  openPopup(
-                    "unliked",
-                    "poulin/sales-reader",
-                    "Sales reader chatbot"
-                  )
-                }
-                disabled={!hasUnlikes}
-              >
-                <i className="fas fa-history"></i>
-                <div className="tooltip">Unliked</div>
-              </button>
-            </div>
-          </div>
-
-          <div className="feature-item">
-            <div className="image-container">
-              <img
-                src="../images/chatbot.webp"
-                alt={t("home.features.chatbot.title")}
-                className="feature-image disabled-image"
-                style={{ backgroundColor: "gray" }}
-              />
-              <div className="overlay">
-                <h3>... </h3>
-                <div className="subtitle"> </div>
+                  <button
+                    className={`btn ${!hasUnlikes ? "disabled-btn" : ""}`}
+                    onClick={() =>
+                      hasUnlikes &&
+                      openPopup(
+                        "unliked",
+                        prompt.promptname,
+                        `${prompt.promptname} chatbot`
+                      )
+                    }
+                    disabled={!hasUnlikes}
+                  >
+                    <i className="fas fa-history"></i>
+                    <div className="tooltip">Unliked</div>
+                  </button>
+                </div>
               </div>
-            </div>
-          </div>
-
-          <div className="feature-item">
-            <div className="image-container">
-              <img
-                src="../images/chatbot.webp"
-                alt={t("home.features.chatbot.title")}
-                className="feature-image disabled-image"
-                style={{ backgroundColor: "gray" }}
-              />
-              <div className="overlay">
-                <h3>... </h3>
-                <div className="subtitle"> </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="feature-item">
-            <div className="image-container">
-              <img
-                src="../images/chatbot.webp"
-                alt={t("home.features.chatbot.title")}
-                className="feature-image disabled-image"
-                style={{ backgroundColor: "gray" }}
-              />
-              <div className="overlay">
-                <h3> ...</h3>
-                <div className="subtitle"> </div>
-              </div>
-            </div>
-          </div>
+            ))}
         </section>
       </div>
     </div>

@@ -45,21 +45,21 @@ const getPrompts: RequestHandler = async (req, res) => {
   const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
-  // Verifica se l'utente è admin
-  const userCheck = await pool.query(
-    "SELECT role FROM users WHERE userid = $1",
-    [userId]
-  )
-
-  if (userCheck.rows[0]?.role.toLowerCase() !== "admin") {
-    res.status(403).json({ error: "Only admin users can manage prompts" })
-    return
-  }
-
   try {
-    const result = await pool.query(
-      "SELECT * FROM prompts ORDER BY promptname ASC"
+    // Verifica se l'utente è admin
+    const userCheck = await pool.query(
+      "SELECT role FROM users WHERE userid = $1",
+      [userId]
     )
+
+    const isAdmin = userCheck.rows[0]?.role.toLowerCase() === "admin"
+
+    // Se admin vede tutti i prompts, altrimenti solo quelli attivi
+    const query = isAdmin
+      ? 'SELECT * FROM prompts ORDER BY "order" ASC'
+      : 'SELECT * FROM prompts WHERE isactive = true AND ishide = false ORDER BY "order" ASC'
+
+    const result = await pool.query(query)
     res.status(200).json(result.rows)
   } catch (error) {
     console.error("Error fetching prompts:", error)
@@ -192,11 +192,114 @@ const togglePromptActive: RequestHandler = async (req, res) => {
   }
 }
 
+// Aggiungiamo una nuova funzione per il toggle hide
+const togglePromptHide: RequestHandler = async (req, res) => {
+  const { userId, token } = await validateRequest(req, res)
+  if (!userId) return
+
+  // Verifica se l'utente è admin
+  const userCheck = await pool.query(
+    "SELECT role FROM users WHERE userid = $1",
+    [userId]
+  )
+
+  if (userCheck.rows[0]?.role.toLowerCase() !== "admin") {
+    res.status(403).json({ error: "Only admin users can manage prompts" })
+    return
+  }
+
+  const { idprompt } = req.params
+  try {
+    const result = await pool.query(
+      "UPDATE prompts SET ishide = NOT ishide WHERE idprompt = $1 RETURNING *",
+      [idprompt]
+    )
+
+    if (result.rowCount === 0) {
+      res.status(404).json({ error: "Prompt not found" })
+      return
+    }
+
+    res.status(200).json(result.rows[0])
+  } catch (error) {
+    console.error("Error toggling prompt hide state:", error)
+    res.status(500).json({ error: "Error updating prompt hide state" })
+  }
+}
+
+// Aggiungiamo funzioni per gestire l'ordine
+const movePromptOrder: RequestHandler = async (req, res) => {
+  const { userId, token } = await validateRequest(req, res)
+  if (!userId) return
+
+  // Verifica admin...
+  const userCheck = await pool.query(
+    "SELECT role FROM users WHERE userid = $1",
+    [userId]
+  )
+
+  if (userCheck.rows[0]?.role.toLowerCase() !== "admin") {
+    res.status(403).json({ error: "Only admin users can manage prompts" })
+    return
+  }
+
+  const { idprompt, direction } = req.params
+  try {
+    // Ottieni l'ordine corrente
+    const currentPrompt = await pool.query(
+      'SELECT "order" FROM prompts WHERE idprompt = $1',
+      [idprompt]
+    )
+
+    if (currentPrompt.rowCount === 0) {
+      res.status(404).json({ error: "Prompt not found" })
+      return
+    }
+
+    const currentOrder = currentPrompt.rows[0].order
+
+    // Trova il prompt con cui scambiare l'ordine
+    const swapPrompt = await pool.query(
+      direction === "up"
+        ? 'SELECT idprompt, "order" FROM prompts WHERE "order" < $1 ORDER BY "order" DESC LIMIT 1'
+        : 'SELECT idprompt, "order" FROM prompts WHERE "order" > $1 ORDER BY "order" ASC LIMIT 1',
+      [currentOrder]
+    )
+
+    if (swapPrompt.rowCount === 0) {
+      res.status(400).json({ error: "Cannot move prompt further" })
+      return
+    }
+
+    // Scambia gli ordini
+    await pool.query(
+      'UPDATE prompts SET "order" = CASE ' +
+        "WHEN idprompt = $1 THEN $2 " +
+        "WHEN idprompt = $3 THEN $4 " +
+        "END " +
+        "WHERE idprompt IN ($1, $3)",
+      [
+        idprompt,
+        swapPrompt.rows[0].order,
+        swapPrompt.rows[0].idprompt,
+        currentOrder,
+      ]
+    )
+
+    res.status(200).json({ success: true })
+  } catch (error) {
+    console.error("Error moving prompt order:", error)
+    res.status(500).json({ error: "Error updating prompt order" })
+  }
+}
+
 // Definizione delle rotte
 promptsRouter.post("/new", createPrompt)
 promptsRouter.get("/", getPrompts)
 promptsRouter.put("/update/:id", updatePrompt)
 promptsRouter.delete("/delete/:idprompt", deletePrompt)
 promptsRouter.put("/toggle/:idprompt", togglePromptActive)
+promptsRouter.put("/toggle-hide/:idprompt", togglePromptHide)
+promptsRouter.put("/move-order/:idprompt/:direction", movePromptOrder)
 
 export default promptsRouter

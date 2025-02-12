@@ -121,3 +121,17 @@
 .delete-btn:hover {
   background-color: #c82333 !important;
 }
+
+.order-btn {
+  padding: 6px 10px;
+  background-color: #6c757d;
+  color: white;
+}
+
+.order-btn:hover {
+  background-color: #5a6268;
+}
+
+.order-btn i {
+  font-size: 12px;
+}
