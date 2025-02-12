@@ -134,7 +134,6 @@ const PromptManager = ({ onClose }) => {
               <th>Name</th>
               <th>Model</th>
               <th>Temperature</th>
-              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -144,7 +143,7 @@ const PromptManager = ({ onClose }) => {
                 <td>{prompt.promptname}</td>
                 <td>{prompt.model}</td>
                 <td>{prompt.temperature}</td>
-                <td>
+                <td className="actions-cell">
                   <button
                     onClick={() => handleToggleActive(prompt)}
                     className={`status-btn ${
@@ -153,11 +152,9 @@ const PromptManager = ({ onClose }) => {
                   >
                     {prompt.isactive ? "Active" : "Inactive"}
                   </button>
-                </td>
-                <td>
                   <button
                     onClick={() => handleDeletePrompt(prompt)}
-                    style={{ backgroundColor: "red" }}
+                    className="delete-btn"
                   >
                     Delete
                   </button>
