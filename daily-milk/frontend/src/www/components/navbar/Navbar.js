@@ -111,57 +111,47 @@ const Navbar = () => {
       </Popup>
 
       <nav className="navbar">
-        <div className="navbar-left">
-          <img src="/images/logo.png" alt="Logo" className="logo" />
-        </div>
+        <button className="btn" onClick={() => openPopup("models")}>
+          <i className="fas fa-robot"></i>
+          <div className="tooltip">Models</div>
+        </button>
 
-        <div className="navbar-right">
-          <button className="btn" onClick={() => openPopup("models")}>
-            <i className="fas fa-robot"></i>
-            <div className="tooltip">Models</div>
+        <button className="btn" onClick={() => openPopup("invoices")}>
+          <i className="fas fa-file-invoice"></i>
+          <div className="tooltip">Invoices</div>
+        </button>
+
+        <button className="btn" onClick={handleBackup}>
+          <i className="fas fa-download"></i>
+          <div className="tooltip">Export</div>
+        </button>
+
+        <button className="btn" onClick={handleImport}>
+          <i className="fas fa-upload"></i>
+          <div className="tooltip">Import</div>
+        </button>
+
+        <button className="btn" onClick={() => openPopup("manageUsers")}>
+          <i className="fas fa-users"></i>
+          <div className="tooltip">Manage Users</div>
+        </button>
+
+        <button className="btn" onClick={() => openPopup("settings")}>
+          <i className="fas fa-cog"></i>
+          <div className="tooltip">Settings</div>
+        </button>
+
+        {userRole?.toLowerCase() === "admin" && (
+          <button className="btn" onClick={handleRolesClick}>
+            <i className="fas fa-user-tag"></i>
+            <div className="tooltip">Roles</div>
           </button>
+        )}
 
-          <button className="btn" onClick={() => openPopup("invoices")}>
-            <i className="fas fa-file-invoice"></i>
-            <div className="tooltip">Invoices</div>
-          </button>
-
-          <button className="btn" onClick={handleBackup}>
-            <i className="fas fa-download"></i>
-            <div className="tooltip">Export</div>
-          </button>
-
-          <button className="btn" onClick={handleImport}>
-            <i className="fas fa-upload"></i>
-            <div className="tooltip">Import</div>
-          </button>
-
-          <button className="btn" onClick={() => openPopup("manageUsers")}>
-            <i className="fas fa-users"></i>
-            <div className="tooltip">Manage Users</div>
-          </button>
-
-          <button className="btn" onClick={() => openPopup("settings")}>
-            <i className="fas fa-cog"></i>
-            <div className="tooltip">Settings</div>
-          </button>
-
-          <button onClick={clearAllCookies} className="btn logout-btn">
-            <i className="fa-solid fa-right-from-bracket"></i>
-            <div className="tooltip">Logout</div>
-          </button>
-
-          {userRole?.toLowerCase() === "admin" && (
-            <button
-              className="btn"
-              onClick={handleRolesClick}
-              title="Manage Roles"
-            >
-              <i className="fas fa-user-tag"></i>
-              <div className="tooltip">Roles</div>
-            </button>
-          )}
-        </div>
+        <button onClick={clearAllCookies} className="btn logout-btn">
+          <i className="fa-solid fa-right-from-bracket"></i>
+          <div className="tooltip">Logout</div>
+        </button>
       </nav>
     </div>
   )
