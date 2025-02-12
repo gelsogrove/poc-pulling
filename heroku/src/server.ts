@@ -1,3 +1,0 @@
-import promptsRouter from "./poulin/prompts.js"
-// ...
-app.use("/prompts", limiter, promptsRouter)

@@ -120,3 +120,12 @@
 .actions-cell button i {
   font-size: 14px;
 }
+
+.prompts-table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.prompts-table tbody tr:hover {
+  background-color: #f8f9fa;
+}

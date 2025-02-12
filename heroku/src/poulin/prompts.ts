@@ -84,25 +84,30 @@ const updatePrompt: RequestHandler = async (req, res) => {
   }
 
   const { id } = req.params
-  const { promptname, model, temperature, prompt } = req.body
-  if (!promptname || !model || !prompt) {
+  const { promptname, model, temperature, prompt, path } = req.body
+  if (!promptname || !model || !prompt || !path) {
     res.status(400).json({ error: "Required fields cannot be null" })
     return
   }
 
   try {
     const result = await pool.query(
-      "UPDATE prompts SET promptname = $1, model = $2, temperature = $3, prompt = $4 WHERE idprompt = $5 RETURNING *",
-      [promptname, model, temperature, prompt, id]
+      `UPDATE prompts 
+       SET promptname = $1, model = $2, temperature = $3, prompt = $4, path = $5 
+       WHERE idprompt = $6 
+       RETURNING *`,
+      [promptname, model, temperature, prompt, path, id]
     )
+
     if (result.rowCount === 0) {
       res.status(404).json({ error: "Prompt not found" })
       return
     }
+
     res.status(200).json(result.rows[0])
   } catch (error) {
     console.error("Error updating prompt:", error)
-    res.status(500).json({ error })
+    res.status(500).json({ error: "Error during prompt update" })
   }
 }
 

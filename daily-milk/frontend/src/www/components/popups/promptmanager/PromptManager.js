@@ -8,6 +8,7 @@ import {
   movePromptOrder,
   togglePromptActive,
   togglePromptHide,
+  updatePrompt,
 } from "./api/promptmanager_api"
 import PromptForm from "./component/PromptForm"
 import "./PromptManager.css"
@@ -23,6 +24,7 @@ const PromptManager = ({ onClose }) => {
     path: "",
   })
   const [models, setModels] = useState([])
+  const [editingPrompt, setEditingPrompt] = useState(null)
 
   useEffect(() => {
     fetchPrompts()
@@ -67,16 +69,28 @@ const PromptManager = ({ onClose }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
-    setNewPrompt((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
+    if (editingPrompt) {
+      setEditingPrompt((prev) => ({
+        ...prev,
+        [name]: value,
+      }))
+    } else {
+      setNewPrompt((prev) => ({
+        ...prev,
+        [name]: value,
+      }))
+    }
   }
 
   const handleSave = async () => {
     try {
-      await createPrompt(newPrompt)
+      if (editingPrompt) {
+        await updatePrompt(editingPrompt.idprompt, editingPrompt)
+      } else {
+        await createPrompt(newPrompt)
+      }
       setShowForm(false)
+      setEditingPrompt(null)
       setNewPrompt({
         promptname: "",
         model: "",
@@ -86,7 +100,7 @@ const PromptManager = ({ onClose }) => {
       })
       fetchPrompts()
     } catch (err) {
-      console.error("Error creating prompt:", err)
+      console.error("Error saving prompt:", err)
     }
   }
 
@@ -117,6 +131,18 @@ const PromptManager = ({ onClose }) => {
     }
   }
 
+  const handleRowClick = (prompt) => {
+    setEditingPrompt(prompt)
+    setNewPrompt({
+      promptname: prompt.promptname,
+      model: prompt.model,
+      temperature: prompt.temperature,
+      prompt: prompt.prompt,
+      path: prompt.path,
+    })
+    setShowForm(true)
+  }
+
   return (
     <div className="prompt-manager">
       <div className="close-button-container">
@@ -132,10 +158,20 @@ const PromptManager = ({ onClose }) => {
 
       {showForm ? (
         <PromptForm
-          prompt={newPrompt}
+          prompt={editingPrompt || newPrompt}
           handleInputChange={handleInputChange}
           handleSave={handleSave}
-          handleCancel={() => setShowForm(false)}
+          handleCancel={() => {
+            setShowForm(false)
+            setEditingPrompt(null)
+            setNewPrompt({
+              promptname: "",
+              model: "",
+              temperature: 0.7,
+              prompt: "",
+              path: "",
+            })
+          }}
           models={models}
         />
       ) : (
@@ -151,14 +187,20 @@ const PromptManager = ({ onClose }) => {
           </thead>
           <tbody>
             {prompts.map((prompt) => (
-              <tr key={prompt.idprompt}>
+              <tr key={prompt.idprompt} onClick={() => handleRowClick(prompt)}>
                 <td>{prompt.promptname}</td>
                 <td>{prompt.model}</td>
                 <td>{prompt.temperature}</td>
                 <td>{prompt.path}</td>
-                <td className="actions-cell">
+                <td
+                  className="actions-cell"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <button
-                    onClick={() => handleToggleHide(prompt)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleToggleHide(prompt)
+                    }}
                     className="hide-btn"
                   >
                     <i
@@ -168,7 +210,10 @@ const PromptManager = ({ onClose }) => {
                     ></i>
                   </button>
                   <button
-                    onClick={() => handleToggleActive(prompt)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleToggleActive(prompt)
+                    }}
                     className={`status-btn ${
                       prompt.isactive ? "active" : "inactive"
                     }`}
@@ -180,7 +225,10 @@ const PromptManager = ({ onClose }) => {
                     ></i>
                   </button>
                   <button
-                    onClick={() => handleDeletePrompt(prompt)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleDeletePrompt(prompt)
+                    }}
                     className="delete-btn"
                   >
                     <i className="fas fa-trash"></i>
