@@ -51,20 +51,6 @@
   font-weight: bold;
 }
 
-.prompts-table button {
-  padding: 8px 15px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  background-color: #007bff;
-  color: white;
-  transition: background-color 0.3s;
-}
-
-.prompts-table button:hover {
-  background-color: #0056b3;
-}
-
 .add-button {
   padding: 8px 15px;
   background-color: #007bff; /* Cambiato in blu come Roles */
@@ -81,31 +67,6 @@
   transform: translateY(-1px);
 }
 
-.status-btn {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  width: 80px;
-}
-
-.status-btn.active {
-  background-color: #28a745;
-  color: white;
-}
-
-.status-btn.inactive {
-  background-color: #dc3545;
-  color: white;
-}
-
-.status-btn:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
 .actions-cell {
   display: flex;
   gap: 8px;
@@ -113,25 +74,49 @@
   align-items: center;
 }
 
+/* Stile base comune per TUTTI i bottoni nelle actions */
+.actions-cell button {
+  width: 32px;
+  height: 32px;
+  min-width: 32px; /* Aggiunto per forzare la stessa larghezza */
+  max-width: 32px; /* Aggiunto per forzare la stessa larghezza */
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+}
+
+/* Colori specifici */
+.status-btn.active {
+  background-color: #28a745;
+}
+.status-btn.inactive {
+  background-color: #dc3545;
+}
+.hide-btn {
+  background-color: #007bff;
+}
 .delete-btn {
-  background-color: #dc3545 !important;
-  color: white;
+  background-color: #dc3545;
 }
 
+/* Hover states */
+.status-btn:hover {
+  opacity: 0.9;
+}
+.hide-btn:hover {
+  background-color: #0056b3;
+}
 .delete-btn:hover {
-  background-color: #c82333 !important;
+  background-color: #c82333;
 }
 
-.order-btn {
-  padding: 6px 10px;
-  background-color: #6c757d;
-  color: white;
-}
-
-.order-btn:hover {
-  background-color: #5a6268;
-}
-
-.order-btn i {
-  font-size: 12px;
+/* Icone */
+.actions-cell button i {
+  font-size: 14px;
 }

@@ -20,18 +20,18 @@ const createPrompt: RequestHandler = async (req, res) => {
     return
   }
 
-  const { promptname, model, temperature, prompt } = req.body
-  if (!promptname || !model || !prompt) {
+  const { promptname, model, temperature, prompt, path } = req.body
+  if (!promptname || !model || !prompt || !path) {
     res.status(400).json({ error: "Required fields cannot be null" })
     return
   }
 
   try {
     const result = await pool.query(
-      `INSERT INTO prompts (promptname, model, temperature, prompt, isactive) 
-       VALUES ($1, $2, $3, $4, true) 
+      `INSERT INTO prompts (promptname, model, temperature, prompt, path, isactive) 
+       VALUES ($1, $2, $3, $4, $5, true) 
        RETURNING *`,
-      [promptname, model, temperature, prompt]
+      [promptname, model, temperature, prompt, path]
     )
     res.status(201).json(result.rows[0])
   } catch (error) {

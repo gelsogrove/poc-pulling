@@ -53,6 +53,17 @@ const PromptForm = ({
           />
         </div>
 
+        <div className="prompt-form-field">
+          <label className="prompt-form-required">Path</label>
+          <input
+            type="text"
+            name="path"
+            value={prompt.path || ""}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+
         <div className="prompt-form-textarea">
           <label className="prompt-form-required">Prompt</label>
           <textarea

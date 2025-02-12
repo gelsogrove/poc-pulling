@@ -14,14 +14,13 @@ import "./PromptManager.css"
 
 const PromptManager = ({ onClose }) => {
   const [prompts, setPrompts] = useState([])
-  const [error, setError] = useState("")
-  const [errorMessage, setErrorMessage] = useState("")
   const [showForm, setShowForm] = useState(false)
   const [newPrompt, setNewPrompt] = useState({
     promptname: "",
     model: "",
     temperature: 0.7,
     prompt: "",
+    path: "",
   })
   const [models, setModels] = useState([])
 
@@ -56,12 +55,8 @@ const PromptManager = ({ onClose }) => {
       try {
         await deletePrompt(prompt.idprompt)
         fetchPrompts()
-        setErrorMessage("")
       } catch (err) {
         console.error("Error deleting prompt:", err)
-        if (err.response?.status === 400) {
-          setErrorMessage(err.response.data.error)
-        }
       }
     }
   }
@@ -87,11 +82,11 @@ const PromptManager = ({ onClose }) => {
         model: "",
         temperature: 0.7,
         prompt: "",
+        path: "",
       })
       fetchPrompts()
     } catch (err) {
       console.error("Error creating prompt:", err)
-      setError(err.response?.data?.error || "Error creating prompt")
     }
   }
 
@@ -101,7 +96,6 @@ const PromptManager = ({ onClose }) => {
       fetchPrompts()
     } catch (err) {
       console.error("Error toggling prompt state:", err)
-      setError(err.response?.data?.error || "Error updating prompt state")
     }
   }
 
@@ -111,7 +105,6 @@ const PromptManager = ({ onClose }) => {
       fetchPrompts()
     } catch (err) {
       console.error("Error toggling prompt hide state:", err)
-      setError(err.response?.data?.error || "Error updating prompt hide state")
     }
   }
 
@@ -121,7 +114,6 @@ const PromptManager = ({ onClose }) => {
       fetchPrompts()
     } catch (err) {
       console.error("Error moving prompt order:", err)
-      setError(err.response?.data?.error || "Error updating prompt order")
     }
   }
 
@@ -138,9 +130,6 @@ const PromptManager = ({ onClose }) => {
         </button>
       </div>
 
-      {error && <div className="error-message">{error}</div>}
-      {errorMessage && <div className="error-message">{errorMessage}</div>}
-
       {showForm ? (
         <PromptForm
           prompt={newPrompt}
@@ -156,6 +145,7 @@ const PromptManager = ({ onClose }) => {
               <th>Name</th>
               <th>Model</th>
               <th>Temperature</th>
+              <th>Path</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -165,24 +155,11 @@ const PromptManager = ({ onClose }) => {
                 <td>{prompt.promptname}</td>
                 <td>{prompt.model}</td>
                 <td>{prompt.temperature}</td>
+                <td>{prompt.path}</td>
                 <td className="actions-cell">
                   <button
-                    onClick={() => handleMoveOrder(prompt, "up")}
-                    className="order-btn"
-                  >
-                    <i className="fas fa-chevron-up"></i>
-                  </button>
-                  <button
-                    onClick={() => handleMoveOrder(prompt, "down")}
-                    className="order-btn"
-                  >
-                    <i className="fas fa-chevron-down"></i>
-                  </button>
-                  <button
                     onClick={() => handleToggleHide(prompt)}
-                    className={`hide-btn ${
-                      prompt.ishide ? "hidden" : "visible"
-                    }`}
+                    className="hide-btn"
                   >
                     <i
                       className={`fas fa-${
@@ -196,13 +173,17 @@ const PromptManager = ({ onClose }) => {
                       prompt.isactive ? "active" : "inactive"
                     }`}
                   >
-                    {prompt.isactive ? "Active" : "Inactive"}
+                    <i
+                      className={`fas fa-${
+                        prompt.isactive ? "check-circle" : "times-circle"
+                      }`}
+                    ></i>
                   </button>
                   <button
                     onClick={() => handleDeletePrompt(prompt)}
                     className="delete-btn"
                   >
-                    Delete
+                    <i className="fas fa-trash"></i>
                   </button>
                 </td>
               </tr>
