@@ -1,3 +1,4 @@
+import Cookies from "js-cookie"
 import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import i18n from "../../../i18n"
@@ -9,6 +10,7 @@ import { LogOut } from "./api/Logout_api.js"
 import "./Navbar.css"
 
 import ModelsPopup from "../../components/popups/models/ModelsPopup.js"
+import RolesPopup from "../popups/roles/RolesPopup"
 import { downloadBackup, uploadBackup } from "./api/Backup_api.js"
 
 const handleBackup = async () => {
@@ -48,6 +50,9 @@ const Navbar = () => {
     setActivePopup(popupType)
   }
 
+  const [showRolesPopup, setShowRolesPopup] = useState(false)
+  const [userRole, setUserRole] = useState("")
+
   useEffect(() => {
     const supportedLanguages = ["it", "es", "en"]
     let language = "en"
@@ -60,6 +65,9 @@ const Navbar = () => {
     }
 
     i18n.changeLanguage(language)
+
+    const role = Cookies.get("role")
+    setUserRole(role || "")
   }, [])
 
   const clearAllCookies = () => {
@@ -74,6 +82,10 @@ const Navbar = () => {
 
       navigate("/login")
     }, 500)
+  }
+
+  const handleRolesClick = () => {
+    setShowRolesPopup(true)
   }
 
   return (
@@ -94,46 +106,62 @@ const Navbar = () => {
         <ModelsPopup onClose={closePopup} />
       </Popup>
 
+      <Popup isOpen={showRolesPopup}>
+        <RolesPopup onClose={() => setShowRolesPopup(false)} />
+      </Popup>
+
       <nav className="navbar">
-        {/* Pulsante per la lista di chatbots */}
-        <button className="btn" onClick={() => openPopup("models")}>
-          <i className="fas fa-robot"></i>
-          <div className="tooltip">Models</div>
-        </button>
+        <div className="navbar-left">
+          <img src="/images/logo.png" alt="Logo" className="logo" />
+        </div>
 
-        {/* Pulsante per le fatture */}
-        <button className="btn" onClick={() => openPopup("invoices")}>
-          <i className="fas fa-file-invoice"></i>
-          <div className="tooltip">Invoices</div>
-        </button>
-        {/* Pulsante per il backup */}
-        <button className="btn" onClick={handleBackup}>
-          <i className="fas fa-download"></i>
-          <div className="tooltip">Export</div>
-        </button>
-        {/* Pulsante per l'import */}
-        <button className="btn" onClick={handleImport}>
-          <i className="fas fa-upload"></i>
-          <div className="tooltip">Import</div>
-        </button>
+        <div className="navbar-right">
+          <button className="btn" onClick={() => openPopup("models")}>
+            <i className="fas fa-robot"></i>
+            <div className="tooltip">Models</div>
+          </button>
 
-        <button className="btn" onClick={() => openPopup("manageUsers")}>
-          <i className="fas fa-users"></i>
-          <div className="tooltip">Manage Users</div>
-        </button>
+          <button className="btn" onClick={() => openPopup("invoices")}>
+            <i className="fas fa-file-invoice"></i>
+            <div className="tooltip">Invoices</div>
+          </button>
 
-        {/* Pulsante per le impostazioni */}
-        <button className="btn" onClick={() => openPopup("settings")}>
-          <i className="fas fa-cog"></i>
-          <div className="tooltip">Settings</div>
-        </button>
+          <button className="btn" onClick={handleBackup}>
+            <i className="fas fa-download"></i>
+            <div className="tooltip">Export</div>
+          </button>
 
-        {/* Pulsante per il logout */}
-        <button onClick={clearAllCookies} className="btn logout-btn">
-          <i className="fa-solid fa-right-from-bracket"></i>
-          <div className="tooltip">Logout</div>
-        </button>
-        {/* Pulsante per gestire gli utenti */}
+          <button className="btn" onClick={handleImport}>
+            <i className="fas fa-upload"></i>
+            <div className="tooltip">Import</div>
+          </button>
+
+          <button className="btn" onClick={() => openPopup("manageUsers")}>
+            <i className="fas fa-users"></i>
+            <div className="tooltip">Manage Users</div>
+          </button>
+
+          <button className="btn" onClick={() => openPopup("settings")}>
+            <i className="fas fa-cog"></i>
+            <div className="tooltip">Settings</div>
+          </button>
+
+          <button onClick={clearAllCookies} className="btn logout-btn">
+            <i className="fa-solid fa-right-from-bracket"></i>
+            <div className="tooltip">Logout</div>
+          </button>
+
+          {userRole?.toLowerCase() === "admin" && (
+            <button
+              className="btn"
+              onClick={handleRolesClick}
+              title="Manage Roles"
+            >
+              <i className="fas fa-user-tag"></i>
+              <div className="tooltip">Roles</div>
+            </button>
+          )}
+        </div>
       </nav>
     </div>
   )

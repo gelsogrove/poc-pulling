@@ -1,0 +1,78 @@
+.roles-popup {
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  min-width: 800px;
+  margin: auto;
+}
+
+.popup-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.error-message {
+  color: #d32f2f;
+  font-size: 0.9em;
+  margin: 4px 0;
+  padding: 4px 8px;
+  background-color: #ffebee;
+  border-radius: 4px;
+}
+
+.close-button-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.roles-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.roles-table th,
+.roles-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.roles-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.add-role-container {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+  align-items: center;
+}
+
+.add-role-container input[type="text"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 600px;
+}
+
+.add-role-container button,
+.roles-table button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  background-color: #007bff;
+  color: white;
+}
+
+.roles-popup button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
