@@ -55,7 +55,7 @@ const Home = () => {
 
   const closePopup = () => {
     setActivePopup(null)
-    window.location.reload()
+    fetchPrompts()
   }
 
   const openPopup = (popupType, chatbot, title) => {
@@ -126,7 +126,7 @@ const Home = () => {
                   className="image-container"
                   onClick={() =>
                     openPopup(
-                      "chatbotsource",
+                      "prompts",
                       "poulin/" + prompt.path,
                       `${prompt.promptname} chatbot`
                     )
@@ -147,9 +147,9 @@ const Home = () => {
                     className="btn"
                     onClick={() =>
                       openPopup(
-                        "chatbotsource",
-                        "poulin/sales-reader",
-                        "Sales reader chatbot"
+                        "prompts",
+                        "poulin/" + prompt.path,
+                        `${prompt.promptname} chatbot`
                       )
                     }
                   >
