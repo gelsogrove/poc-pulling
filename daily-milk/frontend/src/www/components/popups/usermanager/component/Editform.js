@@ -12,7 +12,7 @@ const EditForm = ({
   setNewPassword,
   showChangePassword,
   setShowChangePassword,
-  users, // aggiungiamo questa prop
+  roles, // solo roles, rimuoviamo users
 }) => {
   const [showPasswordText, setShowPasswordText] = useState(false)
 
@@ -28,8 +28,11 @@ const EditForm = ({
   }
 
   const isOnlyAdmin = () => {
-    const adminCount = users.filter((user) => user.role === "Admin").length
-    return adminCount === 1 && editedUser.role === "Admin"
+    // Controlla se è l'unico ruolo admin nei ruoli
+    const adminRoles = roles.filter(
+      (role) => role.role.toLowerCase() === "admin"
+    )
+    return adminRoles.length === 1 && editedUser.role.toLowerCase() === "admin"
   }
 
   return (
@@ -65,18 +68,22 @@ const EditForm = ({
             required
           />
         </label>
-        <label className="role-container">
-          Role:
+        <div className="form-group">
+          <label>Role:</label>
           <select
             name="role"
             value={editedUser.role}
             onChange={handleEditInputChange}
+            className="input-field"
             disabled={isOnlyAdmin()}
           >
-            <option value="User">User</option>
-            <option value="Admin">Admin</option>
+            {roles.map((role) => (
+              <option key={role.idrole} value={role.role}>
+                {role.role}
+              </option>
+            ))}
           </select>
-        </label>
+        </div>
         {showChangePassword && (
           <label className="password-container">
             New Password

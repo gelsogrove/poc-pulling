@@ -4,6 +4,7 @@ import {
   changePassword,
   deleteUser,
   fetchUsers,
+  getRoles,
   toggleUserActive,
   updateUser,
 } from "./api/usermanager_api.js"
@@ -15,6 +16,7 @@ const UserManager = ({ onClose }) => {
   const [editingUser, setEditingUser] = useState(null)
   const [newPassword, setNewPassword] = useState("")
   const [showChangePassword, setShowChangePassword] = useState(false)
+  const [roles, setRoles] = useState([])
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -25,7 +27,18 @@ const UserManager = ({ onClose }) => {
         console.error("Failed to fetch users:", error)
       }
     }
+
+    const fetchRoles = async () => {
+      try {
+        const rolesData = await getRoles()
+        setRoles(rolesData)
+      } catch (error) {
+        console.error("Error fetching roles:", error)
+      }
+    }
+
     loadUsers()
+    fetchRoles()
   }, [])
 
   const handleEditUser = (user) => {
@@ -113,7 +126,7 @@ const UserManager = ({ onClose }) => {
           setNewPassword={setNewPassword}
           showChangePassword={showChangePassword}
           setShowChangePassword={setShowChangePassword}
-          users={users}
+          roles={roles}
         />
       ) : (
         <div className="table-container">

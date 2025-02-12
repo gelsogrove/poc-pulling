@@ -134,3 +134,23 @@ export const changePassword = async (newPassword, userid) => {
     throw error
   }
 }
+
+const getRoles = async () => {
+  const token = Cookies.get("token")
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  }
+
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/roles`, {
+      headers,
+    })
+    return response.data
+  } catch (error) {
+    console.error("Error fetching roles:", error)
+    throw error
+  }
+}
+
+export { getRoles }

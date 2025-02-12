@@ -111,6 +111,13 @@ const Navbar = () => {
       </Popup>
 
       <nav className="navbar">
+        {userRole?.toLowerCase() === "admin" && (
+          <button className="btn" onClick={handleRolesClick}>
+            <i className="fas fa-user-tag"></i>
+            <div className="tooltip">Roles</div>
+          </button>
+        )}
+
         <button className="btn" onClick={() => openPopup("models")}>
           <i className="fas fa-robot"></i>
           <div className="tooltip">Models</div>
@@ -140,13 +147,6 @@ const Navbar = () => {
           <i className="fas fa-cog"></i>
           <div className="tooltip">Settings</div>
         </button>
-
-        {userRole?.toLowerCase() === "admin" && (
-          <button className="btn" onClick={handleRolesClick}>
-            <i className="fas fa-user-tag"></i>
-            <div className="tooltip">Roles</div>
-          </button>
-        )}
 
         <button onClick={clearAllCookies} className="btn logout-btn">
           <i className="fa-solid fa-right-from-bracket"></i>
