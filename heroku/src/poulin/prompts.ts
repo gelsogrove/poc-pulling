@@ -28,7 +28,9 @@ const createPrompt: RequestHandler = async (req, res) => {
 
   try {
     const result = await pool.query(
-      "INSERT INTO prompts (promptname, model, temperature, prompt) VALUES ($1, $2, $3, $4) RETURNING *",
+      `INSERT INTO prompts (promptname, model, temperature, prompt, isactive) 
+       VALUES ($1, $2, $3, $4, true) 
+       RETURNING *`,
       [promptname, model, temperature, prompt]
     )
     res.status(201).json(result.rows[0])
@@ -155,10 +157,46 @@ const deletePrompt: RequestHandler = async (req, res) => {
   }
 }
 
+// Aggiungiamo la funzione per il toggle
+const togglePromptActive: RequestHandler = async (req, res) => {
+  const { userId, token } = await validateRequest(req, res)
+  if (!userId) return
+
+  // Verifica se l'utente è admin
+  const userCheck = await pool.query(
+    "SELECT role FROM users WHERE userid = $1",
+    [userId]
+  )
+
+  if (userCheck.rows[0]?.role.toLowerCase() !== "admin") {
+    res.status(403).json({ error: "Only admin users can manage prompts" })
+    return
+  }
+
+  const { idprompt } = req.params
+  try {
+    const result = await pool.query(
+      "UPDATE prompts SET isactive = NOT isactive WHERE idprompt = $1 RETURNING *",
+      [idprompt]
+    )
+
+    if (result.rowCount === 0) {
+      res.status(404).json({ error: "Prompt not found" })
+      return
+    }
+
+    res.status(200).json(result.rows[0])
+  } catch (error) {
+    console.error("Error toggling prompt active state:", error)
+    res.status(500).json({ error: "Error updating prompt state" })
+  }
+}
+
 // Definizione delle rotte
 promptsRouter.post("/new", createPrompt)
 promptsRouter.get("/", getPrompts)
 promptsRouter.put("/update/:id", updatePrompt)
 promptsRouter.delete("/delete/:idprompt", deletePrompt)
+promptsRouter.put("/toggle/:idprompt", togglePromptActive)
 
 export default promptsRouter

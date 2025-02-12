@@ -53,4 +53,39 @@ const deletePrompt = async (idPrompt) => {
   return response.data
 }
 
-export { createPrompt, deletePrompt, getPrompts, updatePrompt }
+const getModels = async () => {
+  const token = Cookies.get("token")
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  }
+
+  const response = await axios.get(`${process.env.REACT_APP_API_URL}/models`, {
+    headers,
+  })
+  return response.data
+}
+
+const togglePromptActive = async (idPrompt) => {
+  const token = Cookies.get("token")
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  }
+
+  const response = await axios.put(
+    `${API_URL}/toggle/${idPrompt}`,
+    {},
+    { headers }
+  )
+  return response.data
+}
+
+export {
+  createPrompt,
+  deletePrompt,
+  getModels,
+  getPrompts,
+  togglePromptActive,
+  updatePrompt,
+}
