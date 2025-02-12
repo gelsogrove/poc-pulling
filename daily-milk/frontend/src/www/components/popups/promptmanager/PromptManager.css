@@ -1,0 +1,62 @@
+.prompt-manager {
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  min-width: 800px;
+  margin: auto;
+}
+
+.popup-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.error-message {
+  color: #d32f2f;
+  font-size: 0.9em;
+  margin: 4px 0;
+  padding: 4px 8px;
+  background-color: #ffebee;
+  border-radius: 4px;
+}
+
+.close-button-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.prompts-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.prompts-table th,
+.prompts-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.prompts-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.prompts-table button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.prompts-table button:hover {
+  background-color: #0056b3;
+}

@@ -6,15 +6,15 @@ import rateLimit from "express-rate-limit"
 import helmet from "helmet"
 import pkg from "pg"
 
-import unlikeRouter from "./src/poulin/sales-reader/unlinke.js"
-
 import authRouter from "./src/poulin/auth.js"
 import backupRouter from "./src/poulin/backup.js"
 import modelsRouter from "./src/poulin/models.js"
 import monthlyUsageRouter from "./src/poulin/monthlyUsage.js"
+import modelpromptsRouter from "./src/poulin/prompts.js"
 import modelrolesRouter from "./src/poulin/roles.js"
 import chatbotRouter from "./src/poulin/sales-reader/chatbots.js"
 import promptRouter from "./src/poulin/sales-reader/prompts.js"
+import unlikeRouter from "./src/poulin/sales-reader/unlinke.js"
 import usageRouter from "./src/poulin/sales-reader/usage.js"
 import usersRouter from "./src/poulin/users.js"
 import modelWebooksRouter from "./src/poulin/webhook.js"
@@ -108,6 +108,7 @@ app.use("/invoices", limiter, monthlyUsageRouter)
 app.use("/models", limiter, modelsRouter)
 app.use("/webhook", limiter, modelWebooksRouter)
 app.use("/roles", limiter, modelrolesRouter)
+app.use("/prompts", limiter, modelpromptsRouter)
 
 app.use("/poulin/sales-reader/usage", limiter, usageRouter)
 app.use("/poulin/sales-reader/prompt", limiter, promptRouter)

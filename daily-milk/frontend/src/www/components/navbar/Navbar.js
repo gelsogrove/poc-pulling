@@ -10,6 +10,7 @@ import { LogOut } from "./api/Logout_api.js"
 import "./Navbar.css"
 
 import ModelsPopup from "../../components/popups/models/ModelsPopup.js"
+import PromptManager from "../popups/promptmanager/PromptManager"
 import RolesPopup from "../popups/roles/RolesPopup"
 import { downloadBackup, uploadBackup } from "./api/Backup_api.js"
 
@@ -106,6 +107,10 @@ const Navbar = () => {
         <ModelsPopup onClose={closePopup} />
       </Popup>
 
+      <Popup isOpen={activePopup === "prompts"}>
+        <PromptManager onClose={closePopup} />
+      </Popup>
+
       <Popup isOpen={showRolesPopup}>
         <RolesPopup onClose={() => setShowRolesPopup(false)} />
       </Popup>
@@ -122,6 +127,13 @@ const Navbar = () => {
           <i className="fas fa-robot"></i>
           <div className="tooltip">Models</div>
         </button>
+
+        {userRole?.toLowerCase() === "admin" && (
+          <button className="btn" onClick={() => openPopup("prompts")}>
+            <i className="fas fa-message"></i>
+            <div className="tooltip">Prompts</div>
+          </button>
+        )}
 
         <button className="btn" onClick={() => openPopup("invoices")}>
           <i className="fas fa-file-invoice"></i>
