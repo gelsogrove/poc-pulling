@@ -1,8 +1,19 @@
 ===================== TODO =====================
 
-- checkboc chatbot per ogni role
-- dove metto i file statici come backup pdf e altro
-- doppio chatbots
+- anagrafica role
+- checkboX chatbot per ogni role
+- Anagrafica prompt
+- Create new prompt
+- iniziamo a sistemare il settings
+- cerchiam di capire token finale
+- ambiente di test
+- iniziamo a sistemare il settings
+- webhook qui e' l'utente che scrive ? se non esiste e' nuovo e mettiamo un role di default
+
+- creiamo un chatbot router
+- carichiamo i prompt di quello che cerca l'utente
+- function calling
+- dove metto i file statici come backup pdf o altro
 
 - **\*** DAILYMILK\***\*\*\*\***
 - pulire codice funzioni dengfo utils
@@ -11,7 +22,6 @@
 - pulire test folder perche' c'e import
 - upload (todo)
 - togliere page dall'import e dalla tabella
-- user admin e user normale
 - BE DI DAIRY-TOLLS mettere allow only from localhost o mio desarrollo
 
 ===================== AI COSTI =====================

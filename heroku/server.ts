@@ -17,7 +17,7 @@ import promptRouter from "./src/poulin/sales-reader/prompts.js"
 import usageRouter from "./src/poulin/sales-reader/usage.js"
 import usersRouter from "./src/poulin/users.js"
 
-import modelWebooksRouter from "./webhook.js"
+import modelWebooksRouter from "./src/poulin/webhook.js"
 import welcomeRouter from "./welcome.js"
 
 const { Pool } = pkg

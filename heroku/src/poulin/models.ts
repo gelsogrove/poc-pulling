@@ -76,31 +76,39 @@ const deleteModel: RequestHandler = async (req, res) => {
   const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
-  const { name } = req.body
   const { idmodel } = req.params
   try {
+    // Usa JOIN per verificare l'uso del modello
     const promptCheck = await pool.query(
-      "SELECT COUNT(*) FROM prompts WHERE model = $1",
-      [name]
+      `
+      SELECT COUNT(p.*)
+      FROM models m
+      LEFT JOIN prompts p ON p.model = m.model
+      WHERE m.idmodel = $1
+    `,
+      [idmodel]
     )
+
     if (parseInt(promptCheck.rows[0].count) > 0) {
-      res.status(400).json({ error: "Cannot delete" })
+      res
+        .status(400)
+        .json({ error: "Cannot delete model because it is in use" })
       return
     }
 
     const result = await pool.query("DELETE FROM models WHERE idmodel = $1", [
       idmodel,
     ])
+
     if (result.rowCount === 0) {
-      res.status(404).json({ error: "Modello non trovato." })
+      res.status(404).json({ error: "Model not found" })
       return
     }
+
     res.status(204).send()
   } catch (error) {
     console.error("Error deleting model:", error)
-    res
-      .status(500)
-      .json({ error: "Errore durante l'eliminazione del modello." })
+    res.status(500).json({ error: "Error while deleting model" })
   }
 }
 

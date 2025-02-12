@@ -13,10 +13,34 @@ const modelWebooksRouter = Router()
 // Questa è la password che devi mettere anche nell'interfaccia di Meta
 const VERIFY_TOKEN = "manfredonia77"
 
+/*
+
+Vai su business.facebook.com
+Business Settings > Users > System Users > Clicca "Add" > Dai un nome (es. "WhatsApp API Bot")
+Assegna ruolo "Admin"
+
+Assegna Assets:
+Nella sezione "Add Assets"
+Seleziona la tua app WhatsApp
+Dai permesso "Full Control"
+Genera Token:
+Vai sulla scheda del System User creato
+Clicca "Generate New Token"
+Seleziona questi permessi:
+whatsapp_business_messaging
+whatsapp_business_management
+
+Salva il Token:
+Copia il token generato
+Salvalo in modo sicuro
+Questo token non scade
+*/
+
 const WHATSAPP_TOKEN =
   "EAAQRb5SzSQUBOw08TF8rtPI40PXHNv3ZAvBPHWZCnFjrT8l8p8ZBTqx0zX5iWLpzkqIyWjQKU2RBEbFjOp5c9YpZAdibQJWFajEs2CImDpiDdRvVcmfzBd5TWSROCgDZCkcGZBRdI7siYznzdZCM8c0j7EDzlTg0EKAQGaJsw898yHJ8gIStJfhq6btyEU9KUvMmT1B5EP4PBqZCbjZANqgX1ccIb"
 const WHATSAPP_API = "https://graph.facebook.com/v17.0"
-const PHONE_NUMBER_ID = "539180409282748" // Sostituisci con il tuo ID
+
+const PHONE_NUMBER_ID = "539180409282748" //
 
 // Funzione helper per i log
 function logMessage(type: string, message: string, details?: any) {
