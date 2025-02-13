@@ -11,8 +11,8 @@ export const getPromptName = async (idPrompt, token, chatbotSelected) => {
 
     const params = {
       idPrompt,
-      noprompt: true, // Usiamo noprompt per ottenere solo i metadati senza il contenuto del prompt
     }
+    console.log("***********", idPrompt)
 
     const response = await axios.get(API_URL, { headers, params })
     return response.data.content.promptname

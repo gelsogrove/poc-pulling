@@ -59,7 +59,7 @@ const GetPromptHandler: RequestHandler = async (req, res) => {
     const result = await pool.query(sql, values)
 
     if (result.rows.length === 0) {
-      res.status(404).json({ message: "Prompt non trovato." })
+      res.status(404).json({ message: "Prompt non trovato.", idPrompt })
       return
     }
 

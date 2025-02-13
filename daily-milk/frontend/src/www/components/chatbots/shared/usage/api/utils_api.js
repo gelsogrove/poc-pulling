@@ -49,7 +49,6 @@ export const getPromptDetails = async (idPrompt, chatbotSelected) => {
   try {
     const params = {
       idPrompt,
-      noprompt: true,
     }
 
     const response = await axios.get(API_URL, { headers, params })
