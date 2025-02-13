@@ -95,11 +95,12 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
         timeout: 30000,
       }
     )
+    console.log(requestPayload)
 
     if (openaiResponse.data.error) {
       res.status(200).json({
         response:
-          "1Empty response from OpenRouter...generic " +
+          "Empty response from OpenRouter...Generic " +
           openaiResponse.data.error.message,
         error: openaiResponse.data.error.message,
       })
