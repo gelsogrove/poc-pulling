@@ -55,13 +55,20 @@ const createDynamicRouter = (type: keyof RouterMap[ChatbotType]) => {
       routerType: type,
       availableRouters: Object.keys(routerMap),
       selectedRouter: !!selectedRouter,
+      path: req.path,
+      params: req.params,
+      fullUrl: req.originalUrl,
     })
 
     if (selectedRouter) {
       return selectedRouter(req as any, res, next)
     }
 
-    res.status(404).json({ error: "Invalid chatbot type" })
+    res.status(404).json({
+      error: "Invalid chatbot type",
+      requested: chatbot,
+      available: Object.keys(routerMap),
+    })
   })
 
   return router

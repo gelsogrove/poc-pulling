@@ -12,10 +12,12 @@ import modelsRouter from "./src/poulin/models.js"
 import monthlyUsageRouter from "./src/poulin/monthlyUsage.js"
 import modelpromptsRouter from "./src/poulin/prompts.js"
 import modelrolesRouter from "./src/poulin/roles.js"
-import chatbotRouter from "./src/poulin/sales-reader/chatbots.js"
-import promptRouter from "./src/poulin/sales-reader/prompts.js"
-import unlikeRouter from "./src/poulin/sales-reader/unlinke.js"
-import usageRouter from "./src/poulin/sales-reader/usage.js"
+import {
+  chatbotRouter,
+  promptRouter,
+  unlikeRouter,
+  usageRouter,
+} from "./src/poulin/routerManager.js"
 import usersRouter from "./src/poulin/users.js"
 import modelWebooksRouter from "./src/poulin/webhook.js"
 import welcomeRouter from "./welcome.js"
@@ -119,6 +121,7 @@ app.use("/webhook", limiter, modelWebooksRouter)
 app.use("/roles", limiter, modelrolesRouter)
 app.use("/prompts", limiter, modelpromptsRouter)
 
+// Dynamic routes handled by routerManager
 app.use("/poulin/:chatbot/usage", limiter, usageRouter)
 app.use("/poulin/:chatbot/prompt", limiter, promptRouter)
 app.use("/poulin/:chatbot/chatbot", limiter, chatbotRouter)
