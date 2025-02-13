@@ -39,9 +39,8 @@ const Home = () => {
   }
 
   const closePopup = () => {
-    if (activePopup === "prompts") {
-      window.location.reload()
-    }
+    window.location.reload()
+
     setActivePopup(null)
   }
 
