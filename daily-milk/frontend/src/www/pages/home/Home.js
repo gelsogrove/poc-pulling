@@ -45,11 +45,11 @@ const Home = () => {
     setActivePopup(null)
   }
 
-  const openPopup = async (popupType, chatbot, title) => {
+  const openPopup = async (popupType, chatbot, title, promptId) => {
     setActivePopup(popupType)
     setChatbot(chatbot)
     setTitle(title)
-    setIdPrompt(idPrompt)
+    setIdPrompt(promptId)
 
     const token = Cookies.get("token")
     const unlikeExists = await checkUnlikeExists(idPrompt, token, chatbot)
@@ -120,7 +120,8 @@ const Home = () => {
                     openPopup(
                       "chatbotsource",
                       "poulin/" + prompt.path,
-                      `${prompt.promptname}`
+                      `${prompt.promptname}`,
+                      prompt.idprompt
                     )
                   }
                 >
