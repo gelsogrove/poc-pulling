@@ -37,6 +37,8 @@ const createDynamicRouter = (type: RouterType) => {
     const chatbot = req.params.chatbot as ChatbotType
     const selectedRouter = routerMap[chatbot]?.[type]
 
+    console.log(`Loading ${chatbot} router for ${type} endpoint`)
+
     if (selectedRouter) {
       return selectedRouter(req, res, next)
     }

@@ -106,7 +106,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
 
     if (openaiResponse.data.error) {
       res.status(200).json({
-        response: "Empty response from OpenRouter",
+        response: "Empty response from OpenRouter...sales-reader",
         error: openaiResponse.data.error.message,
       })
       return
@@ -120,7 +120,10 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     if (!rawResponse) {
       res
         .status(200)
-        .json({ response: "Empty response from OpenRouter", rawResponse })
+        .json({
+          response: "Empty response from OpenRouter......sales-reader",
+          rawResponse,
+        })
       return
     }
 
