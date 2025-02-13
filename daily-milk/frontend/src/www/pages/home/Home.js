@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // Home.js
-import Cookies from "js-cookie"
 import React, { useEffect, useState } from "react"
 import { Helmet } from "react-helmet"
 import { useTranslation } from "react-i18next"
@@ -13,7 +12,6 @@ import PromptsPopup from "../../components/popups/prompts/PromptsPopup.js"
 import UnlikePopup from "../../components/popups/unlike/UnlikePopup.js"
 import UploadPopup from "../../components/popups/upload/UploadPopup.js"
 
-import { checkUnlikeExists } from "./api/home_api"
 import "./Home.css"
 
 const Home = () => {
@@ -39,7 +37,9 @@ const Home = () => {
   }
 
   const closePopup = () => {
-    window.location.reload()
+    if (activePopup !== "chatbotsource") {
+      window.location.reload()
+    }
 
     setActivePopup(null)
   }
@@ -49,10 +49,6 @@ const Home = () => {
     setChatbot(chatbot)
     setTitle(title)
     setIdPrompt(promptId)
-
-    const token = Cookies.get("token")
-    const unlikeExists = await checkUnlikeExists(idPrompt, token, chatbot)
-    setHasUnlikes(unlikeExists)
   }
 
   return (
@@ -151,17 +147,15 @@ const Home = () => {
                   </button>
 
                   <button
-                    className={`btn ${!hasUnlikes ? "disabled-btn" : ""}`}
+                    className={`btn`}
                     onClick={() =>
-                      hasUnlikes &&
                       openPopup(
                         "unliked",
-                        prompt.promptname,
+                        "poulin/" + prompt.path,
                         `${prompt.promptname}`,
                         prompt.idprompt
                       )
                     }
-                    disabled={!hasUnlikes}
                   >
                     <i className="fas fa-history"></i>
                     <div className="tooltip">Unliked</div>

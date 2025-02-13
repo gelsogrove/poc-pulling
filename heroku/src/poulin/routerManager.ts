@@ -7,6 +7,12 @@ import {
   usageGenericRouter,
 } from "./generic/index.js"
 import {
+  chatbotProductRouter,
+  promptProductRouter,
+  unlikeProductRouter,
+  usageProductRouter,
+} from "./product/index.js"
+import {
   chatbotSalesReaderRouter,
   promptSalesReaderRouter,
   unlikeSalesReaderRouter,
@@ -14,10 +20,10 @@ import {
 } from "./sales-reader/index.js"
 
 interface ChatbotParams extends ParamsDictionary {
-  chatbot: "generic" | "sales-reader"
+  chatbot: "generic" | "sales-reader" | "product"
 }
 
-type ChatbotType = "generic" | "sales-reader"
+type ChatbotType = "generic" | "sales-reader" | "product"
 
 type RouterMap = {
   [K in ChatbotType]: {
@@ -40,6 +46,12 @@ const routerMap: RouterMap = {
     prompt: promptSalesReaderRouter,
     chatbot: chatbotSalesReaderRouter,
     unlike: unlikeSalesReaderRouter,
+  },
+  product: {
+    usage: usageProductRouter,
+    prompt: promptProductRouter,
+    chatbot: chatbotProductRouter,
+    unlike: unlikeProductRouter,
   },
 }
 
@@ -78,4 +90,3 @@ export const usageRouter = createDynamicRouter("usage")
 export const promptRouter = createDynamicRouter("prompt")
 export const chatbotRouter = createDynamicRouter("chatbot")
 export const unlikeRouter = createDynamicRouter("unlike")
-// ... altri router
