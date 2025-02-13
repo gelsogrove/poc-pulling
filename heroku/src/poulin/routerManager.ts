@@ -46,7 +46,7 @@ const routerMap: RouterMap = {
 const createDynamicRouter = (type: keyof RouterMap[ChatbotType]) => {
   const router = Router()
 
-  router.use("/", (req: Request<ChatbotParams>, res: Response, next) => {
+  router.use((req: Request<ChatbotParams>, res: Response, next) => {
     const chatbot = req.params.chatbot
     const selectedRouter = routerMap[chatbot]?.[type]
 
