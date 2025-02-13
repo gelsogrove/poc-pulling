@@ -1,4 +1,5 @@
-import { Router } from "express"
+import { Request, Response, Router } from "express"
+import { ParamsDictionary } from "express-serve-static-core"
 import {
   chatbotGenericRouter,
   promptGenericRouter,
@@ -12,10 +13,22 @@ import {
   usageSalesReaderRouter,
 } from "./sales-reader/index.js"
 
-type ChatbotType = "generic" | "sales-reader"
-type RouterType = "usage" | "prompt" | "chatbot" | "unlike"
+interface ChatbotParams extends ParamsDictionary {
+  chatbot: "generic" | "sales-reader"
+}
 
-const routerMap: Record<ChatbotType, Record<RouterType, Router>> = {
+type ChatbotType = "generic" | "sales-reader"
+
+type RouterMap = {
+  [K in ChatbotType]: {
+    usage: Router
+    prompt: Router
+    chatbot: Router
+    unlike: Router
+  }
+}
+
+const routerMap: RouterMap = {
   generic: {
     usage: usageGenericRouter,
     prompt: promptGenericRouter,
@@ -30,17 +43,17 @@ const routerMap: Record<ChatbotType, Record<RouterType, Router>> = {
   },
 }
 
-const createDynamicRouter = (type: RouterType) => {
+const createDynamicRouter = (type: keyof RouterMap[ChatbotType]) => {
   const router = Router()
 
-  router.use((req, res, next) => {
-    const chatbot = req.params.chatbot as ChatbotType
+  router.use("/", (req: Request<ChatbotParams>, res: Response, next) => {
+    const chatbot = req.params.chatbot
     const selectedRouter = routerMap[chatbot]?.[type]
 
     console.log(`Loading ${chatbot} router for ${type} endpoint`)
 
     if (selectedRouter) {
-      return selectedRouter(req, res, next)
+      return selectedRouter(req as any, res, next)
     }
 
     res.status(404).json({ error: "Invalid chatbot type" })
