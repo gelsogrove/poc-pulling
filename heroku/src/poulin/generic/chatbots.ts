@@ -101,7 +101,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     if (!rawResponse) {
       res
         .status(200)
-        .json({ response: "2Empty response from OpenRouter", rawResponse })
+        .json({ response: "2 Empty response from OpenRouter", rawResponse })
       return
     }
 
