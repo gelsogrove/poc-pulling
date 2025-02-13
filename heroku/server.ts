@@ -101,6 +101,16 @@ app.options("*", (req, res) => {
   res.sendStatus(200)
 })
 
+// Forza HTTPS in produzione
+if (process.env.NODE_ENV === "production") {
+  app.use((req, res, next) => {
+    if (req.headers["x-forwarded-proto"] !== "https") {
+      return res.redirect("https://" + req.hostname + req.url)
+    }
+    next()
+  })
+}
+
 app.use("/", welcomeRouter)
 app.use("/auth", limiter, authRouter)
 app.use("/users", limiter, usersRouter)
@@ -115,16 +125,6 @@ app.use("/poulin/:chatbot/prompt", limiter, promptRouter)
 app.use("/poulin/:chatbot/chatbot", limiter, chatbotRouter)
 app.use("/poulin/:chatbot/unlike", limiter, unlikeRouter)
 app.use("/poulin/:chatbot/backup", limiter, backupRouter)
-
-// Forza HTTPS in produzione
-if (process.env.NODE_ENV === "production") {
-  app.use((req, res, next) => {
-    if (req.headers["x-forwarded-proto"] !== "https") {
-      return res.redirect("https://" + req.hostname + req.url)
-    }
-    next()
-  })
-}
 
 const PORT = process.env.PORT || 4999
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
