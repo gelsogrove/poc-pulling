@@ -121,7 +121,7 @@ app.use("/prompts", limiter, modelpromptsRouter)
 
 app.use("/poulin/:chatbot/usage", limiter, usageRouter)
 app.use("/poulin/:chatbot/prompt", limiter, promptRouter)
-app.use("/poulin/:chatbot/chatbot", limiter, chatbotRouter)
+app.use("/poulin/:chatbot/chatbots", limiter, chatbotRouter)
 app.use("/poulin/:chatbot/unlike", limiter, unlikeRouter)
 app.use("/poulin/:chatbot/backup", limiter, backupRouter)
 
