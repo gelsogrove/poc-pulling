@@ -16,8 +16,6 @@ import UploadPopup from "../../components/popups/upload/UploadPopup.js"
 import { checkUnlikeExists } from "./api/home_api"
 import "./Home.css"
 
-export const PROMPT_ID = "a2c502db-9425-4c66-9d92-acd3521b38b5"
-
 const Home = () => {
   const { t } = useTranslation()
   const [activePopup, setActivePopup] = useState(null)
@@ -25,20 +23,7 @@ const Home = () => {
   const [hasUnlikes, setHasUnlikes] = useState(false)
   const [title, setTitle] = useState("")
   const [prompts, setPrompts] = useState([])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = Cookies.get("token")
-        const unlikeExists = await checkUnlikeExists(PROMPT_ID, token, chatbot)
-        setHasUnlikes(unlikeExists)
-      } catch (error) {
-        console.error("Errore durante il recupero dei dati:", error)
-      }
-    }
-
-    fetchData()
-  }, [])
+  const [idPrompt, setIdPrompt] = useState()
 
   useEffect(() => {
     fetchPrompts()
@@ -60,10 +45,15 @@ const Home = () => {
     setActivePopup(null)
   }
 
-  const openPopup = (popupType, chatbot, title) => {
+  const openPopup = async (popupType, chatbot, title) => {
     setActivePopup(popupType)
     setChatbot(chatbot)
     setTitle(title)
+    setIdPrompt(idPrompt)
+
+    const token = Cookies.get("token")
+    const unlikeExists = await checkUnlikeExists(idPrompt, token, chatbot)
+    setHasUnlikes(unlikeExists)
   }
 
   return (
@@ -81,7 +71,7 @@ const Home = () => {
         <ChatbotSource
           title={title}
           chatbotSelected={chatbot}
-          idPrompt={PROMPT_ID}
+          idPrompt={idPrompt}
           onClose={closePopup}
         />
       </Popup>
@@ -89,7 +79,7 @@ const Home = () => {
       <Popup isOpen={activePopup === "prompts"}>
         <PromptsPopup
           chatbotSelected={chatbot}
-          idPrompt={PROMPT_ID}
+          idPrompt={idPrompt}
           onClose={closePopup}
         />
       </Popup>
@@ -97,7 +87,7 @@ const Home = () => {
       <Popup isOpen={activePopup === "unliked"}>
         <UnlikePopup
           chatbotSelected={chatbot}
-          idPrompt={PROMPT_ID}
+          idPrompt={idPrompt}
           onClose={closePopup}
         />
       </Popup>
@@ -151,7 +141,8 @@ const Home = () => {
                       openPopup(
                         "prompts",
                         "poulin/" + prompt.path,
-                        `${prompt.promptname} chatbot`
+                        `${prompt.promptname} chatbot`,
+                        prompt.idprompt
                       )
                     }
                   >
@@ -166,7 +157,8 @@ const Home = () => {
                       openPopup(
                         "unliked",
                         prompt.promptname,
-                        `${prompt.promptname}`
+                        `${prompt.promptname}`,
+                        prompt.idprompt
                       )
                     }
                     disabled={!hasUnlikes}

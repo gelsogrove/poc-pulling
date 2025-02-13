@@ -50,19 +50,13 @@ const GetPromptHandler: RequestHandler = async (req, res) => {
   const userId = await validateRequest(req, res)
   if (!userId) return
 
-  const { idPrompt, noprompt } = req.query
+  const { idPrompt } = req.query
 
   try {
-    // QUERY
-    let sql =
+    const sql =
       "SELECT prompt, model, temperature, promptname FROM prompts WHERE idPrompt = $1"
-    if (noprompt) {
-      sql =
-        "SELECT model, temperature, promptname FROM prompts WHERE idPrompt = $1"
-    }
     const values = [idPrompt]
     const result = await pool.query(sql, values)
-    const fullQuery = sql.replace(/\$1/g, `'${values[0]}'`)
 
     if (result.rows.length === 0) {
       res.status(404).json({ message: "Prompt non trovato." })
@@ -70,13 +64,9 @@ const GetPromptHandler: RequestHandler = async (req, res) => {
     }
 
     const content = result.rows[0]
-
     res.status(200).json({ content })
   } catch (error) {
-    console.error(
-      "Error fetching prompt:",
-      error instanceof Error ? error.message : error
-    )
+    console.error("Error fetching prompt:", error)
     res.status(500).json({ message: "Errore durante la lettura del prompt." })
   }
 }
