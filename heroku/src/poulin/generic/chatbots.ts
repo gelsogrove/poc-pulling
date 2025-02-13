@@ -95,8 +95,6 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
         timeout: 30000,
       }
     )
-    console.log("openaiResponse", openaiResponse)
-    console.log("error:", openaiResponse.data.error.message)
 
     if (openaiResponse.data.error) {
       res.status(200).json({
