@@ -53,7 +53,20 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
 
     // PROMPT
     const promptResult = await getPrompt(idPrompt)
+    if (!promptResult) {
+      res.status(404).json({ error: "Prompt not found" })
+      return
+    }
+
     const { prompt, model, temperature } = promptResult
+
+    // Log per debug
+    console.log({
+      userMessage,
+      promptResult,
+      model,
+      temperature,
+    })
 
     // HISTORY
     const conversationHistory = messages.map((msg: any) => {
@@ -99,12 +112,10 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     )
 
     if (!rawResponse) {
-      res
-        .status(200)
-        .json({
-          response: "2 Empty response from OpenRouter...generic",
-          rawResponse,
-        })
+      res.status(200).json({
+        response: "2 Empty response from OpenRouter...generic",
+        rawResponse,
+      })
       return
     }
 
