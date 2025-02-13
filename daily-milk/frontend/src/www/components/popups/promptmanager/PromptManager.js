@@ -151,9 +151,11 @@ const PromptManager = ({ onClose }) => {
 
       <div className="popup-title">
         <h2>Prompts</h2>
-        <button className="add-button" onClick={handleAddNewPrompt}>
-          Add
-        </button>
+        {!editingPrompt && (
+          <button className="add-button" onClick={handleAddNewPrompt}>
+            Add
+          </button>
+        )}
       </div>
 
       {showForm ? (

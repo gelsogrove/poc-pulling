@@ -128,9 +128,9 @@ const Home = () => {
                   className="image-container"
                   onClick={() =>
                     openPopup(
-                      "prompts",
+                      "chatbotsource",
                       "poulin/" + prompt.path,
-                      `${prompt.promptname} chatbot`
+                      `${prompt.promptname}`
                     )
                   }
                 >
@@ -166,7 +166,7 @@ const Home = () => {
                       openPopup(
                         "unliked",
                         prompt.promptname,
-                        `${prompt.promptname} chatbot`
+                        `${prompt.promptname}`
                       )
                     }
                     disabled={!hasUnlikes}

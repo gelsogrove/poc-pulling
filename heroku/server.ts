@@ -110,11 +110,11 @@ app.use("/webhook", limiter, modelWebooksRouter)
 app.use("/roles", limiter, modelrolesRouter)
 app.use("/prompts", limiter, modelpromptsRouter)
 
-app.use("/poulin/sales-reader/usage", limiter, usageRouter)
-app.use("/poulin/sales-reader/prompt", limiter, promptRouter)
-app.use("/poulin/sales-reader/chatbot", limiter, chatbotRouter)
-app.use("/poulin/sales-reader/unlike", limiter, unlikeRouter)
-app.use("/poulin/sales-reader/backup", limiter, backupRouter)
+app.use("/poulin/:chatbot/usage", limiter, usageRouter)
+app.use("/poulin/:chatbot/prompt", limiter, promptRouter)
+app.use("/poulin/:chatbot/chatbot", limiter, chatbotRouter)
+app.use("/poulin/:chatbot/unlike", limiter, unlikeRouter)
+app.use("/poulin/:chatbot/backup", limiter, backupRouter)
 
 // Forza HTTPS in produzione
 if (process.env.NODE_ENV === "production") {

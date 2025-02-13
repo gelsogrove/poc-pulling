@@ -12,12 +12,13 @@ const createUsageHandler = async (
   const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
-  const { day, total, service, idprompt } = req.body
+  const { day, total, idprompt } = req.body
+  const chatbot = req.params.chatbot
 
   try {
     const query =
       "INSERT INTO usage (day, total, service, idprompt,userid) VALUES ($1, $2, $3, $4, $5) RETURNING *"
-    const values = [day, total, service, idprompt, userId]
+    const values = [day, total, chatbot, idprompt, userId]
 
     const result = await pool.query(query, values)
     res.status(201).json(result.rows[0])
@@ -34,14 +35,16 @@ const getUsageHandler = async (req: Request, res: Response): Promise<void> => {
   const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
+  const chatbot = req.params.chatbot
+
   try {
     const sql = `
       SELECT total 
       FROM usage 
-      WHERE day = CURRENT_DATE AND userid = $1
+      WHERE day = CURRENT_DATE AND userid = $1 AND service = $2
     `
 
-    const dayResult = await pool.query(sql, [userId])
+    const dayResult = await pool.query(sql, [userId, chatbot])
 
     const currentMonday = new Date()
     currentMonday.setDate(currentMonday.getDate() - currentMonday.getDay() + 1)
@@ -129,10 +132,7 @@ const getUsageHandler = async (req: Request, res: Response): Promise<void> => {
       lastmonths,
     })
   } catch (error) {
-    console.error(
-      "Error during retrieval:",
-      error instanceof Error ? error.message : error
-    )
+    console.error("Error during usage retrieval:", error)
     res.status(500).json({ error: "Internal server error." })
   }
 }
