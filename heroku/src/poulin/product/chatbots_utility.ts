@@ -18,14 +18,16 @@ export const getPrompt = async (idPrompt: string) => {
 }
 
 export const cleanResponse = (responseText: string) => {
+  // Rimuovi eventuali delimitatori Markdown come ```json e ```
   return responseText
-    .replace(/^```json\s*/i, "")
-    .replace(/```$/, "")
+    .replace(/^```json\s*/i, "") // Rimuove l'inizio ```json (case-insensitive)
+    .replace(/```$/, "") // Rimuove i tre backticks finali
     .trim()
 }
 
 export const handleError = (error: unknown): { message: string } => {
   if (axios.isAxiosError(error)) {
+    // Qui sappiamo che error è un AxiosError, quindi ha proprietà come code, response, etc.
     console.error("Axios Error:", {
       message: error.message,
       code: error.code,
@@ -38,50 +40,74 @@ export const handleError = (error: unknown): { message: string } => {
     } else if (error.response) {
       const errorMessage =
         (error.response.data as { message?: string })?.message ||
-        error.response.statusText
+        "OpenRouter error."
       return { message: errorMessage }
+    } else {
+      return {
+        message:
+          "An unexpected error occurred. Please contact support if the issue persists.",
+      }
     }
-  }
-  return { message: "An unexpected error occurred." }
-}
-
-export const sendUsageData = async (
-  userId: string,
-  idPrompt: string,
-  chatbotSelected: string
-) => {
-  try {
-    const today = new Date().toISOString().split("T")[0]
-    const result = await pool.query(
-      "INSERT INTO usage (day, total, service, idprompt, userid) VALUES ($1, 1, $2, $3, $4) ON CONFLICT (day, service, idprompt, userid) DO UPDATE SET total = usage.total + 1 RETURNING total",
-      [today, chatbotSelected, idPrompt, userId]
-    )
-    return result.rows[0].total
-  } catch (error) {
-    console.error("Error updating usage:", error)
-    throw error
+  } else if (error instanceof Error) {
+    // Gestione per errori generici non Axios
+    console.error("Generic Error:", {
+      message: error.message,
+      stack: error.stack,
+    })
+    return { message: error.message }
+  } else {
+    console.error("Unexpected error type:", error)
+    return {
+      message: "Unknown error. Please contact support if the problem persists.",
+    }
   }
 }
 
 export const executeSqlQuery = async (sqlQuery: string) => {
   try {
-    const result = await pool.query(sqlQuery)
-    return result.rows
+    const sqlApiUrl = `https://ai.dairy-tools.com/api/sql.php?query=${encodeURIComponent(
+      sqlQuery
+    )}`
+    const sqlResult = await axios.get(sqlApiUrl)
+    return sqlResult.data
   } catch (error) {
     console.error("Error executing SQL query:", error)
-    throw error
+    throw new Error("SQL execution failed")
+  }
+}
+
+export const sendUsageData = async (
+  day: any,
+  price: any,
+  service: string,
+  triggerAction: string,
+  userId: string,
+  idPrompt: string
+) => {
+  try {
+    const query =
+      "INSERT INTO usage (day, total, service,triggerAction, userId, idprompt) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *"
+    const values = [day, price, service, triggerAction, userId, idPrompt]
+
+    const result = await pool.query(query, values)
+
+    return result
+  } catch (error) {
+    console.log(error)
+    return error
   }
 }
 
 export const generateDetailedSentence = async (
-  model: string,
-  sqlData: any[],
-  temperature: number,
-  OPENROUTER_API_URL: string,
+  model: any,
+  sqlData: any,
+  temperature: any,
+  OPENROUTER_API_URL: any,
   OPENROUTER_HEADERS: any,
-  userMessage: string
+  userMessage: any
 ) => {
   try {
+    // Preparare il payload per OpenRouter
     const requestPayload = {
       model: "openai/gpt-3.5-turbo",
       messages: [
@@ -90,13 +116,14 @@ export const generateDetailedSentence = async (
         {
           role: "user",
           content:
-            "Please summarize the result of the query repeating the question so it's more clear in one sentence using the <b> for important values if we are showing the moeny don't forget to put the $ char , AGGIUNGO ANCHE CHE I NUMERI DEVONO AVERE LE MIGLIAIA ES 2.676, please round if the numer is $674,342.60. show only $674,342",
+            "Please summarize the result of the query repeating the question so it's more clear  in one sentence using the <b> for   important values if we are showing the moeny don't forget to put the $ char , AGGIUNGO ANCHE CHE I NUMERI DEVONO AVERE LE MIGLIAIA ES 2.676, please round if the numer is $674,342.60. show only $674,342",
         },
       ],
       max_tokens: 1000,
       temperature: Number(temperature),
     }
 
+    // Chiamata ad OpenRouter
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
       requestPayload,
@@ -106,6 +133,7 @@ export const generateDetailedSentence = async (
       }
     )
 
+    // Pulire e verificare la risposta
     const rawResponse = cleanResponse(
       openaiResponse.data.choices[0]?.message?.content
     )
