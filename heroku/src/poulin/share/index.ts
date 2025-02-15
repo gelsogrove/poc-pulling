@@ -1,18 +1,23 @@
-import router from "./prompts.js"
+import promptRouter from "./prompts.js"
 import unlikeRouter from "./unlike.js"
 import usageRouter from "./usage.js"
 
-export const promptGenericRouter = router
-export const promptOrdersRouter = router
-export const promptProductRouter = router
-export const promptSalesReaderRouter = router
-
+// Export per generic
+export const promptGenericRouter = promptRouter
 export const unlikeGenericRouter = unlikeRouter
-export const unlikeOrdersRouter = unlikeRouter
-export const unlikeProductRouter = unlikeRouter
-export const unlikeSalesReaderRouter = unlikeRouter
-
 export const usageGenericRouter = usageRouter
-export const usageOrdersRouter = usageRouter
+
+// Export per product
+export const promptProductRouter = promptRouter
+export const unlikeProductRouter = unlikeRouter
 export const usageProductRouter = usageRouter
+
+// Export per sales-reader
+export const promptSalesReaderRouter = promptRouter
+export const unlikeSalesReaderRouter = unlikeRouter
 export const usageSalesReaderRouter = usageRouter
+
+// Export per orders
+export const promptOrdersRouter = promptRouter
+export const unlikeOrdersRouter = unlikeRouter
+export const usageOrdersRouter = usageRouter
