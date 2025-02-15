@@ -30,7 +30,10 @@ const storage = multer.diskStorage({
 const upload = multer({ storage })
 
 // Funzione per creare un nuovo prompt
-const createPrompt: RequestHandler = async (req: Request, res: Response) => {
+const createPrompt: RequestHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
@@ -66,11 +69,19 @@ const createPrompt: RequestHandler = async (req: Request, res: Response) => {
 }
 
 // Funzione per ottenere tutti i prompts
-const getPrompts: RequestHandler = async (req: Request, res: Response) => {
-  const { userId, token } = await validateRequest(req, res)
-  if (!userId) return
-
+const getPrompts: RequestHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
+    const validation = await validateRequest(req, res)
+    if (!validation) {
+      res.status(401).json({ error: "Unauthorized" })
+      return
+    }
+
+    const { userId } = validation
+
     // Verifica se l'utente è admin
     const userCheck = await pool.query(
       "SELECT role FROM users WHERE userid = $1",
@@ -88,43 +99,50 @@ const getPrompts: RequestHandler = async (req: Request, res: Response) => {
     res.status(200).json(result.rows)
   } catch (error) {
     console.error("Error fetching prompts:", error)
-    res.status(500).json({ error })
+    res.status(500).json({ error: "Internal server error" })
   }
 }
 
 // Funzione per aggiornare un prompt esistente
-const updatePrompt: RequestHandler = async (req: Request, res: Response) => {
+const updatePrompt: RequestHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   upload.single("image")(req as unknown as Request, res, async (err: any) => {
     if (err) {
       return res.status(400).json({ error: "Error uploading file" })
     }
 
-    const { userId, token } = await validateRequest(req, res)
-    if (!userId) return
-
-    // Verifica se l'utente è admin
-    const userCheck = await pool.query(
-      "SELECT role FROM users WHERE userid = $1",
-      [userId]
-    )
-
-    if (userCheck.rows[0]?.role.toLowerCase() !== "admin") {
-      res.status(403).json({ error: "Only admin users can manage prompts" })
-      return
-    }
-
-    const { id } = req.params
-    const { promptname, model, temperature, prompt, path } = req.body
-    if (!promptname || !model || !prompt || !path) {
-      res.status(400).json({ error: "Required fields cannot be null" })
-      return
-    }
-
-    const imagePath = req.file
-      ? `/images/chatbots/${req.file.filename}`
-      : req.body.image || "/images/chatbot.webp"
-
     try {
+      const validation = await validateRequest(req, res)
+      if (!validation) {
+        return res.status(401).json({ error: "Unauthorized" })
+      }
+
+      const { userId } = validation
+
+      // Verifica se l'utente è admin
+      const userCheck = await pool.query(
+        "SELECT role FROM users WHERE userid = $1",
+        [userId]
+      )
+
+      if (userCheck.rows[0]?.role.toLowerCase() !== "admin") {
+        res.status(403).json({ error: "Only admin users can manage prompts" })
+        return
+      }
+
+      const { id } = req.params
+      const { promptname, model, temperature, prompt, path } = req.body
+      if (!promptname || !model || !prompt || !path) {
+        res.status(400).json({ error: "Required fields cannot be null" })
+        return
+      }
+
+      const imagePath = req.file
+        ? `/images/chatbots/${req.file.filename}`
+        : req.body.image || "/images/chatbot.webp"
+
       const result = await pool.query(
         `UPDATE prompts 
          SET promptname = $1, model = $2, temperature = $3, prompt = $4, path = $5, image = $6 
@@ -141,7 +159,7 @@ const updatePrompt: RequestHandler = async (req: Request, res: Response) => {
       res.status(200).json(result.rows[0])
     } catch (error) {
       console.error("Error updating prompt:", error)
-      res.status(500).json({ error: "Error during prompt update" })
+      res.status(500).json({ error: "Internal server error" })
     }
   })
 }
