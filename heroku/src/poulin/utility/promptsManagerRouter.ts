@@ -97,9 +97,12 @@ const getPrompts: RequestHandler = async (
 
     const result = await pool.query(query)
     res.status(200).json(result.rows)
+    return
   } catch (error) {
     console.error("Error fetching prompts:", error)
-    res.status(500).json({ error: "Internal server error" })
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Internal server error" })
+    }
   }
 }
 
@@ -108,60 +111,49 @@ const updatePrompt: RequestHandler = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  upload.single("image")(req as unknown as Request, res, async (err: any) => {
-    if (err) {
-      return res.status(400).json({ error: "Error uploading file" })
+  try {
+    const validation = await validateRequest(req, res)
+    if (!validation) {
+      res.status(401).json({ error: "Unauthorized" })
+      return
     }
 
-    try {
-      const validation = await validateRequest(req, res)
-      if (!validation) {
-        return res.status(401).json({ error: "Unauthorized" })
-      }
+    const { userId } = validation
+    const { id } = req.params
+    const { promptname, model, temperature, prompt, path } = req.body
 
-      const { userId } = validation
+    if (!promptname || !model || !prompt || !path) {
+      res.status(400).json({ error: "Required fields cannot be null" })
+      return
+    }
 
-      // Verifica se l'utente è admin
-      const userCheck = await pool.query(
-        "SELECT role FROM users WHERE userid = $1",
-        [userId]
-      )
-
-      if (userCheck.rows[0]?.role.toLowerCase() !== "admin") {
-        res.status(403).json({ error: "Only admin users can manage prompts" })
-        return
-      }
-
-      const { id } = req.params
-      const { promptname, model, temperature, prompt, path } = req.body
-      if (!promptname || !model || !prompt || !path) {
-        res.status(400).json({ error: "Required fields cannot be null" })
-        return
-      }
-
-      const imagePath = req.file
-        ? `/images/chatbots/${req.file.filename}`
+    // Aggiungiamo un controllo più sicuro per il file
+    const multerReq = req as MulterRequest
+    const imagePath =
+      multerReq.file && multerReq.file.filename
+        ? `/images/chatbots/${multerReq.file.filename}`
         : req.body.image || "/images/chatbot.webp"
 
-      const result = await pool.query(
-        `UPDATE prompts 
-         SET promptname = $1, model = $2, temperature = $3, prompt = $4, path = $5, image = $6 
-         WHERE idprompt = $7 
-         RETURNING *`,
-        [promptname, model, temperature, prompt, path, imagePath, id]
-      )
+    const result = await pool.query(
+      `UPDATE prompts 
+       SET promptname = $1, model = $2, temperature = $3, prompt = $4, path = $5, image = $6 
+       WHERE idprompt = $7 
+       RETURNING *`,
+      [promptname, model, temperature, prompt, path, imagePath, id]
+    )
 
-      if (result.rowCount === 0) {
-        res.status(404).json({ error: "Prompt not found" })
-        return
-      }
+    if (result.rowCount === 0) {
+      res.status(404).json({ error: "Prompt not found" })
+      return
+    }
 
-      res.status(200).json(result.rows[0])
-    } catch (error) {
-      console.error("Error updating prompt:", error)
+    res.status(200).json(result.rows[0])
+  } catch (error) {
+    console.error("Error updating prompt:", error)
+    if (!res.headersSent) {
       res.status(500).json({ error: "Internal server error" })
     }
-  })
+  }
 }
 
 // Funzione per eliminare un prompt
@@ -354,7 +346,7 @@ const movePromptOrder: RequestHandler = async (req, res) => {
 // Definizione delle rotte
 promptsManagerRouter.post("/new", createPrompt)
 promptsManagerRouter.get("/", getPrompts)
-promptsManagerRouter.put("/update/:id", updatePrompt)
+promptsManagerRouter.put("/update/:id", upload.single("image"), updatePrompt)
 promptsManagerRouter.delete("/delete/:idprompt", deletePrompt)
 promptsManagerRouter.put("/toggle/:idprompt", togglePromptActive)
 promptsManagerRouter.put("/toggle-hide/:idprompt", togglePromptHide)
