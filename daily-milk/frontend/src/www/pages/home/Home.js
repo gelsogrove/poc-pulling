@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // Home.js
+import axios from "axios"
 import React, { useEffect, useState } from "react"
 import { Helmet } from "react-helmet"
 import { useTranslation } from "react-i18next"
@@ -14,18 +15,40 @@ import UploadPopup from "../../components/popups/upload/UploadPopup.js"
 
 import "./Home.css"
 
+// Definiamo API_URL all'inizio del file
+const API_URL =
+  process.env.REACT_APP_API_URL || "https://poulin-bd075425a92c.herokuapp.com"
+
 const Home = () => {
   const { t } = useTranslation()
   const [activePopup, setActivePopup] = useState(null)
   const [chatbot, setChatbot] = useState("poulin/sales-reader")
-  const [hasUnlikes, setHasUnlikes] = useState(false)
   const [title, setTitle] = useState("")
   const [prompts, setPrompts] = useState([])
   const [idPrompt, setIdPrompt] = useState()
+  const [chatbotImage, setChatbotImage] = useState("/images/chatbot.webp")
 
   useEffect(() => {
     fetchPrompts()
   }, [])
+
+  useEffect(() => {
+    const fetchPromptDetails = async () => {
+      try {
+        const response = await axios.get(
+          `${API_URL}/prompts?idPrompt=${idPrompt}`
+        )
+        const { image } = response.data.content
+        setChatbotImage(image || "/images/chatbot.webp")
+      } catch (error) {
+        console.error("Error fetching prompt details:", error)
+      }
+    }
+
+    if (idPrompt) {
+      fetchPromptDetails()
+    }
+  }, [idPrompt])
 
   const fetchPrompts = async () => {
     try {
@@ -121,7 +144,7 @@ const Home = () => {
                   }
                 >
                   <img
-                    src="../images/chatbot.webp"
+                    src={chatbotImage}
                     alt={t("home.features.chatbot.title")}
                     className="feature-image"
                   />

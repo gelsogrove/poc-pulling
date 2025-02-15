@@ -8,6 +8,28 @@ const PromptForm = ({
   handleCancel,
   models, // array di modelli disponibili
 }) => {
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      if (file.size > 5000000) {
+        // 5MB limit
+        alert("File is too large. Maximum size is 5MB")
+        return
+      }
+
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        handleInputChange({
+          target: {
+            name: "image",
+            value: reader.result,
+          },
+        })
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   return (
     <div className="prompt-form-container">
       <div className="prompt-form-grid">
@@ -73,6 +95,42 @@ const PromptForm = ({
             required
             rows={10}
           />
+        </div>
+
+        <div className="form-group">
+          <label className="prompt-form-label">
+            Immagine Chatbot:
+            <div className="image-upload-container">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="image-upload-input"
+              />
+              {prompt.image && (
+                <div className="image-preview-container">
+                  <img
+                    src={prompt.image}
+                    alt="Preview"
+                    className="image-preview"
+                  />
+                  <button
+                    className="remove-image"
+                    onClick={() =>
+                      handleInputChange({
+                        target: {
+                          name: "image",
+                          value: "/images/chatbot.webp",
+                        },
+                      })
+                    }
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
+            </div>
+          </label>
         </div>
       </div>
 

@@ -1,8 +1,33 @@
 import { RequestHandler, Router } from "express"
+import multer from "multer"
+import path from "path"
 import { pool } from "../../../server.js"
 import { validateRequest } from "../share/validateUser.js"
 
+interface MulterRequest extends Request {
+  file?: Express.Multer.File
+}
+
 const promptsManagerRouter = Router()
+
+const storage = multer.diskStorage({
+  destination: (
+    req: Express.Request,
+    file: Express.Multer.File,
+    cb: (error: Error | null, destination: string) => void
+  ) => {
+    cb(null, "public/images/chatbots")
+  },
+  filename: (
+    req: Express.Request,
+    file: Express.Multer.File,
+    cb: (error: Error | null, filename: string) => void
+  ) => {
+    cb(null, `chatbot-${Date.now()}${path.extname(file.originalname)}`)
+  },
+})
+
+const upload = multer({ storage })
 
 // Funzione per creare un nuovo prompt
 const createPrompt: RequestHandler = async (req, res) => {
@@ -69,46 +94,56 @@ const getPrompts: RequestHandler = async (req, res) => {
 
 // Funzione per aggiornare un prompt esistente
 const updatePrompt: RequestHandler = async (req, res) => {
-  const { userId, token } = await validateRequest(req, res)
-  if (!userId) return
+  upload.single("image")(req as MulterRequest, res, async (err: any) => {
+    if (err) {
+      return res.status(400).json({ error: "Error uploading file" })
+    }
 
-  // Verifica se l'utente è admin
-  const userCheck = await pool.query(
-    "SELECT role FROM users WHERE userid = $1",
-    [userId]
-  )
+    const { userId, token } = await validateRequest(req, res)
+    if (!userId) return
 
-  if (userCheck.rows[0]?.role.toLowerCase() !== "admin") {
-    res.status(403).json({ error: "Only admin users can manage prompts" })
-    return
-  }
-
-  const { id } = req.params
-  const { promptname, model, temperature, prompt, path } = req.body
-  if (!promptname || !model || !prompt || !path) {
-    res.status(400).json({ error: "Required fields cannot be null" })
-    return
-  }
-
-  try {
-    const result = await pool.query(
-      `UPDATE prompts 
-       SET promptname = $1, model = $2, temperature = $3, prompt = $4, path = $5 
-       WHERE idprompt = $6 
-       RETURNING *`,
-      [promptname, model, temperature, prompt, path, id]
+    // Verifica se l'utente è admin
+    const userCheck = await pool.query(
+      "SELECT role FROM users WHERE userid = $1",
+      [userId]
     )
 
-    if (result.rowCount === 0) {
-      res.status(404).json({ error: "Prompt not found" })
+    if (userCheck.rows[0]?.role.toLowerCase() !== "admin") {
+      res.status(403).json({ error: "Only admin users can manage prompts" })
       return
     }
 
-    res.status(200).json(result.rows[0])
-  } catch (error) {
-    console.error("Error updating prompt:", error)
-    res.status(500).json({ error: "Error during prompt update" })
-  }
+    const { id } = req.params
+    const { promptname, model, temperature, prompt, path } = req.body
+    if (!promptname || !model || !prompt || !path) {
+      res.status(400).json({ error: "Required fields cannot be null" })
+      return
+    }
+
+    const imagePath = req.file
+      ? `/images/chatbots/${req.file.filename}`
+      : req.body.image || "/images/chatbot.webp"
+
+    try {
+      const result = await pool.query(
+        `UPDATE prompts 
+         SET promptname = $1, model = $2, temperature = $3, prompt = $4, path = $5, image = $6 
+         WHERE idprompt = $7 
+         RETURNING *`,
+        [promptname, model, temperature, prompt, path, imagePath, id]
+      )
+
+      if (result.rowCount === 0) {
+        res.status(404).json({ error: "Prompt not found" })
+        return
+      }
+
+      res.status(200).json(result.rows[0])
+    } catch (error) {
+      console.error("Error updating prompt:", error)
+      res.status(500).json({ error: "Error during prompt update" })
+    }
+  })
 }
 
 // Funzione per eliminare un prompt

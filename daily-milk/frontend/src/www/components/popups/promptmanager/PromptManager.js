@@ -16,12 +16,12 @@ import "./PromptManager.css"
 const PromptManager = ({ onClose }) => {
   const [prompts, setPrompts] = useState([])
   const [showForm, setShowForm] = useState(false)
-  const [newPrompt, setNewPrompt] = useState({
-    promptname: "",
+  const [prompt, setPrompt] = useState({
+    content: "",
     model: "",
-    temperature: 0.7,
-    prompt: "",
-    path: "",
+    temperature: 0,
+    promptname: "",
+    image: "/images/chatbot.webp",
   })
   const [models, setModels] = useState([])
   const [editingPrompt, setEditingPrompt] = useState(null)
@@ -75,7 +75,7 @@ const PromptManager = ({ onClose }) => {
         [name]: value,
       }))
     } else {
-      setNewPrompt((prev) => ({
+      setPrompt((prev) => ({
         ...prev,
         [name]: value,
       }))
@@ -87,16 +87,16 @@ const PromptManager = ({ onClose }) => {
       if (editingPrompt) {
         await updatePrompt(editingPrompt.idprompt, editingPrompt)
       } else {
-        await createPrompt(newPrompt)
+        await createPrompt(prompt)
       }
       setShowForm(false)
       setEditingPrompt(null)
-      setNewPrompt({
-        promptname: "",
+      setPrompt({
+        content: "",
         model: "",
-        temperature: 0.7,
-        prompt: "",
-        path: "",
+        temperature: 0,
+        promptname: "",
+        image: "/images/chatbot.webp",
       })
       fetchPrompts()
     } catch (err) {
@@ -133,12 +133,12 @@ const PromptManager = ({ onClose }) => {
 
   const handleRowClick = (prompt) => {
     setEditingPrompt(prompt)
-    setNewPrompt({
-      promptname: prompt.promptname,
+    setPrompt({
+      content: prompt.prompt,
       model: prompt.model,
       temperature: prompt.temperature,
-      prompt: prompt.prompt,
-      path: prompt.path,
+      promptname: prompt.promptname,
+      image: prompt.image || "/images/chatbot.webp",
     })
     setShowForm(true)
   }
@@ -160,18 +160,18 @@ const PromptManager = ({ onClose }) => {
 
       {showForm ? (
         <PromptForm
-          prompt={editingPrompt || newPrompt}
+          prompt={editingPrompt || prompt}
           handleInputChange={handleInputChange}
           handleSave={handleSave}
           handleCancel={() => {
             setShowForm(false)
             setEditingPrompt(null)
-            setNewPrompt({
-              promptname: "",
+            setPrompt({
+              content: "",
               model: "",
-              temperature: 0.7,
-              prompt: "",
-              path: "",
+              temperature: 0,
+              promptname: "",
+              image: "/images/chatbot.webp",
             })
           }}
           models={models}
@@ -234,6 +234,24 @@ const PromptManager = ({ onClose }) => {
                     className="delete-btn"
                   >
                     <i className="fas fa-trash"></i>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleMoveOrder(prompt, "up")
+                    }}
+                    className="move-btn"
+                  >
+                    <i className="fas fa-arrow-up"></i>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleMoveOrder(prompt, "down")
+                    }}
+                    className="move-btn"
+                  >
+                    <i className="fas fa-arrow-down"></i>
                   </button>
                 </td>
               </tr>
