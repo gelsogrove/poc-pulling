@@ -1,6 +1,6 @@
 import { RequestHandler, Router } from "express"
 import { pool } from "../../../server.js"
-import { validateRequest } from "../validateUser.js"
+import { validateRequest } from "../share/validateUser.js"
 
 const promptRouter = Router()
 
@@ -53,24 +53,20 @@ const GetPromptHandler: RequestHandler = async (req, res) => {
   const { idPrompt } = req.query
 
   try {
-    // Query semplificata
     const sql =
       "SELECT prompt, model, temperature, promptname FROM prompts WHERE idPrompt = $1"
     const values = [idPrompt]
     const result = await pool.query(sql, values)
 
     if (result.rows.length === 0) {
-      res.status(404).json({ message: "Prompt non trovato." })
+      res.status(404).json({ message: "Prompt non trovato.", idPrompt })
       return
     }
 
     const content = result.rows[0]
     res.status(200).json({ content })
   } catch (error) {
-    console.error(
-      "Error fetching prompt:",
-      error instanceof Error ? error.message : error
-    )
+    console.error("Error fetching prompt:", error)
     res.status(500).json({ message: "Errore durante la lettura del prompt." })
   }
 }

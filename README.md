@@ -1,18 +1,17 @@
 ===================== TODO =====================
 
-- anagrafica role
-- checkboX chatbot per ogni role
-- Anagrafica prompt
-- Create new prompt
-- iniziamo a sistemare il settings
-- cerchiam di capire token finale
-- ambiente di test
-- iniziamo a sistemare il settings
-- webhook qui e' l'utente che scrive ? se non esiste e' nuovo e mettiamo un role di default
+- checkboX per ogni role
+- pulire ottimizzare hroku (naming e duplicati che non servono come unlike, mettere prductmanager)
+- correggere usage perche' voglio sapere quanto spendo per ogni chatbot
 
-- creiamo un chatbot router
-- carichiamo i prompt di quello che cerca l'utente
+
 - function calling
+- iniziamo ad armare il settings
+
+===================== LATER =====================
+
+- cerchiam di capire token finale whatsapp
+
 - dove metto i file statici come backup pdf o altro
 
 - **\*** DAILYMILK\***\*\*\*\***

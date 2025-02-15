@@ -1,14 +1,13 @@
 import axios from "axios"
-import axiosRetry from "axios-retry"
 import dotenv from "dotenv"
 import { Request, RequestHandler, Response, Router } from "express"
-import { validateRequest } from "../validateUser.js"
+import { validateRequest } from "../../share/validateUser.js"
 import {
   cleanResponse,
   executeSqlQuery,
   generateDetailedSentence,
   getPrompt,
-} from "./chatbots_utility.js"
+} from "../../utility/chatbots_utility.js"
 
 dotenv.config()
 
@@ -23,15 +22,6 @@ const chatbotProductRouter = Router()
 if (!process.env.OPENROUTER_API_KEY) {
   throw new Error("OPENROUTER_API_KEY is not set in the environment variables.")
 }
-
-axiosRetry(axios, {
-  retries: 3,
-  retryDelay: (retryCount) => retryCount * 1000,
-  retryCondition: (error) => {
-    const status = error.response?.status ?? 0
-    return error.code === "ECONNRESET" || status >= 500
-  },
-})
 
 const handleResponse: RequestHandler = async (req: Request, res: Response) => {
   const { userId, token } = await validateRequest(req, res)

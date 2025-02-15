@@ -2,14 +2,14 @@ import axios from "axios"
 import axiosRetry from "axios-retry"
 import dotenv from "dotenv"
 import { Request, RequestHandler, Response, Router } from "express"
-import { validateRequest } from "../validateUser.js"
+import { validateRequest } from "../../share/validateUser.js"
 import {
   cleanResponse,
   executeSqlQuery,
   generateDetailedSentence,
   getPrompt,
   sendUsageData,
-} from "./chatbots_utility.js"
+} from "../../utility/chatbots_utility.js"
 
 dotenv.config()
 
@@ -118,12 +118,10 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     )
 
     if (!rawResponse) {
-      res
-        .status(200)
-        .json({
-          response: "Empty response from OpenRouter......sales-reader",
-          rawResponse,
-        })
+      res.status(200).json({
+        response: "Empty response from OpenRouter......sales-reader",
+        rawResponse,
+      })
       return
     }
 

@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt"
 import { Request, Response, Router } from "express"
 import { pool } from "../../server.js" // Importa il pool dal file principale
-import { validateRequest } from "./validateUser.js"
+import { validateRequest } from "./share/validateUser.js"
 
 const usersRouter = Router()
 

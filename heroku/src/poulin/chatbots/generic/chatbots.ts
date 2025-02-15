@@ -1,15 +1,14 @@
 import axios from "axios"
-import axiosRetry from "axios-retry"
 import dotenv from "dotenv"
 import { Request, RequestHandler, Response, Router } from "express"
-import { validateRequest } from "../validateUser.js"
+import { validateRequest } from "../../share/validateUser.js"
 import {
   cleanResponse,
   executeSqlQuery,
   generateDetailedSentence,
   getPrompt,
   sendUsageData,
-} from "./chatbots_utility.js"
+} from "../../utility/chatbots_utility.js"
 
 dotenv.config()
 
@@ -24,15 +23,6 @@ const chatbotRouter = Router()
 if (!process.env.OPENROUTER_API_KEY) {
   throw new Error("OPENROUTER_API_KEY is not set in the environment variables.")
 }
-
-axiosRetry(axios, {
-  retries: 3,
-  retryDelay: (retryCount) => retryCount * 1000,
-  retryCondition: (error) => {
-    const status = error.response?.status ?? 0
-    return error.code === "ECONNRESET" || status >= 500
-  },
-})
 
 const handleResponse: RequestHandler = async (req: Request, res: Response) => {
   const { userId, token } = await validateRequest(req, res)
@@ -53,25 +43,32 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
 
     // PROMPT
     const promptResult = await getPrompt(idPrompt)
-    if (!promptResult) {
-      res.status(404).json({ error: "Prompt not found" })
-      return
-    }
-
     const { prompt, model, temperature } = promptResult
-
-    // Log per debug
-    console.log({
-      userMessage,
-      promptResult,
-      model,
-      temperature,
-    })
 
     // HISTORY
     const conversationHistory = messages.map((msg: any) => {
       return { role: msg.role || "user", content: msg.content }
     })
+
+    // ANALYSIS
+    if (["analysis", "trend"].includes(userMessage.toLowerCase())) {
+      try {
+        const { data: analysis } = await axios.get(
+          "https://ai.dairy-tools.com/api/stats.php"
+        )
+
+        res.status(200).json({
+          response: `Here is the analysis: ${JSON.stringify(analysis)}`,
+        })
+        return
+      } catch (analysisError) {
+        console.error("Error fetching analysis data:", analysisError)
+        res.status(200).json({
+          response: "Failed to fetch analysis data.",
+        })
+        return
+      }
+    }
 
     // PAYLOAD
     const requestPayload = {
@@ -80,6 +77,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
         { role: "system", content: prompt },
         ...conversationHistory,
         { role: "user", content: userMessage },
+        { role: "system", content: `Language: eng` },
       ],
       max_tokens: MAX_TOKENS,
       temperature: Number(temperature),
@@ -98,22 +96,20 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
 
     if (openaiResponse.data.error) {
       res.status(200).json({
-        response:
-          "Empty response from OpenRouter...Generic " +
-          openaiResponse.data.error.message,
+        response: "Empty response from OpenRouter...sales-reader",
         error: openaiResponse.data.error.message,
       })
       return
     }
 
-    // ANSWER1
+    // ANSWER
     const rawResponse = cleanResponse(
       openaiResponse.data.choices[0]?.message?.content
     )
 
     if (!rawResponse) {
       res.status(200).json({
-        response: "2 Empty response from OpenRouter...generic",
+        response: "Empty response from OpenRouter......sales-reader",
         rawResponse,
       })
       return
@@ -134,7 +130,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
         await sendUsageData(
           day,
           0.2,
-          "generic",
+          "sales-reader",
           triggerAction,
           userId,
           idPrompt

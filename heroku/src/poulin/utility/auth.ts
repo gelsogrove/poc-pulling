@@ -4,10 +4,9 @@ import qrcode from "qrcode"
 import speakeasy from "speakeasy"
 import { v4 as uuidv4 } from "uuid" // Importa uuid
 
-import { pool } from "../../server.js"
-import { validateRequest } from "./validateUser.js"
-
 import dotenv from "dotenv"
+import { pool } from "../../../server"
+import { validateRequest } from "../share/validateUser"
 
 dotenv.config() // Carica le variabili d'ambiente dal file .env
 

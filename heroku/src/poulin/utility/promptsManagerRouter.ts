@@ -1,8 +1,8 @@
 import { RequestHandler, Router } from "express"
-import { pool } from "../../server.js"
-import { validateRequest } from "./validateUser.js"
+import { pool } from "../../../server.js"
+import { validateRequest } from "../share/validateUser.js"
 
-const promptsRouter = Router()
+const promptsManagerRouter = Router()
 
 // Funzione per creare un nuovo prompt
 const createPrompt: RequestHandler = async (req, res) => {
@@ -299,12 +299,12 @@ const movePromptOrder: RequestHandler = async (req, res) => {
 }
 
 // Definizione delle rotte
-promptsRouter.post("/new", createPrompt)
-promptsRouter.get("/", getPrompts)
-promptsRouter.put("/update/:id", updatePrompt)
-promptsRouter.delete("/delete/:idprompt", deletePrompt)
-promptsRouter.put("/toggle/:idprompt", togglePromptActive)
-promptsRouter.put("/toggle-hide/:idprompt", togglePromptHide)
-promptsRouter.put("/move-order/:idprompt/:direction", movePromptOrder)
+promptsManagerRouter.post("/new", createPrompt)
+promptsManagerRouter.get("/", getPrompts)
+promptsManagerRouter.put("/update/:id", updatePrompt)
+promptsManagerRouter.delete("/delete/:idprompt", deletePrompt)
+promptsManagerRouter.put("/toggle/:idprompt", togglePromptActive)
+promptsManagerRouter.put("/toggle-hide/:idprompt", togglePromptHide)
+promptsManagerRouter.put("/move-order/:idprompt/:direction", movePromptOrder)
 
-export default promptsRouter
+export default promptsManagerRouter

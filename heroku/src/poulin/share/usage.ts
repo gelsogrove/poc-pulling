@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express"
 
 import { pool } from "../../../server.js"
-import { validateRequest } from "../validateUser.js"
+import { validateRequest } from "../share/validateUser.js"
 
 const usageRouter = Router()
 

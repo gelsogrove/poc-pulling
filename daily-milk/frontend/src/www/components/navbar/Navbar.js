@@ -146,11 +146,6 @@ const Navbar = () => {
           <div className="tooltip">Export</div>
         </button>
 
-        <button className="btn" onClick={handleImport}>
-          <i className="fas fa-upload"></i>
-          <div className="tooltip">Import</div>
-        </button>
-
         <button className="btn" onClick={() => openPopup("manageUsers")}>
           <i className="fas fa-users"></i>
           <div className="tooltip">Manage Users</div>

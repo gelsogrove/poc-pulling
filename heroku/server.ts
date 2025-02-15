@@ -6,12 +6,6 @@ import rateLimit from "express-rate-limit"
 import helmet from "helmet"
 import pkg from "pg"
 
-import authRouter from "./src/poulin/auth.js"
-import backupRouter from "./src/poulin/backup.js"
-import modelsRouter from "./src/poulin/models.js"
-import monthlyUsageRouter from "./src/poulin/monthlyUsage.js"
-import modelpromptsRouter from "./src/poulin/prompts.js"
-import modelrolesRouter from "./src/poulin/roles.js"
 import {
   chatbotRouter,
   promptRouter,
@@ -19,6 +13,12 @@ import {
   usageRouter,
 } from "./src/poulin/routerManager.js"
 import usersRouter from "./src/poulin/users.js"
+import authRouter from "./src/poulin/utility/auth.js"
+import backupRouter from "./src/poulin/utility/backup.js"
+import modelsRouter from "./src/poulin/utility/models.js"
+import monthlyUsageRouter from "./src/poulin/utility/monthlyUsage.js"
+import modelpromptsRouter from "./src/poulin/utility/promptsManagerRouter.js"
+import modelrolesRouter from "./src/poulin/utility/roles.js"
 import modelWebooksRouter from "./src/poulin/webhook.js"
 import welcomeRouter from "./welcome.js"
 

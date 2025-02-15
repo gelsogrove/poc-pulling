@@ -1,7 +1,7 @@
 import { RequestHandler, Router } from "express"
 
-import { pool } from "../../server.js"
-import { validateRequest } from "./validateUser.js"
+import { pool } from "../../../server.js"
+import { validateRequest } from "../share/validateUser.js"
 
 const modelsRouter = Router()
 

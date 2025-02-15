@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express"
 import { pool } from "../../../server.js" // Aggiungi .js e usa percorso relativo corretto
-import { validateRequest, validateUser } from "../validateUser.js" // Presuppone che queste funzioni esistano
-import { sendUsageData } from "./chatbots_utility.js"
+import { validateRequest, validateUser } from "../share/validateUser.js" // Presuppone che queste funzioni esistano
+import { sendUsageData } from "../utility/chatbots_utility.js"
 
 const unlikeRouter = Router()
 

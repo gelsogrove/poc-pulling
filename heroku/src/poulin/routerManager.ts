@@ -1,29 +1,30 @@
 import { Request, Response, Router } from "express"
 import { ParamsDictionary } from "express-serve-static-core"
+import chatbotGenericRouter from "./chatbots/generic/chatbots.js"
+import chatbotOrdersRouter from "./chatbots/orders/chatbots.js"
+import chatbotProductRouter from "./chatbots/product/chatbots.js"
+
+import chatbotSalesReaderRouter from "./chatbots/sales-reader/chatbots.js"
 import {
-  chatbotGenericRouter,
   promptGenericRouter,
-  unlikeGenericRouter,
-  usageGenericRouter,
-} from "./generic/index.js"
-import {
-  chatbotProductRouter,
+  promptOrdersRouter,
   promptProductRouter,
-  unlikeProductRouter,
-  usageProductRouter,
-} from "./product/index.js"
-import {
-  chatbotSalesReaderRouter,
   promptSalesReaderRouter,
+  unlikeGenericRouter,
+  unlikeOrdersRouter,
+  unlikeProductRouter,
   unlikeSalesReaderRouter,
+  usageGenericRouter,
+  usageOrdersRouter,
+  usageProductRouter,
   usageSalesReaderRouter,
-} from "./sales-reader/index.js"
+} from "./share"
 
 interface ChatbotParams extends ParamsDictionary {
   chatbot: "generic" | "sales-reader" | "product"
 }
 
-type ChatbotType = "generic" | "sales-reader" | "product"
+type ChatbotType = "generic" | "sales-reader" | "product" | "orders"
 
 type RouterMap = {
   [K in ChatbotType]: {
@@ -52,6 +53,12 @@ const routerMap: RouterMap = {
     prompt: promptProductRouter,
     chatbot: chatbotProductRouter,
     unlike: unlikeProductRouter,
+  },
+  orders: {
+    usage: usageOrdersRouter,
+    prompt: promptOrdersRouter,
+    chatbot: chatbotOrdersRouter,
+    unlike: unlikeOrdersRouter,
   },
 }
 
