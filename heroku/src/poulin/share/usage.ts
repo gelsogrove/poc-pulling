@@ -3,10 +3,22 @@ import { Request, Response, Router } from "express"
 import { pool } from "../../../server.js"
 import { validateRequest } from "../share/validateUser.js"
 
-const usageRouter = Router()
+const router = Router()
+
+interface UsageRequest extends Request {
+  body: {
+    day: string
+    total: number
+    service: string
+    idprompt: string
+  }
+  params: {
+    id: string
+  }
+}
 
 const createUsageHandler = async (
-  req: Request,
+  req: UsageRequest,
   res: Response
 ): Promise<void> => {
   const { userId, token } = await validateRequest(req, res)
@@ -228,9 +240,9 @@ const getMonthlyTotalsHandler = async (
 }
 
 // Definizione delle rotte con i rispettivi handler
-usageRouter.post("/new", createUsageHandler) // Rotta per creare un nuovo record di utilizzo
-usageRouter.post("/", getUsageHandler) // Rotta per ottenere i dati di utilizzo
-usageRouter.put("/:id", updateUsageHandler) // Rotta per aggiornare un record di utilizzo
-usageRouter.delete("/:id", deleteUsageHandler) // Rotta per eliminare un record di utilizzo
+router.post("/new", createUsageHandler) // Rotta per creare un nuovo record di utilizzo
+router.post("/", getUsageHandler) // Rotta per ottenere i dati di utilizzo
+router.put("/:id", updateUsageHandler) // Rotta per aggiornare un record di utilizzo
+router.delete("/:id", deleteUsageHandler) // Rotta per eliminare un record di utilizzo
 
-export default usageRouter
+export default router

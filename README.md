@@ -3,10 +3,15 @@
 - checkboX per ogni role
 - pulire ottimizzare hroku (naming e duplicati che non servono come unlike, mettere prductmanager)
 - correggere usage perche' voglio sapere quanto spendo per ogni chatbot
-
-
 - function calling
 - iniziamo ad armare il settings
+
+Router
+Generic
+Products  
+Oridini
+New order
+Statistics
 
 ===================== LATER =====================
 

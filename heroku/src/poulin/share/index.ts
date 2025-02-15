@@ -1,15 +1,18 @@
-export { default as promptProductRouter } from "./prompts.js"
-export { default as unlikeProductRouter } from "./unlinke.js"
-export { default as usageProductRouter } from "./usage.js"
+import router from "./prompts.js"
+import unlikeRouter from "./unlike.js"
+import usageRouter from "./usage.js"
 
-export { default as promptSalesReaderRouter } from "./prompts.js"
-export { default as unlikeSalesReaderRouter } from "./unlinke.js"
-export { default as usageSalesReaderRouter } from "./usage.js"
+export const promptGenericRouter = router
+export const promptOrdersRouter = router
+export const promptProductRouter = router
+export const promptSalesReaderRouter = router
 
-export { default as promptGenericRouter } from "./prompts.js"
-export { default as unlikeGenericRouter } from "./unlinke.js"
-export { default as usageGenericRouter } from "./usage.js"
+export const unlikeGenericRouter = unlikeRouter
+export const unlikeOrdersRouter = unlikeRouter
+export const unlikeProductRouter = unlikeRouter
+export const unlikeSalesReaderRouter = unlikeRouter
 
-export { default as promptOrdersRouter } from "./prompts.js"
-export { default as unlikeOrdersRouter } from "./unlinke.js"
-export { default as usageOrdersRouter } from "./usage.js"
+export const usageGenericRouter = usageRouter
+export const usageOrdersRouter = usageRouter
+export const usageProductRouter = usageRouter
+export const usageSalesReaderRouter = usageRouter
