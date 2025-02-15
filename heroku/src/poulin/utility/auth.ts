@@ -5,8 +5,8 @@ import speakeasy from "speakeasy"
 import { v4 as uuidv4 } from "uuid" // Importa uuid
 
 import dotenv from "dotenv"
-import { pool } from "../../../server"
-import { validateRequest } from "../share/validateUser"
+import { pool } from "../../../server.js"
+import { validateRequest } from "../share/validateUser.js"
 
 dotenv.config() // Carica le variabili d'ambiente dal file .env
 

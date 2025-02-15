@@ -18,7 +18,7 @@ import {
   usageOrdersRouter,
   usageProductRouter,
   usageSalesReaderRouter,
-} from "./share"
+} from "./share/index.js"
 
 interface ChatbotParams extends ParamsDictionary {
   chatbot: "generic" | "sales-reader" | "product"

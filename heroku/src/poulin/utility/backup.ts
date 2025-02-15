@@ -5,7 +5,7 @@ import fileUpload, { UploadedFile } from "express-fileupload"
 import fs from "fs"
 import path from "path"
 import unzipper from "unzipper"
-import { validateRequest } from "../share/validateUser"
+import { validateRequest } from "../share/validateUser.js"
 
 const backupRouter = Router()
 

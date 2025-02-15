@@ -11,5 +11,5 @@
     "rootDir": "./heroku"
   },
   "include": ["./heroku/**/*.ts"],
-  "exclude": ["node_modules", "./heroku/dist"]
+  "exclude": ["node_modules"]
 }
