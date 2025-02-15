@@ -1,11 +1,11 @@
-import { RequestHandler, Router } from "express"
+import { Request, RequestHandler, Response, Router } from "express"
 import multer from "multer"
 import path from "path"
 import { pool } from "../../../server.js"
 import { validateRequest } from "../share/validateUser.js"
 
 interface MulterRequest extends Request {
-  file?: Express.Multer.File
+  file?: Express.Multer.File | undefined
 }
 
 const promptsManagerRouter = Router()
@@ -30,7 +30,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage })
 
 // Funzione per creare un nuovo prompt
-const createPrompt: RequestHandler = async (req, res) => {
+const createPrompt: RequestHandler = async (req: Request, res: Response) => {
   const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
@@ -66,7 +66,7 @@ const createPrompt: RequestHandler = async (req, res) => {
 }
 
 // Funzione per ottenere tutti i prompts
-const getPrompts: RequestHandler = async (req, res) => {
+const getPrompts: RequestHandler = async (req: Request, res: Response) => {
   const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
@@ -93,8 +93,8 @@ const getPrompts: RequestHandler = async (req, res) => {
 }
 
 // Funzione per aggiornare un prompt esistente
-const updatePrompt: RequestHandler = async (req, res) => {
-  upload.single("image")(req as MulterRequest, res, async (err: any) => {
+const updatePrompt: RequestHandler = async (req: Request, res: Response) => {
+  upload.single("image")(req as unknown as Request, res, async (err: any) => {
     if (err) {
       return res.status(400).json({ error: "Error uploading file" })
     }

@@ -27,7 +27,7 @@ const createPrompt = async (promptData) => {
 
 const updatePrompt = async (id, promptData) => {
   const token = Cookies.get("token")
-
+  
   const formData = new FormData()
   formData.append("promptname", promptData.promptname)
   formData.append("model", promptData.model)
@@ -44,13 +44,13 @@ const updatePrompt = async (id, promptData) => {
     formData.append("image", promptData.image)
   }
 
-  const response = await axios.put(`${API_URL}/update/${id}`, formData, {
+  const response = await axios.put(`${API_URL}/prompts/update/${id}`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",
     },
   })
-
+  
   return response.data
 }
 
