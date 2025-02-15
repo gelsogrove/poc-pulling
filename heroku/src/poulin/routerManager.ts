@@ -24,7 +24,12 @@ interface ChatbotParams extends ParamsDictionary {
   chatbot: "generic" | "sales-reader" | "product"
 }
 
-type ChatbotType = "generic" | "sales-reader" | "product" | "orders"
+type ChatbotType =
+  | "generic"
+  | "sales-reader"
+  | "product"
+  | "orders"
+  | "logistics"
 
 type RouterMap = {
   [K in ChatbotType]: {
@@ -55,6 +60,12 @@ const routerMap: RouterMap = {
     unlike: unlikeProductRouter,
   },
   orders: {
+    usage: usageOrdersRouter,
+    prompt: promptOrdersRouter,
+    chatbot: chatbotOrdersRouter,
+    unlike: unlikeOrdersRouter,
+  },
+  logistics: {
     usage: usageOrdersRouter,
     prompt: promptOrdersRouter,
     chatbot: chatbotOrdersRouter,
