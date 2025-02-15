@@ -1,8 +1,15 @@
 import { Request, RequestHandler, Response, Router } from "express"
+import fs from "fs"
 import multer from "multer"
 import path from "path"
 import { pool } from "../../../server.js"
 import { validateRequest } from "../share/validateUser.js"
+
+// Crea la directory se non esiste
+const uploadDir = "public/images/chatbots"
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true })
+}
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File | undefined
@@ -16,7 +23,11 @@ const storage = multer.diskStorage({
     file: Express.Multer.File,
     cb: (error: Error | null, destination: string) => void
   ) => {
-    cb(null, "public/images/chatbots")
+    // Assicurati che la directory esista
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true })
+    }
+    cb(null, uploadDir)
   },
   filename: (
     req: Express.Request,
