@@ -24,9 +24,26 @@ const storage = multer.diskStorage({
     cb: (error: Error | null, destination: string) => void
   ) => {
     console.log("Upload directory:", uploadDir)
+    console.log("Directory exists:", fs.existsSync(uploadDir))
+
+    // Prova a creare la directory
     if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true })
+      try {
+        fs.mkdirSync(uploadDir, { recursive: true })
+        console.log("Directory created successfully")
+      } catch (error) {
+        console.error("Error creating directory:", error)
+      }
     }
+
+    // Verifica i permessi
+    try {
+      fs.accessSync(uploadDir, fs.constants.W_OK)
+      console.log("Directory is writable")
+    } catch (error) {
+      console.error("Directory is not writable:", error)
+    }
+
     cb(null, uploadDir)
   },
   filename: (
@@ -34,7 +51,9 @@ const storage = multer.diskStorage({
     file: Express.Multer.File,
     cb: (error: Error | null, filename: string) => void
   ) => {
-    cb(null, `chatbot-${Date.now()}${path.extname(file.originalname)}`)
+    const filename = `chatbot-${Date.now()}${path.extname(file.originalname)}`
+    console.log("Generated filename:", filename)
+    cb(null, filename)
   },
 })
 
@@ -138,15 +157,22 @@ const updatePrompt: RequestHandler = async (
       return
     }
 
-    // Aggiungiamo un controllo più sicuro per il file
     const multerReq = req as MulterRequest
+    console.log("Full upload dir:", path.resolve(uploadDir))
+    console.log("File details:", multerReq.file)
+
     const imagePath =
       multerReq.file && multerReq.file.filename
         ? `/images/chatbots/${multerReq.file.filename}`
         : req.body.image || "/images/chatbot.webp"
 
-    console.log("File caricato:", multerReq.file)
-    console.log("Percorso immagine salvato:", imagePath)
+    console.log("Final image path:", imagePath)
+    console.log(
+      "File exists?",
+      multerReq.file
+        ? fs.existsSync(path.join(uploadDir, multerReq.file.filename))
+        : "No file uploaded"
+    )
 
     const result = await pool.query(
       `UPDATE prompts SET promptname = $1, model = $2, temperature = $3, prompt = $4, path = $5, image = $6 

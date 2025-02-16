@@ -118,8 +118,9 @@ if (process.env.NODE_ENV === "production") {
   })
 }
 
-// Servi i file statici dalla directory public
-app.use(express.static(path.join(__dirname, "../public")))
+const staticPath = path.join(__dirname, "../public")
+console.log("Static files path:", staticPath)
+app.use(express.static(staticPath))
 
 app.use("/", welcomeRouter)
 app.use("/auth", limiter, authRouter)
