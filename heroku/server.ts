@@ -1,8 +1,9 @@
 import cors from "cors"
 import dotenv from "dotenv"
 import { EventEmitter } from "events"
-import express from "express"
+import express, { Request, Response } from "express"
 import rateLimit from "express-rate-limit"
+import fs from "fs"
 import helmet from "helmet"
 import path from "path"
 import pkg from "pg"
@@ -126,8 +127,19 @@ console.log({
   staticPath: path.join(rootDir, "public"),
 })
 
-// Serviamo i file statici dalla directory corretta
-app.use(express.static(path.join(rootDir, "public")))
+// Middleware per servire le immagini
+app.get("/images/chatbots/:filename", (req: Request, res: Response) => {
+  const filename = req.params.filename
+  const filePath = path.join(rootDir, "public/images/chatbots", filename)
+
+  console.log("Requesting image:", filePath)
+
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath)
+  } else {
+    res.status(404).send("Image not found")
+  }
+})
 
 // Aggiungiamo anche un middleware per loggare le richieste di file statici
 app.use((req, res, next) => {
