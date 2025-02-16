@@ -134,7 +134,7 @@ const getPrompts: RequestHandler = async (
     // Se admin vede tutti i prompts, altrimenti solo quelli attivi
     const query = isAdmin
       ? 'SELECT * FROM prompts ORDER BY "idprompt" ASC'
-      : 'SELECT * FROM prompts WHERE isactive = true AND ishide = false ORDER BY "idprompt" ASC'
+      : 'SELECT * FROM prompts WHERE isactive = true AND ishide = false ORDER BY "idprompt",order ASC'
 
     const result = await pool.query(query)
     res.status(200).json(result.rows)
@@ -359,8 +359,8 @@ const movePromptOrder: RequestHandler = async (req, res) => {
     // Trova il prompt con cui scambiare l'ordine
     const swapPrompt = await pool.query(
       direction === "up"
-        ? 'SELECT idprompt, "order" FROM prompts WHERE "order" < $1 ORDER BY "idprompt" DESC LIMIT 1'
-        : 'SELECT idprompt, "order" FROM prompts WHERE "order" > $1 ORDER BY "idprompt" ASC LIMIT 1',
+        ? 'SELECT idprompt, "order" FROM prompts WHERE "order" < $1 ORDER BY "idprompt",order DESC LIMIT 1'
+        : 'SELECT idprompt, "order" FROM prompts WHERE "order" > $1 ORDER BY "idprompt",order ASC LIMIT 1',
       [currentOrder]
     )
 
