@@ -134,7 +134,7 @@ const PromptManager = ({ onClose }) => {
   const handleRowClick = (prompt) => {
     setEditingPrompt(prompt)
     setPrompt({
-      content: prompt.prompt,
+      content: prompt.content,
       model: prompt.model,
       temperature: prompt.temperature,
       promptname: prompt.promptname,

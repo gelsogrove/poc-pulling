@@ -89,8 +89,8 @@ const PromptForm = ({
         <div className="prompt-form-textarea">
           <label className="prompt-form-required">Prompt</label>
           <textarea
-            name="prompt"
-            value={prompt.prompt || ""}
+            name="content"
+            value={prompt.content || ""}
             onChange={handleInputChange}
             required
             rows={10}
