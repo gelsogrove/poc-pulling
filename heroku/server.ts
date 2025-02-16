@@ -126,7 +126,17 @@ console.log({
   staticPath: path.join(rootDir, "public"),
 })
 
-// Aggiungi questo middleware per servire i file statici
+// Aggiungi questo middleware prima di express.static
+app.use((req, res, next) => {
+  if (req.url.startsWith("/images")) {
+    console.log("Static file request:", {
+      url: req.url,
+      physicalPath: path.join(rootDir, "public", req.url),
+    })
+  }
+  next()
+})
+
 app.use(express.static(path.join(rootDir, "public")))
 
 app.use("/", welcomeRouter)
