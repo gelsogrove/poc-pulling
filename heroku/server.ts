@@ -119,9 +119,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // Servi i file statici dalla directory public
-app.use("/images", express.static(path.join(__dirname, "../public/images")))
-// oppure
-app.use(express.static("public"))
+app.use(express.static(path.join(__dirname, "../public")))
 
 app.use("/", welcomeRouter)
 app.use("/auth", limiter, authRouter)
