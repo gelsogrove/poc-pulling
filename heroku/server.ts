@@ -132,11 +132,33 @@ app.get("/images/chatbots/:filename", (req: Request, res: Response) => {
   const filename = req.params.filename
   const filePath = path.join(rootDir, "public/images/chatbots", filename)
 
-  console.log("Requesting image:", filePath)
+  console.log({
+    requestedFile: filename,
+    fullPath: filePath,
+    rootDir,
+    exists: fs.existsSync(filePath),
+    dirContents: fs.existsSync(path.dirname(filePath))
+      ? fs.readdirSync(path.dirname(filePath))
+      : "directory not found",
+  })
 
   if (fs.existsSync(filePath)) {
     res.sendFile(filePath)
   } else {
+    // Log della struttura delle directory
+    try {
+      const publicDir = path.join(rootDir, "public")
+      const imagesDir = path.join(publicDir, "images")
+      console.log("Directory structure:", {
+        rootExists: fs.existsSync(rootDir),
+        publicExists: fs.existsSync(publicDir),
+        imagesExists: fs.existsSync(imagesDir),
+        chatbotsExists: fs.existsSync(path.join(imagesDir, "chatbots")),
+      })
+    } catch (error) {
+      console.error("Error checking directories:", error)
+    }
+
     res.status(404).send("Image not found")
   }
 })
