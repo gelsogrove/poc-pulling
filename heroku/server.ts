@@ -4,7 +4,9 @@ import { EventEmitter } from "events"
 import express from "express"
 import rateLimit from "express-rate-limit"
 import helmet from "helmet"
+import path from "path"
 import pkg from "pg"
+import { fileURLToPath } from "url"
 
 import {
   chatbotRouter,
@@ -41,6 +43,9 @@ export const pool = new Pool({
     rejectUnauthorized: false, // Necessario per Heroku...
   },
 })
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // Inizializza l'app Express
 const app = express()
@@ -112,6 +117,12 @@ if (process.env.NODE_ENV === "production") {
     next()
   })
 }
+
+// Servi i file statici dalla directory public
+app.use("/images", express.static(path.join(__dirname, "../public/images")))
+// oppure
+app.use(express.static("public"))
+
 app.use("/", welcomeRouter)
 app.use("/auth", limiter, authRouter)
 app.use("/users", limiter, usersRouter)

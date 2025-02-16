@@ -6,7 +6,7 @@ import { pool } from "../../../server.js"
 import { validateRequest } from "../share/validateUser.js"
 
 // Crea la directory se non esiste
-const uploadDir = "public/images/chatbots"
+const uploadDir = path.join(process.cwd(), "public/images/chatbots")
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true })
 }
@@ -23,7 +23,6 @@ const storage = multer.diskStorage({
     file: Express.Multer.File,
     cb: (error: Error | null, destination: string) => void
   ) => {
-    // Assicurati che la directory esista
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true })
     }
@@ -145,13 +144,16 @@ const updatePrompt: RequestHandler = async (
         ? `/images/chatbots/${multerReq.file.filename}`
         : req.body.image || "/images/chatbot.webp"
 
+    console.log("File caricato:", multerReq.file)
+    console.log("Percorso immagine salvato:", imagePath)
+
     const result = await pool.query(
-      `UPDATE prompts 
-       SET promptname = $1, model = $2, temperature = $3, prompt = $4, path = $5, image = $6 
-       WHERE idprompt = $7 
-       RETURNING *`,
+      `UPDATE prompts SET promptname = $1, model = $2, temperature = $3, prompt = $4, path = $5, image = $6 
+       WHERE idprompt = $7 RETURNING *`,
       [promptname, model, temperature, prompt, path, imagePath, id]
     )
+
+    console.log("Record aggiornato:", result.rows[0])
 
     if (result.rowCount === 0) {
       res.status(404).json({ error: "Prompt not found" })
