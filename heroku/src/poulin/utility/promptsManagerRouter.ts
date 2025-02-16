@@ -1,12 +1,12 @@
 import { Request, RequestHandler, Response, Router } from "express"
 import fs from "fs"
 import multer from "multer"
-import path from "path"
+import { extname, join } from "path"
 import { pool } from "../../../server.js"
 import { validateRequest } from "../share/validateUser.js"
 
 // Crea la directory se non esiste
-const uploadDir = path.join(process.cwd(), "public/images/chatbots")
+const uploadDir = join(process.cwd(), "public/images/chatbots")
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true })
 }
@@ -51,7 +51,7 @@ const storage = multer.diskStorage({
     file: Express.Multer.File,
     cb: (error: Error | null, filename: string) => void
   ) => {
-    const filename = `chatbot-${Date.now()}${path.extname(file.originalname)}`
+    const filename = `chatbot-${Date.now()}${extname(file.originalname)}`
     console.log("Generated filename:", filename)
     cb(null, filename)
   },
@@ -158,7 +158,7 @@ const updatePrompt: RequestHandler = async (
     }
 
     const multerReq = req as MulterRequest
-    console.log("Full upload dir:", path.resolve(uploadDir))
+    console.log("Full upload dir:", uploadDir)
     console.log("File details:", multerReq.file)
 
     const imagePath =
@@ -170,7 +170,7 @@ const updatePrompt: RequestHandler = async (
     console.log(
       "File exists?",
       multerReq.file
-        ? fs.existsSync(path.join(uploadDir, multerReq.file.filename))
+        ? fs.existsSync(join(uploadDir, multerReq.file.filename))
         : "No file uploaded"
     )
 
