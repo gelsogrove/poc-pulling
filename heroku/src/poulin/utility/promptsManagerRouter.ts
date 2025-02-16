@@ -383,6 +383,20 @@ const movePromptOrder: RequestHandler = async (req, res) => {
   }
 }
 
+// Aggiungi una route per servire le immagini
+promptsManagerRouter.get("/images/:filename", (req: Request, res: Response) => {
+  const filename = req.params.filename
+  const filePath = join(uploadDir, filename)
+
+  console.log("Requesting image:", filePath)
+
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath)
+  } else {
+    res.status(404).send("Image not found")
+  }
+})
+
 // Definizione delle rotte
 promptsManagerRouter.post("/new", createPrompt)
 promptsManagerRouter.get("/", getPrompts)

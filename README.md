@@ -41,6 +41,9 @@ heroku run bash -a poulin
 heroku pg:psql HEROKU_POSTGRESQL_AMBER_URL -a poulin
 heroku logs --tail --app poulin heroku restart -a poulin
 
+-- Aggiungi colonna image alla tabella prompts
+ALTER TABLE prompts ADD COLUMN image VARCHAR(255) DEFAULT '/images/chatbot.webp';
+
 mport command: PGPASSWORD=p7e2d963d16a98f0b61439338891882296ed3519cceb6728b0c6b2f9fbc6ed3bd psql -U u4k452g6ek8tnl -h c5p86clmevrg5s.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com -p 5432 -d dc2879l0jk2mj2 -c "\i '/tmp/Poulin_Grain_20250204.sql'"
 
 heroku run "PGPASSWORD=p7e2d963d16a98f0b61439338891882296ed3519cceb6728b0c6b2f9fbc6ed3bd psql -U u4k452g6ek8tnl -h c5p86clmevrg5s.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com -p 5432 -d dc2879l0jk2mj2 -c '\i /tmp/Poulin_Grain_20250204.sql'"
