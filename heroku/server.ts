@@ -46,6 +46,7 @@ export const pool = new Pool({
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
+const rootDir = path.join(__dirname, "..")
 
 // Inizializza l'app Express
 const app = express()
@@ -118,9 +119,26 @@ if (process.env.NODE_ENV === "production") {
   })
 }
 
-const staticPath = path.join(__dirname, "../public")
-console.log("Static files path:", staticPath)
-app.use(express.static(staticPath))
+// Aggiungiamo un log per vedere i percorsi
+console.log({
+  __dirname,
+  rootDir,
+  staticPath: path.join(rootDir, "public"),
+})
+
+// Serviamo i file statici dalla directory corretta
+app.use(express.static(path.join(rootDir, "public")))
+
+// Aggiungiamo anche un middleware per loggare le richieste di file statici
+app.use((req, res, next) => {
+  if (req.url.startsWith("/images")) {
+    console.log("Requesting static file:", {
+      url: req.url,
+      fullPath: path.join(rootDir, "public", req.url),
+    })
+  }
+  next()
+})
 
 app.use("/", welcomeRouter)
 app.use("/auth", limiter, authRouter)

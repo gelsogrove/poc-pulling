@@ -150,9 +150,9 @@ const updatePrompt: RequestHandler = async (
 
     const { userId } = validation
     const { id } = req.params
-    const { promptname, model, temperature, prompt, path } = req.body
+    const { promptname, model, temperature, content, path } = req.body
 
-    if (!promptname || !model || !prompt || !path) {
+    if (!promptname || !model || !content || !path) {
       res.status(400).json({ error: "Required fields cannot be null" })
       return
     }
@@ -177,7 +177,7 @@ const updatePrompt: RequestHandler = async (
     const result = await pool.query(
       `UPDATE prompts SET promptname = $1, model = $2, temperature = $3, prompt = $4, path = $5, image = $6 
        WHERE idprompt = $7 RETURNING *`,
-      [promptname, model, temperature, prompt, path, imagePath, id]
+      [promptname, model, temperature, content, path, imagePath, id]
     )
 
     console.log("Record aggiornato:", result.rows[0])
