@@ -1,9 +1,10 @@
 import { Request, RequestHandler, Response, Router } from "express"
 import fs from "fs"
 import multer from "multer"
-import { extname, join } from "path"
+import { extname, join, resolve } from "path"
 import { pool } from "../../../server.js"
 import { validateRequest } from "../share/validateUser.js"
+import { uploadToS3 } from "./s3Service.js"
 
 // Crea la directory se non esiste
 const uploadDir = join(process.cwd(), "public/images/chatbots")
@@ -23,8 +24,13 @@ const storage = multer.diskStorage({
     file: Express.Multer.File,
     cb: (error: Error | null, destination: string) => void
   ) => {
-    console.log("Upload directory:", uploadDir)
-    console.log("Directory exists:", fs.existsSync(uploadDir))
+    console.log({
+      uploadDir,
+      cwd: process.cwd(),
+      absolutePath: resolve(uploadDir),
+      exists: fs.existsSync(uploadDir),
+      parentExists: fs.existsSync(join(uploadDir, "..")),
+    })
 
     // Prova a creare la directory
     if (!fs.existsSync(uploadDir)) {
@@ -161,10 +167,18 @@ const updatePrompt: RequestHandler = async (
     console.log("Full upload dir:", uploadDir)
     console.log("File details:", multerReq.file)
 
-    const imagePath =
+    let imagePath =
       multerReq.file && multerReq.file.filename
         ? `/images/chatbots/${multerReq.file.filename}`
         : req.body.image || "/images/chatbot.webp"
+
+    if (multerReq.file) {
+      const s3Url = await uploadToS3(
+        multerReq.file.buffer,
+        multerReq.file.filename
+      )
+      imagePath = s3Url
+    }
 
     console.log("Final image path:", imagePath)
     console.log(
