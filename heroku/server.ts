@@ -3,6 +3,7 @@ import dotenv from "dotenv"
 import { EventEmitter } from "events"
 import express from "express"
 import rateLimit from "express-rate-limit"
+import fs from "fs"
 import helmet from "helmet"
 import path from "path"
 import pkg from "pg"
@@ -62,12 +63,18 @@ app.use(
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "https://ai.dairy-tools.com/"],
         styleSrc: ["'self'", "https://ai.dairy-tools.com/"],
-        imgSrc: ["'self'", "data:", "https://ai.dairy-tools.com/"],
+        imgSrc: [
+          "'self'",
+          "data:",
+          "https://ai.dairy-tools.com/",
+          "https://poulin-bd075425a92c.herokuapp.com/",
+        ],
         connectSrc: [
           "'self'",
           "https://ai.dairy-tools.com/",
           "http://localhost:3000",
           "http://localhost:3001",
+          "https://poulin-bd075425a92c.herokuapp.com/",
         ],
       },
     },
@@ -135,6 +142,19 @@ app.use((req, res, next) => {
     })
   }
   next()
+})
+
+app.get("/images/chatbots/:filename", (req, res) => {
+  const filename = req.params.filename
+  const filePath = path.join(rootDir, "public", "images", "chatbots", filename)
+
+  console.log("Serving image:", {
+    filename,
+    filePath,
+    exists: fs.existsSync(filePath),
+  })
+
+  res.sendFile(filePath)
 })
 
 app.use(express.static(path.join(rootDir, "public")))
