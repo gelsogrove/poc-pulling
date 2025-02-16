@@ -29,10 +29,13 @@ const updatePrompt = async (id, promptData) => {
   const token = Cookies.get("token")
 
   const formData = new FormData()
+
+  console.log("Sending data:", promptData) // Debug log
+
   formData.append("promptname", promptData.promptname)
   formData.append("model", promptData.model)
   formData.append("temperature", promptData.temperature)
-  formData.append("prompt", promptData.content)
+  formData.append("content", promptData.content) // Qui era il problema: usiamo content invece di prompt
   formData.append("path", promptData.path)
 
   // Se l'immagine è in base64, la convertiamo in blob
@@ -42,6 +45,11 @@ const updatePrompt = async (id, promptData) => {
     formData.append("image", blob, "image.jpg")
   } else if (promptData.image !== "/images/chatbot.webp") {
     formData.append("image", promptData.image)
+  }
+
+  // Debug log per vedere cosa stiamo inviando
+  for (let pair of formData.entries()) {
+    console.log(pair[0] + ": " + pair[1])
   }
 
   const response = await axios.put(`${API_URL}/update/${id}`, formData, {
