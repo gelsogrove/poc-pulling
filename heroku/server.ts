@@ -1,9 +1,8 @@
 import cors from "cors"
 import dotenv from "dotenv"
 import { EventEmitter } from "events"
-import express, { Request, Response } from "express"
+import express from "express"
 import rateLimit from "express-rate-limit"
-import fs from "fs"
 import helmet from "helmet"
 import path from "path"
 import pkg from "pg"
@@ -127,52 +126,8 @@ console.log({
   staticPath: path.join(rootDir, "public"),
 })
 
-// Middleware per servire le immagini
-app.get("/images/chatbots/:filename", (req: Request, res: Response) => {
-  const filename = req.params.filename
-  const filePath = path.join(rootDir, "public/images/chatbots", filename)
-
-  console.log({
-    requestedFile: filename,
-    fullPath: filePath,
-    rootDir,
-    exists: fs.existsSync(filePath),
-    dirContents: fs.existsSync(path.dirname(filePath))
-      ? fs.readdirSync(path.dirname(filePath))
-      : "directory not found",
-  })
-
-  if (fs.existsSync(filePath)) {
-    res.sendFile(filePath)
-  } else {
-    // Log della struttura delle directory
-    try {
-      const publicDir = path.join(rootDir, "public")
-      const imagesDir = path.join(publicDir, "images")
-      console.log("Directory structure:", {
-        rootExists: fs.existsSync(rootDir),
-        publicExists: fs.existsSync(publicDir),
-        imagesExists: fs.existsSync(imagesDir),
-        chatbotsExists: fs.existsSync(path.join(imagesDir, "chatbots")),
-      })
-    } catch (error) {
-      console.error("Error checking directories:", error)
-    }
-
-    res.status(404).send("Image not found")
-  }
-})
-
-// Aggiungiamo anche un middleware per loggare le richieste di file statici
-app.use((req, res, next) => {
-  if (req.url.startsWith("/images")) {
-    console.log("Requesting static file:", {
-      url: req.url,
-      fullPath: path.join(rootDir, "public", req.url),
-    })
-  }
-  next()
-})
+// Aggiungi questo middleware per servire i file statici
+app.use(express.static(path.join(rootDir, "public")))
 
 app.use("/", welcomeRouter)
 app.use("/auth", limiter, authRouter)
