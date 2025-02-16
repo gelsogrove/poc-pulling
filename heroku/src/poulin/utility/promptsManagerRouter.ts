@@ -5,8 +5,13 @@ import { extname, join, resolve } from "path"
 import { pool } from "../../../server.js"
 import { validateRequest } from "../share/validateUser.js"
 
+// Usa lo stesso percorso del server
+const uploadDir =
+  process.env.NODE_ENV === "production"
+    ? "/app/public/images/chatbots"
+    : join(process.cwd(), "public/images/chatbots")
+
 // Crea la directory se non esiste
-const uploadDir = join(process.cwd(), "public/images/chatbots")
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true })
 }

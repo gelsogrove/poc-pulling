@@ -157,7 +157,20 @@ app.get("/images/chatbots/:filename", (req, res) => {
   res.sendFile(filePath)
 })
 
-app.use(express.static(path.join(rootDir, "public")))
+// Usa il percorso assoluto per la directory public
+const publicDir =
+  process.env.NODE_ENV === "production"
+    ? "/app/public"
+    : path.join(__dirname, "..", "public")
+
+console.log("Public directory:", {
+  publicDir,
+  exists: fs.existsSync(publicDir),
+  contents: fs.existsSync(publicDir) ? fs.readdirSync(publicDir) : [],
+})
+
+// Serviamo i file statici dalla directory corretta
+app.use(express.static(publicDir))
 
 app.use("/", welcomeRouter)
 app.use("/auth", limiter, authRouter)
