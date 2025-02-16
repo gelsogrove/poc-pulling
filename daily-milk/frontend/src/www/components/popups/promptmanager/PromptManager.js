@@ -1,5 +1,3 @@
-import fs from "fs"
-import path from "path"
 import React, { useEffect, useState } from "react"
 import CloseButton from "../../share/CloseButton"
 import {
@@ -144,23 +142,6 @@ const PromptManager = ({ onClose }) => {
     })
     setShowForm(true)
   }
-
-  console.log(
-    "Directory path:",
-    path.join(process.cwd(), "public/images/chatbots")
-  )
-
-  fs.access(
-    path.join(process.cwd(), "public/images/chatbots"),
-    fs.constants.R_OK | fs.constants.W_OK,
-    (err) => {
-      if (err) {
-        console.error("Directory permissions error:", err)
-      } else {
-        console.log("Directory is readable and writable")
-      }
-    }
-  )
 
   return (
     <div className="prompt-manager">
