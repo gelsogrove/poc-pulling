@@ -188,6 +188,32 @@ app.use("/poulin/:chatbot/chatbot", limiter, chatbotRouter)
 app.use("/poulin/:chatbot/unlike", limiter, unlikeRouter)
 app.use("/poulin/:chatbot/backup", limiter, backupRouter)
 
+// Aggiungi questo endpoint prima delle altre routes
+app.get("/debug/public", (req, res) => {
+  const publicDir =
+    process.env.NODE_ENV === "production"
+      ? "/app/public"
+      : path.join(__dirname, "..", "public")
+
+  const structure = {
+    publicDir,
+    exists: fs.existsSync(publicDir),
+    contents: fs.existsSync(publicDir) ? fs.readdirSync(publicDir) : [],
+    imagesDir: path.join(publicDir, "images"),
+    imagesExists: fs.existsSync(path.join(publicDir, "images")),
+    imagesContents: fs.existsSync(path.join(publicDir, "images"))
+      ? fs.readdirSync(path.join(publicDir, "images"))
+      : [],
+    chatbotsDir: path.join(publicDir, "images/chatbots"),
+    chatbotsExists: fs.existsSync(path.join(publicDir, "images/chatbots")),
+    chatbotsContents: fs.existsSync(path.join(publicDir, "images/chatbots"))
+      ? fs.readdirSync(path.join(publicDir, "images/chatbots"))
+      : [],
+  }
+
+  res.json(structure)
+})
+
 const PORT = process.env.PORT || 4999
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
