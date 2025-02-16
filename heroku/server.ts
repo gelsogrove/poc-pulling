@@ -163,6 +163,49 @@ const publicDir =
     ? "/app/public"
     : path.join(__dirname, "..", "public")
 
+// Crea la struttura delle directory
+const imagesDir = path.join(publicDir, "images")
+const chatbotsDir = path.join(imagesDir, "chatbots")
+
+try {
+  // Crea le directory se non esistono
+  if (!fs.existsSync(publicDir)) {
+    fs.mkdirSync(publicDir, { recursive: true })
+    console.log("Created public dir:", publicDir)
+  }
+
+  if (!fs.existsSync(imagesDir)) {
+    fs.mkdirSync(imagesDir, { recursive: true })
+    console.log("Created images dir:", imagesDir)
+  }
+
+  if (!fs.existsSync(chatbotsDir)) {
+    fs.mkdirSync(chatbotsDir, { recursive: true })
+    console.log("Created chatbots dir:", chatbotsDir)
+  }
+
+  // Log della struttura creata
+  console.log("Directory structure:", {
+    public: {
+      path: publicDir,
+      exists: fs.existsSync(publicDir),
+      writable: fs.accessSync(publicDir, fs.constants.W_OK),
+    },
+    images: {
+      path: imagesDir,
+      exists: fs.existsSync(imagesDir),
+      writable: fs.accessSync(imagesDir, fs.constants.W_OK),
+    },
+    chatbots: {
+      path: chatbotsDir,
+      exists: fs.existsSync(chatbotsDir),
+      writable: fs.accessSync(chatbotsDir, fs.constants.W_OK),
+    },
+  })
+} catch (error) {
+  console.error("Error creating directories:", error)
+}
+
 console.log("Public directory:", {
   publicDir,
   exists: fs.existsSync(publicDir),
@@ -212,6 +255,41 @@ app.get("/debug/public", (req, res) => {
   }
 
   res.json(structure)
+})
+
+// Endpoint per verificare i file nella directory chatbots
+app.get("/debug/chatbots", (req, res) => {
+  const chatbotsDir =
+    process.env.NODE_ENV === "production"
+      ? "/app/public/images/chatbots"
+      : path.join(__dirname, "..", "public/images/chatbots")
+
+  try {
+    const files = fs.readdirSync(chatbotsDir)
+    const filesDetails = files.map((file) => {
+      const filePath = path.join(chatbotsDir, file)
+      const stats = fs.statSync(filePath)
+      return {
+        name: file,
+        size: stats.size,
+        created: stats.birthtime,
+        path: filePath,
+        exists: fs.existsSync(filePath),
+      }
+    })
+
+    res.json({
+      directory: chatbotsDir,
+      exists: fs.existsSync(chatbotsDir),
+      files: filesDetails,
+    })
+  } catch (err: any) {
+    res.json({
+      error: err.message,
+      directory: chatbotsDir,
+      exists: fs.existsSync(chatbotsDir),
+    })
+  }
 })
 
 const PORT = process.env.PORT || 4999

@@ -5,7 +5,7 @@ import { extname, join, resolve } from "path"
 import { pool } from "../../../server.js"
 import { validateRequest } from "../share/validateUser.js"
 
-// Usa lo stesso percorso del server
+// Crea la directory se non esiste
 const uploadDir =
   process.env.NODE_ENV === "production"
     ? "/app/public/images/chatbots"
@@ -169,15 +169,12 @@ const updatePrompt: RequestHandler = async (
     }
 
     const multerReq = req as MulterRequest
-    console.log("File upload details:", {
-      file: multerReq.file,
+    console.log("Upload attempt:", {
       uploadDir,
-      fullPath: multerReq.file
-        ? join(uploadDir, multerReq.file.filename)
-        : null,
-      exists: multerReq.file
-        ? fs.existsSync(join(uploadDir, multerReq.file.filename))
-        : false,
+      file: multerReq.file,
+      body: req.body,
+      env: process.env.NODE_ENV,
+      cwd: process.cwd(),
     })
 
     let imagePath =
