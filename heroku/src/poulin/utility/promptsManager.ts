@@ -133,8 +133,8 @@ const getPrompts: RequestHandler = async (
 
     // Se admin vede tutti i prompts, altrimenti solo quelli attivi
     const query = isAdmin
-      ? 'SELECT * FROM prompts ORDER BY "idprompt", "order" ASC'
-      : 'SELECT * FROM prompts WHERE isactive = true AND ishide = false ORDER BY "idprompt", "order" ASC'
+      ? 'SELECT * FROM prompts ORDER BY "order", "idprompt" ASC'
+      : 'SELECT * FROM prompts WHERE isactive = true AND ishide = false ORDER BY "order", "idprompt" ASC'
 
     const result = await pool.query(query)
     res.status(200).json(result.rows)
