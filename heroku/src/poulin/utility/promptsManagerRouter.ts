@@ -4,7 +4,6 @@ import multer from "multer"
 import { extname, join, resolve } from "path"
 import { pool } from "../../../server.js"
 import { validateRequest } from "../share/validateUser.js"
-import { uploadToS3 } from "./s3Service.js"
 
 // Crea la directory se non esiste
 const uploadDir = join(process.cwd(), "public/images/chatbots")
@@ -18,47 +17,48 @@ interface MulterRequest extends Request {
 
 const promptsManagerRouter = Router()
 
+// Log della directory all'avvio
+console.log("Initial directory check:", {
+  uploadDir,
+  exists: fs.existsSync(uploadDir),
+  cwd: process.cwd(),
+  absolutePath: resolve(uploadDir),
+})
+
 const storage = multer.diskStorage({
-  destination: (
-    req: Express.Request,
-    file: Express.Multer.File,
-    cb: (error: Error | null, destination: string) => void
-  ) => {
-    console.log({
+  destination: (req, file, cb) => {
+    // Log prima di creare la directory
+    console.log("Before directory creation:", {
       uploadDir,
-      cwd: process.cwd(),
-      absolutePath: resolve(uploadDir),
       exists: fs.existsSync(uploadDir),
+      parentDir: join(uploadDir, ".."),
       parentExists: fs.existsSync(join(uploadDir, "..")),
     })
 
-    // Prova a creare la directory
     if (!fs.existsSync(uploadDir)) {
       try {
         fs.mkdirSync(uploadDir, { recursive: true })
-        console.log("Directory created successfully")
+        console.log("Directory created successfully:", uploadDir)
       } catch (error) {
         console.error("Error creating directory:", error)
       }
     }
 
-    // Verifica i permessi
-    try {
-      fs.accessSync(uploadDir, fs.constants.W_OK)
-      console.log("Directory is writable")
-    } catch (error) {
-      console.error("Directory is not writable:", error)
-    }
+    // Log dopo la creazione
+    console.log("After directory creation:", {
+      exists: fs.existsSync(uploadDir),
+      stats: fs.existsSync(uploadDir) ? fs.statSync(uploadDir) : null,
+    })
 
     cb(null, uploadDir)
   },
-  filename: (
-    req: Express.Request,
-    file: Express.Multer.File,
-    cb: (error: Error | null, filename: string) => void
-  ) => {
+  filename: (req, file, cb) => {
     const filename = `chatbot-${Date.now()}${extname(file.originalname)}`
-    console.log("Generated filename:", filename)
+    console.log("File being saved:", {
+      filename,
+      originalName: file.originalname,
+      fullPath: join(uploadDir, filename),
+    })
     cb(null, filename)
   },
 })
@@ -164,29 +164,21 @@ const updatePrompt: RequestHandler = async (
     }
 
     const multerReq = req as MulterRequest
-    console.log("Full upload dir:", uploadDir)
-    console.log("File details:", multerReq.file)
+    console.log("File upload details:", {
+      file: multerReq.file,
+      uploadDir,
+      fullPath: multerReq.file
+        ? join(uploadDir, multerReq.file.filename)
+        : null,
+      exists: multerReq.file
+        ? fs.existsSync(join(uploadDir, multerReq.file.filename))
+        : false,
+    })
 
     let imagePath =
       multerReq.file && multerReq.file.filename
         ? `/images/chatbots/${multerReq.file.filename}`
         : req.body.image || "/images/chatbot.webp"
-
-    if (multerReq.file) {
-      const s3Url = await uploadToS3(
-        multerReq.file.buffer,
-        multerReq.file.filename
-      )
-      imagePath = s3Url
-    }
-
-    console.log("Final image path:", imagePath)
-    console.log(
-      "File exists?",
-      multerReq.file
-        ? fs.existsSync(join(uploadDir, multerReq.file.filename))
-        : "No file uploaded"
-    )
 
     const result = await pool.query(
       `UPDATE prompts SET promptname = $1, model = $2, temperature = $3, prompt = $4, path = $5, image = $6 
