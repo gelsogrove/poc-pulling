@@ -8,6 +8,8 @@ const PromptForm = ({
   handleCancel,
   models, // array di modelli disponibili
 }) => {
+  console.log("PromptForm received data:", prompt) // Debug log
+
   const handleImageUpload = (e) => {
     const file = e.target.files[0]
     if (file) {

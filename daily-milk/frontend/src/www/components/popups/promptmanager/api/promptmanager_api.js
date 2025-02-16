@@ -11,6 +11,7 @@ const getPrompts = async () => {
   }
 
   const response = await axios.get(API_URL, { headers })
+  console.log("API Response:", response.data)
   return response.data
 }
 

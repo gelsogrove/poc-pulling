@@ -34,6 +34,7 @@ const PromptManager = ({ onClose }) => {
   const fetchPrompts = async () => {
     try {
       const data = await getPrompts()
+      console.log("Fetched prompts:", data)
       setPrompts(data)
     } catch (err) {
       console.error("Error fetching prompts:", err)
@@ -73,21 +74,33 @@ const PromptManager = ({ onClose }) => {
       setEditingPrompt((prev) => ({
         ...prev,
         [name]: value,
+        ...(name === "content" ? { prompt: value } : {}),
       }))
     } else {
       setPrompt((prev) => ({
         ...prev,
         [name]: value,
+        ...(name === "content" ? { prompt: value } : {}),
       }))
     }
   }
 
   const handleSave = async () => {
     try {
+      const saveData = editingPrompt
+        ? {
+            ...editingPrompt,
+            prompt: editingPrompt.content,
+          }
+        : {
+            ...prompt,
+            prompt: prompt.content,
+          }
+
       if (editingPrompt) {
-        await updatePrompt(editingPrompt.idprompt, editingPrompt)
+        await updatePrompt(editingPrompt.idprompt, saveData)
       } else {
-        await createPrompt(prompt)
+        await createPrompt(saveData)
       }
       setShowForm(false)
       setEditingPrompt(null)
@@ -132,14 +145,19 @@ const PromptManager = ({ onClose }) => {
   }
 
   const handleRowClick = (prompt) => {
-    setEditingPrompt(prompt)
-    setPrompt({
-      content: prompt.content,
+    console.log("Prompt data received:", prompt)
+    const formData = {
+      ...prompt,
+      content: prompt.prompt,
+      promptname: prompt.promptname,
       model: prompt.model,
       temperature: prompt.temperature,
-      promptname: prompt.promptname,
       image: prompt.image || "/images/chatbot.webp",
-    })
+      path: prompt.path,
+    }
+    console.log("Form data being set:", formData)
+    setEditingPrompt(formData)
+    setPrompt(formData)
     setShowForm(true)
   }
 
