@@ -26,7 +26,7 @@ type ChatbotType =
   | "product"
   | "orders"
   | "logistics"
-  | "router"
+  | "main"
 
 interface ChatbotParams extends ParamsDictionary {
   chatbot: ChatbotType
@@ -72,7 +72,7 @@ const routerMap: RouterMap = {
     chatbot: chatbotOrdersRouter,
     unlike: unlikeOrdersRouter,
   },
-  router: {
+  main: {
     usage: usageOrdersRouter,
     prompt: promptOrdersRouter,
     chatbot: chatbotOrdersRouter,
