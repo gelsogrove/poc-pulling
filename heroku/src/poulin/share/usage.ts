@@ -14,6 +14,7 @@ interface UsageRequest extends Request {
   }
   params: {
     id: string
+    chatbot?: string
   }
 }
 
@@ -45,6 +46,8 @@ const createUsageHandler = async (
 const getUsageHandler = async (req: Request, res: Response): Promise<void> => {
   const { userId, token } = await validateRequest(req, res)
   if (!userId) return
+
+  const chatbot = req.params.chatbot
 
   try {
     const sql = `
@@ -116,14 +119,29 @@ const getUsageHandler = async (req: Request, res: Response): Promise<void> => {
     `
     )
 
-    const currentMonthResult = await pool.query(
-      `
-      SELECT COALESCE(SUM(total), 0) AS total
-      FROM usage
-      WHERE date_trunc('month', day) = date_trunc('month', CURRENT_DATE)
+    const totalMonthQuery = `
+      SELECT COALESCE(SUM(total), 0) as total
+      FROM usage 
+      WHERE 
+        EXTRACT(MONTH FROM day) = EXTRACT(MONTH FROM CURRENT_DATE)
+        AND EXTRACT(YEAR FROM day) = EXTRACT(YEAR FROM CURRENT_DATE)
+        AND userid = $1
     `
-    )
-    const totalCurrentMonth = currentMonthResult.rows[0]?.total || 0
+
+    const totalMonthByChatbotQuery = `
+      SELECT COALESCE(SUM(total), 0) as total
+      FROM usage 
+      WHERE 
+        EXTRACT(MONTH FROM day) = EXTRACT(MONTH FROM CURRENT_DATE)
+        AND EXTRACT(YEAR FROM day) = EXTRACT(YEAR FROM CURRENT_DATE)
+        AND userid = $1
+        AND service = $2
+    `
+
+    const [totalMonthResult, totalMonthByChatbotResult] = await Promise.all([
+      pool.query(totalMonthQuery, [userId]),
+      pool.query(totalMonthByChatbotQuery, [userId, chatbot]),
+    ])
 
     const day = dayResult.rows[0]?.total || "0.00"
 
@@ -137,14 +155,14 @@ const getUsageHandler = async (req: Request, res: Response): Promise<void> => {
       day,
       currentWeek,
       totalCurrentWeek,
-      totalCurrentMonth,
+      totalCurrentMonth: parseFloat(totalMonthResult.rows[0]?.total || "0"),
+      totalCurrentMonthByChatbot: parseFloat(
+        totalMonthByChatbotResult.rows[0]?.total || "0"
+      ),
       lastmonths,
     })
   } catch (error) {
-    console.error(
-      "Error during retrieval:",
-      error instanceof Error ? error.message : error
-    )
+    console.error("Error fetching usage data:", error)
     res.status(500).json({ error: "Internal server error." })
   }
 }
