@@ -43,8 +43,14 @@ const Usage = ({
       {/* Differenza calcolata */}
       <h3>{currentChatDifference.toFixed(2)} $</h3>
       <br />
+      {/* Differenza calcolata */}
+      Current monthly usage:
+      <div>{usageData.totalCurrentMonthByChatbot} $</div>
+      {/*  <hr />
       Current monthly usage:
       <div>{usageData.totalCurrentMonth} $</div>
+      <hr />
+    */}
       <hr />
       Model:
       <div>{model}</div>

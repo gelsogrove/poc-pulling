@@ -391,6 +391,73 @@ const movePromptOrder: RequestHandler = async (req, res) => {
   }
 }
 
+// Aggiungi questo nuovo endpoint per gestire il riordino
+const movePromptOrderHandler = async (req: Request, res: Response) => {
+  const { userId, token } = await validateRequest(req, res)
+  if (!userId) return
+
+  const { idPrompt } = req.params
+  const { direction } = req.params // "up" o "down"
+
+  try {
+    // 1. Prima ottieni l'ordine corrente del prompt
+    const currentPrompt = await pool.query(
+      'SELECT "order" FROM prompts WHERE idprompt = $1',
+      [idPrompt]
+    )
+
+    if (currentPrompt.rows.length === 0) {
+      return res.status(404).json({ error: "Prompt not found" })
+    }
+
+    const currentOrder = currentPrompt.rows[0].order
+
+    // 2. Trova il prompt adiacente (sopra o sotto)
+    const adjacentPrompt = await pool.query(
+      direction === "up"
+        ? 'SELECT idprompt, "order" FROM prompts WHERE "order" < $1 ORDER BY "order" DESC LIMIT 1'
+        : 'SELECT idprompt, "order" FROM prompts WHERE "order" > $1 ORDER BY "order" ASC LIMIT 1',
+      [currentOrder]
+    )
+
+    // Se non c'è un prompt adiacente nella direzione richiesta
+    if (adjacentPrompt.rows.length === 0) {
+      return res.status(400).json({
+        error:
+          direction === "up" ? "Already at the top" : "Already at the bottom",
+      })
+    }
+
+    const adjacentOrder = adjacentPrompt.rows[0].order
+    const adjacentId = adjacentPrompt.rows[0].idprompt
+
+    // 3. Scambia gli ordini in una transazione
+    await pool.query("BEGIN")
+
+    try {
+      await pool.query('UPDATE prompts SET "order" = $1 WHERE idprompt = $2', [
+        adjacentOrder,
+        idPrompt,
+      ])
+
+      await pool.query('UPDATE prompts SET "order" = $1 WHERE idprompt = $2', [
+        currentOrder,
+        adjacentId,
+      ])
+
+      await pool.query("COMMIT")
+
+      res.json({ success: true })
+    } catch (error) {
+      await pool.query("ROLLBACK")
+      throw error
+    }
+  } catch (error) {
+    console.error("Error moving prompt order:", error)
+    res.status(500).json({ error: "Internal server error" })
+  }
+}
+
 // Definizione delle rotte
 promptsManagerRouter.post("/new", createPrompt)
 promptsManagerRouter.get("/", getPrompts)
@@ -399,5 +466,9 @@ promptsManagerRouter.delete("/delete/:idprompt", deletePrompt)
 promptsManagerRouter.put("/toggle/:idprompt", togglePromptActive)
 promptsManagerRouter.put("/toggle-hide/:idprompt", togglePromptHide)
 promptsManagerRouter.put("/move-order/:idprompt/:direction", movePromptOrder)
+promptsManagerRouter.put(
+  "/move-order/:idPrompt/:direction",
+  movePromptOrderHandler
+)
 
 export default promptsManagerRouter

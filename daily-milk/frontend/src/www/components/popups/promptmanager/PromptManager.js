@@ -139,8 +139,8 @@ const PromptManager = ({ onClose }) => {
     try {
       await movePromptOrder(prompt.idprompt, direction)
       fetchPrompts()
-    } catch (err) {
-      console.error("Error moving prompt order:", err)
+    } catch (error) {
+      console.error(`Error moving prompt ${direction}:`, error)
     }
   }
 
@@ -206,7 +206,7 @@ const PromptManager = ({ onClose }) => {
             </tr>
           </thead>
           <tbody>
-            {prompts.map((prompt) => (
+            {prompts.map((prompt, index) => (
               <tr key={prompt.idprompt} onClick={() => handleRowClick(prompt)}>
                 <td>{prompt.promptname}</td>
                 <td>{prompt.model}</td>
@@ -259,6 +259,7 @@ const PromptManager = ({ onClose }) => {
                       handleMoveOrder(prompt, "up")
                     }}
                     className="move-btn"
+                    disabled={index === 0}
                   >
                     <i className="fas fa-arrow-up"></i>
                   </button>
@@ -268,6 +269,7 @@ const PromptManager = ({ onClose }) => {
                       handleMoveOrder(prompt, "down")
                     }}
                     className="move-btn"
+                    disabled={index === prompts.length - 1}
                   >
                     <i className="fas fa-arrow-down"></i>
                   </button>
