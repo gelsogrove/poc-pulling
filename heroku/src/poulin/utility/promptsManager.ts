@@ -325,12 +325,15 @@ const togglePromptHide: RequestHandler = async (req, res) => {
   }
 }
 
-// Aggiungiamo funzioni per gestire l'ordine
-const movePromptOrder: RequestHandler = async (req, res) => {
+// Rimuovi la vecchia funzione movePromptOrder e mantieni solo questa
+const movePromptOrderHandler: RequestHandler = async (
+  req,
+  res
+): Promise<void> => {
   const { userId, token } = await validateRequest(req, res)
   if (!userId) return
 
-  // Verifica admin...
+  // Verifica se l'utente è admin
   const userCheck = await pool.query(
     "SELECT role FROM users WHERE userid = $1",
     [userId]
@@ -341,63 +344,7 @@ const movePromptOrder: RequestHandler = async (req, res) => {
     return
   }
 
-  const { idprompt, direction } = req.params
-  try {
-    // Ottieni l'ordine corrente
-    const currentPrompt = await pool.query(
-      'SELECT "order" FROM prompts WHERE idprompt = $1',
-      [idprompt]
-    )
-
-    if (currentPrompt.rowCount === 0) {
-      res.status(404).json({ error: "Prompt not found" })
-      return
-    }
-
-    const currentOrder = currentPrompt.rows[0].order
-
-    // Trova il prompt con cui scambiare l'ordine
-    const swapPrompt = await pool.query(
-      direction === "up"
-        ? 'SELECT idprompt, "order" FROM prompts WHERE "order" < $1 ORDER BY "idprompt", "order" DESC LIMIT 1'
-        : 'SELECT idprompt, "order" FROM prompts WHERE "order" > $1 ORDER BY "idprompt", "order" ASC LIMIT 1',
-      [currentOrder]
-    )
-
-    if (swapPrompt.rowCount === 0) {
-      res.status(400).json({ error: "Cannot move prompt further" })
-      return
-    }
-
-    // Scambia gli ordini
-    await pool.query(
-      'UPDATE prompts SET "order" = CASE ' +
-        "WHEN idprompt = $1 THEN $2 " +
-        "WHEN idprompt = $3 THEN $4 " +
-        "END " +
-        "WHERE idprompt IN ($1, $3)",
-      [
-        idprompt,
-        swapPrompt.rows[0].order,
-        swapPrompt.rows[0].idprompt,
-        currentOrder,
-      ]
-    )
-
-    res.status(200).json({ success: true })
-  } catch (error) {
-    console.error("Error moving prompt order:", error)
-    res.status(500).json({ error: "Error updating prompt order" })
-  }
-}
-
-// Aggiungi questo nuovo endpoint per gestire il riordino
-const movePromptOrderHandler = async (req: Request, res: Response) => {
-  const { userId, token } = await validateRequest(req, res)
-  if (!userId) return
-
-  const { idPrompt } = req.params
-  const { direction } = req.params // "up" o "down"
+  const { idPrompt, direction } = req.params
 
   try {
     // 1. Prima ottieni l'ordine corrente del prompt
@@ -407,7 +354,8 @@ const movePromptOrderHandler = async (req: Request, res: Response) => {
     )
 
     if (currentPrompt.rows.length === 0) {
-      return res.status(404).json({ error: "Prompt not found" })
+      res.status(404).json({ error: "Prompt not found" })
+      return
     }
 
     const currentOrder = currentPrompt.rows[0].order
@@ -422,10 +370,11 @@ const movePromptOrderHandler = async (req: Request, res: Response) => {
 
     // Se non c'è un prompt adiacente nella direzione richiesta
     if (adjacentPrompt.rows.length === 0) {
-      return res.status(400).json({
+      res.status(400).json({
         error:
           direction === "up" ? "Already at the top" : "Already at the bottom",
       })
+      return
     }
 
     const adjacentOrder = adjacentPrompt.rows[0].order
@@ -447,7 +396,10 @@ const movePromptOrderHandler = async (req: Request, res: Response) => {
 
       await pool.query("COMMIT")
 
-      res.json({ success: true })
+      res.json({
+        success: true,
+        message: `Prompt moved ${direction} successfully`,
+      })
     } catch (error) {
       await pool.query("ROLLBACK")
       throw error
@@ -465,7 +417,6 @@ promptsManagerRouter.put("/update/:id", upload.single("image"), updatePrompt)
 promptsManagerRouter.delete("/delete/:idprompt", deletePrompt)
 promptsManagerRouter.put("/toggle/:idprompt", togglePromptActive)
 promptsManagerRouter.put("/toggle-hide/:idprompt", togglePromptHide)
-promptsManagerRouter.put("/move-order/:idprompt/:direction", movePromptOrder)
 promptsManagerRouter.put(
   "/move-order/:idPrompt/:direction",
   movePromptOrderHandler

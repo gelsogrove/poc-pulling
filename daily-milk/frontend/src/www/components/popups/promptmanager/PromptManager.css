@@ -78,8 +78,8 @@
 .actions-cell button {
   width: 32px;
   height: 32px;
-  min-width: 32px; /* Aggiunto per forzare la stessa larghezza */
-  max-width: 32px; /* Aggiunto per forzare la stessa larghezza */
+  min-width: 32px;
+  max-width: 32px;
   padding: 0;
   display: flex;
   align-items: center;
@@ -89,36 +89,66 @@
   cursor: pointer;
   transition: all 0.3s ease;
   color: white;
+  margin: 0 2px;
 }
 
-/* Colori specifici */
+/* Colori specifici e hover states per ogni tipo di bottone */
 .status-btn.active {
   background-color: #28a745;
 }
+.status-btn.active:hover {
+  background-color: #218838;
+}
+
 .status-btn.inactive {
   background-color: #dc3545;
 }
+.status-btn.inactive:hover {
+  background-color: #c82333;
+}
+
 .hide-btn {
   background-color: #007bff;
 }
-.delete-btn {
-  background-color: #dc3545;
-}
-
-/* Hover states */
-.status-btn:hover {
-  opacity: 0.9;
-}
 .hide-btn:hover {
   background-color: #0056b3;
+}
+
+.delete-btn {
+  background-color: #dc3545;
 }
 .delete-btn:hover {
   background-color: #c82333;
 }
 
+.move-btn {
+  background-color: #6c757d;
+}
+.move-btn:hover:not(:disabled) {
+  background-color: #5a6268;
+}
+
+/* Stile per bottoni disabilitati */
+.move-btn:disabled {
+  background-color: #dee2e6;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
 /* Icone */
 .actions-cell button i {
   font-size: 14px;
+  color: white;
+}
+
+/* Effetto hover per le icone */
+.actions-cell button:hover:not(:disabled) i {
+  transform: scale(1.1);
+}
+
+/* Stile per le icone nei bottoni disabilitati */
+.actions-cell button:disabled i {
+  color: #6c757d;
 }
 
 .prompts-table tbody tr {
