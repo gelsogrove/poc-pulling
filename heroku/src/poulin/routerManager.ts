@@ -7,8 +7,8 @@ import chatbotProductRouter from "./chatbots/product/chatbots.js"
 import chatbotMainRouter from "./chatbots/main/chatbots.js"
 import chatbotSalesReaderRouter from "./chatbots/sales-reader/chatbots.js"
 import {
-  prompMainRouter,
   promptGenericRouter,
+  promptMainRouter,
   promptOrdersRouter,
   promptProductRouter,
   promptSalesReaderRouter,
@@ -77,7 +77,7 @@ const routerMap: RouterMap = {
   },
   main: {
     usage: usageMainRouter,
-    prompt: prompMainRouter,
+    prompt: promptMainRouter,
     chatbot: chatbotMainRouter,
     unlike: unlikeOrdersRouter,
   },

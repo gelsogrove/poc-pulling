@@ -23,6 +23,6 @@ export const unlikeOrdersRouter = unlikeRouter
 export const usageOrdersRouter = usageRouter
 
 // Export per router
-export const prompMainrRouter = promptRouter
+export const promptMainRouter = promptRouter
 export const unlikeMainRouter = unlikeRouter
 export const usageMainRouter = usageRouter
