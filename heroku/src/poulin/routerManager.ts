@@ -30,6 +30,7 @@ type ChatbotType =
   | "product"
   | "orders"
   | "logistics"
+  | "router"
 
 type RouterMap = {
   [K in ChatbotType]: {
@@ -71,6 +72,12 @@ const routerMap: RouterMap = {
     chatbot: chatbotOrdersRouter,
     unlike: unlikeOrdersRouter,
   },
+  router: {
+    usage: usageOrdersRouter,
+    prompt: promptOrdersRouter,
+    chatbot: chatbotOrdersRouter,
+    unlike: unlikeOrdersRouter,
+  },
 }
 
 const createDynamicRouter = (type: keyof RouterMap[ChatbotType]) => {
@@ -80,16 +87,6 @@ const createDynamicRouter = (type: keyof RouterMap[ChatbotType]) => {
     const chatbot = req.params.chatbot
     const selectedRouter = routerMap[chatbot]?.[type]
 
-    /* console.log({
-      requestedChatbot: chatbot,
-      routerType: type,
-      availableRouters: Object.keys(routerMap),
-      selectedRouter: !!selectedRouter,
-      path: req.path,
-      params: req.params,
-      fullUrl: req.originalUrl,
-    })
-*/
     if (selectedRouter) {
       return selectedRouter(req as any, res, next)
     }
