@@ -3,7 +3,6 @@ import dotenv from "dotenv"
 import { EventEmitter } from "events"
 import express from "express"
 import rateLimit from "express-rate-limit"
-import fs from "fs"
 import helmet from "helmet"
 import path from "path"
 import pkg from "pg"
@@ -126,95 +125,6 @@ if (process.env.NODE_ENV === "production") {
   })
 }
 
-// Aggiungiamo un log per vedere i percorsi
-console.log({
-  __dirname,
-  rootDir,
-  staticPath: path.join(rootDir, "public"),
-})
-
-// Aggiungi questo middleware prima di express.static
-app.use((req, res, next) => {
-  if (req.url.startsWith("/images")) {
-    console.log("Static file request:", {
-      url: req.url,
-      physicalPath: path.join(rootDir, "public", req.url),
-    })
-  }
-  next()
-})
-
-app.get("/images/chatbots/:filename", (req, res) => {
-  const filename = req.params.filename
-  const filePath = path.join(rootDir, "public", "images", "chatbots", filename)
-
-  console.log("Serving image:", {
-    filename,
-    filePath,
-    exists: fs.existsSync(filePath),
-  })
-
-  res.sendFile(filePath)
-})
-
-// Usa il percorso assoluto per la directory public
-const publicDir =
-  process.env.NODE_ENV === "production"
-    ? "/app/public"
-    : path.join(__dirname, "..", "public")
-
-// Crea la struttura delle directory
-const imagesDir = path.join(publicDir, "images")
-const chatbotsDir = path.join(imagesDir, "chatbots")
-
-try {
-  // Crea le directory se non esistono
-  if (!fs.existsSync(publicDir)) {
-    fs.mkdirSync(publicDir, { recursive: true })
-    console.log("Created public dir:", publicDir)
-  }
-
-  if (!fs.existsSync(imagesDir)) {
-    fs.mkdirSync(imagesDir, { recursive: true })
-    console.log("Created images dir:", imagesDir)
-  }
-
-  if (!fs.existsSync(chatbotsDir)) {
-    fs.mkdirSync(chatbotsDir, { recursive: true })
-    console.log("Created chatbots dir:", chatbotsDir)
-  }
-
-  // Log della struttura creata
-  console.log("Directory structure:", {
-    public: {
-      path: publicDir,
-      exists: fs.existsSync(publicDir),
-      writable: fs.accessSync(publicDir, fs.constants.W_OK),
-    },
-    images: {
-      path: imagesDir,
-      exists: fs.existsSync(imagesDir),
-      writable: fs.accessSync(imagesDir, fs.constants.W_OK),
-    },
-    chatbots: {
-      path: chatbotsDir,
-      exists: fs.existsSync(chatbotsDir),
-      writable: fs.accessSync(chatbotsDir, fs.constants.W_OK),
-    },
-  })
-} catch (error) {
-  console.error("Error creating directories:", error)
-}
-
-console.log("Public directory:", {
-  publicDir,
-  exists: fs.existsSync(publicDir),
-  contents: fs.existsSync(publicDir) ? fs.readdirSync(publicDir) : [],
-})
-
-// Serviamo i file statici dalla directory corretta
-app.use(express.static(publicDir))
-
 app.use("/", welcomeRouter)
 app.use("/auth", limiter, authRouter)
 app.use("/users", limiter, usersRouter)
@@ -224,7 +134,6 @@ app.use("/webhook", limiter, modelWebooksRouter)
 app.use("/roles", limiter, modelrolesRouter)
 app.use("/prompts", limiter, modelpromptsRouter)
 
-// Dynamic routes handled by routerManager
 app.use("/poulin/:chatbot/usage", limiter, usageRouter)
 app.use("/poulin/:chatbot/prompt", limiter, promptRouter)
 app.use("/poulin/:chatbot/chatbot", limiter, chatbotRouter)

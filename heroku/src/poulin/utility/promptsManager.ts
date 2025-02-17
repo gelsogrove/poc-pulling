@@ -1,7 +1,6 @@
 import { Request, RequestHandler, Response, Router } from "express"
 import fs from "fs"
-import multer from "multer"
-import { extname, join, resolve } from "path"
+import { join } from "path"
 import { pool } from "../../../server.js"
 import { validateRequest } from "../share/validateUser.js"
 
@@ -21,54 +20,6 @@ interface MulterRequest extends Request {
 }
 
 const promptsManagerRouter = Router()
-
-// Log della directory all'avvio
-console.log("Initial directory check:", {
-  uploadDir,
-  exists: fs.existsSync(uploadDir),
-  cwd: process.cwd(),
-  absolutePath: resolve(uploadDir),
-})
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    // Log prima di creare la directory
-    console.log("Before directory creation:", {
-      uploadDir,
-      exists: fs.existsSync(uploadDir),
-      parentDir: join(uploadDir, ".."),
-      parentExists: fs.existsSync(join(uploadDir, "..")),
-    })
-
-    if (!fs.existsSync(uploadDir)) {
-      try {
-        fs.mkdirSync(uploadDir, { recursive: true })
-        console.log("Directory created successfully:", uploadDir)
-      } catch (error) {
-        console.error("Error creating directory:", error)
-      }
-    }
-
-    // Log dopo la creazione
-    console.log("After directory creation:", {
-      exists: fs.existsSync(uploadDir),
-      stats: fs.existsSync(uploadDir) ? fs.statSync(uploadDir) : null,
-    })
-
-    cb(null, uploadDir)
-  },
-  filename: (req, file, cb) => {
-    const filename = `chatbot-${Date.now()}${extname(file.originalname)}`
-    console.log("File being saved:", {
-      filename,
-      originalName: file.originalname,
-      fullPath: join(uploadDir, filename),
-    })
-    cb(null, filename)
-  },
-})
-
-const upload = multer({ storage })
 
 // Funzione per creare un nuovo prompt
 const createPrompt: RequestHandler = async (
@@ -290,7 +241,6 @@ const togglePromptActive: RequestHandler = async (req, res) => {
   }
 }
 
-// Aggiungiamo una nuova funzione per il toggle hide
 const togglePromptHide: RequestHandler = async (req, res) => {
   const { userId, token } = await validateRequest(req, res)
   if (!userId) return
@@ -325,7 +275,6 @@ const togglePromptHide: RequestHandler = async (req, res) => {
   }
 }
 
-// Rimuovi la vecchia funzione movePromptOrder e mantieni solo questa
 const movePromptOrderHandler: RequestHandler = async (
   req,
   res
@@ -413,7 +362,7 @@ const movePromptOrderHandler: RequestHandler = async (
 // Definizione delle rotte
 promptsManagerRouter.post("/new", createPrompt)
 promptsManagerRouter.get("/", getPrompts)
-promptsManagerRouter.put("/update/:id", upload.single("image"), updatePrompt)
+promptsManagerRouter.put("/update/:id", updatePrompt)
 promptsManagerRouter.delete("/delete/:idprompt", deletePrompt)
 promptsManagerRouter.put("/toggle/:idprompt", togglePromptActive)
 promptsManagerRouter.put("/toggle-hide/:idprompt", togglePromptHide)
