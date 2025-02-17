@@ -1,23 +1,6 @@
 import { Request, RequestHandler, Response, Router } from "express"
-import fs from "fs"
-import { join } from "path"
 import { pool } from "../../../server.js"
 import { validateRequest } from "../share/validateUser.js"
-
-// Crea la directory se non esiste
-const uploadDir =
-  process.env.NODE_ENV === "production"
-    ? "/app/public/images/chatbots"
-    : join(process.cwd(), "public/images/chatbots")
-
-// Crea la directory se non esiste
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true })
-}
-
-interface MulterRequest extends Request {
-  file?: Express.Multer.File | undefined
-}
 
 const promptsManagerRouter = Router()
 
@@ -110,33 +93,13 @@ const updatePrompt: RequestHandler = async (
       return
     }
 
-    const { userId } = validation
     const { id } = req.params
     const { promptname, model, temperature, content, path } = req.body
 
-    if (!promptname || !model || !content || !path) {
-      res.status(400).json({ error: "Required fields cannot be null" })
-      return
-    }
-
-    const multerReq = req as MulterRequest
-    console.log("Upload attempt:", {
-      uploadDir,
-      file: multerReq.file,
-      body: req.body,
-      env: process.env.NODE_ENV,
-      cwd: process.cwd(),
-    })
-
-    let imagePath =
-      multerReq.file && multerReq.file.filename
-        ? `/images/chatbots/${multerReq.file.filename}`
-        : req.body.image || "/images/chatbot.webp"
-
     const result = await pool.query(
-      `UPDATE prompts SET promptname = $1, model = $2, temperature = $3, prompt = $4, path = $5, image = $6 
+      `UPDATE prompts SET promptname = $1, model = $2, temperature = $3, prompt = $4, path = $5
        WHERE idprompt = $7 RETURNING *`,
-      [promptname, model, temperature, content, path, imagePath, id]
+      [promptname, model, temperature, content, path, id]
     )
 
     console.log("Record aggiornato:", result.rows[0])
