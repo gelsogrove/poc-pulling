@@ -39,17 +39,24 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
   if (!userId) return
   const { conversationId, idPrompt, messages } = req.body
 
-  if (!conversationId || !Array.isArray(messages)) {
-    console.log("Validation failed for conversationId or messages.") // Log input non valido
+  if (!conversationId || !Array.isArray(messages) || messages.length === 0) {
+    console.log("Validation failed for conversationId or messages.")
     res.status(400).json({
-      message: "conversationId and messages array are required.",
+      message: "conversationId and non-empty messages array are required.",
     })
     return
   }
 
   try {
     // USER MESSAGE
-    const userMessage = messages[messages.length - 1]?.content
+    const lastMessage = messages[messages.length - 1]
+    if (!lastMessage || !lastMessage.content) {
+      res.status(400).json({
+        message: "Last message is missing or has no content.",
+      })
+      return
+    }
+    const userMessage = lastMessage.content
 
     // PROMPT
     const promptResult = await getPrompt(idPrompt)
@@ -106,7 +113,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
 
     if (openaiResponse.data.error) {
       res.status(200).json({
-        response: "Empty response from OpenRouter...sales-reader",
+        response: "Empty response from OpenRouter...generci",
         error: openaiResponse.data.error.message,
       })
       return
@@ -119,7 +126,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
 
     if (!rawResponse) {
       res.status(200).json({
-        response: "Empty response from OpenRouter......sales-reader",
+        response: "Empty response from OpenRouter......generci",
         rawResponse,
       })
       return
