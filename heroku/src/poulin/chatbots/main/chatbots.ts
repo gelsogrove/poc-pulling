@@ -13,7 +13,7 @@ const OPENROUTER_HEADERS = {
   "Content-Type": "application/json",
 }
 const MAX_TOKENS = 5000
-const mainRouter = Router()
+const chatbotMainRouter = Router()
 
 if (!process.env.OPENROUTER_API_KEY) {
   throw new Error("OPENROUTER_API_KEY is not set in the environment variables.")
@@ -130,6 +130,6 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
   }
 }
 
-mainRouter.post("/response", handleResponse)
+chatbotMainRouter.post("/response", handleResponse)
 
-export default mainRouter
+export default chatbotMainRouter
