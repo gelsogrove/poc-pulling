@@ -67,26 +67,6 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
       return { role: msg.role || "user", content: msg.content }
     })
 
-    // ANALYSIS
-    if (["analysis", "trend"].includes(userMessage.toLowerCase())) {
-      try {
-        const { data: analysis } = await axios.get(
-          "https://ai.dairy-tools.com/api/stats.php"
-        )
-
-        res.status(200).json({
-          response: `Here is the analysis: ${JSON.stringify(analysis)}`,
-        })
-        return
-      } catch (analysisError) {
-        console.error("Error fetching analysis data:", analysisError)
-        res.status(200).json({
-          response: "Failed to fetch analysis data.",
-        })
-        return
-      }
-    }
-
     // PAYLOAD
     const requestPayload = {
       model,
@@ -138,6 +118,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     let triggerAction: string = ""
     try {
       const parsedResponse = JSON.parse(rawResponse)
+      console.log("Parsed response:", parsedResponse)
       sqlQuery = parsedResponse.sql || null
       finalResponse = parsedResponse.response || "No response provided."
       triggerAction = parsedResponse.triggerAction || ""
