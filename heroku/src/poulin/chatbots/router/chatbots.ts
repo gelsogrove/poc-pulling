@@ -44,17 +44,13 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
   try {
     // USER MESSAGE
     const lastMessage = messages[messages.length - 1]
-    if (!lastMessage || !lastMessage.content) {
-      res.status(400).json({
-        message: "Last message is missing or has no content.",
-      })
-      return
-    }
     const userMessage = lastMessage.content
+    console.log("User message:", userMessage)
 
     // PROMPT
     const promptResult = await getPrompt(idPrompt)
     const { prompt, model, temperature } = promptResult
+    console.log("promptResult", promptResult)
 
     // HISTORY
     const conversationHistory = messages.map((msg: any) => {
@@ -65,10 +61,10 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     const requestPayload = {
       model,
       messages: [
+        { role: "system", content: `Language: it` },
         { role: "system", content: prompt },
         ...conversationHistory,
         { role: "user", content: userMessage },
-        { role: "system", content: `Language: it` },
       ],
       max_tokens: MAX_TOKENS,
       temperature: Number(temperature),
@@ -87,12 +83,13 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
 
     if (openaiResponse.data.error) {
       res.status(200).json({
-        response: "Empty response from OpenRouter...generci",
+        response: "Empty response from OpenRouter...router",
         error: openaiResponse.data.error.message,
       })
       return
     }
 
+    console.log("message", openaiResponse.data.choices[0]?.message?.content)
     // ANSWER
     const rawResponse = cleanResponse(
       openaiResponse.data.choices[0]?.message?.content
