@@ -121,7 +121,6 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
       res.status(200).json({
         triggerAction,
         response: finalResponse,
-        query: sqlQuery,
       })
     } catch (parseError) {
       res.status(200).json({ response: rawResponse })
