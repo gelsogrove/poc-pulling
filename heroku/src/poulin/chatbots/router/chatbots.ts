@@ -29,6 +29,8 @@ axiosRetry(axios, {
 })
 
 const handleResponse: RequestHandler = async (req: Request, res: Response) => {
+  console.log("********* RequestHandler")
+
   const { userId, token } = await validateRequest(req, res)
   if (!userId) return
   const { conversationId, idPrompt, messages } = req.body
