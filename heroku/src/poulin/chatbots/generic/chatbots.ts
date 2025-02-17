@@ -87,7 +87,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
         { role: "system", content: prompt },
         ...conversationHistory,
         { role: "user", content: userMessage },
-        { role: "system", content: `Language: eng` },
+        { role: "system", content: `Language: it` },
       ],
       max_tokens: MAX_TOKENS,
       temperature: Number(temperature),
