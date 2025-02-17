@@ -3,13 +3,7 @@ import axiosRetry from "axios-retry"
 import dotenv from "dotenv"
 import { Request, RequestHandler, Response, Router } from "express"
 import { validateRequest } from "../../share/validateUser.js"
-import {
-  cleanResponse,
-  executeSqlQuery,
-  generateDetailedSentence,
-  getPrompt,
-  sendUsageData,
-} from "../../utility/chatbots_utility.js"
+import { cleanResponse, getPrompt } from "../../utility/chatbots_utility.js"
 
 dotenv.config()
 
@@ -123,54 +117,10 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
       finalResponse = parsedResponse.response || "No response provided."
       triggerAction = parsedResponse.triggerAction || ""
 
-      if (sqlQuery !== null) {
-        const day = new Date().toISOString().split("T")[0]
-        await sendUsageData(
-          day,
-          0.2,
-          "sales-reader",
-          triggerAction,
-          userId,
-          idPrompt
-        )
-      }
-
-      if (!sqlQuery) {
-        res.status(200).json({
-          triggerAction,
-          response: finalResponse,
-        })
-        return
-      }
-
-      // EXECUTE QUERY
-      const sqlData = await executeSqlQuery(sqlQuery)
-
-      /* 2 PASSAGGIO */
-      if (sqlData.length === 1) {
-        // Chiamata alla funzione per generare una frase dettagliata
-        const detailedSentence = await generateDetailedSentence(
-          model,
-          sqlData,
-          temperature,
-          OPENROUTER_API_URL,
-          OPENROUTER_HEADERS,
-          userMessage
-        )
-
-        res.status(200).json({
-          triggerAction: "COUNT",
-          response: detailedSentence,
-          query: sqlQuery,
-        })
-        return
-      }
-
       // RESPONSE
       res.status(200).json({
         triggerAction,
         response: finalResponse,
-        data: sqlData,
         query: sqlQuery,
       })
     } catch (parseError) {
