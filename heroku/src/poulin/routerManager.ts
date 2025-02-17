@@ -20,10 +20,6 @@ import {
   usageSalesReaderRouter,
 } from "./share/index.js"
 
-interface ChatbotParams extends ParamsDictionary {
-  chatbot: "generic" | "sales-reader" | "product"
-}
-
 type ChatbotType =
   | "generic"
   | "sales-reader"
@@ -31,6 +27,10 @@ type ChatbotType =
   | "orders"
   | "logistics"
   | "router"
+
+interface ChatbotParams extends ParamsDictionary {
+  chatbot: ChatbotType
+}
 
 type RouterMap = {
   [K in ChatbotType]: {
