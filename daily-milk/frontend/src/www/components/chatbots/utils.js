@@ -9,9 +9,8 @@ export const getUserName = () => {
   return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()
 }
 
-export const updateChatState = (messages, conversationHistory, updates) => {
+export const updateChatState = (messages, updates) => {
   const updatedMessages = [...messages]
-  const updatedHistory = [...conversationHistory]
 
   updates.forEach(({ sender, content, role }) => {
     updatedMessages.push({
@@ -19,13 +18,9 @@ export const updateChatState = (messages, conversationHistory, updates) => {
       sender,
       text: content, // what the user sees in chat
     })
-    updatedHistory.push({
-      role,
-      content, // what will be sent to the bot
-    })
   })
 
-  return { updatedMessages, updatedHistory }
+  return { updatedMessages }
 }
 
 // Function to extract JSON from a backend response message

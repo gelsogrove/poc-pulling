@@ -8,21 +8,18 @@ import MessageList from "./shared/messagelist/MessageList"
 import Usage from "./shared/usage/Usage"
 
 import { sendMessageToChatbot } from "./api/chatbot_api"
-import {
-  extractJsonFromMessage,
-  getUserName,
-  handleError,
-  updateChatState,
-} from "./utils"
+import { extractJsonFromMessage, updateChatState } from "./utils"
 
 import Cookies from "js-cookie"
 import { fetchUsageData, getPromptDetails } from "./shared/usage/api/utils_api"
 
 const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
   const [refreshUsage, setRefreshUsage] = useState(false)
-  const [messages, setMessages] = useState([])
+  const [messages, setMessages] = useState([
+    /* messaggi iniziali qui */
+  ])
   const [, setData] = useState([])
-  const [conversationHistory, setConversationHistory] = useState([])
+
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef(null)
@@ -47,19 +44,6 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
   useEffect(() => {}, [])
 
   useEffect(() => {
-    const userName = getUserName()
-    const { updatedMessages, updatedHistory } = updateChatState(
-      [],
-      [],
-      [
-        {
-          sender: "bot",
-          content: `Hello, ${userName}! How can I assist you today?`,
-          role: "assistant",
-        },
-      ]
-    )
-
     const fetchData = async () => {
       try {
         // 1) Dati di usage
@@ -67,7 +51,6 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
         setUsageData(data)
 
         // 2) Dettagli del prompt
-
         const prompt = await getPromptDetails(idPrompt, chatbotSelected)
         setTemperature(prompt.temperature)
         setModel(prompt.model)
@@ -89,8 +72,7 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
     }
 
     fetchData()
-    setMessages(updatedMessages)
-    setConversationHistory(updatedHistory)
+
     Cookies.remove(cookieKey)
   }, [])
 
@@ -130,13 +112,11 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
     setInputValue("")
     setIsLoading(true)
 
-    const { updatedMessages, updatedHistory } = updateChatState(
-      messages,
-      conversationHistory,
-      [{ sender: "user", content: message, role: "user" }]
-    )
+    const { updatedMessages } = updateChatState(messages, [
+      { role: "user", content: message },
+    ])
+
     setMessages(updatedMessages)
-    setConversationHistory(updatedHistory)
 
     // Aggiungo "Typing..."
     setMessages((prevMessages) => [
@@ -151,7 +131,10 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
     try {
       const botResponse = await sendMessageToChatbot(
         IdConversation,
-        updatedHistory,
+        {
+          role: "user",
+          content: message,
+        },
         idPrompt,
         chatbotSelected
       )
@@ -177,34 +160,12 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
           },
         ]
       })
-
-      // Aggiorno conversationHistory
-      setConversationHistory((prevHistory) => [
-        ...prevHistory,
-        {
-          id,
-          role: "assistant",
-          content: responseText,
-          triggerAction: botResponse?.triggerAction,
-          query: botResponse?.query,
-          data: botResponse?.data,
-        },
-      ])
     } catch (error) {
       console.error("Error in handleSend:", error)
-      const { updatedMessages: errMsgs, updatedHistory: errHist } = handleError(
-        error,
-        messages,
-        conversationHistory
-      )
-      setMessages(errMsgs)
-      setConversationHistory(errHist)
     } finally {
       setIsLoading(false)
+      setRefreshUsage((prev) => !prev)
     }
-
-    // Questo toggle forzerà un nuovo fetch usage nel useEffect precedente
-    setRefreshUsage((prev) => !prev)
   }
 
   return (
@@ -216,7 +177,6 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
             openPanel={openPanel}
             idPrompt={idPrompt}
             IdConversation={IdConversation}
-            conversationHistory={conversationHistory}
             messages={messages}
             refresh={refreshUsage}
             model={model}

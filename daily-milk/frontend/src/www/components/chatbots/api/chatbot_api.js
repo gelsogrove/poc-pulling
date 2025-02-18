@@ -11,7 +11,7 @@ import Cookies from "js-cookie"
  */
 export const sendMessageToChatbot = async (
   conversationId,
-  messages,
+  message,
   idPrompt,
   chatbotSelected
 ) => {
@@ -28,7 +28,7 @@ export const sendMessageToChatbot = async (
   const body = {
     name,
     conversationId,
-    messages,
+    message,
     idPrompt,
   }
 
