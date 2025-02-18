@@ -157,7 +157,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     )
 
     res.status(200).json({
-      //response: "test 123",
+      response: "test 123",
       text: {
         conversationId,
         target: parsedResponse.target,
