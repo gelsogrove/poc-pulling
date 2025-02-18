@@ -47,6 +47,8 @@ heroku run "PGPASSWORD=p7e2d963d16a98f0b61439338891882296ed3519cceb6728b0c6b2f9f
 - new grafic dentro home
 - passare il nuovo idprompt dentro
 
+test
+
 const axios = require('axios');
 
 // Configurazione base
