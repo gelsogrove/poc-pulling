@@ -124,11 +124,7 @@ const Home = () => {
                   }
                 >
                   <img
-                    src={
-                      ["orders", "generic"].includes(prompt.path)
-                        ? "/images/chatbot.webp"
-                        : prompt.image || "/images/chatbot.webp"
-                    }
+                    src={prompt.image}
                     alt={t("home.features.chatbot.title")}
                     className="feature-image"
                   />

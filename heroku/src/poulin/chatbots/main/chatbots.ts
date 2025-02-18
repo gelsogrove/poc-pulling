@@ -158,7 +158,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
 
     // Risposta al frontend
     res.status(200).json({
-      response: "test 123",
+      response: "reponse from the sub-bot",
       text: {
         conversationId,
         target: parsedResponse.target,
