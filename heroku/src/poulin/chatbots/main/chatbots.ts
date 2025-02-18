@@ -156,15 +156,11 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
       ""
     )
 
-    /*
-    {
+    res.status(200).json({
+      response: "test 123",
       conversationId,
       target: parsedResponse.target,
       history: finalHistory,
-    }*/
-
-    res.status(200).json({
-      response: "test 123",
     })
   } catch (parseError) {
     res.status(200).json({

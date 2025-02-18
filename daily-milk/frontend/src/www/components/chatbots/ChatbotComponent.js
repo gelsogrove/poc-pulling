@@ -8,7 +8,7 @@ import MessageList from "./shared/messagelist/MessageList"
 import Usage from "./shared/usage/Usage"
 
 import { sendMessageToChatbot } from "./api/chatbot_api"
-import { extractJsonFromMessage, updateChatState } from "./utils"
+import { updateChatState } from "./utils"
 
 import Cookies from "js-cookie"
 import { fetchUsageData, getPromptDetails } from "./shared/usage/api/utils_api"
@@ -144,11 +144,6 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
         chatbotSelected
       )
 
-      const parsedResponse = extractJsonFromMessage(botResponse)
-      setData(botResponse?.data)
-
-      const responseText = parsedResponse || "I couldn't understand that."
-
       // Rimuovo "Typing..." e aggiungo risposta
       const id = uuidv4()
       setMessages((prevMessages) => {
@@ -158,7 +153,7 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
           {
             id,
             sender: "bot",
-            text: responseText,
+            text: botResponse.response,
             data: botResponse?.data,
             query: botResponse?.query,
             triggerAction: botResponse?.triggerAction,
