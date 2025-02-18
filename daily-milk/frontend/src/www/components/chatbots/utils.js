@@ -15,7 +15,6 @@ export const updateChatState = (messages, updates) => {
   updates.forEach(({ sender, content, role }) => {
     updatedMessages.push({
       id: uuidv4(),
-      sender,
       text: content, // what the user sees in chat
     })
   })
