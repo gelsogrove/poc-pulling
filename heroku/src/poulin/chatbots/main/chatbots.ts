@@ -96,8 +96,17 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
   // Invia richiesta a OpenRouter
   const openaiResponse = await axios.post(OPENROUTER_API_URL, requestPayload, {
     headers: OPENROUTER_HEADERS,
-    timeout: 30000, // 30 secondi timeout
+    timeout: 30000,
   })
+
+  if (!openaiResponse.data?.choices?.length) {
+    res.status(200).json({
+      id: conversationId,
+      sender: "bot",
+      error: "No response from OpenRouter",
+    })
+    return
+  }
 
   console.log(
     "\n📩 OPENROUTER RECEIVED:",
