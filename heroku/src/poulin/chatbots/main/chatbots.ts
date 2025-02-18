@@ -5,7 +5,7 @@ import { Request, RequestHandler, Response, Router } from "express"
 import { pool } from "../../../../server.js"
 import { GetAndSetHistory } from "../../share/history.js"
 import { validateRequest } from "../../share/validateUser.js"
-import { cleanResponse, getPrompt } from "../../utility/chatbots_utility.js"
+import { getPrompt } from "../../utility/chatbots_utility.js"
 
 dotenv.config()
 
@@ -113,25 +113,30 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     return
   }
 
-  // Pulisce e valida il contenuto della risposta
-  const rawResponse = cleanResponse(
-    openaiResponse.data.choices[0]?.message?.content
-  )
-
-  if (!rawResponse) {
-    res.status(200).json({
-      response: "Empty response from OpenRouter",
-      rawResponse,
-    })
-    return
-  }
-
-  // Tenta di parsare la risposta JSON
   try {
+    // Pulisce e valida il contenuto della risposta
+    const rawResponse = openaiResponse.data.choices[0]?.message?.content
+    if (!rawResponse) {
+      res.status(200).json({
+        response: "Empty response from OpenRouter",
+        rawResponse,
+      })
+      return
+    }
+
     const parsedResponse = JSON.parse(rawResponse)
-    res.status(200).json({ response: parsedResponse })
+    res.status(200).json({
+      id: conversationId,
+      sender: "bot",
+      target: parsedResponse.target,
+      history: parsedResponse.history,
+    })
   } catch (parseError) {
-    res.status(200).json({ response: rawResponse })
+    res.status(200).json({
+      id: conversationId,
+      sender: "bot",
+      error: "Failed to parse response",
+    })
   }
 }
 
