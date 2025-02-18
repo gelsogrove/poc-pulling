@@ -158,9 +158,11 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
 
     res.status(200).json({
       //response: "test 123",
-      conversationId,
-      target: parsedResponse.target,
-      history: finalHistory,
+      text: {
+        conversationId,
+        target: parsedResponse.target,
+        history: finalHistory,
+      },
     })
   } catch (parseError) {
     res.status(200).json({
