@@ -43,7 +43,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
   console.log(" - UserId:", userId)
   if (!userId) return
 
-  const { conversationId, promptId, message } = req.body
+  const { conversationId, idPrompt, message } = req.body
 
   // Verifica accesso alla conversazione
   const accessQuery = `
@@ -52,9 +52,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     LIMIT 1
   `
   const access = await pool.query(accessQuery, [conversationId, userId])
-
   if (access.rows.length === 0) {
-    // Prima conversazione, permesso accordato
     console.log("Prima conversazione per questo utente")
   } else {
     console.log("Conversazione esistente, accesso verificato")
@@ -69,12 +67,12 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
   }
 
   // Recupera configurazione del prompt
-  const { prompt, model, temperature } = await getPrompt(promptId)
+  const { prompt, model, temperature } = await getPrompt(idPrompt)
 
   // Gestisce la history della conversazione
   const updatedHistory = await GetAndSetHistory(
     conversationId,
-    promptId,
+    idPrompt,
     userId,
     new Date(),
     message,
