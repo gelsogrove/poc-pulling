@@ -143,7 +143,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     const parsedResponse = JSON.parse(rawResponse)
     const botResponse = {
       role: "assistant",
-      content: "*** Risposta del bot ***",
+      content: parsedResponse.response || "Nessuna risposta",
     }
 
     // Salva la risposta del bot nel DB
@@ -156,6 +156,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
       ""
     )
 
+    // Risposta al frontend
     res.status(200).json({
       response: "test 123",
       text: {

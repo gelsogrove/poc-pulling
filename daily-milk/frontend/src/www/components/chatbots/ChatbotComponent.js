@@ -157,6 +157,7 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
             data: botResponse?.data,
             query: botResponse?.query,
             triggerAction: botResponse?.triggerAction,
+            debugInfo: botResponse.text,
           },
         ]
       })

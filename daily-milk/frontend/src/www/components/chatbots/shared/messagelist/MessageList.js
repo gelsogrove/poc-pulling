@@ -90,42 +90,27 @@ const MessageList = ({
     }
   }
 
-  const renderMessageText = (msg, text, sender, debugMode) => {
-    if (sender === "user") {
-      return <span>{text}</span>
-    } else {
-      try {
-        const parsed = JSON.parse(text)
-
-        if (debugMode) {
-          return <pre>{JSON.stringify(msg, null, 2)}</pre>
-        } else if (parsed.response) {
-          return (
-            <div
-              dangerouslySetInnerHTML={{ __html: parsed.response }}
-              style={{ whiteSpace: "pre-line" }}
-            />
-          )
-        } else {
-          return (
-            <div
-              dangerouslySetInnerHTML={{ __html: text }}
-              style={{ whiteSpace: "pre-line" }}
-            />
-          )
-        }
-      } catch (error) {
-        console.log(`Error parsing JSON for message ${msg.id}:`, error)
-        return debugMode ? (
-          <pre>{JSON.stringify(msg, null, 2)}</pre>
-        ) : (
-          <div
-            dangerouslySetInnerHTML={{ __html: text }}
-            style={{ whiteSpace: "pre-line" }}
-          />
-        )
-      }
+  const renderMessageText = (msg, text, sender, isDebug) => {
+    if (isDebug) {
+      return (
+        <div>
+          <div>{text}</div>
+          <div className="debug-mode">
+            <pre>
+              {JSON.stringify(
+                {
+                  response: msg.text,
+                  text: msg.debugInfo,
+                },
+                null,
+                2
+              )}
+            </pre>
+          </div>
+        </div>
+      )
     }
+    return text
   }
 
   useEffect(() => {
