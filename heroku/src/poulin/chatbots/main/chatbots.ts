@@ -93,8 +93,6 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     response_format: { type: "json_object" },
   }
 
-  console.log("\n🚀 OPENROUTER SEND:", JSON.stringify(requestPayload, null, 2))
-
   // Invia richiesta a OpenRouter
   const openaiResponse = await axios.post(OPENROUTER_API_URL, requestPayload, {
     headers: OPENROUTER_HEADERS,
@@ -103,7 +101,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
 
   console.log(
     "\n📩 OPENROUTER RECEIVED:",
-    JSON.stringify(openaiResponse.data, null, 2)
+    JSON.stringify(openaiResponse.data.choices[0]?.message?.content, null, 2)
   )
 
   // Gestisce errori nella risposta API

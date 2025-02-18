@@ -10,10 +10,6 @@ export const getPrompt = async (idPrompt: string) => {
       "SELECT prompt, model, temperature FROM prompts WHERE idPrompt = $1",
       [idPrompt]
     )
-    console.log(
-      "SELECT prompt, model, temperature FROM prompts WHERE idPrompt = $1"
-    )
-    console.log(idPrompt)
 
     return result.rows.length > 0 ? result.rows[0] : null
   } catch (error) {
