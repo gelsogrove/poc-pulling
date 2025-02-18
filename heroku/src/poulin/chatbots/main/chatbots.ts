@@ -164,7 +164,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     }*/
 
     res.status(200).json({
-      text: "test 123",
+      response: "test 123",
     })
   } catch (parseError) {
     res.status(200).json({
