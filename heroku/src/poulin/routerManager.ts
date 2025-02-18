@@ -84,6 +84,7 @@ const routerMap: RouterMap = {
 }
 
 const createDynamicRouter = (type: keyof RouterMap[ChatbotType]) => {
+  console.log("🔍**** createDynamicRouter *****", type)
   const router = Router({ mergeParams: true })
 
   router.use((req: Request<ChatbotParams>, res: Response, next) => {

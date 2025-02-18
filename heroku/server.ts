@@ -125,6 +125,21 @@ if (process.env.NODE_ENV === "production") {
   })
 }
 
+// Middleware per logging delle richieste e risposte
+app.use((req, res, next) => {
+  const requestDetails = {
+    method: req.method,
+    path: req.path,
+    params: req.params,
+    body: req.body,
+    timestamp: new Date().toISOString(),
+  }
+
+  console.log("🔍 Request Details:", JSON.stringify(requestDetails, null, 2))
+
+  next()
+})
+
 app.use("/", welcomeRouter)
 app.use("/auth", limiter, authRouter)
 app.use("/users", limiter, usersRouter)

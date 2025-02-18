@@ -172,8 +172,6 @@ const isExpired: RequestHandler = async (req, res) => {
 
     const values = [userId]
     const fullQuery = sql.replace(/\$1/g, `'${values[0]}'`)
-    console.log(fullQuery)
-    console.log(rows.length)
 
     if (rows.length === 0) {
       res.status(404).json({ message: "Utente non trovato..." })
