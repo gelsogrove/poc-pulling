@@ -130,7 +130,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
       sender: "bot",
       target: parsedResponse.target, // bot scelto
       history: parsedResponse.history, // history della conversazione
-      response: "*** Risposta del bot ***",
+      reply: "*** Risposta del bot ***",
     })
   } catch (parseError) {
     res.status(200).json({
