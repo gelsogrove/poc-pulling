@@ -15,8 +15,13 @@ import { fetchUsageData, getPromptDetails } from "./shared/usage/api/utils_api"
 
 const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
   const [refreshUsage, setRefreshUsage] = useState(false)
+  const name = Cookies.get("name")
   const [messages, setMessages] = useState([
-    /* messaggi iniziali qui */
+    {
+      id: uuidv4(),
+      sender: "bot",
+      text: "Ciao, " + name + " come posso aiutarti oggi?",
+    },
   ])
   const [, setData] = useState([])
 

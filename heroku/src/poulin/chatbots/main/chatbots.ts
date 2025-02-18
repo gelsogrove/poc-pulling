@@ -157,8 +157,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     )
 
     res.status(200).json({
-      id: conversationId,
-      sender: "bot",
+      conversationId,
       target: parsedResponse.target,
       history: finalHistory,
     })
