@@ -99,11 +99,18 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     timeout: 30000,
   })
 
+  console.log(
+    "\n📩 OPENROUTER RAW RESPONSE:",
+    JSON.stringify(openaiResponse.data, null, 2)
+  )
+
   if (!openaiResponse.data?.choices?.length) {
+    console.log("❌ OpenRouter response missing choices array")
     res.status(200).json({
       id: conversationId,
       sender: "bot",
       error: "No response from OpenRouter",
+      debug: openaiResponse.data, // Aggiungiamo i dati grezzi per debug
     })
     return
   }
