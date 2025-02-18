@@ -139,7 +139,7 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
         chatbotSelected
       )
 
-      const parsedResponse = extractJsonFromMessage(botResponse.response)
+      const parsedResponse = extractJsonFromMessage(botResponse)
       setData(botResponse?.data)
 
       const responseText = parsedResponse || "I couldn't understand that."
