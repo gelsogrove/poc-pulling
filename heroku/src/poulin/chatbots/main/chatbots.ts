@@ -126,11 +126,22 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
 
     const parsedResponse = JSON.parse(rawResponse)
     const botResponse = { role: "bot", content: "*** Risposta del bot ***" }
+
+    // Salva la risposta del bot nel DB
+    const finalHistory = await GetAndSetHistory(
+      conversationId,
+      idPrompt,
+      userId,
+      new Date(),
+      botResponse,
+      "" // La history verrà recuperata dal DB
+    )
+
     res.status(200).json({
       id: conversationId,
       sender: "bot",
       target: parsedResponse.target,
-      history: [...parsedResponse.history, botResponse],
+      history: finalHistory,
     })
   } catch (parseError) {
     res.status(200).json({
