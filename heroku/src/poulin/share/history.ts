@@ -111,7 +111,7 @@ export async function GetHistoryChats(idPrompt: string): Promise<any> {
   const query = `
     SELECT history
     FROM conversation_history
-    WHERE   idPrompt = $1 AND idUser = $3
+    WHERE idPrompt = $1 
     ORDER BY datetime DESC
     LIMIT 1
   `
