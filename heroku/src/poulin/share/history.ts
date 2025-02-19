@@ -178,11 +178,7 @@ async function handleSetHistory(req: Request, res: Response) {
 async function handleGetHistoryChats(req: Request, res: Response) {
   const { idConversation, idPrompt, idUser } = req.query
   try {
-    const history = await GetHistoryChats(
-      idConversation as string,
-      idPrompt as string,
-      idUser as string
-    )
+    const history = await GetHistoryChats(idConversation as string)
     res.status(200).json(history)
   } catch (error) {
     res
