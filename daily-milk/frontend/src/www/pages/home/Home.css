@@ -5,7 +5,8 @@
   margin-top: 0px;
   padding: 20px;
   position: relative;
-  max-height: 300px;
+  max-height: none;
+  height: auto;
   padding-top: 80px;
 }
 
@@ -32,19 +33,38 @@
 }
 .features {
   display: flex;
+  flex-direction: column;
+  gap: 50px;
+  margin-top: 40px;
+}
+
+.features-row {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+}
+
+.main-row {
+  margin-bottom: 50px;
+  justify-content: center;
+}
+
+.main-feature {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.secondary-row {
+  display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 50px;
-  margin-top: 40px;
-  max-height: 300px;
 }
 
 .feature-item {
   padding: 1px;
   border-radius: 10px;
   max-width: 500px;
-  max-height: 450px;
-  flex: 1 1 300px;
   position: relative;
   overflow: hidden;
   transition: transform 0.3s ease;
@@ -108,7 +128,6 @@
   display: flex;
   gap: 10px;
   padding: 14px;
-  height: 400px;
 }
 
 .btn {

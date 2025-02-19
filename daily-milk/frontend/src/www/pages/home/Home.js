@@ -3,8 +3,10 @@
 import React, { useEffect, useState } from "react"
 import { Helmet } from "react-helmet"
 import { useTranslation } from "react-i18next"
+import { FaHistory } from "react-icons/fa"
 import Navbar from "../../components/navbar/Navbar"
 import ChatbotSource from "../../components/popups/chatbots/ChatbotPopup.js"
+import History from "../../components/popups/History"
 import InvoicePopup from "../../components/popups/invoices/InvoicePopup.js"
 import Popup from "../../components/popups/Popup"
 import { getPrompts } from "../../components/popups/promptmanager/api/promptmanager_api"
@@ -14,7 +16,7 @@ import UploadPopup from "../../components/popups/upload/UploadPopup.js"
 
 import "./Home.css"
 
-// Definiamo API_URL all'inizio del file
+// eslint-disable-next-line no-unused-vars
 const API_URL =
   process.env.REACT_APP_API_URL || "https://poulin-bd075425a92c.herokuapp.com"
 
@@ -25,6 +27,7 @@ const Home = () => {
   const [title, setTitle] = useState("")
   const [prompts, setPrompts] = useState([])
   const [idPrompt, setIdPrompt] = useState()
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false)
 
   useEffect(() => {
     fetchPrompts()
@@ -53,6 +56,9 @@ const Home = () => {
     setTitle(title)
     setIdPrompt(promptId)
   }
+
+  const openHistory = () => setIsHistoryOpen(true)
+  const closeHistory = () => setIsHistoryOpen(false)
 
   return (
     <div>
@@ -98,74 +104,170 @@ const Home = () => {
         <InvoicePopup chatbotSelected={chatbot} onClose={closePopup} />
       </Popup>
 
+      <History
+        isOpen={isHistoryOpen}
+        onClose={closeHistory}
+        chatbotSelected={chatbot}
+        idPrompt={idPrompt}
+      />
+
       <div className="home-container">
         <h1 className="ourservice">AI dairy-tools </h1>
         <img alt="" className="logo" src="/images/whatsapp.jpg" />
         <div className="num">+001 646474747</div>
         <section className="features">
-          {prompts
-            .filter((prompt) => !prompt.ishide)
-            .map((prompt) => (
-              <div
-                key={prompt.idprompt}
-                className={`feature-item ${
-                  !prompt.isactive ? "disabled-image" : ""
-                }`}
-              >
+          {/* Prima riga: solo Main chatbot */}
+          <div className="features-row main-row">
+            {prompts
+              .filter(
+                (prompt) => prompt.promptname === "Main" && !prompt.ishide
+              )
+              .map((prompt) => (
                 <div
-                  className="image-container"
-                  onClick={() =>
-                    openPopup(
-                      "chatbotsource",
-                      "poulin/" + prompt.path,
-                      `${prompt.promptname}`,
-                      prompt.idprompt
-                    )
-                  }
+                  key={prompt.idprompt}
+                  className="feature-item main-feature"
                 >
-                  <img
-                    src={prompt.image}
-                    alt={t("home.features.chatbot.title")}
-                    className="feature-image"
-                  />
-                  <div className="overlay">
-                    <h3>{prompt.promptname}</h3>
-                    <div className="subtitle"> </div>
-                  </div>
-                </div>
-                <div className="actions-chatbot">
-                  <button
-                    className="btn"
+                  <div
+                    className="image-container"
                     onClick={() =>
                       openPopup(
-                        "prompts",
-                        "poulin/" + prompt.path,
-                        `${prompt.promptname} chatbot`,
-                        prompt.idprompt
-                      )
-                    }
-                  >
-                    <i className="fas fa-cogs"></i>
-                    <div className="tooltip">Prompts</div>
-                  </button>
-
-                  <button
-                    className={`btn`}
-                    onClick={() =>
-                      openPopup(
-                        "unliked",
+                        "chatbotsource",
                         "poulin/" + prompt.path,
                         `${prompt.promptname}`,
                         prompt.idprompt
                       )
                     }
                   >
-                    <i className="fas fa-history"></i>
-                    <div className="tooltip">Unliked</div>
-                  </button>
+                    <img
+                      src={prompt.image}
+                      alt={t("home.features.chatbot.title")}
+                      className="feature-image"
+                    />
+                    <div className="overlay">
+                      <h3>{prompt.promptname}</h3>
+                      <div className="subtitle"> </div>
+                    </div>
+                  </div>
+                  <div className="actions-chatbot">
+                    <button
+                      className="btn"
+                      onClick={() =>
+                        openPopup(
+                          "prompts",
+                          "poulin/" + prompt.path,
+                          `${prompt.promptname} chatbot`,
+                          prompt.idprompt
+                        )
+                      }
+                    >
+                      <i className="fas fa-cogs"></i>
+                      <div className="tooltip">Prompts</div>
+                    </button>
+
+                    <button
+                      className={`btn`}
+                      onClick={() =>
+                        openPopup(
+                          "unliked",
+                          "poulin/" + prompt.path,
+                          `${prompt.promptname}`,
+                          prompt.idprompt
+                        )
+                      }
+                    >
+                      <i className="fas fa-thumbs-down"></i>
+                      <div className="tooltip">Unliked</div>
+                    </button>
+
+                    <button
+                      onClick={openHistory}
+                      className="btn"
+                      title="View Chat History"
+                    >
+                      <FaHistory
+                        style={{ fontSize: "36px", color: "#007bff" }}
+                      />
+                      <div className="tooltip">History</div>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+          </div>
+
+          {/* Seconda riga: altri chatbot */}
+          <div className="features-row secondary-row">
+            {prompts
+              .filter(
+                (prompt) => prompt.promptname !== "Main" && !prompt.ishide
+              )
+              .map((prompt) => (
+                <div key={prompt.idprompt} className="feature-item">
+                  <div
+                    className="image-container"
+                    onClick={() =>
+                      openPopup(
+                        "chatbotsource",
+                        "poulin/" + prompt.path,
+                        `${prompt.promptname}`,
+                        prompt.idprompt
+                      )
+                    }
+                  >
+                    <img
+                      src={prompt.image}
+                      alt={t("home.features.chatbot.title")}
+                      className="feature-image"
+                    />
+                    <div className="overlay">
+                      <h3>{prompt.promptname}</h3>
+                      <div className="subtitle"> </div>
+                    </div>
+                  </div>
+                  <div className="actions-chatbot">
+                    <button
+                      className="btn"
+                      onClick={() =>
+                        openPopup(
+                          "prompts",
+                          "poulin/" + prompt.path,
+                          `${prompt.promptname} chatbot`,
+                          prompt.idprompt
+                        )
+                      }
+                    >
+                      <i className="fas fa-cogs"></i>
+                      <div className="tooltip">Prompts</div>
+                    </button>
+
+                    <button
+                      className={`btn`}
+                      onClick={() =>
+                        openPopup(
+                          "unliked",
+                          "poulin/" + prompt.path,
+                          `${prompt.promptname}`,
+                          prompt.idprompt
+                        )
+                      }
+                    >
+                      <i className="fas fa-thumbs-down"></i>
+                      <div className="tooltip">Unliked</div>
+                    </button>
+
+                    <button
+                      onClick={openHistory}
+                      className="btn"
+                      title="View Chat History"
+                    >
+                      <FaHistory
+                        style={{ fontSize: "36px", color: "#007bff" }}
+                      />
+                      <div className="tooltip">History</div>
+                    </button>
+                  </div>
+                </div>
+              ))}
+          </div>
         </section>
       </div>
     </div>
