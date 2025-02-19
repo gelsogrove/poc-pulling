@@ -9,6 +9,7 @@ const HistoryPopup = ({
   idConversation,
   idPrompt,
   idUser,
+  chatbotSelected,
 }) => {
   const [historyData, setHistoryData] = useState([])
 
@@ -20,7 +21,12 @@ const HistoryPopup = ({
 
   const fetchHistoryData = async () => {
     try {
-      const data = await GetHistoryChats(idConversation, idPrompt, idUser)
+      const data = await GetHistoryChats(
+        idConversation,
+        idPrompt,
+        idUser,
+        chatbotSelected
+      )
       setHistoryData(data)
     } catch (error) {
       console.error("Error fetching history data:", error)
@@ -29,7 +35,7 @@ const HistoryPopup = ({
 
   const handleDeleteHistory = async (idHistory) => {
     try {
-      const success = await DeleteHistory(idHistory)
+      const success = await DeleteHistory(idHistory, chatbotSelected)
       if (success) {
         setHistoryData(
           historyData.filter((item) => item.idHistory !== idHistory)

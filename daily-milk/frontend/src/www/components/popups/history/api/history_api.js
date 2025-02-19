@@ -1,8 +1,13 @@
 import axios from "axios"
 import Cookies from "js-cookie"
 
-export const GetHistoryChats = async (idConversation, idPrompt, idUser) => {
-  const API_URL = `${process.env.REACT_APP_API_URL}/conversation_history/get`
+export const GetHistoryChats = async (
+  idConversation,
+  idPrompt,
+  idUser,
+  chatbotSelected
+) => {
+  const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}/history/`
   const token = Cookies.get("token")
 
   try {
@@ -29,8 +34,8 @@ export const GetHistoryChats = async (idConversation, idPrompt, idUser) => {
   }
 }
 
-export const DeleteHistory = async (idHistory) => {
-  const API_URL = `${process.env.REACT_APP_API_URL}/conversation_history/delete`
+export const DeleteHistory = async (idHistory, chatbotSelected) => {
+  const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}/history/delete`
   const token = Cookies.get("token")
 
   try {

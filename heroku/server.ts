@@ -156,6 +156,7 @@ app.use("/poulin/:chatbot/prompt", limiter, promptRouter)
 app.use("/poulin/:chatbot/chatbot", limiter, chatbotRouter)
 app.use("/poulin/:chatbot/unlike", limiter, unlikeRouter)
 app.use("/poulin/:chatbot/backup", limiter, backupRouter)
+app.use("/poulin/:chatbot/history", limiter, historyRouter)
 
 const PORT = process.env.PORT || 4999
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))

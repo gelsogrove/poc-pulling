@@ -57,7 +57,11 @@ const Home = () => {
     setIdPrompt(promptId)
   }
 
-  const openHistory = () => setIsHistoryOpen(true)
+  const openHistory = (chatbotSelected) => {
+    setIsHistoryOpen(true)
+    setChatbot(chatbotSelected)
+  }
+
   const closeHistory = () => setIsHistoryOpen(false)
 
   return (
@@ -177,7 +181,7 @@ const Home = () => {
                     </button>
 
                     <button
-                      onClick={openHistory}
+                      onClick={() => openHistory(prompt.path)}
                       className="btn"
                       title="View Chat History"
                     >
