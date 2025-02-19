@@ -107,26 +107,20 @@ export async function GetAndSetHistory(
  * @param idUser - ID dell'utente
  * @returns Promise<any> - La cronologia delle chat
  */
-export async function GetHistoryChats(
-  idConversation: string,
-  idPrompt: string,
-  idUser: string
-): Promise<any> {
+export async function GetHistoryChats(idPrompt: string): Promise<any> {
   const query = `
     SELECT history
     FROM conversation_history
-    WHERE idConversation = $1 AND idPrompt = $2 AND idUser = $3
+    WHERE   idPrompt = $1 AND idUser = $3
     ORDER BY datetime DESC
     LIMIT 1
   `
 
-  console.log("idConversation", idConversation)
   console.log("idPrompt", idPrompt)
-  console.log("idUser", idUser)
   console.log("query", query)
 
   try {
-    const result = await pool.query(query, [idConversation, idPrompt, idUser])
+    const result = await pool.query(query, [idPrompt])
     if (result.rows.length > 0) {
       return result.rows[0].history
     } else {

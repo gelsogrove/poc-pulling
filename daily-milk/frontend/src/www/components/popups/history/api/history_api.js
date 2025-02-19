@@ -2,9 +2,8 @@ import axios from "axios"
 import Cookies from "js-cookie"
 
 export const GetHistoryChats = async (
-  idConversation,
   idPrompt,
-  idUser,
+
   chatbotSelected
 ) => {
   const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}/history/chats`
@@ -17,9 +16,7 @@ export const GetHistoryChats = async (
     }
 
     const params = {
-      idConversation,
       idPrompt,
-      idUser,
     }
 
     // Effettua la richiesta GET con axios

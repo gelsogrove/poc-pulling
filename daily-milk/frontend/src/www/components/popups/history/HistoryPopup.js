@@ -21,12 +21,7 @@ const HistoryPopup = ({
 
   const fetchHistoryData = async () => {
     try {
-      const data = await GetHistoryChats(
-        idConversation,
-        idPrompt,
-        idUser,
-        chatbotSelected
-      )
+      const data = await GetHistoryChats(idPrompt, chatbotSelected)
       setHistoryData(data)
     } catch (error) {
       console.error("Error fetching history data:", error)
