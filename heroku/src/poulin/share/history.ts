@@ -176,9 +176,9 @@ async function handleSetHistory(req: Request, res: Response) {
 
 // Metodo di gestione per recuperare la cronologia delle chat
 async function handleGetHistoryChats(req: Request, res: Response) {
-  const { idConversation, idPrompt, idUser } = req.query
+  const { idPrompt } = req.query
   try {
-    const history = await GetHistoryChats(idConversation as string)
+    const history = await GetHistoryChats(idPrompt as string)
     res.status(200).json(history)
   } catch (error) {
     res
