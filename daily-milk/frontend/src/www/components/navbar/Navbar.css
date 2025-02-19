@@ -41,6 +41,7 @@
   margin-top: -15px; /* Spazio tra l'icona e il tooltip */
   color: #fff; /* Colore del tooltip */
   text-align: center;
+  top: 70px; /* Sposta il tooltip 20px più in basso */
 }
 
 /* Responsive: Mobile-specific styles */

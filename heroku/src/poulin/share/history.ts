@@ -97,3 +97,58 @@ export async function GetAndSetHistory(
     throw error
   }
 }
+
+/**
+ * Recupera la cronologia delle chat per una conversazione specifica.
+ *
+ * @param idConversation - ID della conversazione
+ * @param idPrompt - ID del prompt
+ * @param idUser - ID dell'utente
+ * @returns Promise<any> - La cronologia delle chat
+ */
+export async function GetHistoryChats(
+  idConversation: string,
+  idPrompt: string,
+  idUser: string
+): Promise<any> {
+  const query = `
+    SELECT history
+    FROM conversation_history
+    WHERE idConversation = $1 AND idPrompt = $2 AND idUser = $3
+    ORDER BY datetime DESC
+    LIMIT 1
+  `
+
+  try {
+    const result = await pool.query(query, [idConversation, idPrompt, idUser])
+    if (result.rows.length > 0) {
+      return result.rows[0].history
+    } else {
+      return null
+    }
+  } catch (error) {
+    console.error("Errore nel recupero della cronologia delle chat:", error)
+    throw error
+  }
+}
+
+/**
+ * Elimina una cronologia specifica.
+ *
+ * @param idHistory - ID della cronologia da eliminare
+ * @returns Promise<boolean> - Indica se l'eliminazione è avvenuta con successo
+ */
+export async function DeleteHistory(idHistory: string): Promise<boolean> {
+  const query = `
+    DELETE FROM conversation_history
+    WHERE idHistory = $1
+  `
+
+  try {
+    const result = await pool.query(query, [idHistory])
+    return result?.rowCount ? result.rowCount > 0 : false
+  } catch (error) {
+    console.error("Errore nell'eliminazione della cronologia:", error)
+    throw error
+  }
+}

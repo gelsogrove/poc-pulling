@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next"
 import { FaHistory } from "react-icons/fa"
 import Navbar from "../../components/navbar/Navbar"
 import ChatbotSource from "../../components/popups/chatbots/ChatbotPopup.js"
-import History from "../../components/popups/History"
+import History from "../../components/popups/history/History.js"
 import InvoicePopup from "../../components/popups/invoices/InvoicePopup.js"
 import Popup from "../../components/popups/Popup"
 import { getPrompts } from "../../components/popups/promptmanager/api/promptmanager_api"
@@ -112,9 +112,6 @@ const Home = () => {
       />
 
       <div className="home-container">
-        <h1 className="ourservice">AI dairy-tools </h1>
-        <img alt="" className="logo" src="/images/whatsapp.jpg" />
-        <div className="num">+001 646474747</div>
         <section className="features">
           {/* Prima riga: solo Main chatbot */}
           <div className="features-row main-row">
@@ -184,10 +181,16 @@ const Home = () => {
                       className="btn"
                       title="View Chat History"
                     >
-                      <FaHistory
-                        style={{ fontSize: "36px", color: "#007bff" }}
-                      />
+                      <FaHistory style={{ fontSize: "30px" }} />
                       <div className="tooltip">History</div>
+                    </button>
+
+                    <button className="btn">
+                      <i
+                        className="fab fa-whatsapp"
+                        style={{ fontSize: "30px" }}
+                      ></i>
+                      <div className="tooltip">WhatsApp Settings</div>
                     </button>
                   </div>
                 </div>
@@ -252,17 +255,6 @@ const Home = () => {
                     >
                       <i className="fas fa-thumbs-down"></i>
                       <div className="tooltip">Unliked</div>
-                    </button>
-
-                    <button
-                      onClick={openHistory}
-                      className="btn"
-                      title="View Chat History"
-                    >
-                      <FaHistory
-                        style={{ fontSize: "36px", color: "#007bff" }}
-                      />
-                      <div className="tooltip">History</div>
                     </button>
                   </div>
                 </div>

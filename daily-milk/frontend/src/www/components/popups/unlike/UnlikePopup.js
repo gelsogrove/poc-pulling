@@ -84,7 +84,7 @@ const UnlikePopup = ({ idPrompt, onClose, chatbotSelected }) => {
       <div className="close-button-container">
         <CloseButton onClose={onClose} />
       </div>
-      <h1>Unlike</h1>
+      <h1>Unlike Messages</h1>
       <div className="content-container">
         {loading ? (
           <div className="loading-message">Loading...</div>
