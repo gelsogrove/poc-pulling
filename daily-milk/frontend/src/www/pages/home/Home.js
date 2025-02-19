@@ -181,7 +181,7 @@ const Home = () => {
                     </button>
 
                     <button
-                      onClick={() => openHistory(prompt.path)}
+                      onClick={() => openHistory("poulin/" + prompt.path)}
                       className="btn"
                       title="View Chat History"
                     >

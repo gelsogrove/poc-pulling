@@ -120,6 +120,11 @@ export async function GetHistoryChats(
     LIMIT 1
   `
 
+  console.log("idConversation", idConversation)
+  console.log("idPrompt", idPrompt)
+  console.log("idUser", idUser)
+  console.log("query", query)
+
   try {
     const result = await pool.query(query, [idConversation, idPrompt, idUser])
     if (result.rows.length > 0) {

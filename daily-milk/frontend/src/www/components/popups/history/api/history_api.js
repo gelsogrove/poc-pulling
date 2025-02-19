@@ -7,11 +7,10 @@ export const GetHistoryChats = async (
   idUser,
   chatbotSelected
 ) => {
-  const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}/history/`
+  const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}/history/chats`
   const token = Cookies.get("token")
 
   try {
-    // Configura gli headers e i parametri della richiesta
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -48,9 +47,18 @@ export const DeleteHistory = async (idHistory, chatbotSelected) => {
     // Effettua la richiesta DELETE con axios
     const response = await axios.delete(`${API_URL}/${idHistory}`, { headers })
 
-    return response.status === 204
+    if (response.status === 204) {
+      console.log("History successfully deleted.")
+      return true
+    } else {
+      console.warn("Unexpected response status:", response.status)
+      return false
+    }
   } catch (error) {
-    console.error("Error deleting history:", error)
+    console.error(
+      "Error deleting history:",
+      error.response ? error.response.data : error.message
+    )
     throw error
   }
 }
