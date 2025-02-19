@@ -1,3 +1,4 @@
+import express, { Request, Response } from "express"
 import { v4 as uuidv4 } from "uuid"
 import { pool } from "../../../server.js"
 
@@ -152,3 +153,63 @@ export async function DeleteHistory(idHistory: string): Promise<boolean> {
     throw error
   }
 }
+
+const historyRouter = express.Router()
+
+// Metodo di gestione per impostare la cronologia
+async function handleSetHistory(req: Request, res: Response) {
+  const { conversationId, promptId, userId, dateTime, message, historyString } =
+    req.body
+  try {
+    const history = await GetAndSetHistory(
+      conversationId,
+      promptId,
+      userId,
+      dateTime,
+      message,
+      historyString
+    )
+    res.status(200).json(history)
+  } catch (error) {
+    res.status(500).json({ error: "Errore nella gestione della history" })
+  }
+}
+
+// Metodo di gestione per recuperare la cronologia delle chat
+async function handleGetHistoryChats(req: Request, res: Response) {
+  const { idConversation, idPrompt, idUser } = req.query
+  try {
+    const history = await GetHistoryChats(
+      idConversation as string,
+      idPrompt as string,
+      idUser as string
+    )
+    res.status(200).json(history)
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Errore nel recupero della cronologia delle chat" })
+  }
+}
+
+// Metodo di gestione per eliminare una cronologia
+async function handleDeleteHistory(req: Request, res: Response) {
+  const { idHistory } = req.params
+  try {
+    const success = await DeleteHistory(idHistory)
+    if (success) {
+      res.status(200).json({ message: "Cronologia eliminata con successo" })
+    } else {
+      res.status(404).json({ error: "Cronologia non trovata" })
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Errore nell'eliminazione della cronologia" })
+  }
+}
+
+// Collegamento dei metodi di gestione agli endpoint
+historyRouter.post("/set", handleSetHistory)
+historyRouter.get("/chats", handleGetHistoryChats)
+historyRouter.delete("/delete/:idHistory", handleDeleteHistory)
+
+export default historyRouter

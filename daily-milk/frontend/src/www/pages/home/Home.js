@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next"
 import { FaHistory } from "react-icons/fa"
 import Navbar from "../../components/navbar/Navbar"
 import ChatbotSource from "../../components/popups/chatbots/ChatbotPopup.js"
-import History from "../../components/popups/history/History.js"
+import HistoryPopup from "../../components/popups/history/HistoryPopup.js"
 import InvoicePopup from "../../components/popups/invoices/InvoicePopup.js"
 import Popup from "../../components/popups/Popup"
 import { getPrompts } from "../../components/popups/promptmanager/api/promptmanager_api"
@@ -104,7 +104,7 @@ const Home = () => {
         <InvoicePopup chatbotSelected={chatbot} onClose={closePopup} />
       </Popup>
 
-      <History
+      <HistoryPopup
         isOpen={isHistoryOpen}
         onClose={closeHistory}
         chatbotSelected={chatbot}

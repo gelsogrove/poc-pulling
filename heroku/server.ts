@@ -14,12 +14,13 @@ import {
   unlikeRouter,
   usageRouter,
 } from "./src/poulin/routerManager.js"
+import historyRouter from "./src/poulin/share/history.js"
 import usersRouter from "./src/poulin/users.js"
 import authRouter from "./src/poulin/utility/auth.js"
 import backupRouter from "./src/poulin/utility/backup.js"
 import modelsRouter from "./src/poulin/utility/models.js"
 import monthlyUsageRouter from "./src/poulin/utility/monthlyUsage.js"
-import modelpromptsRouter from "./src/poulin/utility/promptsManager.js"
+import promptsManagerRouter from "./src/poulin/utility/promptsManager.js"
 import modelrolesRouter from "./src/poulin/utility/roles.js"
 import modelWebooksRouter from "./src/poulin/webhook.js"
 import welcomeRouter from "./welcome.js"
@@ -147,7 +148,8 @@ app.use("/invoices", limiter, monthlyUsageRouter)
 app.use("/models", limiter, modelsRouter)
 app.use("/webhook", limiter, modelWebooksRouter)
 app.use("/roles", limiter, modelrolesRouter)
-app.use("/prompts", limiter, modelpromptsRouter)
+app.use("/prompts", limiter, promptsManagerRouter)
+app.use("/history", limiter, historyRouter)
 
 app.use("/poulin/:chatbot/usage", limiter, usageRouter)
 app.use("/poulin/:chatbot/prompt", limiter, promptRouter)
