@@ -109,7 +109,7 @@ export async function GetAndSetHistory(
  */
 export async function GetHistoryChats(idPrompt: string): Promise<any> {
   const query = `
-    SELECT history
+    SELECT datetime,idhistory,history
     FROM conversation_history
     WHERE idPrompt = $1 
     ORDER BY datetime DESC
@@ -122,7 +122,7 @@ export async function GetHistoryChats(idPrompt: string): Promise<any> {
   try {
     const result = await pool.query(query, [idPrompt])
     if (result.rows.length > 0) {
-      return result.rows[0].history
+      return result.rows
     } else {
       return null
     }
