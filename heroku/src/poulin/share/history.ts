@@ -113,7 +113,6 @@ export async function GetHistoryChats(idPrompt: string): Promise<any> {
     FROM conversation_history
     WHERE idPrompt = $1 
     ORDER BY datetime DESC
-    LIMIT 1
   `
 
   console.log("idPrompt", idPrompt)

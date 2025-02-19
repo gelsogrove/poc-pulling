@@ -27,7 +27,6 @@ const Home = () => {
   const [title, setTitle] = useState("")
   const [prompts, setPrompts] = useState([])
   const [idPrompt, setIdPrompt] = useState()
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false)
 
   useEffect(() => {
     fetchPrompts()
@@ -56,13 +55,6 @@ const Home = () => {
     setTitle(title)
     setIdPrompt(promptId)
   }
-
-  const openHistory = (chatbotSelected) => {
-    setIsHistoryOpen(true)
-    setChatbot(chatbotSelected)
-  }
-
-  const closeHistory = () => setIsHistoryOpen(false)
 
   return (
     <div>
@@ -108,12 +100,13 @@ const Home = () => {
         <InvoicePopup chatbotSelected={chatbot} onClose={closePopup} />
       </Popup>
 
-      <HistoryPopup
-        isOpen={isHistoryOpen}
-        onClose={closeHistory}
-        chatbotSelected={chatbot}
-        idPrompt={idPrompt}
-      />
+      <Popup isOpen={activePopup === "history"}>
+        <HistoryPopup
+          onClose={closePopup}
+          chatbotSelected={chatbot}
+          idPrompt={idPrompt}
+        />
+      </Popup>
 
       <div className="home-container">
         <section className="features">
@@ -181,7 +174,14 @@ const Home = () => {
                     </button>
 
                     <button
-                      onClick={() => openHistory("poulin/" + prompt.path)}
+                      onClick={() =>
+                        openPopup(
+                          "history",
+                          "poulin/" + prompt.path,
+                          `${prompt.promptname}`,
+                          prompt.idprompt
+                        )
+                      }
                       className="btn"
                       title="View Chat History"
                     >

@@ -1,30 +1,23 @@
+/* eslint-disable no-undef */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react"
 import { DeleteHistory, GetHistoryChats } from "./api/history_api"
 import "./HistoryPopup.css"
 
-const HistoryPopup = ({
-  isOpen,
-  onClose,
-  idConversation,
-  idPrompt,
-  idUser,
-  chatbotSelected,
-}) => {
+const HistoryPopup = ({ onClose, chatbotSelected, idPrompt }) => {
   const [historyData, setHistoryData] = useState([])
 
   useEffect(() => {
-    if (isOpen) {
-      fetchHistoryData()
-    }
-  }, [isOpen])
+    fetchHistoryData()
+  }, [])
 
   const fetchHistoryData = async () => {
     try {
       const data = await GetHistoryChats(idPrompt, chatbotSelected)
-      setHistoryData(data)
+      setHistoryData(data || [])
     } catch (error) {
       console.error("Error fetching history data:", error)
+      setHistoryData([])
     }
   }
 
@@ -40,8 +33,6 @@ const HistoryPopup = ({
       console.error("Error deleting history:", error)
     }
   }
-
-  if (!isOpen) return null
 
   return (
     <div className="popup-overlay">
