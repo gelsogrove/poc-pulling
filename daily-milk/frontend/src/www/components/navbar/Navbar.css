@@ -4,7 +4,7 @@
   display: flex;
   justify-content: flex-end; /* Allinea tutti gli elementi a destra */
   align-items: center; /* Allinea verticalmente */
-  padding: 10px;
+  padding: 0px;
   background-color: transparent; /* Sfondo trasparente */
 }
 

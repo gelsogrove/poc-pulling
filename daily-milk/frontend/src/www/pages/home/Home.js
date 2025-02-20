@@ -11,6 +11,7 @@ import InvoicePopup from "../../components/popups/invoices/InvoicePopup.js"
 import Popup from "../../components/popups/Popup"
 import { getPrompts } from "../../components/popups/promptmanager/api/promptmanager_api"
 import PromptsPopup from "../../components/popups/prompts/PromptsPopup.js"
+import SettingsPopup from "../../components/popups/settings/SettingsPopup.js"
 import UnlikePopup from "../../components/popups/unlike/UnlikePopup.js"
 import UploadPopup from "../../components/popups/upload/UploadPopup.js"
 
@@ -108,6 +109,10 @@ const Home = () => {
         />
       </Popup>
 
+      <Popup isOpen={activePopup === "settings"}>
+        <SettingsPopup onClose={closePopup} />
+      </Popup>
+
       <div className="home-container">
         <section className="features">
           {/* Prima riga: solo Main chatbot */}
@@ -189,7 +194,10 @@ const Home = () => {
                       <div className="tooltip">History</div>
                     </button>
 
-                    <button className="btn">
+                    <button
+                      className="btn"
+                      onClick={() => openPopup("settings")}
+                    >
                       <i
                         className="fab fa-whatsapp"
                         style={{ fontSize: "30px" }}

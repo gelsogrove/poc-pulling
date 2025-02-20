@@ -21,6 +21,7 @@ const handleBackup = async () => {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 const handleImport = async () => {
   const input = document.createElement("input")
   input.type = "file"
@@ -149,11 +150,6 @@ const Navbar = () => {
         <button className="btn" onClick={() => openPopup("manageUsers")}>
           <i className="fas fa-users"></i>
           <div className="tooltip">Manage Users</div>
-        </button>
-
-        <button className="btn" onClick={() => openPopup("settings")}>
-          <i className="fas fa-cog"></i>
-          <div className="tooltip">Settings</div>
         </button>
 
         <button onClick={clearAllCookies} className="btn logout-btn">
