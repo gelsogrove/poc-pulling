@@ -55,15 +55,15 @@ export const DeleteHistory = async (idHistory, chatbotSelected) => {
 
 function populateChatList(chatData) {
   const chatList = document.getElementById("chatList")
-  chatList.innerHTML = "" // Pulisce la lista esistente
+  chatList.innerHTML = "" // Clear existing list
 
   if (chatData && chatData.length > 0) {
     chatData.forEach((chat) => {
       const listItem = document.createElement("li")
-      // Usa la data dalla proprietà 'datetime' e formattala
+      // Use the date from the 'datetime' property and format it
       const date = new Date(chat.datetime).toLocaleString()
       listItem.textContent = `Data: ${date}`
-      listItem.onclick = () => showChatHistory(chat)
+      listItem.onclick = () => showChatHistory(chat) // Call showChatHistory on click
       chatList.appendChild(listItem)
     })
   } else {

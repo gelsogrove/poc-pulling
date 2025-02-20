@@ -37,7 +37,7 @@ export async function GetAndSetHistory(
 ): Promise<Message[]> {
   // Query per recuperare la history più recente per questa conversazione
   const existingHistoryQuery = `
-    SELECT history 
+    SELECT history, idhistory 
     FROM conversation_history 
     WHERE idConversation = $1 
     ORDER BY datetime DESC 
@@ -50,13 +50,16 @@ export async function GetAndSetHistory(
       conversationId,
     ])
 
+    let history: Message[] = []
+    let existingHistoryId: string | null = null
+
     // Se esiste una history precedente, la usa invece di quella fornita
     if (existingHistory.rows.length > 0) {
       historyString = existingHistory.rows[0].history
+      existingHistoryId = existingHistory.rows[0].idhistory
     }
 
     // Converte la history da stringa JSON ad array
-    let history: Message[] = []
     try {
       history = historyString ? JSON.parse(historyString) : []
     } catch (error) {
@@ -68,22 +71,34 @@ export async function GetAndSetHistory(
     history.push(message)
     const updatedHistoryString = JSON.stringify(history)
 
-    // Salva il nuovo record nel database
-    await pool.query(
-      `
-      INSERT INTO conversation_history (
-        idHistory, idUser, idPrompt, idConversation, datetime, history
-      ) VALUES ($1, $2, $3, $4, $5, $6)
-    `,
-      [
-        uuidv4(),
-        userId,
-        promptId,
-        conversationId,
-        dateTime,
-        updatedHistoryString,
-      ]
-    )
+    if (existingHistoryId) {
+      // Se la conversazione esiste, aggiorna il record esistente
+      await pool.query(
+        `
+        UPDATE conversation_history 
+        SET history = $1, datetime = $2
+        WHERE idHistory = $3
+        `,
+        [updatedHistoryString, dateTime, existingHistoryId]
+      )
+    } else {
+      // Se è una nuova conversazione, crea un nuovo record
+      await pool.query(
+        `
+        INSERT INTO conversation_history (
+          idHistory, idUser, idPrompt, idConversation, datetime, history
+        ) VALUES ($1, $2, $3, $4, $5, $6)
+        `,
+        [
+          uuidv4(),
+          userId,
+          promptId,
+          conversationId,
+          dateTime,
+          updatedHistoryString,
+        ]
+      )
+    }
 
     // Applica il limite alla lunghezza della history
     if (history.length > MAX_HISTORY_MESSAGES) {
