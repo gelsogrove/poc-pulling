@@ -91,6 +91,7 @@ const Home = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            cursor: "pointer",
           }}
         >
           <div
@@ -102,6 +103,9 @@ const Home = () => {
               borderRadius: "8px",
               zIndex: 9999,
               position: "relative",
+              minWidth: "300px",
+              minHeight: "200px",
+              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
             }}
           >
             <ChatbotSource
@@ -243,7 +247,7 @@ const Home = () => {
                     className="image-container"
                     onClick={() =>
                       openPopup(
-                        "chatbotsource",
+                        "prompts",
                         "poulin/" + prompt.path,
                         `${prompt.promptname}`,
                         prompt.idprompt
@@ -259,22 +263,6 @@ const Home = () => {
                       <h3>{prompt.promptname}</h3>
                       <div className="subtitle"> </div>
                     </div>
-                  </div>
-                  <div className="actions-chatbot">
-                    <button
-                      className="btn"
-                      onClick={() =>
-                        openPopup(
-                          "prompts",
-                          "poulin/" + prompt.path,
-                          `${prompt.promptname} chatbot`,
-                          prompt.idprompt
-                        )
-                      }
-                    >
-                      <i className="fas fa-cogs"></i>
-                      <div className="tooltip">Prompts</div>
-                    </button>
                   </div>
                 </div>
               ))}
