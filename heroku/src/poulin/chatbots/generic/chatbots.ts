@@ -2,7 +2,6 @@ import axios from "axios"
 import dotenv from "dotenv"
 import { Request, RequestHandler, Response, Router } from "express"
 
-import { pool } from "../../../../server.js"
 import { GetAndSetHistory } from "../../share/history.js"
 import { validateRequest } from "../../share/validateUser.js"
 import { getPrompt } from "../../utility/chatbots_utility.js"
@@ -26,17 +25,8 @@ if (!process.env.OPENROUTER_API_KEY) {
   throw new Error("OPENROUTER_API_KEY is not set in the environment variables.")
 }
 
-/**
- * Gestisce le richieste di chat al chatbot
- *
- * Il flusso è:
- * 1. Verifica autenticazione e autorizzazione
- * 2. Recupera e aggiorna la history della conversazione
- * 3. Invia la richiesta al modello
- * 4. Processa e restituisce la risposta
- */
 const handleResponse: RequestHandler = async (req: Request, res: Response) => {
-  console.log("\n📥 *** CHATBOT MAIN ***")
+  console.log("\n📥 *** CHATBOT Generic ***")
 
   // Validazione utente
   const { userId } = await validateRequest(req, res)
@@ -44,27 +34,6 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
   if (!userId) return
 
   const { conversationId, idPrompt, message } = req.body
-
-  // Verifica accesso alla conversazione
-  const accessQuery = `
-    SELECT 1 FROM conversation_history 
-    WHERE idConversation = $1 AND idUser = $2 
-    LIMIT 1
-  `
-  const access = await pool.query(accessQuery, [conversationId, userId])
-  if (access.rows.length === 0) {
-    console.log("Prima conversazione per questo utente")
-  } else {
-    console.log("Conversazione esistente, accesso verificato")
-  }
-
-  // Validazione campi richiesti
-  if (!conversationId || !message?.role || !message?.content) {
-    res.status(400).json({
-      message: "conversationId and message with role and content are required.",
-    })
-    return
-  }
 
   // Recupera configurazione del prompt
   const { prompt, model, temperature } = await getPrompt(idPrompt)
@@ -98,11 +67,6 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     headers: OPENROUTER_HEADERS,
     timeout: 30000,
   })
-
-  console.log(
-    "\n📩 OPENROUTER RAW RESPONSE:",
-    JSON.stringify(openaiResponse.data, null, 2)
-  )
 
   if (!openaiResponse.data?.choices?.length) {
     console.log("❌ OpenRouter response missing choices array")
