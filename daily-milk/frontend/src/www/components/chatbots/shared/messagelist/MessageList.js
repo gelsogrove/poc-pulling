@@ -1,4 +1,3 @@
-import Cookies from "js-cookie"
 import React, { useEffect, useRef, useState } from "react"
 import { createDynamicAsciiTable } from "../../shared/utils"
 import { handleUnlikeApi } from "./api/MessageList_api"
@@ -44,6 +43,11 @@ const MessageList = ({
     temperature
   ) => {
     try {
+      if (!conversationHistory) {
+        console.warn("conversationHistory is undefined, using empty array")
+        conversationHistory = []
+      }
+
       const response = await handleUnlikeApi(
         msgId,
         conversationHistory,
@@ -156,25 +160,6 @@ const MessageList = ({
                   index !== 0 && (
                     <>
                       <div className="like-unlike-icons" data-id={msg.id}>
-                        <span
-                          role="img"
-                          aria-label="unlike"
-                          className="unlike-icon"
-                          onClick={() =>
-                            handleUnlike(
-                              msg.id,
-                              conversationHistory,
-                              IdConversation,
-                              Cookies.get("userId"),
-                              model,
-                              temperature
-                            )
-                          }
-                          title="Dislike this answer"
-                          style={{ cursor: "pointer", marginRight: "8px" }}
-                        >
-                          👎
-                        </span>
                         <span
                           role="img"
                           aria-label="debug"

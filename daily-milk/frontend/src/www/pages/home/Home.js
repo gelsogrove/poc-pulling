@@ -57,6 +57,14 @@ const Home = () => {
     setIdPrompt(promptId)
   }
 
+  const handlePopupClick = (e) => {
+    e.stopPropagation()
+  }
+
+  const handleCloseClick = (e) => {
+    e.stopPropagation()
+  }
+
   return (
     <div>
       <Helmet>
@@ -69,12 +77,41 @@ const Home = () => {
       <Navbar />
 
       <Popup isOpen={activePopup === "chatbotsource"}>
-        <ChatbotSource
-          title={title}
-          chatbotSelected={chatbot}
-          idPrompt={idPrompt}
-          onClose={closePopup}
-        />
+        <div
+          className="popup-overlay"
+          onClick={handlePopupClick}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 9998,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div
+            className="popup-content"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: "white",
+              padding: "20px",
+              borderRadius: "8px",
+              zIndex: 9999,
+              position: "relative",
+            }}
+          >
+            <ChatbotSource
+              title={title}
+              chatbotSelected={chatbot}
+              idPrompt={idPrompt}
+              onClose={closePopup}
+            />
+          </div>
+        </div>
       </Popup>
 
       <Popup isOpen={activePopup === "prompts"}>
@@ -164,21 +201,6 @@ const Home = () => {
                     </button>
 
                     <button
-                      className={`btn`}
-                      onClick={() =>
-                        openPopup(
-                          "unliked",
-                          "poulin/" + prompt.path,
-                          `${prompt.promptname}`,
-                          prompt.idprompt
-                        )
-                      }
-                    >
-                      <i className="fas fa-thumbs-down"></i>
-                      <div className="tooltip">Unliked</div>
-                    </button>
-
-                    <button
                       onClick={() =>
                         openPopup(
                           "history",
@@ -252,21 +274,6 @@ const Home = () => {
                     >
                       <i className="fas fa-cogs"></i>
                       <div className="tooltip">Prompts</div>
-                    </button>
-
-                    <button
-                      className={`btn`}
-                      onClick={() =>
-                        openPopup(
-                          "unliked",
-                          "poulin/" + prompt.path,
-                          `${prompt.promptname}`,
-                          prompt.idprompt
-                        )
-                      }
-                    >
-                      <i className="fas fa-thumbs-down"></i>
-                      <div className="tooltip">Unliked</div>
                     </button>
                   </div>
                 </div>

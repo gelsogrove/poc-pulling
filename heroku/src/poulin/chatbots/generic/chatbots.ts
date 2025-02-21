@@ -1,17 +1,16 @@
 import axios from "axios"
-import axiosRetry from "axios-retry"
 import dotenv from "dotenv"
 import { Request, RequestHandler, Response, Router } from "express"
+
 import { pool } from "../../../../server.js"
 import { GetAndSetHistory } from "../../share/history.js"
 import { validateRequest } from "../../share/validateUser.js"
-import { cleanResponse, getPrompt } from "../../utility/chatbots_utility.js"
+import { getPrompt } from "../../utility/chatbots_utility.js"
 
 dotenv.config()
 
 /**
  * Configurazione per le chiamate a OpenRouter
- * Chatbot generico per richieste non specializzate
  */
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 const OPENROUTER_HEADERS = {
@@ -20,47 +19,46 @@ const OPENROUTER_HEADERS = {
 }
 const MAX_TOKENS = 5000
 
-const genericRouter = Router() // Rinominato per chiarezza
+const chatbotMainRouter = Router()
 
-// Verifica configurazione API
+// Verifica che la chiave API sia configurata
 if (!process.env.OPENROUTER_API_KEY) {
   throw new Error("OPENROUTER_API_KEY is not set in the environment variables.")
 }
 
 /**
- * Configurazione retry per gestire interruzioni di rete
- */
-axiosRetry(axios, {
-  retries: 3,
-  retryDelay: (retryCount) => retryCount * 1000,
-  retryCondition: (error) => {
-    const status = error.response?.status ?? 0
-    return error.code === "ECONNRESET" || status >= 500
-  },
-})
-
-/**
- * Gestisce le richieste al chatbot generico
+ * Gestisce le richieste di chat al chatbot
  *
- * Funzionalità specifiche:
- * - Risposte generali
- * - Routing alle specializzazioni
- * - Supporto base utente
- * - Gestione FAQ
- *
- * Flusso di elaborazione:
- * 1. Validazione input e autenticazione
- * 2. Recupero configurazione prompt
- * 3. Elaborazione richiesta con OpenAI
- * 4. Generazione risposta semplice
+ * Il flusso è:
+ * 1. Verifica autenticazione e autorizzazione
+ * 2. Recupera e aggiorna la history della conversazione
+ * 3. Invia la richiesta al modello
+ * 4. Processa e restituisce la risposta
  */
 const handleResponse: RequestHandler = async (req: Request, res: Response) => {
+  console.log("\n📥 *** CHATBOT MAIN ***")
+
   // Validazione utente
   const { userId } = await validateRequest(req, res)
+  console.log(" - UserId:", userId)
   if (!userId) return
-  const { conversationId, promptId, message } = req.body
 
-  // Validazione richiesta
+  const { conversationId, idPrompt, message } = req.body
+
+  // Verifica accesso alla conversazione
+  const accessQuery = `
+    SELECT 1 FROM conversation_history 
+    WHERE idConversation = $1 AND idUser = $2 
+    LIMIT 1
+  `
+  const access = await pool.query(accessQuery, [conversationId, userId])
+  if (access.rows.length === 0) {
+    console.log("Prima conversazione per questo utente")
+  } else {
+    console.log("Conversazione esistente, accesso verificato")
+  }
+
+  // Validazione campi richiesti
   if (!conversationId || !message?.role || !message?.content) {
     res.status(400).json({
       message: "conversationId and message with role and content are required.",
@@ -68,99 +66,106 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     return
   }
 
-  try {
-    // Verifica accesso alla conversazione
-    const accessQuery = `
-      SELECT 1 FROM conversation_history 
-      WHERE idConversation = $1 AND idUser = $2 
-      LIMIT 1
-    `
-    const access = await pool.query(accessQuery, [conversationId, userId])
+  // Recupera configurazione del prompt
+  const { prompt, model, temperature } = await getPrompt(idPrompt)
 
-    if (access.rows.length === 0) {
-      // Prima conversazione, permesso accordato
-    } else if (access.rows[0].idUser !== userId) {
-      res.status(403).json({
-        error: "Non autorizzato ad accedere a questa conversazione",
-      })
-      return
-    }
+  // Gestisce la history della conversazione
+  const updatedHistory = await GetAndSetHistory(
+    conversationId,
+    idPrompt,
+    userId,
+    new Date(),
+    message,
+    "" // La prima volta sarà vuota, poi verrà recuperata dal DB
+  )
 
-    // Recupero e validazione prompt
-    const { prompt, model, temperature } = await getPrompt(promptId)
-
-    // Gestione history della conversazione
-    const updatedHistory = await GetAndSetHistory(
-      conversationId,
-      promptId,
-      userId,
-      new Date(),
+  // Prepara il payload per il modello
+  const requestPayload = {
+    model,
+    messages: [
+      { role: "system", content: "Language: it" },
+      { role: "system", content: prompt },
+      ...updatedHistory,
       message,
-      "" // La prima volta sarà vuota, poi verrà recuperata dal DB
-    )
+    ],
+    max_tokens: MAX_TOKENS,
+    temperature: Number(temperature),
+    response_format: { type: "json_object" },
+  }
 
-    // Preparazione payload per la richiesta
-    const requestPayload = {
-      model,
-      messages: [
-        { role: "system", content: "Language: it" },
-        { role: "system", content: prompt },
-        ...updatedHistory,
-        message,
-      ],
-      max_tokens: MAX_TOKENS,
-      temperature: Number(temperature),
-      response_format: { type: "json_object" },
-    }
+  // Invia richiesta a OpenRouter
+  const openaiResponse = await axios.post(OPENROUTER_API_URL, requestPayload, {
+    headers: OPENROUTER_HEADERS,
+    timeout: 30000,
+  })
 
-    console.log(
-      "\n🚀 OPENROUTER SEND:",
-      JSON.stringify(requestPayload, null, 2)
-    )
+  console.log(
+    "\n📩 OPENROUTER RAW RESPONSE:",
+    JSON.stringify(openaiResponse.data, null, 2)
+  )
 
-    // Invio richiesta a OpenRouter
-    const openaiResponse = await axios.post(
-      OPENROUTER_API_URL,
-      requestPayload,
-      {
-        headers: OPENROUTER_HEADERS,
-        timeout: 30000, // 30 secondi timeout
-      }
-    )
+  if (!openaiResponse.data?.choices?.length) {
+    console.log("❌ OpenRouter response missing choices array")
+    res.status(200).json({
+      id: conversationId,
+      sender: "bot",
+      error: "No response from OpenRouter",
+      debug: openaiResponse.data, // Aggiungiamo i dati grezzi per debug
+    })
+    return
+  }
 
-    console.log(
-      "\n📩 OPENROUTER RECEIVED:",
-      JSON.stringify(openaiResponse.data, null, 2)
-    )
+  console.log(
+    "\n📩 OPENROUTER RECEIVED:",
+    JSON.stringify(openaiResponse.data.choices[0]?.message?.content, null, 2)
+  )
 
-    // Elaborazione risposta
-    const rawResponse = cleanResponse(
-      openaiResponse.data.choices[0]?.message?.content
-    )
+  // Gestisce errori nella risposta API
+  if (openaiResponse.data.error) {
+    res.status(200).json({
+      response: "Empty response from OpenRouter",
+      error: openaiResponse.data.error.message,
+    })
+    return
+  }
 
+  try {
+    // Pulisce e valida il contenuto della risposta
+    const rawResponse = openaiResponse.data.choices[0]?.message?.content
     if (!rawResponse) {
-      res.status(500).json({ error: "Empty response from OpenRouter" })
+      res.status(200).json({
+        response: "Empty response from OpenRouter",
+        rawResponse,
+      })
       return
     }
 
-    // Parsing e invio risposta
-    try {
-      const parsedResponse = JSON.parse(rawResponse)
-      res.status(200).json({
-        triggerAction: parsedResponse.triggerAction || "NONE",
-        response: parsedResponse.response || "No response provided.",
-      })
-    } catch (parseError) {
-      // Fallback per errori di parsing
-      res.status(200).json({ response: rawResponse })
+    const parsedResponse = JSON.parse(rawResponse)
+    const botResponse = {
+      role: "assistant",
+      content: parsedResponse.response || "Nessuna risposta",
     }
-  } catch (error) {
-    console.error("\n❌ OPENROUTER ERROR:", error)
-    res.status(500).json({ error: "Errore interno del server" })
+
+    // Risposta al frontend
+    res.status(200).json({
+      response: "reponse from the sub-bot",
+      text: {
+        conversationId,
+        target: parsedResponse.target,
+        triggerAction: "todo",
+        response: botResponse,
+      },
+    })
+  } catch (parseError) {
+    res.status(200).json({
+      id: conversationId,
+      sender: "bot",
+      error: "Failed to parse response",
+    })
   }
 }
 
 // Registra l'handler per le richieste POST
-genericRouter.post("/response", handleResponse)
+chatbotMainRouter.post("/response", handleResponse)
 
-export default genericRouter
+export default chatbotMainRouter
