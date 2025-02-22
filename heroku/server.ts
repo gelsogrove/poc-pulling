@@ -7,14 +7,12 @@ import helmet from "helmet"
 import path from "path"
 import pkg from "pg"
 import { fileURLToPath } from "url"
+import unlikeRouter from "./../heroku/src/poulin/share/unlike.js"
+import usageRouter from "./src/poulin/share/usage.js"
 
-import {
-  chatbotRouter,
-  promptRouter,
-  unlikeRouter,
-  usageRouter,
-} from "./src/poulin/routerManager.js"
+import chatbotMainRouter from "./src/poulin/chatbots/main/chatbots.js"
 import historyRouter from "./src/poulin/share/history.js"
+import promptRouter from "./src/poulin/share/prompts.js"
 import usersRouter from "./src/poulin/users.js"
 import authRouter from "./src/poulin/utility/auth.js"
 import backupRouter from "./src/poulin/utility/backup.js"
@@ -153,7 +151,7 @@ app.use("/history", limiter, historyRouter)
 
 app.use("/poulin/main/usage", limiter, usageRouter)
 app.use("/poulin/main/prompt", limiter, promptRouter)
-app.use("/poulin/main/chatbot", limiter, chatbotRouter)
+app.use("/poulin/main/chatbot", limiter, chatbotMainRouter)
 app.use("/poulin/main/unlike", limiter, unlikeRouter)
 app.use("/poulin/main/backup", limiter, backupRouter)
 app.use("/poulin/main/history", limiter, historyRouter)
