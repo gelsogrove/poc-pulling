@@ -5,7 +5,7 @@ import { Request, RequestHandler, Response, Router } from "express"
 import { pool } from "../../../../server.js"
 import { GetAndSetHistory } from "../../share/history.js"
 import { validateRequest } from "../../share/validateUser.js"
-import { getPrompt } from "../../utility/chatbots_utility.js"
+import { getPrompt, sendUsageData } from "../../utility/chatbots_utility.js"
 
 dotenv.config()
 
@@ -155,6 +155,19 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
       botResponse,
       ""
     )
+
+    // Tracciamento usage per query SQL
+    if (parsedResponse.trigger_action) {
+      const day = new Date().toISOString().split("T")[0]
+      await sendUsageData(
+        day,
+        0.2,
+        "main",
+        parsedResponse.trigger_action,
+        userId,
+        idPrompt
+      )
+    }
 
     // Risposta al frontend
     res.status(200).json({
