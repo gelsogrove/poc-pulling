@@ -8,15 +8,17 @@ import {
 
 const router = Router()
 
-// Register the main chatbot router
-router.use("/main", chatbotMainRouter)
+// Funzione per registrare le rotte
+const registerRoute = (path: string, routerInstance: Router) => {
+  router.use(path, routerInstance)
+}
 
-// Register other routes as needed
-router.use("/usage", usageMainRouter)
-router.use("/prompt", promptMainRouter)
-router.use("/unlike", unlikeOrdersRouter)
+// Registrazione delle rotte
+registerRoute("/main", chatbotMainRouter)
+registerRoute("/usage", usageMainRouter)
+registerRoute("/prompt", promptMainRouter)
+registerRoute("/unlike", unlikeOrdersRouter)
 
-// Export the routers
 export const chatbotRouter = router.use("/main", chatbotMainRouter)
 export const usageRouter = router.use("/usage", usageMainRouter)
 export const promptRouter = router.use("/prompt", promptMainRouter)
