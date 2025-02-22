@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express"
 import { ParamsDictionary } from "express-serve-static-core"
-import chatbotGenericRouter from "./chatbots/generic/chatbots.js"
+import chatbotGenericRouter from "./chatbots/getLLMresponse.js"
 import chatbotOrdersRouter from "./chatbots/orders/chatbots.js"
 import chatbotProductRouter from "./chatbots/product/chatbots.js"
 

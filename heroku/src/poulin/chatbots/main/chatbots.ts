@@ -6,6 +6,7 @@ import { pool } from "../../../../server.js"
 import { GetAndSetHistory } from "../../share/history.js"
 import { validateRequest } from "../../share/validateUser.js"
 import { getPrompt, sendUsageData } from "../../utility/chatbots_utility.js"
+import { getLLMResponse } from "../getLLMresponse.js"
 
 dotenv.config()
 
@@ -110,7 +111,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
       id: conversationId,
       sender: "bot",
       error: "No response from OpenRouter",
-      debug: openaiResponse.data, // Aggiungiamo i dati grezzi per debug
+      debug: openaiResponse.data,
     })
     return
   }
@@ -170,8 +171,32 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     }
 
     // Risposta al frontend
+    let response: string
+
+    switch (parsedResponse.target) {
+      case "Products":
+        const { user, content } = await getLLMResponse(
+          "7e963d5d-ce8d-45ac-b3da-0d9642d580a8",
+          finalHistory
+        )
+        response = content
+        finalHistory.push({ role: "assistant", content })
+        break
+      case "Generci":
+        response = "Gestione generica in corso."
+        break
+      case "Order":
+        response = "Gestione degli ordini in corso."
+        break
+      case "Logistic":
+        response = "Gestione logistica in corso."
+        break
+      default:
+        response = "Target non riconosciuto."
+    }
+
     res.status(200).json({
-      response: "reponse from the sub-bot",
+      response,
       text: {
         conversationId,
         target: parsedResponse.target,
