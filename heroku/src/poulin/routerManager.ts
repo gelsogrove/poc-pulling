@@ -1,111 +1,25 @@
-import { Request, Response, Router } from "express"
-import { ParamsDictionary } from "express-serve-static-core"
-import chatbotGenericRouter from "./chatbots/getLLMresponse.js"
-import chatbotOrdersRouter from "./chatbots/orders/chatbots.js"
-import chatbotProductRouter from "./chatbots/product/chatbots.js"
-
+import { Router } from "express"
 import chatbotMainRouter from "./chatbots/main/chatbots.js"
-import chatbotSalesReaderRouter from "./chatbots/sales-reader/chatbots.js"
 import {
-  promptGenericRouter,
   promptMainRouter,
-  promptOrdersRouter,
-  promptProductRouter,
-  promptSalesReaderRouter,
-  unlikeGenericRouter,
   unlikeOrdersRouter,
-  unlikeProductRouter,
-  unlikeSalesReaderRouter,
-  usageGenericRouter,
   usageMainRouter,
-  usageOrdersRouter,
-  usageProductRouter,
-  usageSalesReaderRouter,
 } from "./share/index.js"
 
-type ChatbotType =
-  | "generic"
-  | "sales-reader"
-  | "product"
-  | "orders"
-  | "logistics"
-  | "main"
+const router = Router()
 
-interface ChatbotParams extends ParamsDictionary {
-  chatbot: ChatbotType
-}
+// Register the main chatbot router
+router.use("/main", chatbotMainRouter)
 
-type RouterMap = {
-  [K in ChatbotType]: {
-    usage: Router
-    prompt: Router
-    chatbot: Router
-    unlike: Router
-  }
-}
+// Register other routes as needed
+router.use("/usage", usageMainRouter)
+router.use("/prompt", promptMainRouter)
+router.use("/unlike", unlikeOrdersRouter)
 
-const routerMap: RouterMap = {
-  generic: {
-    usage: usageGenericRouter,
-    prompt: promptGenericRouter,
-    chatbot: chatbotGenericRouter,
-    unlike: unlikeGenericRouter,
-  },
-  "sales-reader": {
-    usage: usageSalesReaderRouter,
-    prompt: promptSalesReaderRouter,
-    chatbot: chatbotSalesReaderRouter,
-    unlike: unlikeSalesReaderRouter,
-  },
-  product: {
-    usage: usageProductRouter,
-    prompt: promptProductRouter,
-    chatbot: chatbotProductRouter,
-    unlike: unlikeProductRouter,
-  },
-  orders: {
-    usage: usageOrdersRouter,
-    prompt: promptOrdersRouter,
-    chatbot: chatbotOrdersRouter,
-    unlike: unlikeOrdersRouter,
-  },
-  logistics: {
-    usage: usageOrdersRouter,
-    prompt: promptOrdersRouter,
-    chatbot: chatbotOrdersRouter,
-    unlike: unlikeOrdersRouter,
-  },
-  main: {
-    usage: usageMainRouter,
-    prompt: promptMainRouter,
-    chatbot: chatbotMainRouter,
-    unlike: unlikeOrdersRouter,
-  },
-}
+// Export the routers
+export const chatbotRouter = router.use("/main", chatbotMainRouter)
+export const usageRouter = router.use("/usage", usageMainRouter)
+export const promptRouter = router.use("/prompt", promptMainRouter)
+export const unlikeRouter = router.use("/unlike", unlikeOrdersRouter)
 
-const createDynamicRouter = (type: keyof RouterMap[ChatbotType]) => {
-  console.log("🔍**** createDynamicRouter *****", type)
-  const router = Router({ mergeParams: true })
-
-  router.use((req: Request<ChatbotParams>, res: Response, next) => {
-    const chatbot = req.params.chatbot
-    const selectedRouter = routerMap[chatbot]?.[type]
-
-    if (selectedRouter) {
-      return selectedRouter(req as any, res, next)
-    }
-
-    res.status(404).json({
-      error: "Invalid chatbot type",
-      requested: chatbot,
-      available: Object.keys(routerMap),
-    })
-  })
-
-  return router
-}
-
-export const usageRouter = createDynamicRouter("usage")
-export const promptRouter = createDynamicRouter("prompt")
-export const chatbotRouter = createDynamicRouter("chatbot")
-export const unlikeRouter = createDynamicRouter("unlike")
+export default router

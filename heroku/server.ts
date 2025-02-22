@@ -151,12 +151,12 @@ app.use("/roles", limiter, modelrolesRouter)
 app.use("/prompts", limiter, promptsManagerRouter)
 app.use("/history", limiter, historyRouter)
 
-app.use("/poulin/:chatbot/usage", limiter, usageRouter)
-app.use("/poulin/:chatbot/prompt", limiter, promptRouter)
-app.use("/poulin/:chatbot/chatbot", limiter, chatbotRouter)
-app.use("/poulin/:chatbot/unlike", limiter, unlikeRouter)
-app.use("/poulin/:chatbot/backup", limiter, backupRouter)
-app.use("/poulin/:chatbot/history", limiter, historyRouter)
+app.use("/poulin/main/usage", limiter, usageRouter)
+app.use("/poulin/main/prompt", limiter, promptRouter)
+app.use("/poulin/main/chatbot", limiter, chatbotRouter)
+app.use("/poulin/main/unlike", limiter, unlikeRouter)
+app.use("/poulin/main/backup", limiter, backupRouter)
+app.use("/poulin/main/history", limiter, historyRouter)
 
 const PORT = process.env.PORT || 4999
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
