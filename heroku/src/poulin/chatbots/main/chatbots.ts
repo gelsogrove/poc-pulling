@@ -162,6 +162,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
       text: {
         conversationId,
         target: parsedResponse.target,
+        trigger_action: parsedResponse.trigger_action,
         history: finalHistory,
       },
     })
