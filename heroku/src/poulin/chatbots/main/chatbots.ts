@@ -181,6 +181,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
         )
         response = content
         finalHistory.push({ role: "assistant", content })
+        console.log("******" + response + "***********")
         break
       case "Generci":
         response = "Gestione generica in corso."
