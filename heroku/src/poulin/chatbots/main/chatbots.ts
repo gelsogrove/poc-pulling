@@ -157,7 +157,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
         ))
         response = content
         finalHistory.push({ role: "assistant", content })
-        console.log("******" + response + "***********")
+
         break
       case "Generic":
         ;({ user, content } = await getLLMResponse(
@@ -166,7 +166,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
         ))
         response = content
         finalHistory.push({ role: "assistant", content })
-        console.log("******" + response + "***********")
+
         break
       case "Order":
         response = "Gestione degli ordini in corso."
