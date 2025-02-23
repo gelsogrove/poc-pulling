@@ -45,8 +45,6 @@ export const getLLMResponse = async (idPrompt: string, history: any[]) => {
       }
     )
 
-    console.log(openaiResponse)
-
     if (!openaiResponse.data?.choices?.length) {
       throw new Error("No response from OpenRouter!")
     }

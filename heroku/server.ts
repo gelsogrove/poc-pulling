@@ -149,7 +149,7 @@ app.use("/prompt", limiter, promptRouter)
 app.use("/history", limiter, historyRouter)
 
 app.use("/poulin/main/usage", limiter, usageRouter)
-
+app.use("/polin/main/prompt", limiter, promptRouter)
 app.use("/poulin/main/chatbot", limiter, chatbotMainRouter)
 app.use("/poulin/main/unlike", limiter, unlikeRouter)
 app.use("/poulin/main/backup", limiter, backupRouter)
