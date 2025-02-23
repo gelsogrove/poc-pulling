@@ -168,25 +168,27 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     // Risposta al frontend
     let response: string
 
+    let user
+    let content
+
     switch (parsedResponse.target) {
       case "Products":
-        const { user, content } = await getLLMResponse(
+        ;({ user, content } = await getLLMResponse(
           "94624adb-6c09-44c3-bda5-1414d40f04f3",
           finalHistory
-        )
+        ))
         response = content
         finalHistory.push({ role: "assistant", content })
         console.log("******" + response + "***********")
         break
       case "Generic":
-        const { user, content } = await getLLMResponse(
+        ;({ user, content } = await getLLMResponse(
           "7e963d5d-ce8d-45ac-b3da-0d9642d580a8",
           finalHistory
-        )
+        ))
         response = content
         finalHistory.push({ role: "assistant", content })
         console.log("******" + response + "***********")
-
         break
       case "Order":
         response = "Gestione degli ordini in corso."
