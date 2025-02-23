@@ -35,7 +35,7 @@ export const getLLMResponse = async (idPrompt: string, history: any[]) => {
       response_format: { type: "json_object" },
     }
 
-    console.log("******" + requestPayload + "***********")
+    console.log(requestPayload)
 
     // Invia richiesta a OpenRouter
     const openaiResponse = await axios.post(
@@ -48,7 +48,7 @@ export const getLLMResponse = async (idPrompt: string, history: any[]) => {
     )
 
     if (!openaiResponse.data?.choices?.length) {
-      throw new Error("No response from OpenRouter")
+      throw new Error("No response from OpenRouter!")
     }
 
     const rawResponse = openaiResponse.data.choices[0]?.message?.content
