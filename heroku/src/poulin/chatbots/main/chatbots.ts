@@ -36,8 +36,6 @@ if (!process.env.OPENROUTER_API_KEY) {
  * 4. Processa e restituisce la risposta
  */
 const handleResponse: RequestHandler = async (req: Request, res: Response) => {
-  console.log("\n📥 *** CHATBOT MAIN ***")
-
   // Validazione utente
   const { userId } = await validateRequest(req, res)
   console.log(" - UserId:", userId)

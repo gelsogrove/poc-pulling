@@ -35,6 +35,8 @@ export const getLLMResponse = async (idPrompt: string, history: any[]) => {
       response_format: { type: "json_object" },
     }
 
+    console.log("******" + requestPayload + "***********")
+
     // Invia richiesta a OpenRouter
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
