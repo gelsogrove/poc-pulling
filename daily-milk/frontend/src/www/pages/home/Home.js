@@ -44,7 +44,6 @@ const Home = () => {
 
   const closePopup = () => {
     if (activePopup !== "chatbotsource") {
-      window.location.reload()
     }
 
     setActivePopup(null)
@@ -58,10 +57,6 @@ const Home = () => {
   }
 
   const handlePopupClick = (e) => {
-    e.stopPropagation()
-  }
-
-  const handleCloseClick = (e) => {
     e.stopPropagation()
   }
 

@@ -46,7 +46,6 @@ const Navbar = () => {
   const [activePopup, setActivePopup] = useState(null)
   const closePopup = () => {
     setActivePopup(null)
-    window.location.reload()
   }
 
   const openPopup = (popupType) => {
