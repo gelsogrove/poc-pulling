@@ -134,8 +134,6 @@ app.use((req, res, next) => {
     timestamp: new Date().toISOString(),
   }
 
-  console.log("🔍 Request Details:", JSON.stringify(requestDetails, null, 2))
-
   next()
 })
 
@@ -147,10 +145,11 @@ app.use("/models", limiter, modelsRouter)
 app.use("/webhook", limiter, modelWebooksRouter)
 app.use("/roles", limiter, modelrolesRouter)
 app.use("/prompts", limiter, promptsManagerRouter)
+app.use("/prompt", limiter, promptRouter)
 app.use("/history", limiter, historyRouter)
 
 app.use("/poulin/main/usage", limiter, usageRouter)
-app.use("/poulin/main/prompt", limiter, promptRouter)
+
 app.use("/poulin/main/chatbot", limiter, chatbotMainRouter)
 app.use("/poulin/main/unlike", limiter, unlikeRouter)
 app.use("/poulin/main/backup", limiter, backupRouter)

@@ -1,7 +1,7 @@
 import axios from "axios"
 
 export const getPrompt = async (idPrompt, token, chatbotSelected) => {
-  const API_URL = `${process.env.REACT_APP_API_URL}/${chatbotSelected}/prompt`
+  const API_URL = `${process.env.REACT_APP_API_URL}/prompt`
 
   try {
     const headers = {
@@ -38,7 +38,7 @@ export const postPrompt = async (
     }
 
     const response = await axios.put(
-      `${process.env.REACT_APP_API_URL}/${chatbotSelected}/prompt`,
+      `${process.env.REACT_APP_API_URL}/prompt`,
       {
         content,
         model,
