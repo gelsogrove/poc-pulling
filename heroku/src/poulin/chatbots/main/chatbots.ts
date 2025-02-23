@@ -2,7 +2,6 @@ import axios from "axios"
 import dotenv from "dotenv"
 import { Request, RequestHandler, Response, Router } from "express"
 
-import { pool } from "../../../../server.js"
 import { GetAndSetHistory } from "../../share/history.js"
 import { validateRequest } from "../../share/validateUser.js"
 import { getPrompt, sendUsageData } from "../../utility/chatbots_utility.js"
@@ -44,28 +43,8 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
   console.log(" - UserId:", userId)
   if (!userId) return
 
+  // Recupera GET DATA FROM BODY
   const { conversationId, idPrompt, message } = req.body
-
-  // Verifica accesso alla conversazione
-  const accessQuery = `
-    SELECT 1 FROM conversation_history 
-    WHERE idConversation = $1 AND idUser = $2 
-    LIMIT 1
-  `
-  const access = await pool.query(accessQuery, [conversationId, userId])
-  if (access.rows.length === 0) {
-    console.log("Prima conversazione per questo utente")
-  } else {
-    console.log("Conversazione esistente, accesso verificato")
-  }
-
-  // Validazione campi richiesti
-  if (!conversationId || !message?.role || !message?.content) {
-    res.status(400).json({
-      message: "conversationId and message with role and content are required.",
-    })
-    return
-  }
 
   // Recupera configurazione del prompt
   const { prompt, model, temperature } = await getPrompt(idPrompt)
@@ -106,6 +85,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
       id: conversationId,
       sender: "bot",
       error: "No response from OpenRouter",
+      payload: requestPayload,
       debug: openaiResponse.data,
     })
     return
