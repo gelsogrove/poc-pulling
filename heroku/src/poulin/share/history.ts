@@ -100,13 +100,6 @@ export async function GetAndSetHistory(
       )
     }
 
-    // Applica il limite alla lunghezza della history
-    if (history.length > MAX_HISTORY_MESSAGES) {
-      history = history.slice(-MAX_HISTORY_MESSAGES)
-    }
-
-    // Restituisce la history senza l'ultimo messaggio
-    // L'ultimo messaggio verrà aggiunto separatamente al payload della richiesta
     return history
   } catch (error) {
     console.error("Errore nella gestione della history:", error)
