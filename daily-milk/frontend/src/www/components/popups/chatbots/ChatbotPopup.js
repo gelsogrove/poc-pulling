@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 import ChatBotComponent from "../../chatbots/ChatbotComponent"
 import "./ChatbotPopup.css"
-import PrintSection from "./PrintSection"
 
 const ChatbotPopup = ({ idPrompt, onClose, chatbotSelected, title }) => {
   const [openPanel, setOpenPanel] = useState(false)
@@ -24,10 +23,6 @@ const ChatbotPopup = ({ idPrompt, onClose, chatbotSelected, title }) => {
             ) : (
               <i className="fa-solid fa-arrow-left icon"></i>
             )}
-          </button>
-
-          <button className="btn-circle" onClick={PrintSection} title="Print">
-            <i className="fa-solid fa-print icon"></i>
           </button>
 
           <button className="btn-circle" onClick={onClose} title="Close">

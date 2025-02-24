@@ -32,22 +32,7 @@
   cursor: pointer;
 }
 
-h3 {
-  color: #333;
-}
-
-h4 {
-  color: #666;
-}
-
 ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  background-color: #e7f3fe;
-  margin: 5px 0;
-  padding: 10px;
-  border-radius: 4px;
+  padding: 10;
+  margin-top: -25px;
 }

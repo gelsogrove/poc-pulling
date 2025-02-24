@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 import { createDynamicAsciiTable } from "../../shared/utils"
 import "./MessageList.css"
 
@@ -51,38 +53,51 @@ const MessageList = ({
     }
   }
 
-  const renderMessageText = (msg, text, sender, isDebug) => {
-    if (isDebug) {
+  const renderMessageText = (msg) => {
+    if (debugModes[msg.id] || false) {
       return (
         <div>
-          <div>{text}</div>
+          <div>{msg.text}</div>
           <div className="debug-mode">
-            <pre>
-              {JSON.stringify(
-                {
-                  response: msg.text,
-                  text: msg.debugInfo,
-                },
-                null,
-                2
-              )}
-            </pre>
+            <pre>{JSON.stringify(msg.debugInfo, null, 2)}</pre>
           </div>
         </div>
       )
     }
-    // Rendi il testo in grassetto e maiuscolo per il contenuto racchiuso tra **
-    const formattedText = text
-      .split(/\*\*(.*?)\*\*/g)
-      .map((part, index) =>
-        index % 2 === 1 ? (
-          <strong key={index}>{part.toUpperCase()}</strong>
-        ) : (
-          part
-        )
-      )
 
-    return <>{formattedText}</>
+    return (
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          h3: ({ node, children, ...props }) => (
+            <h3 style={{ margin: "0px" }} {...props}>
+              {children}
+            </h3>
+          ),
+          p: ({ node, ...props }) => (
+            <p
+              style={{
+                margin: "0px",
+              }}
+              {...props}
+            />
+          ),
+          ol: ({ node, ...props }) => (
+            <ol
+              style={{
+                margin: "0px",
+              }}
+              {...props}
+            />
+          ),
+          li: ({ node, ...props }) => (
+            <li style={{ margin: "0", padding: "0" }} {...props} />
+          ),
+        }}
+      >
+        {msg.text}
+      </ReactMarkdown>
+    )
   }
 
   useEffect(() => {
@@ -103,6 +118,7 @@ const MessageList = ({
                 className={`chat-message ${
                   msg.sender === "user" ? "user-message" : "bot-message"
                 }`}
+                style={{ marginRight: "10px" }}
               >
                 <span className="message-text">
                   {msg.text === "Typing..." ? (
@@ -112,12 +128,7 @@ const MessageList = ({
                       <span></span>
                     </div>
                   ) : (
-                    renderMessageText(
-                      msg,
-                      msg.text,
-                      msg.sender,
-                      debugModes[msg.id] || false
-                    )
+                    renderMessageText(msg)
                   )}
                 </span>
 
