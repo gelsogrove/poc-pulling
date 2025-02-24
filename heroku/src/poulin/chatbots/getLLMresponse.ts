@@ -22,8 +22,6 @@ export const getLLMResponse = async (
   history: any[],
   chatbot: string
 ) => {
-  console.log("CHABAOT Response:", chatbot)
-
   try {
     // Recupera configurazione del prompt
     const { prompt, model, temperature } = await getPrompt(idPrompt)
@@ -58,7 +56,10 @@ export const getLLMResponse = async (
     }
 
     const rawResponse = openaiResponse.data.choices[0]?.message?.content
-    return { user: "assistant", content: rawResponse || "Nessuna risposta1" }
+
+    console.log("Chatbot " + chatbot + " Response: ", rawResponse)
+
+    return { user: "assistant", content: rawResponse || "Nessuna risposta" }
   } catch (error) {
     return { user: "assistant", content: "errore: " + error }
   }
