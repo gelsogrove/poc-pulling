@@ -117,13 +117,6 @@ const Navbar = () => {
       </Popup>
 
       <nav className="navbar">
-        {userRole?.toLowerCase() === "admin" && (
-          <button className="btn" onClick={handleRolesClick}>
-            <i className="fas fa-user-tag"></i>
-            <div className="tooltip">Roles</div>
-          </button>
-        )}
-
         <button className="btn" onClick={() => openPopup("models")}>
           <i className="fas fa-robot"></i>
           <div className="tooltip">Models</div>
@@ -139,11 +132,6 @@ const Navbar = () => {
         <button className="btn" onClick={() => openPopup("invoices")}>
           <i className="fas fa-file-invoice"></i>
           <div className="tooltip">Invoices</div>
-        </button>
-
-        <button className="btn" onClick={handleBackup}>
-          <i className="fas fa-download"></i>
-          <div className="tooltip">Export</div>
         </button>
 
         <button className="btn" onClick={() => openPopup("manageUsers")}>

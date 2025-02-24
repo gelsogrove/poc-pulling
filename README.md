@@ -1,10 +1,12 @@
 ===================== TODO =====================
 
-- checkboX per ogni role
-- avere il checbox principale.
+- Prodotti devono essere del PDF
+- Modiciare chatbto ordini che deve avere anche PRODOTTI
+- CAPIRE COME MANDARE EMAIL
+- CAPIRE COME SCARICARE UN PDF
+- Current monthly usage: NON VA0 $
 - iniziamo ad armare il settings
-- immagini non vanno?
-- function calling
+- function calling ?
 
 ===================== LATER =====================
 
