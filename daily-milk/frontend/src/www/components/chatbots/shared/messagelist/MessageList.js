@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react"
 import { createDynamicAsciiTable } from "../../shared/utils"
-import { handleUnlikeApi } from "./api/MessageList_api"
 import "./MessageList.css"
 
 const MessageList = ({
@@ -32,48 +31,6 @@ const MessageList = ({
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
-
-  const handleUnlike = async (
-    msgId,
-    conversationHistory,
-    IdConversation,
-    userId,
-    model,
-    temperature
-  ) => {
-    try {
-      if (!conversationHistory) {
-        console.warn("conversationHistory is undefined, using empty array")
-        conversationHistory = []
-      }
-
-      const response = await handleUnlikeApi(
-        msgId,
-        conversationHistory,
-        IdConversation,
-        idPrompt,
-        userId,
-        model,
-        temperature,
-        chatbotSelected
-      )
-      if (response) {
-        const unlikeIcon = document.querySelector(
-          `[data-id='${msgId}'] .unlike-icon`
-        )
-
-        if (!unlikeIcon) {
-          console.error(`Icon with data-id='${msgId}' not found!`)
-          return
-        }
-
-        unlikeIcon.classList.toggle("selected")
-        console.log(unlikeIcon)
-      }
-    } catch (error) {
-      console.error("Error in unliking message:", error)
-    }
   }
 
   const copyContent = (id) => {
@@ -114,7 +71,18 @@ const MessageList = ({
         </div>
       )
     }
-    return text
+    // Rendi il testo in grassetto e maiuscolo per il contenuto racchiuso tra **
+    const formattedText = text
+      .split(/\*\*(.*?)\*\*/g)
+      .map((part, index) =>
+        index % 2 === 1 ? (
+          <strong key={index}>{part.toUpperCase()}</strong>
+        ) : (
+          part
+        )
+      )
+
+    return <>{formattedText}</>
   }
 
   useEffect(() => {

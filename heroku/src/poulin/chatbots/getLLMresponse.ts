@@ -54,7 +54,7 @@ export const getLLMResponse = async (idPrompt: string, history: any[]) => {
     }
 
     const rawResponse = openaiResponse.data.choices[0]?.message?.content
-    return { user: "assistant", content: rawResponse || "Nessuna risposta" }
+    return { user: "assistant", content: rawResponse || "Nessuna risposta1" }
   } catch (error) {
     return { user: "assistant", content: "errore: " + error }
   }

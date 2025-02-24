@@ -117,7 +117,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     const parsedResponse = JSON.parse(rawResponse)
     const botResponse = {
       role: "assistant",
-      content: parsedResponse.response || "Nessuna risposta",
+      content: parsedResponse.response || "Nessuna risposta2",
     }
 
     // Salva la risposta del bot nel DB
@@ -150,15 +150,6 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     let content
 
     switch (parsedResponse.target) {
-      case "Products":
-        ;({ user, content } = await getLLMResponse(
-          "94624adb-6c09-44c3-bda5-1414d40f04f3",
-          finalHistory
-        ))
-        response = content
-        finalHistory.push({ role: "assistant", content })
-
-        break
       case "Generic":
         ;({ user, content } = await getLLMResponse(
           "7e963d5d-ce8d-45ac-b3da-0d9642d580a8",
@@ -168,11 +159,34 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
         finalHistory.push({ role: "assistant", content })
 
         break
+
+      case "Products":
+        ;({ user, content } = await getLLMResponse(
+          "94624adb-6c09-44c3-bda5-1414d40f04f3",
+          finalHistory
+        ))
+        response = content
+        finalHistory.push({ role: "assistant", content })
+
+        break
+
       case "Order":
-        response = "Gestione degli ordini in corso."
+        ;({ user, content } = await getLLMResponse(
+          "a2a55acd-9db1-4ef3-a3f1-b745b7c0eaad",
+          finalHistory
+        ))
+        response = content
+        finalHistory.push({ role: "assistant", content })
+
         break
       case "Logistic":
-        response = "Gestione logistica in corso."
+        ;({ user, content } = await getLLMResponse(
+          "5abf1bd8-3ab1-4f8a-901c-a064cf18955c",
+          finalHistory
+        ))
+        response = content
+        finalHistory.push({ role: "assistant", content })
+
         break
       default:
         response = "Target non riconosciuto."

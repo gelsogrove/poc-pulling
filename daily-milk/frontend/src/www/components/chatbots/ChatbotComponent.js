@@ -23,7 +23,6 @@ const ChatBotComponent = ({ idPrompt, openPanel, chatbotSelected }) => {
       text: "Ciao, " + name + " come posso aiutarti oggi?",
     },
   ])
-  const [, setData] = useState([])
 
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
