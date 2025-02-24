@@ -107,7 +107,7 @@ export async function GetAndSetHistory(
 
     // Restituisce la history senza l'ultimo messaggio
     // L'ultimo messaggio verrà aggiunto separatamente al payload della richiesta
-    return history.slice(0, -1)
+    return history
   } catch (error) {
     console.error("Errore nella gestione della history:", error)
     throw error
