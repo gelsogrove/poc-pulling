@@ -83,22 +83,6 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     const parsedResponse = JSON.parse(rawResponse)
     console.log("parsedResponse", parsedResponse)
 
-    const botResponse = {
-      role: "assistant",
-      content: parsedResponse.response || "Nessuna risposta2",
-    }
-
-    // Salva la risposta del bot nel DB
-    const finalHistory = await GetAndSetHistory(
-      conversationId,
-      idPrompt,
-      userId,
-      new Date(),
-      botResponse,
-      ""
-    )
-
-    // Tracciamento usage per query SQL
     if (parsedResponse.trigger_action) {
       const day = new Date().toISOString().split("T")[0]
       await sendUsageData(
@@ -121,39 +105,39 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
       case "Generic":
         ;({ user, content } = await getLLMResponse(
           "7e963d5d-ce8d-45ac-b3da-0d9642d580a8",
-          finalHistory
+          updatedHistory
         ))
         response = content
-        finalHistory.push({ role: "assistant", content })
+        updatedHistory.push({ role: "assistant", content })
 
         break
 
       case "Products":
         ;({ user, content } = await getLLMResponse(
           "94624adb-6c09-44c3-bda5-1414d40f04f3",
-          finalHistory
+          updatedHistory
         ))
         response = content
-        finalHistory.push({ role: "assistant", content })
+        updatedHistory.push({ role: "assistant", content })
 
         break
 
       case "Order":
         ;({ user, content } = await getLLMResponse(
           "a2a55acd-9db1-4ef3-a3f1-b745b7c0eaad",
-          finalHistory
+          updatedHistory
         ))
         response = content
-        finalHistory.push({ role: "assistant", content })
+        updatedHistory.push({ role: "assistant", content })
 
         break
       case "Logistic":
         ;({ user, content } = await getLLMResponse(
           "5abf1bd8-3ab1-4f8a-901c-a064cf18955c",
-          finalHistory
+          updatedHistory
         ))
         response = content
-        finalHistory.push({ role: "assistant", content })
+        updatedHistory.push({ role: "assistant", content })
 
         break
       default:
@@ -166,7 +150,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
         conversationId,
         target: parsedResponse.target,
         trigger_action: parsedResponse.trigger_action,
-        history: finalHistory,
+        history: updatedHistory,
       },
     })
   } catch (parseError) {
