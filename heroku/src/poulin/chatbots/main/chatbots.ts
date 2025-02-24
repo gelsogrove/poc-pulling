@@ -77,44 +77,12 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     timeout: 30000,
   })
 
-  if (!openaiResponse.data?.choices?.length) {
-    console.log("❌ OpenRouter response missing choices array")
-    res.status(200).json({
-      id: conversationId,
-      sender: "bot",
-      error: "No response from OpenRouter",
-      payload: requestPayload,
-      debug: openaiResponse.data,
-    })
-    return
-  }
-
-  console.log(
-    "\n📩 OPENROUTER RECEIVED:",
-    JSON.stringify(openaiResponse.data.choices[0]?.message?.content, null, 2)
-  )
-
-  // Gestisce errori nella risposta API
-  if (openaiResponse.data.error) {
-    res.status(200).json({
-      response: "Empty response from OpenRouter",
-      error: openaiResponse.data.error.message,
-    })
-    return
-  }
-
   try {
     // Pulisce e valida il contenuto della risposta
     const rawResponse = openaiResponse.data.choices[0]?.message?.content
-    if (!rawResponse) {
-      res.status(200).json({
-        response: "Empty response from OpenRouter",
-        rawResponse,
-      })
-      return
-    }
-
     const parsedResponse = JSON.parse(rawResponse)
+    console.log("parsedResponse", parsedResponse)
+
     const botResponse = {
       role: "assistant",
       content: parsedResponse.response || "Nessuna risposta2",
