@@ -27,7 +27,7 @@ if (!process.env.OPENROUTER_API_KEY) {
 }
 
 // Definisci un tipo per i target
-type Target = "Generic" | "Products" | "Order" | "Logistic"
+type Target = "Generic" | "Products" | "Orders" | "Logistic"
 
 /**
  * Gestisce le richieste di chat al chatbot
@@ -113,9 +113,9 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
         id: "94624adb-6c09-44c3-bda5-1414d40f04f3",
         chatbot: "Products",
       },
-      Order: {
+      Orders: {
         id: "a2a55acd-9db1-4ef3-a3f1-b745b7c0eaad",
-        chatbot: "Order",
+        chatbot: "Orders",
       },
       Logistic: {
         id: "5abf1bd8-3ab1-4f8a-901c-a064cf18955c",
