@@ -118,6 +118,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
           updatedHistory
         ))
         response = content
+
         updatedHistory.push({ role: "assistant", content })
 
         break
@@ -144,16 +145,17 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
         response = "Target non riconosciuto."
     }
 
-    // Salva la risposta del bot nel DB
-    const finalHistory = await GetAndSetHistory(
+    // Salva la risposta del bot nel DB prima di inviarla al frontend
+    await GetAndSetHistory(
       conversationId,
       idPrompt,
       userId,
       new Date(),
-      { role: "assistant", content },
+      updatedHistory[updatedHistory.length - 1],
       ""
     )
 
+    // Invio al frontend
     res.status(200).json({
       response,
       text: {
