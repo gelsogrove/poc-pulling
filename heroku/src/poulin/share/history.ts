@@ -40,8 +40,7 @@ export async function GetAndSetHistory(
   const existingHistoryQuery = `
     SELECT history, idhistory 
     FROM conversation_history 
-    WHERE idConversation = $1 
-    ORDER BY datetime DESC 
+    WHERE idConversation = $1
     LIMIT 1
   `
 
@@ -130,9 +129,6 @@ export async function GetHistoryChats(idPrompt: string): Promise<any> {
     WHERE idPrompt = $1 
     ORDER BY datetime DESC
   `
-
-  console.log("idPrompt", idPrompt)
-  console.log("query", query)
 
   try {
     const result = await pool.query(query, [idPrompt])

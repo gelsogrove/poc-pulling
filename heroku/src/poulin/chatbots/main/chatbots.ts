@@ -59,6 +59,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     message,
     "" // La prima volta sarà vuota, poi verrà recuperata dal DB
   )
+  console.log("updatedHistory 1", updatedHistory)
 
   // Prepara il payload per il modello
   const requestPayload = {
@@ -102,9 +103,6 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     // Risposta al frontend
     let response: string
 
-    let user
-    let content
-
     const targetMap = {
       Generic: {
         id: "7e963d5d-ce8d-45ac-b3da-0d9642d580a8",
@@ -126,9 +124,13 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
 
     if (targetMap[parsedResponse.target as Target]) {
       const { id, chatbot } = targetMap[parsedResponse.target as Target]
-      ;({ user, content } = await getLLMResponse(id, updatedHistory, chatbot))
+      const { user, content } = await getLLMResponse(
+        id,
+        updatedHistory,
+        chatbot
+      )
       response = content
-      updatedHistory.push({ role: "assistant", content, chatbot })
+      updatedHistory.push({ role: user, content, chatbot })
     } else {
       response = "Target non riconosciuto."
     }
