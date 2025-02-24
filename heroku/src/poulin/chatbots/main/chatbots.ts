@@ -26,6 +26,9 @@ if (!process.env.OPENROUTER_API_KEY) {
   throw new Error("OPENROUTER_API_KEY is not set in the environment variables.")
 }
 
+// Definisci un tipo per i target
+type Target = "Generic" | "Products" | "Order" | "Logistic"
+
 /**
  * Gestisce le richieste di chat al chatbot
  *
@@ -101,52 +104,32 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     let user
     let content
 
-    switch (parsedResponse.target) {
-      case "Generic":
-        ;({ user, content } = await getLLMResponse(
-          "7e963d5d-ce8d-45ac-b3da-0d9642d580a8",
-          updatedHistory,
-          "Generic"
-        ))
-        response = content
-        updatedHistory.push({ role: "assistant", content })
+    const targetMap = {
+      Generic: {
+        id: "7e963d5d-ce8d-45ac-b3da-0d9642d580a8",
+        chatbot: "Generic",
+      },
+      Products: {
+        id: "94624adb-6c09-44c3-bda5-1414d40f04f3",
+        chatbot: "Products",
+      },
+      Order: {
+        id: "a2a55acd-9db1-4ef3-a3f1-b745b7c0eaad",
+        chatbot: "Order",
+      },
+      Logistic: {
+        id: "5abf1bd8-3ab1-4f8a-901c-a064cf18955c",
+        chatbot: "Logistic",
+      },
+    }
 
-        break
-
-      case "Products":
-        ;({ user, content } = await getLLMResponse(
-          "94624adb-6c09-44c3-bda5-1414d40f04f3",
-          updatedHistory,
-          "Products"
-        ))
-        response = content
-
-        updatedHistory.push({ role: "assistant", content })
-
-        break
-
-      case "Order":
-        ;({ user, content } = await getLLMResponse(
-          "a2a55acd-9db1-4ef3-a3f1-b745b7c0eaad",
-          updatedHistory,
-          "Order"
-        ))
-        response = content
-        updatedHistory.push({ role: "assistant", content })
-
-        break
-      case "Logistic":
-        ;({ user, content } = await getLLMResponse(
-          "5abf1bd8-3ab1-4f8a-901c-a064cf18955c",
-          updatedHistory,
-          "Logistic"
-        ))
-        response = content
-        updatedHistory.push({ role: "assistant", content })
-
-        break
-      default:
-        response = "Target non riconosciuto."
+    if (targetMap[parsedResponse.target as Target]) {
+      const { id, chatbot } = targetMap[parsedResponse.target as Target]
+      ;({ user, content } = await getLLMResponse(id, updatedHistory, chatbot))
+      response = content
+      updatedHistory.push({ role: "assistant", content, chatbot })
+    } else {
+      response = "Target non riconosciuto."
     }
 
     // Salva la risposta del bot nel DB prima di inviarla al frontend

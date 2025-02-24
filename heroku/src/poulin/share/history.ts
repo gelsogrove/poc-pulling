@@ -8,6 +8,7 @@ import { pool } from "../../../server.js"
 interface Message {
   role: string // "user" o "assistant"
   content: string // contenuto del messaggio
+  chatbot?: string
 }
 
 /**
