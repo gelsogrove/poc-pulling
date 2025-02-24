@@ -87,8 +87,6 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     // Pulisce e valida il contenuto della risposta
     const rawResponse = openaiResponse.data.choices[0]?.message?.content
     const parsedResponse = JSON.parse(rawResponse)
-    console.log("parsedResponse", parsedResponse)
-    console.log("updatedHistory", updatedHistory)
 
     if (parsedResponse.trigger_action) {
       const day = new Date().toISOString().split("T")[0]

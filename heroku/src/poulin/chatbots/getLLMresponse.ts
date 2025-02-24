@@ -31,6 +31,7 @@ export const getLLMResponse = async (
       model,
       messages: [
         { role: "system", content: "Language: it" },
+        { role: "system", content: "Language: es" },
         { role: "system", content: prompt },
         ...history,
       ],
