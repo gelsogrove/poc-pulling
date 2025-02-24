@@ -67,6 +67,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     model,
     messages: [
       { role: "system", content: "Language: it" },
+      { role: "system", content: "Language: es" },
       { role: "system", content: prompt },
       ...updatedHistory,
       message,
