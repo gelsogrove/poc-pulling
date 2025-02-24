@@ -60,6 +60,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     "" // La prima volta sarà vuota, poi verrà recuperata dal DB
   )
   console.log("updatedHistory 1", updatedHistory)
+  console.log("message 1", message)
 
   // Prepara il payload per il modello
   const requestPayload = {
