@@ -17,7 +17,13 @@ const OPENROUTER_HEADERS = {
 const MAX_TOKENS = 5000
 
 // Nuova funzione per gestire la richiesta al LLM
-export const getLLMResponse = async (idPrompt: string, history: any[]) => {
+export const getLLMResponse = async (
+  idPrompt: string,
+  history: any[],
+  chatbot: string
+) => {
+  console.log("CHABAOT Response:", chatbot)
+
   try {
     // Recupera configurazione del prompt
     const { prompt, model, temperature } = await getPrompt(idPrompt)
@@ -46,8 +52,6 @@ export const getLLMResponse = async (idPrompt: string, history: any[]) => {
         timeout: 30000,
       }
     )
-
-    console.log("OpenRouter Response:", openaiResponse.data)
 
     if (!openaiResponse.data?.choices?.length) {
       throw new Error("No response from OpenRouter!")

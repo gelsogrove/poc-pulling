@@ -105,7 +105,8 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
       case "Generic":
         ;({ user, content } = await getLLMResponse(
           "7e963d5d-ce8d-45ac-b3da-0d9642d580a8",
-          updatedHistory
+          updatedHistory,
+          "Generic"
         ))
         response = content
         updatedHistory.push({ role: "assistant", content })
@@ -115,7 +116,8 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
       case "Products":
         ;({ user, content } = await getLLMResponse(
           "94624adb-6c09-44c3-bda5-1414d40f04f3",
-          updatedHistory
+          updatedHistory,
+          "Products"
         ))
         response = content
 
@@ -126,7 +128,8 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
       case "Order":
         ;({ user, content } = await getLLMResponse(
           "a2a55acd-9db1-4ef3-a3f1-b745b7c0eaad",
-          updatedHistory
+          updatedHistory,
+          "Order"
         ))
         response = content
         updatedHistory.push({ role: "assistant", content })
@@ -135,7 +138,8 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
       case "Logistic":
         ;({ user, content } = await getLLMResponse(
           "5abf1bd8-3ab1-4f8a-901c-a064cf18955c",
-          updatedHistory
+          updatedHistory,
+          "Logistic"
         ))
         response = content
         updatedHistory.push({ role: "assistant", content })

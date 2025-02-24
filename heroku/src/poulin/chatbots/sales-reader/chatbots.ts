@@ -142,11 +142,6 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
       response_format: { type: "json_object" },
     }
 
-    console.log(
-      "\n🚀 OPENROUTER SEND:",
-      JSON.stringify(requestPayload, null, 2)
-    )
-
     // Invio richiesta a OpenRouter con gestione timeout
     const openaiResponse = await axios.post(
       OPENROUTER_API_URL,
@@ -155,11 +150,6 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
         headers: OPENROUTER_HEADERS,
         timeout: 30000, // 30 secondi di timeout
       }
-    )
-
-    console.log(
-      "\n📩 OPENROUTER RECEIVED:",
-      JSON.stringify(openaiResponse.data, null, 2)
     )
 
     // Gestione errori nella risposta
