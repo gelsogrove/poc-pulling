@@ -121,6 +121,10 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
         id: "5abf1bd8-3ab1-4f8a-901c-a064cf18955c",
         chatbot: "Logistic",
       },
+      Appointment: {
+        id: "88858525-84de-41ea-8ae9-7e57ced9b03f",
+        chatbot: "Appointment",
+      },
     }
 
     if (targetMap[parsedResponse.target as Target]) {
