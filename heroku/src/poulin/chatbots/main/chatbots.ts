@@ -144,6 +144,16 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
         response = "Target non riconosciuto."
     }
 
+    // Salva la risposta del bot nel DB
+    const finalHistory = await GetAndSetHistory(
+      conversationId,
+      idPrompt,
+      userId,
+      new Date(),
+      { role: "assistant", content },
+      ""
+    )
+
     res.status(200).json({
       response,
       text: {
