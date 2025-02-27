@@ -5,7 +5,14 @@ import { Request, RequestHandler, Response, Router } from "express"
 import { GetAndSetHistory } from "../../share/history.js"
 import { validateRequest } from "../../share/validateUser.js"
 import { getPrompt, sendUsageData } from "../../utility/chatbots_utility.js"
-import { getLLMResponse } from "../getLLMresponse.js"
+import {
+  getCoordinatorResponse,
+  getSpecialistResponse,
+  getTargetConfig,
+  prepareFinalPayload,
+  Target,
+  updateConversationHistory,
+} from "./utils"
 
 dotenv.config()
 
@@ -20,14 +27,6 @@ const OPENROUTER_HEADERS = {
 const MAX_TOKENS = 5000
 
 const chatbotMainRouter = Router()
-
-// Verifica che la chiave API sia configurata
-if (!process.env.OPENROUTER_API_KEY) {
-  throw new Error("OPENROUTER_API_KEY is not set in the environment variables.")
-}
-
-// Definisci un tipo per i target
-type Target = "Generic" | "Products" | "Orders" | "Logistic"
 
 /**
  * Gestisce le richieste di chat al chatbot
@@ -51,7 +50,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
   const { prompt, model, temperature } = await getPrompt(idPrompt)
 
   // Gestisce la history della conversazione
-  const updatedHistory = await GetAndSetHistory(
+  let updatedHistory = await GetAndSetHistory(
     conversationId,
     idPrompt,
     userId,
@@ -59,8 +58,6 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     message,
     "" // La prima volta sarà vuota, poi verrà recuperata dal DB
   )
-  console.log("updatedHistory 1", updatedHistory)
-  console.log("message 1", message)
 
   // Prepara il payload per il modello
   const requestPayload = {
@@ -68,7 +65,6 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     messages: [
       { role: "system", content: "Language: it" },
       { role: "system", content: "Language: es" },
-      { role: "system", content: "Language: en" },
       { role: "system", content: prompt },
       ...updatedHistory,
       message,
@@ -104,40 +100,34 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
     // Risposta al frontend
     let response: string
 
-    const targetMap = {
-      Generic: {
-        id: "7e963d5d-ce8d-45ac-b3da-0d9642d580a8",
-        chatbot: "Generic",
-      },
-      Products: {
-        id: "94624adb-6c09-44c3-bda5-1414d40f04f3",
-        chatbot: "Products",
-      },
-      Orders: {
-        id: "a2a55acd-9db1-4ef3-a3f1-b745b7c0eaad",
-        chatbot: "Orders",
-      },
-      Logistic: {
-        id: "5abf1bd8-3ab1-4f8a-901c-a064cf18955c",
-        chatbot: "Logistic",
-      },
-      Appointment: {
-        id: "88858525-84de-41ea-8ae9-7e57ced9b03f",
-        chatbot: "Appointment",
-      },
-    }
+    if (parsedResponse.target) {
+      const targetConfig = getTargetConfig(parsedResponse.target as Target)
+      if (targetConfig) {
+        const { id, chatbot } = targetConfig
 
-    if (targetMap[parsedResponse.target as Target]) {
-      const { id, chatbot } = targetMap[parsedResponse.target as Target]
-      const { user, content } = await getLLMResponse(
-        id,
-        updatedHistory,
-        chatbot
-      )
-      response = content
-      updatedHistory.push({ role: user, content, chatbot })
+        const { user, specialistResponse } = await getSpecialistResponse(
+          id,
+          updatedHistory,
+          chatbot
+        )
+        const finalPayload = prepareFinalPayload(
+          requestPayload,
+          chatbot,
+          specialistResponse
+        )
+        response = await getCoordinatorResponse(finalPayload)
+        updatedHistory = updateConversationHistory(
+          updatedHistory,
+          chatbot,
+          specialistResponse,
+          response,
+          user
+        )
+      } else {
+        response = "Target non riconosciuto."
+      }
     } else {
-      response = "Target non riconosciuto."
+      response = "Target non specificato."
     }
 
     // Salva la risposta del bot nel DB prima di inviarla al frontend

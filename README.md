@@ -1,12 +1,13 @@
 ===================== TODO =====================
 
-- Prodotti devono essere del PDF
 - Modiciare chatbto ordini che deve avere anche PRODOTTI
 - CAPIRE COME MANDARE EMAIL
+- Chat layout non va piu
 - CAPIRE COME SCARICARE UN PDF
 - Current monthly usage: NON VA0 $
 - iniziamo ad armare il settings
 - function calling ?
+- Prodotti devono essere del PDF
 
 ===================== LATER =====================
 

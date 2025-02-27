@@ -1,7 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import "codemirror/lib/codemirror.css"
+import "codemirror/mode/gfm/gfm"
 import "codemirror/mode/javascript/javascript"
-import "codemirror/theme/dracula.css"
+import "codemirror/mode/markdown/markdown"
+import "codemirror/mode/xml/xml"
 import Cookies from "js-cookie"
 import React, { useEffect, useState } from "react"
 import { Controlled as ControlledEditor } from "react-codemirror2"
@@ -27,7 +29,7 @@ const PromptsForm = ({ chatbotSelected, idPrompt, onClose, onSave }) => {
         const prompt = await getPrompt(idPrompt, token, chatbotSelected)
         setFormData((prevData) => ({
           ...prevData,
-          content: prompt.prompt || "ddd",
+          content: prompt.prompt || "",
           model: prompt.model || "",
           temperature: parseFloat(prompt.temperature) || 0.5,
           promptname: prompt.promptname || "",
@@ -188,8 +190,7 @@ const PromptsForm = ({ chatbotSelected, idPrompt, onClose, onSave }) => {
           onBeforeChange={handleEditorChange("content")}
           options={{
             lineNumbers: true,
-            mode: "json",
-            theme: "dracula",
+            mode: "markdown",
             lineWrapping: true,
             scrollbarStyle: "native",
             viewportMargin: Infinity,
