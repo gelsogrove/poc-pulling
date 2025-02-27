@@ -1,13 +1,17 @@
 ===================== TODO =====================
 
 - Modiciare chatbto ordini che deve avere anche PRODOTTI
+
 - CAPIRE COME MANDARE EMAIL
 - Chat layout non va piu
+- i file riuscimoa ad appoggiarci a google drive ?
+- riusciamo a leggere i dati da un excel di google?
 - CAPIRE COME SCARICARE UN PDF
 - Current monthly usage: NON VA0 $
 - iniziamo ad armare il settings
 - function calling ?
 - Prodotti devono essere del PDF
+- ma viene caricato una volta il prompt ?
 
 ===================== LATER =====================
 

@@ -4,15 +4,16 @@ import { Request, RequestHandler, Response, Router } from "express"
 
 import { GetAndSetHistory } from "../../share/history.js"
 import { validateRequest } from "../../share/validateUser.js"
-import { getPrompt, sendUsageData } from "../../utility/chatbots_utility.js"
 import {
   getCoordinatorResponse,
+  getPrompt,
   getSpecialistResponse,
   getTargetConfig,
   prepareFinalPayload,
+  sendUsageData,
   Target,
   updateConversationHistory,
-} from "./utils"
+} from "../../utility/chatbots_utility.js"
 
 dotenv.config()
 
