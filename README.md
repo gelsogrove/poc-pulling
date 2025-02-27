@@ -12,6 +12,7 @@
 - function calling ?
 - Prodotti devono essere del PDF
 - ma viene caricato una volta il prompt ?
+- deve fare lo storico per numero di telefono
 
 ===================== LATER =====================
 

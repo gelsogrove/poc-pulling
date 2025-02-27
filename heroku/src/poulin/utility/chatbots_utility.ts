@@ -184,16 +184,26 @@ export function prepareFinalPayload(
   specialistResponse: string
 ) {
   return {
-    ...requestPayload,
+    model: requestPayload.model,
     messages: [
-      ...requestPayload.messages,
+      { role: "system", content: "Language: it" },
+      { role: "system", content: "Language: es" },
       {
         role: "system",
-        content: `You are the main coordinator. A specialist ${chatbot} chatbot provided this response: "${specialistResponse}". 
-                 Review, enhance, and ensure the response is coherent and complete. 
-                 Maintain the same language as the original conversation.`,
+        content: `You are the main coordinator. Respond in a natural, conversational way.
+                 Never return JSON format responses.
+                 Here is the specialist ${chatbot} response: "${specialistResponse}".
+                 Format the response in a user-friendly way, maintaining the same language and adding appropriate greetings or context.
+                 If the response contains a list, format it nicely with bullet points or numbers.`,
+      },
+      {
+        role: "user",
+        content:
+          requestPayload.messages[requestPayload.messages.length - 1].content,
       },
     ],
+    temperature: requestPayload.temperature,
+    max_tokens: requestPayload.max_tokens,
     response_format: { type: "text" },
   }
 }
