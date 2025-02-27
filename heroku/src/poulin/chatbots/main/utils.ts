@@ -1,5 +1,5 @@
 import axios from "axios"
-import { getLLMResponse } from "../getLLMresponse"
+import { getLLMResponse } from "../getLLMresponse.js"
 
 export type Target =
   | "Generic"
