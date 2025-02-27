@@ -50,7 +50,7 @@ const InvoicePopup = ({ onClose }) => {
       const usageData = await fetchUsageData()
 
       // Sort months by year and month
-      usageData.lastmonths.sort((a, b) => {
+      usageData?.lastmonths?.sort((a, b) => {
         const dateA = new Date(
           `${a.year}-${monthNames.indexOf(a.month) + 1}-01`
         )

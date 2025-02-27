@@ -11,8 +11,8 @@
 - iniziamo ad armare il settings
 - function calling ?
 - Prodotti devono essere del PDF
-- ma viene caricato una volta il prompt ?
 - deve fare lo storico per numero di telefono
+- trigger_action lo vorrei nell'item
 
 ===================== LATER =====================
 
