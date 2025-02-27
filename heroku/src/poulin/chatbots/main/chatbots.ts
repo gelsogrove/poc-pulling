@@ -29,6 +29,11 @@ const MAX_TOKENS = 5000
 
 const chatbotMainRouter = Router()
 
+// Cache per i prompt degli specialisti
+const specialistPromptsCache: {
+  [key: string]: { prompt: string; model: string; temperature: number }
+} = {}
+
 /**
  * Gestisce le richieste di chat al chatbot
  *
@@ -162,5 +167,30 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
 
 // Registra l'handler per le richieste POST
 chatbotMainRouter.post("/response", handleResponse)
+
+/**
+ * Ottiene la risposta dallo specialista, caricando il prompt solo la prima volta
+ */
+export async function getSpecialistResponse(
+  id: string,
+  updatedHistory: any[],
+  chatbot: string
+) {
+  // Carica il prompt solo se non è in cache
+  if (!specialistPromptsCache[id]) {
+    const promptData = await getPrompt(id)
+    if (promptData) {
+      specialistPromptsCache[id] = promptData
+    }
+  }
+
+  const { user, content: specialistResponse } = await getLLMResponse(
+    id,
+    updatedHistory,
+    chatbot,
+    specialistPromptsCache[id] // Passa il prompt dalla cache
+  )
+  return { user, specialistResponse }
+}
 
 export default chatbotMainRouter

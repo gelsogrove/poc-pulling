@@ -20,11 +20,13 @@ const MAX_TOKENS = 5000
 export const getLLMResponse = async (
   idPrompt: string,
   history: any[],
-  chatbot: string
+  chatbot: string,
+  cachedPromptData?: { prompt: string; model: string; temperature: number }
 ) => {
   try {
-    // Recupera configurazione del prompt
-    const { prompt, model, temperature } = await getPrompt(idPrompt)
+    // Usa il prompt dalla cache se disponibile, altrimenti lo carica
+    const { prompt, model, temperature } =
+      cachedPromptData || (await getPrompt(idPrompt))
 
     // Prepara il payload per il modello
     const requestPayload = {
