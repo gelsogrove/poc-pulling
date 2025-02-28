@@ -2,17 +2,18 @@
 
 - Modiciare chatbto ordini che deve avere anche PRODOTTI
 
+- Current monthly usage: NON VA0 $
+
 - CAPIRE COME MANDARE EMAIL
-- Chat layout non va piu
 - i file riuscimoa ad appoggiarci a google drive ?
 - riusciamo a leggere i dati da un excel di google?
 - CAPIRE COME SCARICARE UN PDF
-- Current monthly usage: NON VA0 $
 - iniziamo ad armare il settings
 - function calling ?
 - Prodotti devono essere del PDF
 - deve fare lo storico per numero di telefono
 - trigger_action lo vorrei nell'item
+- chat conun numero di telefono di inputs
 
 ===================== LATER =====================
 

@@ -116,7 +116,7 @@ const MessageList = ({
                 data-id={msg.id}
                 key={msg.id}
                 className={`chat-message ${
-                  msg.sender === "user" ? "user-message" : "bot-message"
+                  msg.sender === "bot" ? "bot-message" : "user-message"
                 }`}
                 style={{ marginRight: "10px" }}
               >

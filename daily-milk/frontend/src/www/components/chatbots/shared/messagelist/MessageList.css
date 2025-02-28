@@ -60,7 +60,7 @@
 }
 
 /* User message styling */
-.user-message {
+.chat-message.user-message {
   align-self: flex-end;
   background-color: #007bff;
   color: white;

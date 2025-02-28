@@ -9,6 +9,7 @@ interface Message {
   role: string // "user" o "assistant"
   content: string // contenuto del messaggio
   chatbot?: string
+  trigger_action?: string | null
 }
 
 /**
@@ -68,7 +69,10 @@ export async function GetAndSetHistory(
     }
 
     // Aggiunge il nuovo messaggio alla history
-    history.push(message)
+    history.push({
+      ...message,
+      trigger_action: message.trigger_action || null,
+    })
     const updatedHistoryString = JSON.stringify(history)
 
     if (existingHistoryId) {
