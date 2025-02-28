@@ -7,13 +7,13 @@ import { validateRequest } from "../../share/validateUser.js"
 import {
   getCoordinatorResponse,
   getPrompt,
-  getSpecialistResponse,
   getTargetConfig,
   prepareFinalPayload,
   sendUsageData,
   Target,
   updateConversationHistory,
 } from "../../utility/chatbots_utility.js"
+import { getLLMResponse } from "../getLLMresponse.js"
 
 dotenv.config()
 
@@ -111,7 +111,7 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
       if (targetConfig) {
         const { id, chatbot } = targetConfig
 
-        const { user, specialistResponse } = await getSpecialistResponse(
+        const { user, specialistResponse } = await fetchSpecialistResponse(
           id,
           updatedHistory,
           chatbot
@@ -171,7 +171,7 @@ chatbotMainRouter.post("/response", handleResponse)
 /**
  * Ottiene la risposta dallo specialista, caricando il prompt solo la prima volta
  */
-export async function getSpecialistResponse(
+export async function fetchSpecialistResponse(
   id: string,
   updatedHistory: any[],
   chatbot: string
