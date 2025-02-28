@@ -216,23 +216,6 @@ export async function getCoordinatorResponse(finalPayload: any) {
   return finalResponse.data.choices[0]?.message?.content
 }
 
-export function updateConversationHistory(
-  updatedHistory: any[],
-  chatbot: string,
-  specialistResponse: string,
-  response: string,
-  user: string
-) {
-  updatedHistory.push(
-    {
-      role: "system",
-      content: `Specialist ${chatbot} response: ${specialistResponse}`,
-    },
-    { role: user, content: response, chatbot: "main" }
-  )
-  return updatedHistory
-}
-
 export function getTargetConfig(target: Target) {
   const targetMap = {
     Generic: {

@@ -2,7 +2,10 @@ import axios from "axios"
 import dotenv from "dotenv"
 import { Request, RequestHandler, Response, Router } from "express"
 
-import { GetAndSetHistory } from "../../share/history.js"
+import {
+  GetAndSetHistory,
+  updateConversationHistory,
+} from "../../share/history.js"
 import { validateRequest } from "../../share/validateUser.js"
 import {
   getCoordinatorResponse,
@@ -11,7 +14,6 @@ import {
   prepareFinalPayload,
   sendUsageData,
   Target,
-  updateConversationHistory,
 } from "../../utility/chatbots_utility.js"
 import { getLLMResponse } from "./getLLMresponse.js"
 
@@ -127,7 +129,8 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
           chatbot,
           specialistResponse,
           response,
-          user
+          user,
+          parsedResponse.trigger_action
         )
       } else {
         response = "Target non riconosciuto."
