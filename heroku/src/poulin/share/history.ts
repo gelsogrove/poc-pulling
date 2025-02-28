@@ -167,7 +167,7 @@ export function updateConversationHistory(
   specialistResponse: string,
   response: string,
   user: string,
-  triggerAction: string | null
+  triggerAction: string
 ) {
   updatedHistory.push(
     {
