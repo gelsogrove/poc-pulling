@@ -13,7 +13,7 @@ import {
   Target,
   updateConversationHistory,
 } from "../../utility/chatbots_utility.js"
-import { getLLMResponse } from "../getLLMresponse.js"
+import { getLLMResponse } from "./getLLMresponse.js"
 
 dotenv.config()
 

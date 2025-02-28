@@ -1,7 +1,7 @@
 import axios from "axios"
 import dotenv from "dotenv"
 import { pool } from "../../../server.js"
-import { getLLMResponse } from "../chatbots/getLLMresponse.js"
+import { getLLMResponse } from "../chatbots/main/getLLMresponse.js"
 
 dotenv.config()
 

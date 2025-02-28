@@ -1,7 +1,7 @@
 import axios from "axios"
 import dotenv from "dotenv"
 
-import { getPrompt } from "../utility/chatbots_utility.js"
+import { getPrompt } from "../../utility/chatbots_utility.js"
 
 dotenv.config()
 

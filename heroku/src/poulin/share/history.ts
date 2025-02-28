@@ -161,6 +161,30 @@ export async function DeleteHistory(idHistory: string): Promise<boolean> {
   }
 }
 
+export function updateConversationHistory(
+  updatedHistory: any[],
+  chatbot: string,
+  specialistResponse: string,
+  response: string,
+  user: string,
+  triggerAction: string | null
+) {
+  updatedHistory.push(
+    {
+      role: "system",
+      content: `Specialist ${chatbot} response: ${specialistResponse}`,
+      trigger_action: triggerAction,
+    },
+    {
+      role: user,
+      content: response,
+      chatbot: "main",
+      trigger_action: triggerAction,
+    }
+  )
+  return updatedHistory
+}
+
 const historyRouter = express.Router()
 
 // Metodo di gestione per impostare la cronologia

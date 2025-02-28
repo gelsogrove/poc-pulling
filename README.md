@@ -14,6 +14,8 @@
 - deve fare lo storico per numero di telefono
 - trigger_action lo vorrei nell'item
 - chat conun numero di telefono di inputs
+- grafico non va dei soldi
+- fare una query per il prompt name
 
 ===================== LATER =====================
 
