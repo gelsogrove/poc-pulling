@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express"
+import serveDashboard from "./whatsapp-dashboard.js"
 
 // Crea una funzione middleware che gestisce le richieste WhatsApp
 export function whatsappMiddleware(
@@ -9,6 +10,12 @@ export function whatsappMiddleware(
   // Gestisci solo le richieste al percorso /whatsapp
   if (!req.path.startsWith("/whatsapp")) {
     return next()
+  }
+
+  // Endpoint per la dashboard di gestione
+  if (req.path === "/whatsapp/dashboard" && req.method === "GET") {
+    serveDashboard(req, res)
+    return
   }
 
   // Gestisci l'endpoint di invio
@@ -23,13 +30,13 @@ export function whatsappMiddleware(
     return
   }
 
-  // Nuovo endpoint per forzare la logout e riconnessione
+  // Endpoint per forzare la logout e riconnessione
   if (req.path === "/whatsapp/reset" && req.method === "GET") {
     handleReset(req, res)
     return
   }
 
-  // Nuovo endpoint per visualizzare i log recenti (incluso QR code)
+  // Endpoint per visualizzare i log recenti (incluso QR code)
   if (req.path === "/whatsapp/logs" && req.method === "GET") {
     res.json({
       success: true,
@@ -38,7 +45,7 @@ export function whatsappMiddleware(
     return
   }
 
-  // Nuovo endpoint per forzare la generazione del QR code
+  // Endpoint per forzare la generazione del QR code
   if (req.path === "/whatsapp/force-qr" && req.method === "GET") {
     handleForceQR(req, res)
     return
