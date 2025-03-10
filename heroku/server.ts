@@ -214,7 +214,7 @@ async function initializeWhatsApp(): Promise<boolean> {
           console.log("QRCODE_START =============================")
           console.log("Scansiona questo codice QR con WhatsApp (+34654728753):")
           qrcode.generate(qr, { small: true })
-          console.log("QRCODE_END ===============================")
+          console.log("QRCODE_END ================================")
         },
       },
     })
