@@ -168,8 +168,21 @@ export class ChatbotWebhookService {
       // Nome del chatbot per il logging
       const chatbotName = "webhook-chatbot"
 
-      // Ottiene la risposta dal modello di IA
-      const llmResponse = await getLLMResponse(promptId, history, chatbotName)
+      // Usa un prompt predefinito invece di cercarlo nel database
+      const cachedPromptData = {
+        prompt:
+          "Sei Eva, un'assistente virtuale utile e amichevole che risponde in italiano. Fornisci risposte chiare e concise alle domande degli utenti.",
+        model: "gpt-4-0125-preview",
+        temperature: 0.7,
+      }
+
+      // Ottiene la risposta dal modello di IA passando il prompt predefinito
+      const llmResponse = await getLLMResponse(
+        promptId,
+        history,
+        chatbotName,
+        cachedPromptData
+      )
 
       // Estrae il testo della risposta
       const responseText =
@@ -213,22 +226,18 @@ export class ChatbotWebhookService {
       // Costruisce la struttura del messaggio
       // Da adattare alla struttura richiesta dall'API in uso
       const payload = {
-        messaging_product: "general",
+        messaging_product: "whatsapp",
         recipient_type: "individual",
         to: message.to,
         type: "text",
         text: {
           body: message.text,
         },
-        // Opzioni aggiuntive se necessarie
-        metadata: {
-          correlation_id: message.correlationId,
-        },
       }
 
       // Invia il messaggio all'API
       const response = await axios.post(
-        `${webhookConfig.apiUrl}/messages`,
+        `${webhookConfig.apiUrl}/${webhookConfig.senderId}/messages`,
         payload,
         {
           headers: {
