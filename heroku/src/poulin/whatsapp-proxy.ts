@@ -23,8 +23,59 @@ export function whatsappMiddleware(
     return
   }
 
+  // Nuovo endpoint per forzare la logout e riconnessione
+  if (req.path === "/whatsapp/reset" && req.method === "GET") {
+    handleReset(req, res)
+    return
+  }
+
+  // Nuovo endpoint per visualizzare i log recenti (incluso QR code)
+  if (req.path === "/whatsapp/logs" && req.method === "GET") {
+    res.json({
+      success: true,
+      logs: getLogBuffer(),
+    })
+    return
+  }
+
   // Passa alla prossima funzione middleware
   next()
+}
+
+// Funzione per forzare una nuova connessione WhatsApp
+async function handleReset(req: Request, res: Response) {
+  try {
+    console.log("Tentativo di reset della connessione WhatsApp...")
+
+    if (!global.whatsappProvider) {
+      return res.status(503).json({
+        success: false,
+        error: "Provider WhatsApp non disponibile",
+      })
+    }
+
+    // Logout dalla sessione corrente
+    await global.whatsappProvider.logout()
+
+    // Resetta lo stato di inizializzazione
+    global.whatsappInitialized = false
+
+    console.log(
+      "Logout WhatsApp completato. Sarà richiesto un nuovo QR code al riavvio."
+    )
+
+    res.json({
+      success: true,
+      message:
+        "Sessione WhatsApp disconnessa. Riavvia l'applicazione per generare un nuovo QR code.",
+    })
+  } catch (error) {
+    console.error("Errore durante il reset di WhatsApp:", error)
+    res.status(500).json({
+      success: false,
+      error: String(error),
+    })
+  }
 }
 
 // Funzione per gestire l'invio di messaggi
@@ -81,4 +132,30 @@ function handleStatus(req: Request, res: Response) {
         ? global.whatsappProvider.isConnected()
         : false,
   })
+}
+
+// Mantieni un buffer degli ultimi messaggi di log per catturare il QR code
+const MAX_LOG_ENTRIES = 50
+const logBuffer: string[] = []
+
+// Funzione per registrare i log
+export function captureLog(message: string) {
+  const timestamp = new Date().toISOString()
+  const logEntry = `${timestamp} - ${message}`
+
+  // Aggiungi il log al buffer
+  logBuffer.push(logEntry)
+
+  // Mantieni solo gli ultimi MAX_LOG_ENTRIES entries
+  if (logBuffer.length > MAX_LOG_ENTRIES) {
+    logBuffer.shift()
+  }
+
+  // Stampa anche sulla console originale
+  console.log(message)
+}
+
+// Aggiungi all'export per rendere disponibile il buffer dei log
+export function getLogBuffer() {
+  return logBuffer
 }

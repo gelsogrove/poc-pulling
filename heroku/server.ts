@@ -34,7 +34,7 @@ import monthlyUsageRouter from "./src/poulin/utility/monthlyUsage.js"
 import promptsManagerRouter from "./src/poulin/utility/promptsManager.js"
 import modelrolesRouter from "./src/poulin/utility/roles.js"
 import modelWebooksRouter from "./src/poulin/webhook.js"
-import { whatsappMiddleware } from "./src/poulin/whatsapp-proxy.js"
+import { captureLog, whatsappMiddleware } from "./src/poulin/whatsapp-proxy.js"
 import welcomeRouter from "./welcome.js"
 
 const { Pool } = pkg
@@ -211,10 +211,10 @@ async function initializeWhatsApp(): Promise<boolean> {
       printQRInTerminal: true,
       qrcode: {
         generate: (qr: string) => {
-          console.log("QRCODE_START =============================")
-          console.log("Scansiona questo codice QR con WhatsApp (+34654728753):")
+          captureLog("QRCODE_START =============================")
+          captureLog("Scansiona questo codice QR con WhatsApp (+34654728753):")
           qrcode.generate(qr, { small: true })
-          console.log("QRCODE_END ================================")
+          captureLog("QRCODE_END ===============================")
         },
       },
     })
