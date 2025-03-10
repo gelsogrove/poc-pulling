@@ -117,6 +117,19 @@ export class ChatbotWebhookService {
       // Log completo del payload per debug
       console.log("Payload ricevuto:", JSON.stringify(data, null, 2))
 
+      // Ignora le notifiche di stato dei messaggi
+      if (
+        data.entry &&
+        data.entry[0]?.changes &&
+        data.entry[0].changes[0]?.value?.statuses
+      ) {
+        Logger.log(
+          "STATUS",
+          "Ricevuta notifica di stato del messaggio, ignorata"
+        )
+        return null
+      }
+
       // Caso standard: messaggio WhatsApp in formato normale
       if (
         data.entry &&
@@ -125,6 +138,9 @@ export class ChatbotWebhookService {
         data.entry[0].changes[0].value.messages[0]
       ) {
         const messageData = data.entry[0].changes[0].value.messages[0]
+
+        // Log dei dettagli del messaggio per debug
+        Logger.log("DEBUG", "Dati del messaggio estratti:", messageData)
 
         // Messaggio di testo
         if (messageData.type === "text" && messageData.text) {
@@ -265,33 +281,57 @@ export class ChatbotWebhookService {
         to: message.to,
         type: "text",
         text: {
+          preview_url: false,
           body: message.text,
         },
       }
 
       // Log del payload e dell'URL per debug
       const apiUrl = `${webhookConfig.apiUrl}/${webhookConfig.senderId}/messages`
-      console.log("Invio richiesta a:", apiUrl)
-      console.log("Payload:", JSON.stringify(payload, null, 2))
+      Logger.log("DEBUG", `Invio richiesta a: ${apiUrl}`)
+      Logger.log("DEBUG", `Payload: ${JSON.stringify(payload)}`)
+      Logger.log(
+        "DEBUG",
+        `Token di autenticazione: ${
+          webhookConfig.bearerToken ? "Configurato" : "NON configurato"
+        }`
+      )
+      Logger.log("DEBUG", `Configurazione completa:`, {
+        enabled: webhookConfig.enabled,
+        apiUrl: webhookConfig.apiUrl,
+        senderId: webhookConfig.senderId,
+      })
 
       // Invia il messaggio all'API
-      const response = await axios.post(apiUrl, payload, {
-        headers: {
-          Authorization: `Bearer ${webhookConfig.bearerToken}`,
-          "Content-Type": "application/json",
-        },
-      })
+      try {
+        const response = await axios.post(apiUrl, payload, {
+          headers: {
+            Authorization: `Bearer ${webhookConfig.bearerToken}`,
+            "Content-Type": "application/json",
+          },
+        })
 
-      Logger.log("SENT", `Messaggio inviato con successo a ${message.to}`, {
-        statusCode: response.status,
-        responseData: response.data,
-      })
+        Logger.log("SENT", `Messaggio inviato con successo a ${message.to}`, {
+          statusCode: response.status,
+          responseData: response.data,
+        })
 
-      return true
+        return true
+      } catch (axiosError: any) {
+        // Log dettagliato dell'errore Axios
+        Logger.log("ERROR", "Errore nella richiesta axios:", {
+          status: axiosError.response?.status,
+          statusText: axiosError.response?.statusText,
+          data: axiosError.response?.data,
+          message: axiosError.message,
+        })
+
+        return false
+      }
     } catch (error) {
       Logger.log(
         "ERROR",
-        `Errore nell'invio del messaggio a ${message.to}`,
+        `Errore generale nell'invio del messaggio a ${message.to}`,
         error
       )
       return false
