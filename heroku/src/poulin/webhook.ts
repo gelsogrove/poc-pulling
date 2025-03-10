@@ -1,6 +1,7 @@
 import axios from "axios"
 import dotenv from "dotenv"
 import { Request, RequestHandler, Response, Router } from "express"
+import { getLLMResponse } from "./chatbots/main/getLLMresponse.js"
 
 dotenv.config()
 
@@ -48,6 +49,9 @@ const WHATSAPP_API =
 const PHONE_NUMBER_ID =
   process.env.PHONE_NUMBER_ID || process.env.CHATBOT_WEBHOOK_SENDER_ID || ""
 
+// Prompt predefinito per la chatbot
+const DEFAULT_PROMPT_ID = "default-chatbot-prompt"
+
 // Funzione helper per i log
 function logMessage(type: string, message: string, details?: any) {
   const timestamp = new Date().toISOString()
@@ -92,13 +96,30 @@ async function receiveMessage(
 
         // Gestione messaggi di testo
         if (message.text) {
-          const name = message.text.body.trim()
-          logMessage("RECEIVED", `Nuovo utente: ${name}`, {
+          const userMessage = message.text.body.trim()
+          logMessage("RECEIVED", `Nuovo utente: ${userMessage}`, {
             from: message.from,
             timestamp: new Date().toISOString(),
           })
 
-          await sendWelcomeMessage(message.from, name)
+          // Crea history con il messaggio dell'utente
+          const history = [{ role: "user", content: userMessage }]
+
+          // Ottieni risposta dal modello LLM
+          const llmResponse = await getLLMResponse(
+            DEFAULT_PROMPT_ID,
+            history,
+            "whatsapp-webhook"
+          )
+
+          // Estrai il testo della risposta
+          const responseText =
+            typeof llmResponse.content === "string"
+              ? llmResponse.content
+              : JSON.stringify(llmResponse.content)
+
+          // Invia la risposta generata dall'IA
+          await sendWhatsAppMessage(message.from, responseText)
         }
 
         // Gestione risposte dai bottoni
@@ -109,12 +130,26 @@ async function receiveMessage(
             buttonId: buttonResponse.id,
           })
 
-          // Rispondi in base al bottone cliccato
-          if (buttonResponse.id === "btn-yes") {
-            await sendWhatsAppMessage(message.from, "Hai cliccato SÌ! 👍")
-          } else if (buttonResponse.id === "btn-no") {
-            await sendWhatsAppMessage(message.from, "Hai cliccato NO! 👎")
-          }
+          // Crea history con il messaggio del bottone
+          const history = [
+            { role: "user", content: `Ho cliccato ${buttonResponse.title}` },
+          ]
+
+          // Ottieni risposta dal modello LLM
+          const llmResponse = await getLLMResponse(
+            DEFAULT_PROMPT_ID,
+            history,
+            "whatsapp-webhook"
+          )
+
+          // Estrai il testo della risposta
+          const responseText =
+            typeof llmResponse.content === "string"
+              ? llmResponse.content
+              : JSON.stringify(llmResponse.content)
+
+          // Invia la risposta generata dall'IA
+          await sendWhatsAppMessage(message.from, responseText)
         }
       }
     }
@@ -148,10 +183,34 @@ async function sendWhatsAppMessage(to: string, message: string) {
   }
 }
 
+// Funzione per inviare il messaggio di benvenuto (ora usa bottoni per interazione iniziale)
 async function sendWelcomeMessage(to: string, name: string) {
   try {
     logMessage("SENDING", `Invio messaggio di benvenuto a ${name}`, { to })
 
+    // Prima ottieni una risposta dal modello LLM per un messaggio di benvenuto
+    const history = [
+      {
+        role: "user",
+        content:
+          "Salutami e chiedimi come posso aiutarti, sono un nuovo utente.",
+      },
+    ]
+
+    // Ottieni risposta dal modello LLM
+    const llmResponse = await getLLMResponse(
+      DEFAULT_PROMPT_ID,
+      history,
+      "whatsapp-welcome"
+    )
+
+    // Estrai il testo della risposta
+    const welcomeText =
+      typeof llmResponse.content === "string"
+        ? llmResponse.content
+        : JSON.stringify(llmResponse.content)
+
+    // Invia un messaggio interattivo con la risposta del modello
     const response = (await axios.post(
       `${WHATSAPP_API}/${PHONE_NUMBER_ID}/messages`,
       {
@@ -162,7 +221,7 @@ async function sendWelcomeMessage(to: string, name: string) {
         interactive: {
           type: "button",
           body: {
-            text: `Ciao *${name}*, mi chiamo Eva e sono un assistente virtuale dell'Altra Italia (https://laltrait.com/), sono un assistenza di primo livello se non riusciamo a darti l'informazione che cerchi ti metteremo in contatto con un operatore.\n\nCome ti posso aiutare oggi?`,
+            text: welcomeText,
           },
           action: {
             buttons: [
