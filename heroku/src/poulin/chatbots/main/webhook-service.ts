@@ -114,20 +114,45 @@ export class ChatbotWebhookService {
    */
   private static extractMessageFromPayload(data: any): IncomingMessage | null {
     try {
-      // Esempio di estrazione da una struttura generica
-      // Da adattare secondo la struttura specifica dell'API in uso
+      // Log completo del payload per debug
+      console.log("Payload ricevuto:", JSON.stringify(data, null, 2))
+
+      // Caso standard: messaggio WhatsApp in formato normale
       if (
         data.entry &&
         data.entry[0]?.changes &&
-        data.entry[0].changes[0]?.value?.messages
+        data.entry[0].changes[0]?.value?.messages &&
+        data.entry[0].changes[0].value.messages[0]
       ) {
         const messageData = data.entry[0].changes[0].value.messages[0]
 
-        return {
-          from: messageData.from,
-          text: messageData.text?.body || "",
-          timestamp: messageData.timestamp || Date.now(),
-          messageId: messageData.id,
+        // Messaggio di testo
+        if (messageData.type === "text" && messageData.text) {
+          return {
+            from: messageData.from,
+            text: messageData.text.body || "",
+            timestamp: parseInt(messageData.timestamp) || Date.now(),
+            messageId: messageData.id,
+          }
+        }
+
+        // Messaggio interattivo (bottoni)
+        if (messageData.type === "interactive" && messageData.interactive) {
+          let text = ""
+
+          // Gestisci diversi tipi di interazioni
+          if (messageData.interactive.button_reply) {
+            text = `Ho selezionato: ${messageData.interactive.button_reply.title}`
+          } else if (messageData.interactive.list_reply) {
+            text = `Ho selezionato: ${messageData.interactive.list_reply.title}`
+          }
+
+          return {
+            from: messageData.from,
+            text: text,
+            timestamp: parseInt(messageData.timestamp) || Date.now(),
+            messageId: messageData.id,
+          }
         }
       }
 
@@ -141,6 +166,7 @@ export class ChatbotWebhookService {
         }
       }
 
+      console.log("Nessun formato di messaggio riconosciuto nel payload")
       return null
     } catch (error) {
       Logger.log("ERROR", "Errore nell'estrazione del messaggio", error)
@@ -223,8 +249,16 @@ export class ChatbotWebhookService {
         messageText: message.text,
       })
 
-      // Costruisce la struttura del messaggio
-      // Da adattare alla struttura richiesta dall'API in uso
+      // Controlla se l'ID del mittente è configurato
+      if (!webhookConfig.senderId) {
+        Logger.log(
+          "ERROR",
+          "SENDER_ID non configurato. Impossibile inviare messaggi."
+        )
+        return false
+      }
+
+      // Costruisce la struttura del messaggio per WhatsApp
       const payload = {
         messaging_product: "whatsapp",
         recipient_type: "individual",
@@ -235,17 +269,18 @@ export class ChatbotWebhookService {
         },
       }
 
+      // Log del payload e dell'URL per debug
+      const apiUrl = `${webhookConfig.apiUrl}/${webhookConfig.senderId}/messages`
+      console.log("Invio richiesta a:", apiUrl)
+      console.log("Payload:", JSON.stringify(payload, null, 2))
+
       // Invia il messaggio all'API
-      const response = await axios.post(
-        `${webhookConfig.apiUrl}/${webhookConfig.senderId}/messages`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${webhookConfig.bearerToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      )
+      const response = await axios.post(apiUrl, payload, {
+        headers: {
+          Authorization: `Bearer ${webhookConfig.bearerToken}`,
+          "Content-Type": "application/json",
+        },
+      })
 
       Logger.log("SENT", `Messaggio inviato con successo a ${message.to}`, {
         statusCode: response.status,
