@@ -169,7 +169,7 @@ app.use("/poulin/main/unlike", limiter, unlikeRouter)
 app.use("/poulin/main/backup", limiter, backupRouter)
 app.use("/poulin/main/history", limiter, historyRouter)
 
-// WhatsApp configuration
+// WhatsApp configuration *********************************************
 const PORT = process.env.PORT || 4999
 
 const WHATSAPP_DEFAULT_PROMPT =
@@ -207,7 +207,8 @@ async function initializeWhatsApp(): Promise<boolean> {
 
     // Configura Baileys provider con supporto sessioni persistenti
     const whatsappProvider = createProvider(BaileysProvider, {
-      sessionPath: "./whatsapp-session", // Cartella dove salvare la sessione
+      sessionPath: "./whatsapp-session",
+      printQRInTerminal: true,
       qrcode: {
         generate: (qr: string) => {
           console.log("Scansiona questo codice QR con WhatsApp (+34654728753):")
