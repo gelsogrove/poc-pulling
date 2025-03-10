@@ -1,5 +1,9 @@
 import { NextFunction, Request, Response } from "express"
-import serveDashboard from "./whatsapp-dashboard.js"
+import serveDashboard, {
+  generateQRImage,
+  serveCSS,
+  serveJS,
+} from "./whatsapp-dashboard.js"
 
 // Crea una funzione middleware che gestisce le richieste WhatsApp
 export function whatsappMiddleware(
@@ -15,6 +19,24 @@ export function whatsappMiddleware(
   // Endpoint per la dashboard di gestione
   if (req.path === "/whatsapp/dashboard" && req.method === "GET") {
     serveDashboard(req, res)
+    return
+  }
+
+  // Endpoint per servire il CSS della dashboard
+  if (req.path === "/whatsapp/dashboard.css" && req.method === "GET") {
+    serveCSS(req, res)
+    return
+  }
+
+  // Endpoint per servire il JavaScript della dashboard
+  if (req.path === "/whatsapp/dashboard.js" && req.method === "GET") {
+    serveJS(req, res)
+    return
+  }
+
+  // Endpoint per generare l'immagine QR code
+  if (req.path === "/whatsapp/qrcode" && req.method === "GET") {
+    generateQRImage(req, res)
     return
   }
 
