@@ -1,5 +1,8 @@
 import axios from "axios"
+import dotenv from "dotenv"
 import { Request, RequestHandler, Response, Router } from "express"
+
+dotenv.config()
 
 /* REMEMBER 
  telefono dura 90 giorni
@@ -10,8 +13,8 @@ import { Request, RequestHandler, Response, Router } from "express"
 
 const modelWebooksRouter = Router()
 
-// Questa è la password che devi mettere anche nell'interfaccia di Meta
-const VERIFY_TOKEN = "manfredonia77"
+// Leggi il token di verifica dalla variabile d'ambiente
+const VERIFY_TOKEN = process.env.CHATBOT_WEBHOOK_VERIFY_TOKEN || "manfredonia77"
 
 /*
 
@@ -36,11 +39,14 @@ Salvalo in modo sicuro
 Questo token non scade
 */
 
-const WHATSAPP_TOKEN =
-  "EAAQRb5SzSQUBO0k4maZBFikIFiOZBOtwGbxZAausbOE0cIsLkiqrKEgQZCx41RPIZCg1wJcZBCDP5IZB9gk91w7oZCICenz9HtzX0cNyqRa4q7VoZBVkrIYhdx0rsZCCu1JUJOZCAWQcJZCYq33vYQwNeg4iOMp3ZA6ImHtxZCTHdZAsdYpVZAXddZBJqWtxE2WpgnMlzSs1OeXgoWvj3DdCuhObBkkzS48Yf"
-const WHATSAPP_API = "https://graph.facebook.com/v17.0"
+// Leggi il token e l'URL dell'API dalle variabili d'ambiente
+const WHATSAPP_TOKEN = process.env.CHATBOT_WEBHOOK_BEARER_TOKEN || ""
+const WHATSAPP_API =
+  process.env.CHATBOT_WEBHOOK_API_URL || "https://graph.facebook.com/v17.0"
 
-const PHONE_NUMBER_ID = "539180409282748" //
+// Leggi l'ID del numero di telefono dalla variabile d'ambiente
+const PHONE_NUMBER_ID =
+  process.env.PHONE_NUMBER_ID || process.env.CHATBOT_WEBHOOK_SENDER_ID || ""
 
 // Funzione helper per i log
 function logMessage(type: string, message: string, details?: any) {
