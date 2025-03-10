@@ -40,6 +40,8 @@ const limiter = rateLimit({
     message: "Troppe richieste da questo IP, riprova più tardi.",
 });
 const app = express();
+// Configura Express per fidarsi del proxy di Heroku
+app.set("trust proxy", 1);
 // Security middleware
 app.use(helmet());
 app.use(cors());
