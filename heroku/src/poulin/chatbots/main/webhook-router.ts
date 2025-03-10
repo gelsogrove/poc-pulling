@@ -38,12 +38,22 @@ const receiveMessageHandler = ((req: Request, res: Response) => {
   return ChatbotWebhookService.receiveMessage(req, res)
 }) as RequestHandler
 
-// Endpoint per la verifica del webhook (gestisce la richiesta di verifica)
-chatbotWebhookRouter.get("/verify", verifyWebhookHandler)
+// Endpoint principale per la verifica del webhook (per compatibilità con webhook.ts)
+chatbotWebhookRouter.get("/receive", verifyWebhookHandler)
 
-// Endpoint per ricevere messaggi (gestisce i messaggi in entrata)
+// Endpoint principale per ricevere messaggi (per compatibilità con webhook.ts)
 chatbotWebhookRouter.post(
   "/receive",
+  checkWebhookEnabled,
+  receiveMessageHandler
+)
+
+// Endpoint per la verifica del webhook (con prefisso, per la nuova implementazione)
+chatbotWebhookRouter.get("/verify", verifyWebhookHandler)
+
+// Endpoint per ricevere messaggi (con prefisso, per la nuova implementazione)
+chatbotWebhookRouter.post(
+  "/verify/receive",
   checkWebhookEnabled,
   receiveMessageHandler
 )
