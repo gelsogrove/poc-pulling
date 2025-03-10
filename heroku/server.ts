@@ -11,6 +11,7 @@ import unlikeRouter from "./src/poulin/share/unlike.js"
 import usageRouter from "./src/poulin/share/usage.js"
 
 import chatbotMainRouter from "./src/poulin/chatbots/main/chatbots.js"
+import { chatbotWebhookRouter } from "./src/poulin/chatbots/main/index.js"
 import historyRouter from "./src/poulin/share/history.js"
 import promptRouter from "./src/poulin/share/prompts.js"
 import usersRouter from "./src/poulin/users.js"
@@ -80,6 +81,7 @@ app.use("/history", limiter, historyRouter)
 app.use("/poulin/main/usage", limiter, usageRouter)
 app.use("/poulin/main/prompt", limiter, promptRouter)
 app.use("/poulin/main/chatbot", limiter, chatbotMainRouter)
+app.use("/poulin/main/chatbot-webhook", limiter, chatbotWebhookRouter)
 app.use("/poulin/main/unlike", limiter, unlikeRouter)
 app.use("/poulin/main/backup", limiter, backupRouter)
 app.use("/poulin/main/history", limiter, historyRouter)

@@ -8,7 +8,7 @@ import unzipper from "unzipper";
 import { validateRequest } from "../share/validateUser.js";
 const backupRouter = Router();
 backupRouter.use(fileUpload({
-    limits: { fileSize: 50 * 1024 * 1024 },
+    limits: { fileSize: 50 * 1024 * 1024 }, // Limite di 50MB
     useTempFiles: true,
     tempFileDir: "/tmp/",
 }));
