@@ -38,8 +38,97 @@ export function whatsappMiddleware(
     return
   }
 
+  // Nuovo endpoint per forzare la generazione del QR code
+  if (req.path === "/whatsapp/force-qr" && req.method === "GET") {
+    handleForceQR(req, res)
+    return
+  }
+
   // Passa alla prossima funzione middleware
   next()
+}
+
+// Funzione per forzare la generazione di un nuovo QR code
+async function handleForceQR(req: Request, res: Response) {
+  try {
+    console.log("Tentativo di forzare la generazione di un nuovo QR code...")
+
+    // Reset completo delle variabili globali
+    global.whatsappInitialized = false
+    global.whatsappProvider = null
+
+    // Forza la ricarica dell'intero modulo WhatsApp
+    // Questo è un hack per forzare l'inizializzazione da zero
+    try {
+      const { BaileysProvider } = await import("@builderbot/provider-baileys")
+      const { createBot, createFlow, addKeyword, createProvider } =
+        await import("@builderbot/bot")
+
+      // Avvia una nuova inizializzazione
+      console.log("Inizializzazione forzata di una nuova istanza WhatsApp...")
+
+      const catchAllFlow = addKeyword(".*").addAction(async (ctx: any) => {
+        console.log(`[FORCE-QR] Messaggio ricevuto: ${ctx.body}`)
+      })
+
+      const whatsappProvider = createProvider(BaileysProvider, {
+        // Sessione unica per questa richiesta
+        sessionPath: `./whatsapp-session-${Date.now()}`,
+        printQRInTerminal: true,
+        browser: ["Poulin WhatsApp", "Chrome", "10.0"],
+        qrcode: {
+          generate: (qr: string) => {
+            console.log("QRCODE_FORZATO_START ==============================")
+            console.log("Scansiona questo QR code con WhatsApp (+34654728753):")
+            console.log(qr) // Stampiamo direttamente il QR code come testo per essere sicuri
+            console.log("QRCODE_FORZATO_END ==============================")
+
+            // Salva il QR code nell'oggetto di risposta
+            res.locals.qrCode = qr
+          },
+        },
+      })
+
+      // Usa qualsiasi struttura dati disponibile come database in memoria
+      const adapterDB = { save: () => {}, get: () => {} }
+      const adapterFlow = createFlow([catchAllFlow])
+
+      // Crea il bot ma non attenderlo
+      const botPromise = createBot({
+        flow: adapterFlow,
+        provider: whatsappProvider,
+        database: adapterDB as any,
+      })
+
+      // Attendi 5 secondi per dare tempo al QR code di essere generato
+      setTimeout(() => {
+        if (res.locals.qrCode) {
+          res.json({
+            success: true,
+            message: "Nuovo QR code generato con successo",
+            qrCode: res.locals.qrCode,
+          })
+        } else {
+          res.json({
+            success: false,
+            message: "QR code non generato. Controlla i log di Heroku.",
+          })
+        }
+      }, 5000)
+    } catch (initError) {
+      console.error("Errore nell'inizializzazione forzata:", initError)
+      res.status(500).json({
+        success: false,
+        error: `Errore nell'inizializzazione forzata: ${String(initError)}`,
+      })
+    }
+  } catch (error) {
+    console.error("Errore durante la generazione forzata del QR code:", error)
+    res.status(500).json({
+      success: false,
+      error: String(error),
+    })
+  }
 }
 
 // Funzione per forzare una nuova connessione WhatsApp
@@ -47,38 +136,37 @@ async function handleReset(req: Request, res: Response) {
   try {
     console.log("Tentativo di reset della connessione WhatsApp...")
 
-    if (!global.whatsappProvider) {
-      return res.status(503).json({
-        success: false,
-        error: "Provider WhatsApp non disponibile",
-      })
-    }
-
-    // Metodo alternativo di reset - impostare manualmente lo stato
+    // Reset dello stato a livello globale
     global.whatsappInitialized = false
 
-    // Stampa informazioni sul provider
-    console.log("Provider WhatsApp:", Object.keys(global.whatsappProvider))
+    if (global.whatsappProvider) {
+      // Stampa informazioni sul provider
+      console.log("Provider WhatsApp:", Object.keys(global.whatsappProvider))
 
-    try {
-      // Prova a usare il metodo di disconnessione se disponibile
-      if (typeof global.whatsappProvider.close === "function") {
-        await global.whatsappProvider.close()
-        console.log("Provider WhatsApp chiuso con il metodo 'close'")
-      } else if (typeof global.whatsappProvider.disconnect === "function") {
-        await global.whatsappProvider.disconnect()
-        console.log("Provider WhatsApp disconnesso con il metodo 'disconnect'")
-      } else if (typeof global.whatsappProvider.destroy === "function") {
-        await global.whatsappProvider.destroy()
-        console.log("Provider WhatsApp distrutto con il metodo 'destroy'")
-      } else {
-        // Se nessun metodo è disponibile, suggerisci di riavviare il server
-        console.log(
-          "Nessun metodo di disconnessione trovato. Impostato flag di inizializzazione a false."
-        )
+      try {
+        // Prova diversi metodi per scollegare il provider
+        if (typeof global.whatsappProvider.close === "function") {
+          await global.whatsappProvider.close()
+          console.log("Provider WhatsApp chiuso con il metodo 'close'")
+        } else if (typeof global.whatsappProvider.disconnect === "function") {
+          await global.whatsappProvider.disconnect()
+          console.log(
+            "Provider WhatsApp disconnesso con il metodo 'disconnect'"
+          )
+        } else if (typeof global.whatsappProvider.destroy === "function") {
+          await global.whatsappProvider.destroy()
+          console.log("Provider WhatsApp distrutto con il metodo 'destroy'")
+        } else {
+          console.log(
+            "Nessun metodo di disconnessione trovato. Reset manuale..."
+          )
+        }
+      } catch (disconnectError) {
+        console.error("Errore durante la disconnessione:", disconnectError)
       }
-    } catch (disconnectError) {
-      console.error("Errore durante la disconnessione:", disconnectError)
+
+      // Reset forzato
+      global.whatsappProvider = null
     }
 
     console.log(
