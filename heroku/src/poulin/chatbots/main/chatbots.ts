@@ -159,6 +159,9 @@ const handleResponse: RequestHandler = async (req: Request, res: Response) => {
         history: updatedHistory,
       },
     })
+
+    // Invia un messaggio a WhatsApp se necessario
+    await sendToWhatsapp(response, req)
   } catch (parseError) {
     res.status(200).json({
       id: conversationId,
@@ -194,6 +197,32 @@ export async function fetchSpecialistResponse(
     specialistPromptsCache[id] // Passa il prompt dalla cache
   )
   return { user, specialistResponse }
+}
+
+/**
+ * Invia un messaggio a WhatsApp se necessario
+ * @param response Risposta da inviare
+ * @param req Richiesta originale
+ */
+const sendToWhatsapp = async (response: string, req: Request) => {
+  // Controlla se la richiesta proviene da WhatsApp
+  const whatsappNumber = req.body.whatsappNumber
+
+  if (whatsappNumber) {
+    try {
+      // Usa il server locale sulla stessa porta
+      await axios.post(
+        `http://localhost:${process.env.PORT || 4999}/whatsapp/send`,
+        {
+          to: whatsappNumber,
+          message: response,
+        }
+      )
+      console.log(`Risposta inviata a WhatsApp: ${whatsappNumber}`)
+    } catch (error) {
+      console.error(`Errore nell'invio a WhatsApp (${whatsappNumber}):`, error)
+    }
+  }
 }
 
 export default chatbotMainRouter
