@@ -211,8 +211,10 @@ async function initializeWhatsApp(): Promise<boolean> {
       printQRInTerminal: true,
       qrcode: {
         generate: (qr: string) => {
+          console.log("QRCODE_START =============================")
           console.log("Scansiona questo codice QR con WhatsApp (+34654728753):")
           qrcode.generate(qr, { small: true })
+          console.log("QRCODE_END ===============================")
         },
       },
     })
@@ -245,6 +247,23 @@ app.use(whatsappMiddleware)
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
+
+  // Forza reset della sessione WhatsApp
+  try {
+    const fs = require("fs")
+    const path = require("path")
+    const sessionPath = path.resolve("./whatsapp-session")
+
+    if (fs.existsSync(sessionPath)) {
+      console.log("Trovata sessione WhatsApp precedente. Elimino...")
+      fs.rmdirSync(sessionPath, { recursive: true })
+      console.log(
+        "Sessione WhatsApp eliminata. Sarà richiesto un nuovo QR code."
+      )
+    }
+  } catch (error) {
+    console.error("Errore nel tentativo di eliminare la sessione:", error)
+  }
 
   // Inizializza WhatsApp
   initializeWhatsApp()
