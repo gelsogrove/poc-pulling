@@ -375,19 +375,51 @@ export function generateQRImage(req, res) {
         res.status(400).send("Dati QR code mancanti");
         return;
     }
-    QRCode.toDataURL(data, { width: 300 })
-        .then((url) => {
-        res.setHeader("Content-Type", "image/png");
-        // Il data URL è del tipo "data:image/png;base64,..."
-        // Estraiamo solo la parte base64
-        const base64Data = url.replace(/^data:image\/png;base64,/, "");
-        const imageBuffer = Buffer.from(base64Data, "base64");
-        res.send(imageBuffer);
-    })
-        .catch((err) => {
-        console.error("Errore nella generazione del QR code:", err);
-        res.status(500).send("Errore nella generazione del QR code");
-    });
+    // Se il dato è un URL (inizia con http o https)
+    const isUrl = data.startsWith("http://") || data.startsWith("https://");
+    // Registro il tipo di QR code che sto generando
+    console.log(`Generazione QR code per: ${isUrl ? "URL" : "testo"} - ${data.substring(0, 30)}...`);
+    // Opzioni per il QR code
+    const qrOptions = {
+        width: 300,
+        margin: 2,
+        color: {
+            dark: "#075e54",
+            light: "#FFFFFF", // Sfondo bianco
+        },
+    };
+    try {
+        QRCode.toDataURL(data, qrOptions)
+            .then((url) => {
+            res.setHeader("Content-Type", "image/png");
+            // Il data URL è del tipo "data:image/png;base64,..."
+            // Estraiamo solo la parte base64
+            const base64Data = url.replace(/^data:image\/png;base64,/, "");
+            const imageBuffer = Buffer.from(base64Data, "base64");
+            res.send(imageBuffer);
+            console.log("QR code generato con successo");
+        })
+            .catch((err) => {
+            console.error("Errore nella generazione del QR code:", err);
+            // Fallback: genera un QR code semplice senza opzioni
+            QRCode.toDataURL(data)
+                .then((url) => {
+                res.setHeader("Content-Type", "image/png");
+                const base64Data = url.replace(/^data:image\/png;base64,/, "");
+                const imageBuffer = Buffer.from(base64Data, "base64");
+                res.send(imageBuffer);
+                console.log("QR code generato con successo (fallback)");
+            })
+                .catch((fallbackErr) => {
+                console.error("Errore anche nel fallback del QR code:", fallbackErr);
+                res.status(500).send("Impossibile generare il QR code");
+            });
+        });
+    }
+    catch (error) {
+        console.error("Errore critico nella generazione del QR code:", error);
+        res.status(500).send("Errore critico nella generazione del QR code");
+    }
 }
 // Esporta la funzione principale
 export default serveDashboard;
