@@ -132,6 +132,24 @@ async function sendWelcomeMessage(to, name) {
                 body: {
                     text: `Ciao *${name}*, mi chiamo Eva e sono un assistente virtuale dell'Altra Italia (https://laltrait.com/), sono un assistenza di primo livello se non riusciamo a darti l'informazione che cerchi ti metteremo in contatto con un operatore.\n\nCome ti posso aiutare oggi?`,
                 },
+                action: {
+                    buttons: [
+                        {
+                            type: "reply",
+                            reply: {
+                                id: "btn-info",
+                                title: "Informazioni",
+                            },
+                        },
+                        {
+                            type: "reply",
+                            reply: {
+                                id: "btn-help",
+                                title: "Aiuto",
+                            },
+                        },
+                    ],
+                },
             },
         }, {
             headers: {
