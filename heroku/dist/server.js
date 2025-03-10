@@ -141,6 +141,25 @@ const WHATSAPP_DEFAULT_PROMPT = process.env.WHATSAPP_DEFAULT_PROMPT || "whatsapp
 async function initializeWhatsApp() {
     try {
         console.log("Inizializzazione WhatsApp con BuilderBot...");
+        // Se esiste una sessione precedente, rimuovila
+        try {
+            const fs = require("fs");
+            const path = require("path");
+            const sessionPath = path.resolve("./whatsapp-session");
+            if (fs.existsSync(sessionPath)) {
+                console.log("Trovata sessione WhatsApp precedente. Eliminazione in corso...");
+                if (fs.rmSync) {
+                    fs.rmSync(sessionPath, { recursive: true, force: true }); // Node.js 14+
+                }
+                else {
+                    fs.rmdirSync(sessionPath, { recursive: true }); // Node.js <14
+                }
+                console.log("Sessione WhatsApp eliminata.");
+            }
+        }
+        catch (error) {
+            console.error("Errore nel tentativo di eliminare la sessione:", error);
+        }
         // Flow che cattura qualsiasi messaggio
         const catchAllFlow = addKeyword(".*").addAction(async (ctx) => {
             const phoneNumber = ctx.from.split("@")[0];

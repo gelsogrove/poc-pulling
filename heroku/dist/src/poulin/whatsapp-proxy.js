@@ -40,14 +40,36 @@ async function handleReset(req, res) {
                 error: "Provider WhatsApp non disponibile",
             });
         }
-        // Logout dalla sessione corrente
-        await global.whatsappProvider.logout();
-        // Resetta lo stato di inizializzazione
+        // Metodo alternativo di reset - impostare manualmente lo stato
         global.whatsappInitialized = false;
-        console.log("Logout WhatsApp completato. Sarà richiesto un nuovo QR code al riavvio.");
+        // Stampa informazioni sul provider
+        console.log("Provider WhatsApp:", Object.keys(global.whatsappProvider));
+        try {
+            // Prova a usare il metodo di disconnessione se disponibile
+            if (typeof global.whatsappProvider.close === "function") {
+                await global.whatsappProvider.close();
+                console.log("Provider WhatsApp chiuso con il metodo 'close'");
+            }
+            else if (typeof global.whatsappProvider.disconnect === "function") {
+                await global.whatsappProvider.disconnect();
+                console.log("Provider WhatsApp disconnesso con il metodo 'disconnect'");
+            }
+            else if (typeof global.whatsappProvider.destroy === "function") {
+                await global.whatsappProvider.destroy();
+                console.log("Provider WhatsApp distrutto con il metodo 'destroy'");
+            }
+            else {
+                // Se nessun metodo è disponibile, suggerisci di riavviare il server
+                console.log("Nessun metodo di disconnessione trovato. Impostato flag di inizializzazione a false.");
+            }
+        }
+        catch (disconnectError) {
+            console.error("Errore durante la disconnessione:", disconnectError);
+        }
+        console.log("Reset WhatsApp completato. Sarà richiesto un nuovo QR code al riavvio.");
         res.json({
             success: true,
-            message: "Sessione WhatsApp disconnessa. Riavvia l'applicazione per generare un nuovo QR code.",
+            message: "Sessione WhatsApp resettata. Riavvia l'applicazione per generare un nuovo QR code.",
         });
     }
     catch (error) {
