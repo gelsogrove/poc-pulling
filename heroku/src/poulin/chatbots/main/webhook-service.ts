@@ -73,38 +73,48 @@ export class ChatbotWebhookService {
     req: Request,
     res: Response
   ): Promise<void | Response> {
-    // Se il webhook è disabilitato, restituisci un errore
-    if (!webhookConfig.enabled) {
-      Logger.log("RECEIVE", "Webhook disabilitato")
-      return res.status(403).json({ error: "Webhook disabilitato" })
-    }
-
     try {
-      const data = req.body
-
-      Logger.log("RECEIVED", "Messaggio ricevuto", data)
-
-      // Estrae il messaggio dai dati ricevuti
-      // La struttura effettiva dipende dall'API che stai utilizzando
-      const message = ChatbotWebhookService.extractMessageFromPayload(data)
-
-      if (!message) {
-        Logger.log("RECEIVE", "Nessun messaggio valido trovato nella richiesta")
-        return res
-          .status(400)
-          .json({ error: "Nessun messaggio valido trovato" })
+      // Se il webhook è disabilitato, restituisci un errore
+      if (!webhookConfig.enabled) {
+        Logger.log("RECEIVE", "Webhook disabilitato")
+        return res.status(403).json({ error: "Webhook disabilitato" })
       }
 
-      // Elabora il messaggio (in modo asincrono senza bloccare la risposta)
-      ChatbotWebhookService.processMessage(message).catch((error) => {
-        Logger.log("ERROR", "Errore nel processare il messaggio", error)
-      })
+      Logger.log("RECEIVED", "Messaggio ricevuto", req.body)
 
-      // Risponde immediatamente per evitare timeout
-      return res.status(200).json({ status: "Messaggio ricevuto" })
+      // Prima verifica se si tratta di una notifica di stato
+      if (
+        req.body?.object === "whatsapp_business_account" &&
+        req.body?.entry &&
+        req.body.entry[0]?.changes &&
+        req.body.entry[0].changes[0]?.value?.statuses
+      ) {
+        Logger.log(
+          "STATUS",
+          "Ricevuta notifica di stato del messaggio, ignorata"
+        )
+        return res.status(200).send("OK") // Rispondi con 200 OK per le notifiche di stato
+      }
+
+      // Estrae il messaggio dal payload solo per messaggi non di stato
+      const message = ChatbotWebhookService.extractMessageFromPayload(req.body)
+
+      // Se non è stato possibile estrarre un messaggio valido
+      if (!message) {
+        Logger.log("RECEIVE", "Nessun messaggio valido trovato nella richiesta")
+        return res.status(400).send({
+          error: "Nessun messaggio valido trovato nella richiesta",
+        })
+      }
+
+      // Processa il messaggio
+      await ChatbotWebhookService.processMessage(message)
+
+      // Risponde con OK
+      return res.status(200).send("OK")
     } catch (error) {
-      Logger.log("ERROR", "Errore nel processare la richiesta", error)
-      return res.status(500).json({ error: "Errore del server" })
+      Logger.log("ERROR", "Errore durante la ricezione del messaggio", error)
+      return res.status(500).send({ error: "Errore interno del server" })
     }
   }
 
@@ -117,21 +127,9 @@ export class ChatbotWebhookService {
       // Log completo del payload per debug
       console.log("Payload ricevuto:", JSON.stringify(data, null, 2))
 
-      // Ignora le notifiche di stato dei messaggi
+      // Formato standard di WhatsApp Cloud API per messaggi di testo
       if (
-        data.entry &&
-        data.entry[0]?.changes &&
-        data.entry[0].changes[0]?.value?.statuses
-      ) {
-        Logger.log(
-          "STATUS",
-          "Ricevuta notifica di stato del messaggio, ignorata"
-        )
-        return null
-      }
-
-      // Caso standard: messaggio WhatsApp in formato normale
-      if (
+        data.object === "whatsapp_business_account" &&
         data.entry &&
         data.entry[0]?.changes &&
         data.entry[0].changes[0]?.value?.messages &&
@@ -144,6 +142,10 @@ export class ChatbotWebhookService {
 
         // Messaggio di testo
         if (messageData.type === "text" && messageData.text) {
+          Logger.log(
+            "INFO",
+            `Messaggio di testo ricevuto da ${messageData.from}: ${messageData.text.body}`
+          )
           return {
             from: messageData.from,
             text: messageData.text.body || "",
@@ -163,6 +165,10 @@ export class ChatbotWebhookService {
             text = `Ho selezionato: ${messageData.interactive.list_reply.title}`
           }
 
+          Logger.log(
+            "INFO",
+            `Messaggio interattivo ricevuto da ${messageData.from}: ${text}`
+          )
           return {
             from: messageData.from,
             text: text,
@@ -170,10 +176,23 @@ export class ChatbotWebhookService {
             messageId: messageData.id,
           }
         }
+
+        // Log per tipo di messaggio non gestito
+        Logger.log(
+          "WARNING",
+          `Tipo di messaggio non gestito: ${messageData.type}`,
+          messageData
+        )
       }
 
       // Formato alternativo
       if (data.message && data.sender) {
+        Logger.log(
+          "INFO",
+          `Messaggio in formato alternativo ricevuto da ${data.sender.id}: ${
+            data.message.text || ""
+          }`
+        )
         return {
           from: data.sender.id,
           text: data.message.text || "",
@@ -182,7 +201,10 @@ export class ChatbotWebhookService {
         }
       }
 
-      console.log("Nessun formato di messaggio riconosciuto nel payload")
+      Logger.log(
+        "WARNING",
+        "Nessun formato di messaggio riconosciuto nel payload"
+      )
       return null
     } catch (error) {
       Logger.log("ERROR", "Errore nell'estrazione del messaggio", error)
@@ -274,32 +296,38 @@ export class ChatbotWebhookService {
         return false
       }
 
+      // Controlla se il token di autenticazione è configurato
+      if (!webhookConfig.bearerToken) {
+        Logger.log(
+          "ERROR",
+          "BEARER_TOKEN non configurato. Impossibile inviare messaggi."
+        )
+        return false
+      }
+
       // Costruisce la struttura del messaggio per WhatsApp
       const payload = {
-        messaging_product: "whatsapp",
-        recipient_type: "individual",
-        to: message.to,
-        type: "text",
+        messaging_product: "whatsapp", // Deve essere esattamente "whatsapp"
+        recipient_type: "individual", // Tipo di destinatario
+        to: message.to, // Numero di telefono del destinatario
+        type: "text", // Tipo di messaggio
         text: {
-          preview_url: false,
-          body: message.text,
+          preview_url: false, // Non mostrare anteprima URL
+          body: message.text, // Corpo del messaggio
         },
       }
 
-      // Log del payload e dell'URL per debug
+      // Costruisce l'URL completo dell'API WhatsApp
       const apiUrl = `${webhookConfig.apiUrl}/${webhookConfig.senderId}/messages`
+
+      // Log dei dettagli della richiesta per debug
       Logger.log("DEBUG", `Invio richiesta a: ${apiUrl}`)
       Logger.log("DEBUG", `Payload: ${JSON.stringify(payload)}`)
-      Logger.log(
-        "DEBUG",
-        `Token di autenticazione: ${
-          webhookConfig.bearerToken ? "Configurato" : "NON configurato"
-        }`
-      )
-      Logger.log("DEBUG", `Configurazione completa:`, {
+      Logger.log("DEBUG", `Configurazione webhook:`, {
         enabled: webhookConfig.enabled,
         apiUrl: webhookConfig.apiUrl,
         senderId: webhookConfig.senderId,
+        tokenConfigured: !!webhookConfig.bearerToken,
       })
 
       // Invia il messaggio all'API
@@ -319,11 +347,15 @@ export class ChatbotWebhookService {
         return true
       } catch (axiosError: any) {
         // Log dettagliato dell'errore Axios
-        Logger.log("ERROR", "Errore nella richiesta axios:", {
+        Logger.log("ERROR", "Errore nella richiesta API WhatsApp:", {
           status: axiosError.response?.status,
           statusText: axiosError.response?.statusText,
           data: axiosError.response?.data,
           message: axiosError.message,
+          request: {
+            url: apiUrl,
+            payload,
+          },
         })
 
         return false
