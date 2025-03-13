@@ -7,6 +7,7 @@ import path from "path"
 import { fileURLToPath } from "url"
 import { LoggerService } from "./domain/services/LoggerService.js"
 import { DependencyInjection } from "./infrastructure/config/dependencyInjection.js"
+import { createAuthRoutes } from "./interfaces/api/routes/authRoutes.js"
 import { createWebhookRoutes } from "./interfaces/api/routes/webhookRoutes.js"
 
 // Carica le variabili d'ambiente
@@ -55,12 +56,14 @@ const initializeRoutes = async () => {
     const webhookController =
       await DependencyInjection.configureWebhookController()
 
-    // Crea le rotte del webhook
+    // Crea le rotte
     const webhookRoutes = createWebhookRoutes(webhookController)
+    const authRoutes = createAuthRoutes()
 
     // Registra le rotte
     app.use("/webhook", limiter, webhookRoutes)
     app.use("/poulin/main/chatbot-webhook", limiter, webhookRoutes)
+    app.use("/auth", authRoutes)
 
     LoggerService.info("Rotte configurate con successo")
   } catch (error) {
@@ -69,7 +72,7 @@ const initializeRoutes = async () => {
 }
 
 // Avvia il server
-const PORT = process.env.PORT || 4999
+const PORT = process.env.PORT || 3001
 
 // Inizializza in modo asincrono e avvia il server
 initializeRoutes()

@@ -7,6 +7,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { LoggerService } from "./domain/services/LoggerService.js";
 import { DependencyInjection } from "./infrastructure/config/dependencyInjection.js";
+import { createAuthRoutes } from "./interfaces/api/routes/authRoutes.js";
 import { createWebhookRoutes } from "./interfaces/api/routes/webhookRoutes.js";
 // Carica le variabili d'ambiente
 dotenv.config();
@@ -15,8 +16,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // Limiter per prevenire abusi
 const limiter = rateLimit({
-    windowMs: 60 * 1000,
-    max: 100,
+    windowMs: 60 * 1000, // 1 minuto
+    max: 100, // Max 100 richieste per finestra
     message: "Troppe richieste da questo IP, riprova più tardi.",
 });
 // Inizializza l'applicazione Express
@@ -44,11 +45,13 @@ const initializeRoutes = async () => {
     try {
         // Configura il controller del webhook
         const webhookController = await DependencyInjection.configureWebhookController();
-        // Crea le rotte del webhook
+        // Crea le rotte
         const webhookRoutes = createWebhookRoutes(webhookController);
+        const authRoutes = createAuthRoutes();
         // Registra le rotte
         app.use("/webhook", limiter, webhookRoutes);
         app.use("/poulin/main/chatbot-webhook", limiter, webhookRoutes);
+        app.use("/auth", authRoutes);
         LoggerService.info("Rotte configurate con successo");
     }
     catch (error) {
@@ -56,7 +59,7 @@ const initializeRoutes = async () => {
     }
 };
 // Avvia il server
-const PORT = process.env.PORT || 4999;
+const PORT = process.env.PORT || 3001;
 // Inizializza in modo asincrono e avvia il server
 initializeRoutes()
     .then(() => {
