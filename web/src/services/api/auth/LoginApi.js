@@ -1,13 +1,14 @@
-import axios from "axios" // Importa axios per le chiamate API
+import { API_URL } from "../../../config/constants"
 
-const API_URL = `${process.env.REACT_APP_API_URL}/auth/login`
+const LOGIN_URL = `${API_URL}/auth/login`
 
 export const login = async (username, password) => {
-  try {
-    const response = await axios.post(API_URL, { username, password })
-    return response.data
-  } catch (error) {
-    console.error("Error during login:", error)
-    throw error
-  }
+  const response = await fetch(LOGIN_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username, password }),
+  })
+  return response.json()
 }
