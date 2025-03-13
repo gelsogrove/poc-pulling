@@ -204,3 +204,7 @@ console.log(result);
 process.on('unhandledRejection', (error) => {
 console.error('Errore non gestito:', error);
 });
+
+Puoi inviare messaggi all'endpoint: https://poulin-bd075425a92c.herokuapp.com/poulin/main/chatbot-webhook/receive
+Per la verifica del webhook, usa: https://poulin-bd075425a92c.herokuapp.com/poulin/main/chatbot-webhook/verify
+Per verificare lo stato del webhook: https://poulin-bd075425a92c.herokuapp.com/poulin/main/chatbot-webhook/status
