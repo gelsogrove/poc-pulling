@@ -45,7 +45,7 @@ const Usage = ({
       <br />
       {/* Utilizzo mensile corrente */}
       Current monthly usage:
-      <div>{usageData.totalCurrentMonth} $</div>
+      <div>{usageData.totalCurrentMonth.toFixed(2)} $</div>
       <hr />
       Model:
       <div>{model}</div>
