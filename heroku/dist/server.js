@@ -35,8 +35,8 @@ export const pool = new Pool({
 });
 // Limiter to prevent abuse
 const limiter = rateLimit({
-    windowMs: 60 * 1000, // 1 minute window
-    max: 100, // Max 100 requests per window
+    windowMs: 60 * 1000,
+    max: 100,
     message: "Troppe richieste da questo IP, riprova più tardi.",
 });
 const app = express();
