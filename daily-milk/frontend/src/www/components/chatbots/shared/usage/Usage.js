@@ -26,7 +26,7 @@ const Usage = ({
     return <div className="loading-message">Loading...</div>
   }
 
-  // Se c’è un errore specifico nei dati usage
+  // Se c'è un errore specifico nei dati usage
   if (usageData.error) {
     return (
       <div className="error-message">
@@ -43,14 +43,9 @@ const Usage = ({
       {/* Differenza calcolata */}
       <h3>{currentChatDifference.toFixed(2)} $</h3>
       <br />
-      {/* Differenza calcolata */}
-      Current monthly usage:
-      <div>{usageData.totalCurrentMonthByChatbot} $</div>
-      {/*  <hr />
+      {/* Utilizzo mensile corrente */}
       Current monthly usage:
       <div>{usageData.totalCurrentMonth} $</div>
-      <hr />
-    */}
       <hr />
       Model:
       <div>{model}</div>
