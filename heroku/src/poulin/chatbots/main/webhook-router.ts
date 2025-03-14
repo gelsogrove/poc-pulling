@@ -6,7 +6,7 @@ import {
   Router,
 } from "express"
 import webhookConfig from "./webhook-config.js"
-import { ChatbotWebhookService, WhatsAppMessage } from "./webhook-service"
+import { ChatbotWebhookService, WhatsAppMessage } from "./webhook-service.js"
 
 /**
  * Router per gestire le richieste webhook della chatbot
