@@ -2,6 +2,7 @@ import axios from "axios";
 import dotenv from "dotenv";
 import { Router } from "express";
 import { getLLMResponse } from "./chatbots/main/getLLMresponse.js";
+import { getPrompt } from "./utility/chatbots_utility.js";
 dotenv.config();
 /* REMEMBER
  telefono dura 90 giorni
@@ -50,20 +51,23 @@ function logMessage(type, message, details) {
     }
 }
 // Funzione per la verifica del webhook (GET)
-async function verifyWebhook(req, res) {
+const verifyWebhook = async (req, res, next) => {
     const mode = req.query["hub.mode"];
     const token = req.query["hub.verify_token"];
     const challenge = req.query["hub.challenge"];
     if (mode && token) {
         if (mode === "subscribe" && token === VERIFY_TOKEN) {
             console.log("Webhook verificato con successo!");
-            return res.status(200).send(challenge);
+            res.status(200).send(challenge);
+            return;
         }
-        return res.sendStatus(403);
+        res.sendStatus(403);
+        return;
     }
-}
+    res.sendStatus(400);
+};
 // Funzione per ricevere i messaggi (POST)
-async function receiveMessage(req, res) {
+const receiveMessage = async (req, res, next) => {
     try {
         const data = req.body;
         if (data.entry && data.entry[0].changes) {
@@ -71,6 +75,11 @@ async function receiveMessage(req, res) {
             const value = change.value;
             if (value.messages && value.messages[0]) {
                 const message = value.messages[0];
+                // Ottieni il prompt predefinito
+                const promptData = await getPrompt(DEFAULT_PROMPT_ID);
+                if (!promptData) {
+                    throw new Error("Prompt predefinito non trovato");
+                }
                 // Gestione messaggi di testo
                 if (message.text) {
                     const userMessage = message.text.body.trim();
@@ -81,13 +90,9 @@ async function receiveMessage(req, res) {
                     // Crea history con il messaggio dell'utente
                     const history = [{ role: "user", content: userMessage }];
                     // Ottieni risposta dal modello LLM
-                    const llmResponse = await getLLMResponse(DEFAULT_PROMPT_ID, history, "whatsapp-webhook");
-                    // Estrai il testo della risposta
-                    const responseText = typeof llmResponse.content === "string"
-                        ? llmResponse.content
-                        : JSON.stringify(llmResponse.content);
+                    const llmResponse = await getLLMResponse(userMessage, promptData, history);
                     // Invia la risposta generata dall'IA
-                    await sendWhatsAppMessage(message.from, responseText);
+                    await sendWhatsAppMessage(message.from, llmResponse.content);
                 }
                 // Gestione risposte dai bottoni
                 if (message.interactive) {
@@ -101,13 +106,9 @@ async function receiveMessage(req, res) {
                         { role: "user", content: `Ho cliccato ${buttonResponse.title}` },
                     ];
                     // Ottieni risposta dal modello LLM
-                    const llmResponse = await getLLMResponse(DEFAULT_PROMPT_ID, history, "whatsapp-webhook");
-                    // Estrai il testo della risposta
-                    const responseText = typeof llmResponse.content === "string"
-                        ? llmResponse.content
-                        : JSON.stringify(llmResponse.content);
+                    const llmResponse = await getLLMResponse(buttonResponse.title, promptData, history);
                     // Invia la risposta generata dall'IA
-                    await sendWhatsAppMessage(message.from, responseText);
+                    await sendWhatsAppMessage(message.from, llmResponse.content);
                 }
             }
         }
@@ -117,7 +118,7 @@ async function receiveMessage(req, res) {
         logMessage("ERROR", "Errore nel processare il messaggio", error);
         res.status(500).json({ error: "Errore del server" });
     }
-}
+};
 //test
 async function sendWhatsAppMessage(to, message) {
     try {
@@ -140,6 +141,11 @@ async function sendWhatsAppMessage(to, message) {
 async function sendWelcomeMessage(to, name) {
     try {
         logMessage("SENDING", `Invio messaggio di benvenuto a ${name}`, { to });
+        // Ottieni il prompt predefinito
+        const promptData = await getPrompt(DEFAULT_PROMPT_ID);
+        if (!promptData) {
+            throw new Error("Prompt predefinito non trovato");
+        }
         // Prima ottieni una risposta dal modello LLM per un messaggio di benvenuto
         const history = [
             {
@@ -148,13 +154,9 @@ async function sendWelcomeMessage(to, name) {
             },
         ];
         // Ottieni risposta dal modello LLM
-        const llmResponse = await getLLMResponse(DEFAULT_PROMPT_ID, history, "whatsapp-welcome");
-        // Estrai il testo della risposta
-        const welcomeText = typeof llmResponse.content === "string"
-            ? llmResponse.content
-            : JSON.stringify(llmResponse.content);
+        const llmResponse = await getLLMResponse("Benvenuto", promptData, history);
         // Invia un messaggio interattivo con la risposta del modello
-        const response = (await axios.post(`${WHATSAPP_API}/${PHONE_NUMBER_ID}/messages`, {
+        await axios.post(`${WHATSAPP_API}/${PHONE_NUMBER_ID}/messages`, {
             messaging_product: "whatsapp",
             recipient_type: "individual",
             to: to,
@@ -162,7 +164,7 @@ async function sendWelcomeMessage(to, name) {
             interactive: {
                 type: "button",
                 body: {
-                    text: welcomeText,
+                    text: llmResponse.content,
                 },
                 action: {
                     buttons: [
@@ -188,19 +190,14 @@ async function sendWelcomeMessage(to, name) {
                 Authorization: `Bearer ${WHATSAPP_TOKEN}`,
                 "Content-Type": "application/json",
             },
-        }));
-        logMessage("SENT", `Messaggio inviato con successo a ${name}`, {
-            to,
-            messageId: response.data?.messages?.[0]?.id,
         });
+        logMessage("SENT", "Messaggio di benvenuto inviato");
     }
     catch (error) {
-        logMessage("ERROR", `Errore nell'invio del messaggio a ${name}`, {
-            to,
-            error: error.response?.data || error.message,
-        });
+        console.error("Errore nell'invio del messaggio di benvenuto:", error);
     }
 }
-modelWebooksRouter.get("/receive", verifyWebhook);
-modelWebooksRouter.post("/receive", receiveMessage);
+// Registra gli handler per le richieste
+modelWebooksRouter.get("/webhook", verifyWebhook);
+modelWebooksRouter.post("/webhook", receiveMessage);
 export default modelWebooksRouter;

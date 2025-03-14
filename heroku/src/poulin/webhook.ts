@@ -1,7 +1,8 @@
 import axios from "axios"
 import dotenv from "dotenv"
-import { Request, RequestHandler, Response, Router } from "express"
+import { RequestHandler, Router } from "express"
 import { getLLMResponse } from "./chatbots/main/getLLMresponse.js"
+import { getPrompt } from "./utility/chatbots_utility.js"
 
 dotenv.config()
 
@@ -62,10 +63,7 @@ function logMessage(type: string, message: string, details?: any) {
 }
 
 // Funzione per la verifica del webhook (GET)
-async function verifyWebhook(
-  req: Request,
-  res: Response
-): Promise<void | Response> {
+const verifyWebhook: RequestHandler = async (req, res, next) => {
   const mode = req.query["hub.mode"]
   const token = req.query["hub.verify_token"]
   const challenge = req.query["hub.challenge"]
@@ -73,17 +71,17 @@ async function verifyWebhook(
   if (mode && token) {
     if (mode === "subscribe" && token === VERIFY_TOKEN) {
       console.log("Webhook verificato con successo!")
-      return res.status(200).send(challenge)
+      res.status(200).send(challenge)
+      return
     }
-    return res.sendStatus(403)
+    res.sendStatus(403)
+    return
   }
+  res.sendStatus(400)
 }
 
 // Funzione per ricevere i messaggi (POST)
-async function receiveMessage(
-  req: Request,
-  res: Response
-): Promise<void | Response> {
+const receiveMessage: RequestHandler = async (req, res, next) => {
   try {
     const data = req.body
 
@@ -93,6 +91,12 @@ async function receiveMessage(
 
       if (value.messages && value.messages[0]) {
         const message = value.messages[0]
+
+        // Ottieni il prompt predefinito
+        const promptData = await getPrompt(DEFAULT_PROMPT_ID)
+        if (!promptData) {
+          throw new Error("Prompt predefinito non trovato")
+        }
 
         // Gestione messaggi di testo
         if (message.text) {
@@ -107,19 +111,13 @@ async function receiveMessage(
 
           // Ottieni risposta dal modello LLM
           const llmResponse = await getLLMResponse(
-            DEFAULT_PROMPT_ID,
-            history,
-            "whatsapp-webhook"
+            userMessage,
+            promptData,
+            history
           )
 
-          // Estrai il testo della risposta
-          const responseText =
-            typeof llmResponse.content === "string"
-              ? llmResponse.content
-              : JSON.stringify(llmResponse.content)
-
           // Invia la risposta generata dall'IA
-          await sendWhatsAppMessage(message.from, responseText)
+          await sendWhatsAppMessage(message.from, llmResponse.content)
         }
 
         // Gestione risposte dai bottoni
@@ -137,19 +135,13 @@ async function receiveMessage(
 
           // Ottieni risposta dal modello LLM
           const llmResponse = await getLLMResponse(
-            DEFAULT_PROMPT_ID,
-            history,
-            "whatsapp-webhook"
+            buttonResponse.title,
+            promptData,
+            history
           )
 
-          // Estrai il testo della risposta
-          const responseText =
-            typeof llmResponse.content === "string"
-              ? llmResponse.content
-              : JSON.stringify(llmResponse.content)
-
           // Invia la risposta generata dall'IA
-          await sendWhatsAppMessage(message.from, responseText)
+          await sendWhatsAppMessage(message.from, llmResponse.content)
         }
       }
     }
@@ -188,6 +180,12 @@ async function sendWelcomeMessage(to: string, name: string) {
   try {
     logMessage("SENDING", `Invio messaggio di benvenuto a ${name}`, { to })
 
+    // Ottieni il prompt predefinito
+    const promptData = await getPrompt(DEFAULT_PROMPT_ID)
+    if (!promptData) {
+      throw new Error("Prompt predefinito non trovato")
+    }
+
     // Prima ottieni una risposta dal modello LLM per un messaggio di benvenuto
     const history = [
       {
@@ -198,20 +196,10 @@ async function sendWelcomeMessage(to: string, name: string) {
     ]
 
     // Ottieni risposta dal modello LLM
-    const llmResponse = await getLLMResponse(
-      DEFAULT_PROMPT_ID,
-      history,
-      "whatsapp-welcome"
-    )
-
-    // Estrai il testo della risposta
-    const welcomeText =
-      typeof llmResponse.content === "string"
-        ? llmResponse.content
-        : JSON.stringify(llmResponse.content)
+    const llmResponse = await getLLMResponse("Benvenuto", promptData, history)
 
     // Invia un messaggio interattivo con la risposta del modello
-    const response = (await axios.post(
+    await axios.post(
       `${WHATSAPP_API}/${PHONE_NUMBER_ID}/messages`,
       {
         messaging_product: "whatsapp",
@@ -221,7 +209,7 @@ async function sendWelcomeMessage(to: string, name: string) {
         interactive: {
           type: "button",
           body: {
-            text: welcomeText,
+            text: llmResponse.content,
           },
           action: {
             buttons: [
@@ -249,21 +237,16 @@ async function sendWelcomeMessage(to: string, name: string) {
           "Content-Type": "application/json",
         },
       }
-    )) as { data: { messages: Array<{ id: string }> } }
+    )
 
-    logMessage("SENT", `Messaggio inviato con successo a ${name}`, {
-      to,
-      messageId: response.data?.messages?.[0]?.id,
-    })
-  } catch (error: any) {
-    logMessage("ERROR", `Errore nell'invio del messaggio a ${name}`, {
-      to,
-      error: error.response?.data || error.message,
-    })
+    logMessage("SENT", "Messaggio di benvenuto inviato")
+  } catch (error) {
+    console.error("Errore nell'invio del messaggio di benvenuto:", error)
   }
 }
 
-modelWebooksRouter.get("/receive", verifyWebhook as RequestHandler)
-modelWebooksRouter.post("/receive", receiveMessage as RequestHandler)
+// Registra gli handler per le richieste
+modelWebooksRouter.get("/webhook", verifyWebhook)
+modelWebooksRouter.post("/webhook", receiveMessage)
 
 export default modelWebooksRouter

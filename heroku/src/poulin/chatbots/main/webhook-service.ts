@@ -1,14 +1,20 @@
 import axios from "axios"
 import { Request, Response } from "express"
+import { saveMessageHistory } from "../../api/history_api.js"
+import { getPrompt } from "../../api/promptmanager_api.js"
+import { getUserIdByPhoneNumber } from "../../services/userService.js"
+import { convertToMarkdown } from "../../utils/markdownConverter.js"
 import { getLLMResponse } from "./getLLMresponse.js"
 import webhookConfig from "./webhook-config.js"
 
-// Interfaccia per il messaggio in entrata
-export interface IncomingMessage {
+// Interfaccia per il messaggio WhatsApp
+export interface WhatsAppMessage {
   from: string
-  text: string
+  text: {
+    body: string
+  }
   timestamp: number
-  messageId: string
+  id: string
 }
 
 // Interfaccia per il messaggio in uscita
@@ -16,6 +22,39 @@ export interface OutgoingMessage {
   to: string
   text: string
   correlationId?: string
+}
+
+// Interfaccia per la risposta del chatbot
+interface ChatbotResponse {
+  content: string
+  target?: ValidTarget
+}
+
+// Interfaccia per la configurazione del target
+interface TargetConfig {
+  promptId: number
+}
+
+// Mappa dei target validi
+type ValidTarget = "sales" | "support" | "general"
+
+// Mappa delle configurazioni dei target
+const targetConfigs: Record<ValidTarget, TargetConfig> = {
+  sales: { promptId: 2 },
+  support: { promptId: 3 },
+  general: { promptId: 4 },
+}
+
+// Interfaccia per la risposta del LLM
+interface LLMResponse {
+  content: string
+}
+
+// Interfaccia per i parametri del LLM
+interface LLMParams {
+  prompt: string
+  model: string
+  temperature: number
 }
 
 // Classe per gestire i log con timestamp
@@ -50,147 +89,122 @@ export class ChatbotWebhookService {
     const token = req.query["hub.verify_token"]
     const challenge = req.query["hub.challenge"]
 
-    if (mode && token) {
-      if (mode === "subscribe" && token === webhookConfig.verifyToken) {
-        Logger.log("VERIFY", "Webhook verificato con successo")
-        return res.status(200).send(challenge)
-      }
-      Logger.log("VERIFY", "Verifica fallita: token non valido", {
-        receivedToken: token,
-        expectedToken: webhookConfig.verifyToken,
-      })
-      return res.sendStatus(403)
+    if (mode === "subscribe" && token === webhookConfig.verifyToken) {
+      Logger.log("VERIFY", "Webhook verificato con successo")
+      return res.status(200).send(challenge)
     }
 
-    Logger.log("VERIFY", "Verifica fallita: parametri mancanti")
-    return res.sendStatus(400)
+    Logger.log("VERIFY", "Verifica webhook fallita")
+    return res.status(403).json({ error: "Verifica fallita" })
   }
 
   /**
    * Gestisce i messaggi in arrivo dal webhook
    */
   static async receiveMessage(
-    req: Request,
-    res: Response
-  ): Promise<void | Response> {
-    // Se il webhook è disabilitato, restituisci un errore
-    if (!webhookConfig.enabled) {
-      Logger.log("RECEIVE", "Webhook disabilitato")
-      return res.status(403).json({ error: "Webhook disabilitato" })
-    }
-
+    message: WhatsAppMessage
+  ): Promise<ChatbotResponse> {
     try {
-      const data = req.body
+      Logger.log("RECEIVE", "Messaggio ricevuto", message)
 
-      Logger.log("RECEIVED", "Messaggio ricevuto", data)
+      // Estrai il numero di telefono dal messaggio WhatsApp
+      const phoneNumber = message.from
 
-      // Estrae il messaggio dai dati ricevuti
-      // La struttura effettiva dipende dall'API che stai utilizzando
-      const message = ChatbotWebhookService.extractMessageFromPayload(data)
+      // Verifica se l'utente esiste e ottieni userId o crea nuovo utente
+      const userId = await getUserIdByPhoneNumber(phoneNumber)
 
-      if (!message) {
-        Logger.log("RECEIVE", "Nessun messaggio valido trovato nella richiesta")
-        return res
-          .status(400)
-          .json({ error: "Nessun messaggio valido trovato" })
-      }
+      // Recupera il contenuto del messaggio
+      const messageContent = message.text?.body || ""
 
-      // Elabora il messaggio (in modo asincrono senza bloccare la risposta)
-      ChatbotWebhookService.processMessage(message).catch((error) => {
-        Logger.log("ERROR", "Errore nel processare il messaggio", error)
-      })
+      // Processa con il chatbot principale per determinare il routing
+      const routingResult = await this.processWithMainChatbot(messageContent)
 
-      // Risponde immediatamente per evitare timeout
-      return res.status(200).json({ status: "Messaggio ricevuto" })
-    } catch (error) {
-      Logger.log("ERROR", "Errore nel processare la richiesta", error)
-      return res.status(500).json({ error: "Errore del server" })
-    }
-  }
-
-  /**
-   * Estrae il messaggio dalla struttura del payload
-   * Questo metodo deve essere adattato al formato specifico dell'API utilizzata
-   */
-  private static extractMessageFromPayload(data: any): IncomingMessage | null {
-    try {
-      // Esempio di estrazione da una struttura generica
-      // Da adattare secondo la struttura specifica dell'API in uso
-      if (
-        data.entry &&
-        data.entry[0]?.changes &&
-        data.entry[0].changes[0]?.value?.messages
-      ) {
-        const messageData = data.entry[0].changes[0].value.messages[0]
-
-        return {
-          from: messageData.from,
-          text: messageData.text?.body || "",
-          timestamp: messageData.timestamp || Date.now(),
-          messageId: messageData.id,
-        }
-      }
-
-      // Formato alternativo
-      if (data.message && data.sender) {
-        return {
-          from: data.sender.id,
-          text: data.message.text || "",
-          timestamp: data.timestamp || Date.now(),
-          messageId: data.message.mid,
-        }
-      }
-
-      return null
-    } catch (error) {
-      Logger.log("ERROR", "Errore nell'estrazione del messaggio", error)
-      return null
-    }
-  }
-
-  /**
-   * Processa il messaggio ricevuto e invia una risposta
-   */
-  private static async processMessage(message: IncomingMessage): Promise<void> {
-    try {
-      Logger.log(
-        "PROCESSING",
-        `Elaborazione messaggio da ${message.from}`,
-        message
+      // Routing al sub-chatbot appropriato basato sulla risposta del chatbot principale
+      const finalResponse = await this.routeToSubChatbot(
+        routingResult.target || "general",
+        messageContent,
+        userId
       )
 
-      // ID del prompt da utilizzare (può essere configurato o dinamico in base al messaggio)
-      const promptId = "default-chatbot-prompt"
+      // Salva nella cronologia
+      await saveMessageHistory(userId, messageContent, finalResponse.content)
 
-      // Storia vuota per un messaggio singolo
-      const history = [{ role: "user", content: message.text }]
-
-      // Nome del chatbot per il logging
-      const chatbotName = "webhook-chatbot"
-
-      // Ottiene la risposta dal modello di IA
-      const llmResponse = await getLLMResponse(promptId, history, chatbotName)
-
-      // Estrae il testo della risposta
-      const responseText =
-        typeof llmResponse.content === "string"
-          ? llmResponse.content
-          : JSON.stringify(llmResponse.content)
-
-      // Invia la risposta all'utente
-      await ChatbotWebhookService.sendMessage({
-        to: message.from,
-        text: responseText,
-        correlationId: message.messageId,
-      })
-
-      Logger.log("PROCESSED", `Messaggio elaborato per ${message.from}`)
+      // Restituisci la risposta in formato markdown
+      return {
+        content: convertToMarkdown(finalResponse.content),
+        target: finalResponse.target,
+      }
     } catch (error) {
       Logger.log(
         "ERROR",
-        `Errore nell'elaborazione del messaggio per ${message.from}`,
+        "Errore nell'elaborazione del messaggio WhatsApp",
         error
       )
+      throw error
+    }
+  }
+
+  private static async processWithMainChatbot(
+    message: string
+  ): Promise<ChatbotResponse> {
+    try {
+      // Usa il prompt principale per determinare il routing
+      const mainPromptId = 1 // ID del prompt principale
+      const promptData = await getPrompt(mainPromptId)
+
+      if (!promptData) {
+        throw new Error("Prompt principale non trovato")
+      }
+
+      // Ottieni la risposta dal modello
+      const response = await getLLMResponse(message, promptData)
+
+      return {
+        content: response.content,
+        target: this.determineTarget(response.content),
+      }
+    } catch (error) {
+      Logger.log("ERROR", "Errore nel processing del chatbot principale", error)
+      throw error
+    }
+  }
+
+  private static determineTarget(content: string): ValidTarget {
+    // Implementa la logica per determinare il target basandoti sul contenuto
+    if (content.toLowerCase().includes("vendite")) return "sales"
+    if (content.toLowerCase().includes("supporto")) return "support"
+    return "general"
+  }
+
+  private static async routeToSubChatbot(
+    target: ValidTarget,
+    message: string,
+    userId: string
+  ): Promise<ChatbotResponse> {
+    try {
+      // Ottieni la configurazione del target
+      const targetConfig = targetConfigs[target]
+
+      if (!targetConfig) {
+        throw new Error(`Configurazione non trovata per il target ${target}`)
+      }
+
+      // Ottieni il prompt specifico per il target
+      const promptData = await getPrompt(targetConfig.promptId)
+
+      if (!promptData) {
+        throw new Error(`Prompt non trovato per il target ${target}`)
+      }
+
+      // Ottieni la risposta dal modello
+      const response = await getLLMResponse(message, promptData)
+
+      return {
+        content: response.content,
+        target: target,
+      }
+    } catch (error) {
+      Logger.log("ERROR", "Errore nel routing al sub-chatbot", error)
       throw error
     }
   }
@@ -211,7 +225,6 @@ export class ChatbotWebhookService {
       })
 
       // Costruisce la struttura del messaggio
-      // Da adattare alla struttura richiesta dall'API in uso
       const payload = {
         messaging_product: "general",
         recipient_type: "individual",
@@ -220,7 +233,6 @@ export class ChatbotWebhookService {
         text: {
           body: message.text,
         },
-        // Opzioni aggiuntive se necessarie
         metadata: {
           correlation_id: message.correlationId,
         },

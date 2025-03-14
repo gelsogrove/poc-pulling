@@ -18,7 +18,15 @@ const OPENROUTER_HEADERS = {
   "Content-Type": "application/json",
 }
 
-export const getPrompt = async (idPrompt: string) => {
+export interface PromptData {
+  prompt: string
+  model: string
+  temperature: number
+}
+
+export const getPrompt = async (
+  idPrompt: string
+): Promise<PromptData | null> => {
   try {
     const result = await pool.query(
       "SELECT prompt, model, temperature FROM prompts WHERE idPrompt = $1",
@@ -114,51 +122,25 @@ export const sendUsageData = async (
 }
 
 export const generateDetailedSentence = async (
-  model: any,
+  model: string,
   sqlData: any,
-  temperature: any,
-  OPENROUTER_API_URL: any,
-  OPENROUTER_HEADERS: any,
-  userMessage: any
+  temperature: number,
+  userMessage: string
 ) => {
   try {
-    // Preparare il payload per OpenRouter
-    const requestPayload = {
-      model: "openai/gpt-3.5-turbo",
-      messages: [
-        { role: "user", content: userMessage },
-        { role: "system", content: `Result: ${JSON.stringify(sqlData)}` },
-        {
-          role: "user",
-          content:
-            "Please summarize the result of the query repeating the question so it's more clear  in one sentence using the <b> for   important values if we are showing the moeny don't forget to put the $ char , AGGIUNGO ANCHE CHE I NUMERI DEVONO AVERE LE MIGLIAIA ES 2.676, please round if the numer is $674,342.60. show only $674,342",
-        },
-      ],
-      max_tokens: 1000,
-      temperature: Number(temperature),
+    const params = {
+      prompt: `Result: ${JSON.stringify(
+        sqlData
+      )}\nPlease summarize the result of the query repeating the question so it's more clear in one sentence using the <b> for important values if we are showing the moeny don't forget to put the $ char , AGGIUNGO ANCHE CHE I NUMERI DEVONO AVERE LE MIGLIAIA ES 2.676, please round if the numer is $674,342.60. show only $674,342`,
+      model: model || "openai/gpt-3.5-turbo",
+      temperature: Number(temperature) || 0.7,
     }
 
-    // Chiamata ad OpenRouter
-    const openaiResponse = await axios.post(
-      OPENROUTER_API_URL,
-      requestPayload,
-      {
-        headers: OPENROUTER_HEADERS,
-        timeout: 30000,
-      }
+    const response = await getLLMResponse(userMessage, params)
+    return (
+      response.content ||
+      "Failed to generate a detailed sentence for the result."
     )
-
-    // Pulire e verificare la risposta
-    const rawResponse = cleanResponse(
-      openaiResponse.data.choices[0]?.message?.content
-    )
-
-    if (!rawResponse) {
-      console.error("Second pass: Empty response from OpenRouter.")
-      return "Failed to generate a detailed sentence for the result."
-    }
-
-    return rawResponse
   } catch (error) {
     console.error("Error in generateDetailedSentence:", error)
     return "An error occurred while creating a detailed sentence for the result."
@@ -167,24 +149,19 @@ export const generateDetailedSentence = async (
 
 export async function getSpecialistResponse(
   id: string,
-  updatedHistory: any[],
-  chatbot: string
+  updatedHistory: { role: string; content: string }[],
+  promptData: PromptData
 ) {
-  const { user, content: specialistResponse } = await getLLMResponse(
-    id,
-    updatedHistory,
-    chatbot
-  )
-  return { user, specialistResponse }
+  return await getLLMResponse("", promptData, updatedHistory)
 }
 
 export function prepareFinalPayload(
-  requestPayload: any,
+  message: string,
   chatbot: string,
   specialistResponse: string
 ) {
   return {
-    model: requestPayload.model,
+    model: "openai/gpt-3.5-turbo",
     messages: [
       { role: "system", content: "Language: it" },
       { role: "system", content: "Language: es" },
@@ -196,14 +173,10 @@ export function prepareFinalPayload(
                  Format the response in a user-friendly way, maintaining the same language and adding appropriate greetings or context.
                  If the response contains a list, format it nicely with bullet points or numbers.`,
       },
-      {
-        role: "user",
-        content:
-          requestPayload.messages[requestPayload.messages.length - 1].content,
-      },
+      { role: "user", content: message },
     ],
-    temperature: requestPayload.temperature,
-    max_tokens: requestPayload.max_tokens,
+    temperature: 0.7,
+    max_tokens: 1000,
     response_format: { type: "text" },
   }
 }

@@ -36,60 +36,45 @@ const handleResponse = async (req, res) => {
     // Recupera GET DATA FROM BODY
     const { conversationId, idPrompt, message } = req.body;
     // Recupera configurazione del prompt
-    const { prompt, model, temperature } = await getPrompt(idPrompt);
+    const promptData = await getPrompt(idPrompt);
+    if (!promptData) {
+        throw new Error(`Prompt not found for ID: ${idPrompt}`);
+    }
     // Gestisce la history della conversazione
     let updatedHistory = await GetAndSetHistory(conversationId, idPrompt, userId, new Date(), message, "" // La prima volta sarà vuota, poi verrà recuperata dal DB
     );
-    // Prepara il payload per il modello
-    const requestPayload = {
-        model,
-        messages: [
-            { role: "system", content: "Language: it" },
-            { role: "system", content: "Language: es" },
-            { role: "system", content: prompt },
-            ...updatedHistory,
-            message,
-        ],
-        max_tokens: MAX_TOKENS,
-        temperature: Number(temperature),
-        response_format: { type: "json_object" },
-    };
-    // Invia richiesta a OpenRouter
-    const openaiResponse = await axios.post(OPENROUTER_API_URL, requestPayload, {
-        headers: OPENROUTER_HEADERS,
-        timeout: 30000,
-    });
+    // Ottieni la risposta dal modello
+    const response = await getLLMResponse(message, promptData, updatedHistory);
     try {
         // Pulisce e valida il contenuto della risposta
-        const rawResponse = openaiResponse.data.choices[0]?.message?.content;
-        const parsedResponse = JSON.parse(rawResponse);
+        const parsedResponse = JSON.parse(response.content);
         if (parsedResponse.trigger_action) {
             const day = new Date().toISOString().split("T")[0];
             await sendUsageData(day, 0.2, "main", parsedResponse.trigger_action, userId, idPrompt);
         }
         // Risposta al frontend
-        let response;
+        let finalResponse;
         if (parsedResponse.target) {
             const targetConfig = getTargetConfig(parsedResponse.target);
             if (targetConfig) {
                 const { id, chatbot } = targetConfig;
-                const { user, specialistResponse } = await fetchSpecialistResponse(id, updatedHistory, chatbot);
-                const finalPayload = prepareFinalPayload(requestPayload, chatbot, specialistResponse);
-                response = await getCoordinatorResponse(finalPayload);
-                updatedHistory = updateConversationHistory(updatedHistory, chatbot, specialistResponse, response, user, parsedResponse.trigger_action);
+                const specialistResponse = await fetchSpecialistResponse(id, updatedHistory, chatbot);
+                const finalPayload = prepareFinalPayload(message, chatbot, specialistResponse.content);
+                finalResponse = await getCoordinatorResponse(finalPayload);
+                updatedHistory = updateConversationHistory(updatedHistory, chatbot, specialistResponse.content, finalResponse, specialistResponse.user, parsedResponse.trigger_action);
             }
             else {
-                response = "Target non riconosciuto.";
+                finalResponse = "Target non riconosciuto.";
             }
         }
         else {
-            response = "Target non specificato.";
+            finalResponse = "Target non specificato.";
         }
         // Salva la risposta del bot nel DB prima di inviarla al frontend
         await GetAndSetHistory(conversationId, idPrompt, userId, new Date(), updatedHistory[updatedHistory.length - 1], "");
         // Invio al frontend
         res.status(200).json({
-            response,
+            response: finalResponse,
             text: {
                 conversationId,
                 target: parsedResponse.target,
@@ -98,7 +83,7 @@ const handleResponse = async (req, res) => {
             },
         });
         // Invia un messaggio a WhatsApp se necessario
-        await sendToWhatsapp(response, req);
+        await sendToWhatsapp(finalResponse, req);
     }
     catch (parseError) {
         res.status(200).json({
@@ -121,9 +106,12 @@ export async function fetchSpecialistResponse(id, updatedHistory, chatbot) {
             specialistPromptsCache[id] = promptData;
         }
     }
-    const { user, content: specialistResponse } = await getLLMResponse(id, updatedHistory, chatbot, specialistPromptsCache[id] // Passa il prompt dalla cache
-    );
-    return { user, specialistResponse };
+    // Usa il prompt dalla cache
+    const promptData = specialistPromptsCache[id];
+    if (!promptData) {
+        throw new Error(`Prompt non trovato per l'ID ${id}`);
+    }
+    return await getLLMResponse("", promptData, updatedHistory);
 }
 /**
  * Invia un messaggio a WhatsApp se necessario

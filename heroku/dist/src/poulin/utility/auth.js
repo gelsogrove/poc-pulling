@@ -113,8 +113,8 @@ const setExpire = async (req, res) => {
     const token = uuidv4(); // Genera un token unico
     // Esegui una query per aggiornare la data di scadenza e il token
     await pool.query("UPDATE users SET expire_date = $1, token = $2 WHERE userid = $3", [
-        newExpireDate,
-        token,
+        newExpireDate, // Usa la nuova data di scadenza
+        token, // Aggiungi il token all'update
         userId,
     ]);
     // Nuova query per ottenere la data di scadenza aggiornata

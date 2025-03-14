@@ -5,7 +5,7 @@ import { Router } from "express";
 import { pool } from "../../../../server.js";
 import { GetAndSetHistory } from "../../share/history.js";
 import { validateRequest } from "../../share/validateUser.js";
-import { cleanResponse, executeSqlQuery, generateDetailedSentence, getPrompt, sendUsageData, } from "../../utility/chatbots_utility.js";
+import { cleanResponse, getPrompt } from "../../utility/chatbots_utility.js";
 dotenv.config();
 /**
  * Configurazione per le chiamate a OpenRouter
@@ -85,7 +85,11 @@ const handleResponse = async (req, res) => {
         // Estrazione messaggio utente
         const userMessage = message.content;
         // Configurazione prompt e modello
-        const { prompt, model, temperature } = await getPrompt(promptId);
+        const promptData = await getPrompt(promptId);
+        if (!promptData) {
+            throw new Error(`Prompt not found for ID: ${promptId}`);
+        }
+        const { prompt, model, temperature } = promptData;
         // Gestione comandi speciali per analisi
         if (["analysis", "trend"].includes(userMessage.toLowerCase())) {
             try {
@@ -104,87 +108,32 @@ const handleResponse = async (req, res) => {
             }
         }
         // Preparazione payload per la richiesta
-        const requestPayload = {
+        const response = await axios.post(OPENROUTER_API_URL, {
             model,
             messages: [
-                { role: "system", content: "Language: it" },
                 { role: "system", content: prompt },
-                ...updatedHistory,
-                message,
+                { role: "user", content: userMessage },
             ],
+            temperature,
             max_tokens: MAX_TOKENS,
-            temperature: Number(temperature),
-            response_format: { type: "json_object" },
-        };
-        // Invio richiesta a OpenRouter con gestione timeout
-        const openaiResponse = await axios.post(OPENROUTER_API_URL, requestPayload, {
+        }, {
             headers: OPENROUTER_HEADERS,
-            timeout: 30000, // 30 secondi di timeout
         });
         // Gestione errori nella risposta
-        if (openaiResponse.data.error) {
+        if (response.data.error) {
             res.status(200).json({
                 response: "Empty response from OpenRouter...sales-reader",
-                error: openaiResponse.data.error.message,
+                error: response.data.error.message,
             });
             return;
         }
         // Pulizia e validazione della risposta
-        const rawResponse = cleanResponse(openaiResponse.data.choices[0]?.message?.content);
+        const rawResponse = cleanResponse(response.data.choices[0]?.message?.content);
         if (!rawResponse) {
             res.status(200).json({
                 response: "Empty response from OpenRouter......sales-reader",
                 rawResponse,
             });
-            return;
-        }
-        // Elaborazione risposta e gestione query SQL
-        let sqlQuery = null;
-        let finalResponse = "";
-        let triggerAction = "";
-        try {
-            // Parsing della risposta JSON
-            const parsedResponse = JSON.parse(rawResponse);
-            sqlQuery = parsedResponse.sql || null;
-            finalResponse = parsedResponse.response || "No response provided.";
-            triggerAction = parsedResponse.triggerAction || "";
-            // Tracciamento usage per query SQL
-            if (sqlQuery !== null) {
-                const day = new Date().toISOString().split("T")[0];
-                await sendUsageData(day, 0.2, "sales-reader", triggerAction, userId, promptId);
-            }
-            // Gestione risposta senza query SQL
-            if (!sqlQuery) {
-                res.status(200).json({
-                    triggerAction,
-                    response: finalResponse,
-                });
-                return;
-            }
-            // Esecuzione query SQL e analisi risultati
-            const sqlData = await executeSqlQuery(sqlQuery);
-            // Gestione speciale per risultati singoli
-            if (sqlData.length === 1) {
-                // Generazione frase dettagliata per risultato singolo
-                const detailedSentence = await generateDetailedSentence(model, sqlData, temperature, OPENROUTER_API_URL, OPENROUTER_HEADERS, userMessage);
-                res.status(200).json({
-                    triggerAction: "COUNT",
-                    response: detailedSentence,
-                    query: sqlQuery,
-                });
-                return;
-            }
-            // Risposta standard con dati SQL
-            res.status(200).json({
-                triggerAction,
-                response: finalResponse,
-                data: sqlData,
-                query: sqlQuery,
-            });
-        }
-        catch (parseError) {
-            // Fallback per errori di parsing
-            res.status(200).json({ response: rawResponse });
             return;
         }
     }

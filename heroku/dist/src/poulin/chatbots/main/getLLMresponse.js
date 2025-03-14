@@ -1,6 +1,5 @@
 import axios from "axios";
 import dotenv from "dotenv";
-import { getPrompt } from "../../utility/chatbots_utility.js";
 dotenv.config();
 /**
  * Configurazione per le chiamate a OpenRouter
@@ -11,38 +10,44 @@ const OPENROUTER_HEADERS = {
     "Content-Type": "application/json",
 };
 const MAX_TOKENS = 5000;
-// Nuova funzione per gestire la richiesta al LLM
-export const getLLMResponse = async (idPrompt, history, chatbot, cachedPromptData) => {
+/**
+ * Invia una richiesta al modello LLM e ottiene una risposta
+ * @param message Il messaggio dell'utente
+ * @param params I parametri per il modello LLM (prompt, model, temperature)
+ * @param history Opzionale: storico dei messaggi precedenti
+ * @returns La risposta del modello
+ */
+export async function getLLMResponse(message, params, history = []) {
     try {
-        // Usa il prompt dalla cache se disponibile, altrimenti lo carica
-        const { prompt, model, temperature } = cachedPromptData || (await getPrompt(idPrompt));
         // Prepara il payload per il modello
         const requestPayload = {
-            model,
+            model: params.model,
             messages: [
                 { role: "system", content: "Language: it" },
                 { role: "system", content: "Language: es" },
-                { role: "system", content: prompt },
+                { role: "system", content: params.prompt },
                 ...history,
+                { role: "user", content: message },
             ],
             max_tokens: MAX_TOKENS,
-            temperature: Number(temperature),
-            //  response_format: { type: "json_object" },
+            temperature: Number(params.temperature),
         };
-        console.log(history);
         // Invia richiesta a OpenRouter
         const openaiResponse = await axios.post(OPENROUTER_API_URL, requestPayload, {
             headers: OPENROUTER_HEADERS,
             timeout: 30000,
         });
         if (!openaiResponse.data?.choices?.length) {
-            throw new Error("No response from OpenRouter!");
+            throw new Error("Nessuna risposta da OpenRouter!");
         }
         const rawResponse = openaiResponse.data.choices[0]?.message?.content;
-        console.log("Chatbot " + chatbot + " Response: ", rawResponse);
-        return { user: "assistant", content: rawResponse || "Nessuna risposta" };
+        return {
+            user: "assistant",
+            content: rawResponse || "Nessuna risposta",
+        };
     }
     catch (error) {
-        return { user: "assistant", content: "errore: " + error };
+        console.error("Errore nella chiamata al modello LLM:", error);
+        throw error;
     }
-};
+}
