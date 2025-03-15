@@ -359,7 +359,8 @@ async function processWithMainChatbot(
         mainResponse.content.includes('"target": "Orders"') ||
         mainResponse.content.includes('"target":"Orders"') ||
         message.toLowerCase().includes("ordine") ||
-        message.toLowerCase().includes("ordini")
+        message.toLowerCase().includes("ordini") ||
+        message.toLowerCase().includes("ultimo ordine")
       ) {
         target = "orders"
       } else if (
@@ -392,13 +393,13 @@ async function processWithMainChatbot(
       let content = ""
       if (target === "orders") {
         content =
-          "Mi dispiace, al momento non posso accedere alle informazioni sui tuoi ordini. Posso aiutarti con altre informazioni?"
+          "Per visualizzare i dettagli del tuo ultimo ordine con L'Altra Italia, avrai bisogno di accedere al tuo account sul nostro sito web. Al momento non posso visualizzare direttamente i dettagli degli ordini tramite WhatsApp. Posso aiutarti con altre informazioni sui nostri prodotti gastronomici mediterranei?"
       } else if (target === "products") {
         content =
-          "Abbiamo una vasta gamma di prodotti disponibili. Puoi visitare il nostro sito web per vedere il catalogo completo o chiedermi informazioni su categorie specifiche."
+          "L'Altra Italia offre una vasta gamma di prodotti gastronomici mediterranei e italiani. Puoi visitare il nostro sito web per vedere il catalogo completo o chiedermi informazioni su categorie specifiche."
       } else if (target === "sales") {
         content =
-          "Siamo felici che tu sia interessato ai nostri prodotti. Posso fornirti informazioni generali sulle vendite o metterti in contatto con un nostro consulente."
+          "Siamo felici che tu sia interessato ai prodotti gastronomici de L'Altra Italia. Posso fornirti informazioni generali sulle vendite o metterti in contatto con un nostro consulente."
       }
 
       if (content) {
@@ -445,15 +446,16 @@ async function processWithMainChatbot(
     ) {
       if (target === "orders") {
         responseContent =
-          "Per informazioni sui tuoi ordini, ho bisogno di identificarti. Puoi dirmi il tuo numero d'ordine o la data approssimativa dell'ordine?"
+          "Per visualizzare i dettagli dei tuoi ordini con L'Altra Italia, potresti dover accedere al tuo account sul nostro sito web. Al momento, posso fornirti solo informazioni generali."
       } else if (target === "products") {
         responseContent =
-          "Posso fornirti informazioni sui nostri prodotti. Quale categoria ti interessa?"
+          "L'Altra Italia offre una selezione di prodotti gastronomici mediterranei e italiani di alta qualità. Quale categoria ti interessa di più?"
       } else if (target === "sales") {
         responseContent =
-          "Posso aiutarti con informazioni sulle vendite o metterti in contatto con un consulente. Di cosa hai bisogno specificamente?"
+          "Grazie per il tuo interesse nei prodotti de L'Altra Italia. Posso fornirti informazioni sui nostri prodotti o metterti in contatto con un consulente. Cosa preferisci?"
       } else {
-        responseContent = "Ciao! Come posso aiutarti oggi?"
+        responseContent =
+          "Ciao! Come posso aiutarti oggi con i prodotti de L'Altra Italia?"
       }
     }
 
@@ -510,7 +512,7 @@ async function routeToSubChatbot(
       ) {
         return {
           content:
-            "Ciao! Sono l'assistente virtuale di Poulin. Come posso aiutarti oggi?",
+            "Ciao! Sono l'assistente virtuale de L'Altra Italia, specializzata in prodotti gastronomici mediterranei e italiani. Come posso aiutarti oggi?",
           target: target,
         }
       } else if (lowerMessage.includes("grazie")) {
@@ -529,7 +531,7 @@ async function routeToSubChatbot(
         // Per messaggi generici, usa un messaggio standard
         return {
           content:
-            "Posso aiutarti con informazioni sui nostri prodotti, servizi, o rispondere alle tue domande. Di cosa vorresti parlare?",
+            "Posso aiutarti con informazioni sui nostri prodotti gastronomici mediterranei e italiani, servizi, o rispondere alle tue domande. Di cosa vorresti parlare?",
           target: target,
         }
       }
