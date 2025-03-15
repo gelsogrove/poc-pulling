@@ -2,7 +2,6 @@ import axios from "axios"
 import dotenv from "dotenv"
 import { Request, Response } from "express"
 import { getLLMResponse } from "./chatbots/main/getLLMresponse.js"
-import { getUserIdByPhoneNumber } from "./services/userService.js"
 import { getPrompt } from "./utility/chatbots_utility.js"
 import { convertToMarkdown } from "./utils/markdownConverter.js"
 
@@ -182,13 +181,9 @@ export const receiveMessage = async (req: Request, res: Response) => {
           }
         }
 
-        // Ottieni l'ID utente dal numero di telefono o crea nuovo utente se necessario
+        // Usiamo direttamente il numero di telefono come identificativo
         const phoneNumber = message.from
-        const userId = await getUserIdByPhoneNumber(phoneNumber)
-        logMessage(
-          "INFO",
-          `UserId ricevuto: ${userId} per telefono: ${phoneNumber}`
-        )
+        logMessage("INFO", `Gestione messaggio per telefono: ${phoneNumber}`)
 
         // Gestione messaggi di testo
         if (message.text) {
@@ -220,7 +215,7 @@ export const receiveMessage = async (req: Request, res: Response) => {
               finalResponse = await routeToSubChatbot(
                 routingResult.target,
                 userMessage,
-                userId,
+                phoneNumber,
                 history
               )
               logMessage(
@@ -291,7 +286,7 @@ export const receiveMessage = async (req: Request, res: Response) => {
               finalResponse = await routeToSubChatbot(
                 routingResult.target,
                 buttonResponse.title,
-                userId,
+                phoneNumber,
                 history
               )
             } else {
@@ -380,7 +375,7 @@ function determineTarget(content: string): ValidTarget | undefined {
 async function routeToSubChatbot(
   target: ValidTarget,
   message: string,
-  userId: string,
+  phoneNumber: string,
   history?: any[]
 ) {
   try {
