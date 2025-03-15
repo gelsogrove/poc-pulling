@@ -1,8 +1,9 @@
 import axios from "axios"
 import dotenv from "dotenv"
-import { RequestHandler } from "express"
+import { Request, Response } from "express"
 import { getLLMResponse } from "./chatbots/main/getLLMresponse.js"
 import { getPrompt } from "./utility/chatbots_utility.js"
+import { logMessage } from "./utility/logger.js"
 
 dotenv.config()
 
@@ -49,7 +50,13 @@ const PHONE_NUMBER_ID =
   process.env.PHONE_NUMBER_ID || process.env.CHATBOT_WEBHOOK_SENDER_ID || ""
 
 // Prompt predefinito per la chatbot
-const DEFAULT_PROMPT_ID = "default-chatbot-prompt"
+const DEFAULT_PROMPT_ID = "default"
+
+// Determine the base URL based on environment
+const BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.HEROKU_APP_URL || "https://poulin-chatbot.herokuapp.com"
+    : "http://localhost:3001"
 
 // Funzione helper per i log
 function logMessage(type: string, message: string, details?: any) {
@@ -61,33 +68,36 @@ function logMessage(type: string, message: string, details?: any) {
 }
 
 // Funzione per la verifica del webhook (GET)
-export const verifyWebhook: RequestHandler = async (req, res) => {
+export const verifyWebhook = (req: Request, res: Response) => {
+  logMessage("INFO", "Webhook verification request received")
+  logMessage("INFO", `Environment: ${process.env.NODE_ENV}`)
+  logMessage("INFO", `Using base URL: ${BASE_URL}`)
+
   const mode = req.query["hub.mode"]
   const token = req.query["hub.verify_token"]
   const challenge = req.query["hub.challenge"]
 
-  logMessage("VERIFY", "Richiesta di verifica webhook ricevuta", {
-    mode,
-    token,
-    challenge,
-  })
+  logMessage(
+    "INFO",
+    `Verification params - Mode: ${mode}, Token: ${token}, Challenge: ${challenge}`
+  )
 
   if (mode && token) {
     if (mode === "subscribe" && token === VERIFY_TOKEN) {
-      logMessage("VERIFY", "Webhook verificato con successo!")
+      logMessage("SUCCESS", "Webhook verified successfully!")
       res.status(200).send(challenge)
-      return
+    } else {
+      logMessage("ERROR", "Verification failed: invalid token or mode")
+      res.sendStatus(403)
     }
-    logMessage("VERIFY", "Verifica fallita: token non valido")
+  } else {
+    logMessage("ERROR", "Verification failed: missing parameters")
     res.sendStatus(403)
-    return
   }
-  logMessage("VERIFY", "Verifica fallita: parametri mancanti")
-  res.sendStatus(400)
 }
 
 // Funzione per ricevere i messaggi (POST)
-export const receiveMessage: RequestHandler = async (req, res) => {
+export const receiveMessage = async (req: Request, res: Response) => {
   try {
     const data = req.body
     logMessage("RECEIVE", "Messaggio ricevuto", data)
