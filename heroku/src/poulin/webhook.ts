@@ -537,6 +537,33 @@ async function routeToSubChatbot(
       }
     }
 
+    // Se il target è orders, products o sales ma non esiste il prompt,
+    // restituisci direttamente una risposta personalizzata
+    if (
+      (target === "orders" || target === "products" || target === "sales") &&
+      (!targetConfigs[target] || !targetConfigs[target].promptId)
+    ) {
+      if (target === "orders") {
+        return {
+          content:
+            "Per visualizzare i dettagli del tuo ultimo ordine con L'Altra Italia, avrai bisogno di accedere al tuo account sul nostro sito web. Al momento non posso visualizzare direttamente i dettagli degli ordini tramite WhatsApp. Posso aiutarti con altre informazioni sui nostri prodotti gastronomici mediterranei?",
+          target: target,
+        }
+      } else if (target === "products") {
+        return {
+          content:
+            "L'Altra Italia offre una vasta gamma di prodotti gastronomici mediterranei e italiani. Puoi visitare il nostro sito web per vedere il catalogo completo o chiedermi informazioni su categorie specifiche.",
+          target: target,
+        }
+      } else if (target === "sales") {
+        return {
+          content:
+            "Siamo felici che tu sia interessato ai prodotti gastronomici de L'Altra Italia. Posso fornirti informazioni generali sulle vendite o metterti in contatto con un nostro consulente.",
+          target: target,
+        }
+      }
+    }
+
     // Per altri target, continua con il comportamento normale
     // Ottieni la configurazione del target
     const targetConfig = targetConfigs[target]
@@ -600,11 +627,33 @@ async function routeToSubChatbot(
     }
   } catch (error) {
     logMessage("ERROR", `Errore nel routing al sub-chatbot ${target}`, error)
-    // In caso di errore, restituisci un messaggio generico
-    return {
-      content:
-        "Mi dispiace, ma al momento non posso elaborare questa richiesta. Riprova più tardi.",
-      target: "general",
+
+    // In caso di errore, invia una risposta specifica in base al target
+    if (target === "orders") {
+      return {
+        content:
+          "Per visualizzare i dettagli del tuo ultimo ordine con L'Altra Italia, avrai bisogno di accedere al tuo account sul nostro sito web. Al momento non posso visualizzare direttamente i dettagli degli ordini tramite WhatsApp. Posso aiutarti con altre informazioni sui nostri prodotti gastronomici mediterranei?",
+        target: target,
+      }
+    } else if (target === "products") {
+      return {
+        content:
+          "L'Altra Italia offre una vasta gamma di prodotti gastronomici mediterranei e italiani. Puoi visitare il nostro sito web per vedere il catalogo completo o chiedermi informazioni su categorie specifiche.",
+        target: target,
+      }
+    } else if (target === "sales") {
+      return {
+        content:
+          "Siamo felici che tu sia interessato ai prodotti gastronomici de L'Altra Italia. Posso fornirti informazioni generali sulle vendite o metterti in contatto con un nostro consulente.",
+        target: target,
+      }
+    } else {
+      // Messaggio generico per altri target
+      return {
+        content:
+          "Mi dispiace, ma al momento non posso elaborare questa richiesta. Riprova più tardi.",
+        target: "general",
+      }
     }
   }
 }
