@@ -546,7 +546,7 @@ async function routeToSubChatbot(
       if (target === "orders") {
         return {
           content:
-            "Per visualizzare i dettagli del tuo ultimo ordine con L'Altra Italia, avrai bisogno di accedere al tuo account sul nostro sito web. Al momento non posso visualizzare direttamente i dettagli degli ordini tramite WhatsApp. Posso aiutarti con altre informazioni sui nostri prodotti gastronomici mediterranei?",
+            "Per visualizzare i dettagli del tuo ultimo ordine con L'Altra Italia, avrai bisogno di accedere al tuo account sul nostro sito web ufficiale. Al momento non posso visualizzare direttamente i dettagli degli ordini tramite WhatsApp. Posso comunque aiutarti con informazioni generali sui nostri prodotti gastronomici mediterranei e italiani. C'è qualche categoria in particolare che ti interessa?",
           target: target,
         }
       } else if (target === "products") {
