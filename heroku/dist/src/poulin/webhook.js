@@ -45,6 +45,8 @@ const targetConfigs = {
     sales: { promptId: "prompt-sales-id" },
     support: { promptId: "prompt-support-id" },
     general: { promptId: "prompt-general-id" },
+    orders: { promptId: "prompt-orders-id" },
+    products: { promptId: "prompt-products-id" },
 };
 // Determine the base URL based on environment
 const BASE_URL = process.env.NODE_ENV === "production"
@@ -246,8 +248,59 @@ async function processWithMainChatbot(message, promptData, history) {
         // Ottieni direttamente la risposta dal modello LLM
         const mainResponse = await getLLMResponse(message, promptData, history);
         // Determina il target dal contenuto della risposta
-        const target = determineTarget(mainResponse.content);
+        let target;
+        try {
+            // Prova a estrarre il target dal JSON
+            if (mainResponse.content.includes('"target": "Orders"') ||
+                mainResponse.content.includes('"target":"Orders"') ||
+                message.toLowerCase().includes("ordine") ||
+                message.toLowerCase().includes("ordini")) {
+                target = "orders";
+            }
+            else if (mainResponse.content.includes('"target": "Products"') ||
+                mainResponse.content.includes('"target":"Products"') ||
+                message.toLowerCase().includes("prodotto") ||
+                message.toLowerCase().includes("prodotti")) {
+                target = "products";
+            }
+            else if (mainResponse.content.includes('"target": "Sales"') ||
+                mainResponse.content.includes('"target":"Sales"') ||
+                message.toLowerCase().includes("vendita") ||
+                message.toLowerCase().includes("acquisto")) {
+                target = "sales";
+            }
+            else {
+                target = determineTarget(mainResponse.content);
+            }
+        }
+        catch (err) {
+            // In caso di errore, usa il metodo standard
+            target = determineTarget(mainResponse.content);
+        }
         logMessage("INFO", `Target determinato: ${target || "nessun target"}`);
+        // Se il target è orders, products o sales ma non c'è un sub-chatbot configurato,
+        // restituiamo una risposta predefinita
+        if (target && !targetConfigs[target]) {
+            let content = "";
+            if (target === "orders") {
+                content =
+                    "Mi dispiace, al momento non posso accedere alle informazioni sui tuoi ordini. Posso aiutarti con altre informazioni?";
+            }
+            else if (target === "products") {
+                content =
+                    "Abbiamo una vasta gamma di prodotti disponibili. Puoi visitare il nostro sito web per vedere il catalogo completo o chiedermi informazioni su categorie specifiche.";
+            }
+            else if (target === "sales") {
+                content =
+                    "Siamo felici che tu sia interessato ai nostri prodotti. Posso fornirti informazioni generali sulle vendite o metterti in contatto con un nostro consulente.";
+            }
+            if (content) {
+                return {
+                    content: content,
+                    target: target,
+                };
+            }
+        }
         // Estrai il contenuto effettivo dal JSON se possibile
         let responseContent = mainResponse.content;
         // Prima prova a fare il parsing del JSON
@@ -279,10 +332,24 @@ async function processWithMainChatbot(message, promptData, history) {
                 }
             }
         }
-        // Se la risposta è ancora in JSON, prova a estrarre un messaggio generico
+        // Se la risposta è ancora in JSON, imposta una risposta predefinita in base al target
         if (responseContent.trim().startsWith("{") &&
             responseContent.includes('"target":')) {
-            responseContent = "Ciao! Come posso aiutarti oggi?";
+            if (target === "orders") {
+                responseContent =
+                    "Per informazioni sui tuoi ordini, ho bisogno di identificarti. Puoi dirmi il tuo numero d'ordine o la data approssimativa dell'ordine?";
+            }
+            else if (target === "products") {
+                responseContent =
+                    "Posso fornirti informazioni sui nostri prodotti. Quale categoria ti interessa?";
+            }
+            else if (target === "sales") {
+                responseContent =
+                    "Posso aiutarti con informazioni sulle vendite o metterti in contatto con un consulente. Di cosa hai bisogno specificamente?";
+            }
+            else {
+                responseContent = "Ciao! Come posso aiutarti oggi?";
+            }
         }
         return {
             content: responseContent,
