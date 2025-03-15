@@ -3,7 +3,6 @@ import dotenv from "dotenv"
 import { Request, Response } from "express"
 import { getLLMResponse } from "./chatbots/main/getLLMresponse.js"
 import { getUserIdByPhoneNumber } from "./services/userService.js"
-import { GetAndSetHistory } from "./share/history.js"
 import { getPrompt } from "./utility/chatbots_utility.js"
 import { convertToMarkdown } from "./utils/markdownConverter.js"
 
@@ -203,24 +202,9 @@ export const receiveMessage = async (req: Request, res: Response) => {
             // Inizia a misurare il tempo di elaborazione
             const startTime = new Date()
 
-            // Crea un ID conversazione basato sul numero di telefono
-            const conversationId = `whatsapp-${phoneNumber}`
-
-            // Crea l'oggetto messaggio per la history
-            const messageObj = {
-              role: "user",
-              content: userMessage,
-            }
-
-            // Usa la funzione GetAndSetHistory per gestire la history
-            const history = await GetAndSetHistory(
-              conversationId,
-              MAIN_PROMPT_ID,
-              userId,
-              new Date(),
-              messageObj,
-              ""
-            )
+            // Creiamo un array di messaggi semplice per il contesto
+            // Per ora non salviamo la cronologia nel database
+            const history = [{ role: "user", content: userMessage }]
 
             // Processa il messaggio con il chatbot principale per determinare il routing
             const routingResult = await processWithMainChatbot(
@@ -255,19 +239,11 @@ export const receiveMessage = async (req: Request, res: Response) => {
             // Converti in markdown se necessario
             const formattedResponse = convertToMarkdown(finalResponse.content)
 
-            // Aggiorna la history con la risposta dell'assistente
-            await GetAndSetHistory(
-              conversationId,
-              MAIN_PROMPT_ID,
-              userId,
-              new Date(),
-              {
-                role: "assistant",
-                content: formattedResponse,
-                chatbot: routingResult.target || "main",
-              },
-              ""
-            )
+            // Aggiungiamo la risposta alla history locale (solo per questa sessione)
+            history.push({
+              role: "assistant",
+              content: formattedResponse,
+            })
 
             // Invia la risposta finale
             await sendWhatsAppMessage(message.from, formattedResponse)
@@ -297,21 +273,10 @@ export const receiveMessage = async (req: Request, res: Response) => {
           try {
             const startTime = new Date()
 
-            // Crea un ID conversazione basato sul numero di telefono
-            const conversationId = `whatsapp-${phoneNumber}`
-
-            // Usa la funzione GetAndSetHistory per gestire la history del bottone
-            const history = await GetAndSetHistory(
-              conversationId,
-              MAIN_PROMPT_ID,
-              userId,
-              new Date(),
-              {
-                role: "user",
-                content: `Ho cliccato ${buttonResponse.title}`,
-              },
-              ""
-            )
+            // Semplice array di messaggi per il contesto
+            const history = [
+              { role: "user", content: `Ho cliccato ${buttonResponse.title}` },
+            ]
 
             // Processa con il chatbot principale
             const routingResult = await processWithMainChatbot(
@@ -336,19 +301,11 @@ export const receiveMessage = async (req: Request, res: Response) => {
             // Converti in markdown e invia
             const formattedResponse = convertToMarkdown(finalResponse.content)
 
-            // Aggiorna la history con la risposta dell'assistente
-            await GetAndSetHistory(
-              conversationId,
-              MAIN_PROMPT_ID,
-              userId,
-              new Date(),
-              {
-                role: "assistant",
-                content: formattedResponse,
-                chatbot: routingResult.target || "main",
-              },
-              ""
-            )
+            // Aggiungiamo la risposta alla history locale
+            history.push({
+              role: "assistant",
+              content: formattedResponse,
+            })
 
             await sendWhatsAppMessage(message.from, formattedResponse)
             logMessage("SENT", "Risposta inviata", {
