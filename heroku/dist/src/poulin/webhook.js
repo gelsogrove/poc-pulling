@@ -1,7 +1,6 @@
 import axios from "axios";
 import dotenv from "dotenv";
 import { getLLMResponse } from "./chatbots/main/getLLMresponse.js";
-import { getUserIdByPhoneNumber } from "./services/userService.js";
 import { getPrompt } from "./utility/chatbots_utility.js";
 import { convertToMarkdown } from "./utils/markdownConverter.js";
 dotenv.config();
@@ -140,10 +139,9 @@ export const receiveMessage = async (req, res) => {
                         temperature: 0.7,
                     };
                 }
-                // Ottieni l'ID utente dal numero di telefono o crea nuovo utente se necessario
+                // Usiamo direttamente il numero di telefono come identificativo
                 const phoneNumber = message.from;
-                const userId = await getUserIdByPhoneNumber(phoneNumber);
-                logMessage("INFO", `UserId ricevuto: ${userId} per telefono: ${phoneNumber}`);
+                logMessage("INFO", `Gestione messaggio per telefono: ${phoneNumber}`);
                 // Gestione messaggi di testo
                 if (message.text) {
                     const userMessage = message.text.body.trim();
@@ -151,31 +149,45 @@ export const receiveMessage = async (req, res) => {
                         from: message.from,
                         timestamp: new Date().toISOString(),
                     });
-                    // Crea history con il messaggio dell'utente
-                    const history = [{ role: "user", content: userMessage }];
-                    // NUOVA FUNZIONALITÀ: Prima processa con il chatbot principale per determinare il routing
-                    const routingResult = await processWithMainChatbot(userMessage, mainPromptData);
-                    logMessage("ROUTING", `Target determinato: ${routingResult.target || "nessun target"}`);
-                    // Routing al sub-chatbot appropriato
-                    let finalResponse;
-                    if (routingResult.target) {
-                        // Se è stato determinato un target, usa il sub-chatbot
-                        finalResponse = await routeToSubChatbot(routingResult.target, userMessage, userId);
-                        logMessage("INFO", `Risposta dal sub-chatbot ${routingResult.target}`, {
-                            responsePreview: finalResponse.content.substring(0, 50) + "...",
+                    try {
+                        // Inizia a misurare il tempo di elaborazione
+                        const startTime = new Date();
+                        // Creiamo un array di messaggi semplice per il contesto
+                        // Per ora non salviamo la cronologia nel database
+                        const history = [{ role: "user", content: userMessage }];
+                        // Processa il messaggio con il chatbot principale per determinare il routing
+                        const routingResult = await processWithMainChatbot(userMessage, mainPromptData, history);
+                        // Routing al sub-chatbot appropriato
+                        let finalResponse;
+                        if (routingResult.target) {
+                            // Se è stato determinato un target, usa il sub-chatbot
+                            finalResponse = await routeToSubChatbot(routingResult.target, userMessage, phoneNumber, history);
+                            logMessage("INFO", `Risposta dal sub-chatbot ${routingResult.target}`, {
+                                responsePreview: finalResponse.content.substring(0, 50) + "...",
+                            });
+                        }
+                        else {
+                            // Altrimenti usa direttamente la risposta del chatbot principale
+                            finalResponse = { content: routingResult.content };
+                        }
+                        // Converti in markdown se necessario
+                        const formattedResponse = convertToMarkdown(finalResponse.content);
+                        // Aggiungiamo la risposta alla history locale (solo per questa sessione)
+                        history.push({
+                            role: "assistant",
+                            content: formattedResponse,
+                        });
+                        // Invia la risposta finale
+                        await sendWhatsAppMessage(message.from, formattedResponse);
+                        logMessage("SENT", "Risposta inviata", {
+                            response: formattedResponse.substring(0, 50) + "...",
+                            processingTime: `${(new Date().getTime() - startTime.getTime()) / 1000} sec`,
                         });
                     }
-                    else {
-                        // Altrimenti usa direttamente la risposta del chatbot principale
-                        finalResponse = { content: routingResult.content };
+                    catch (error) {
+                        logMessage("ERROR", "Errore nell'elaborazione del messaggio", error);
+                        await sendWhatsAppMessage(message.from, "Mi dispiace, si è verificato un errore nell'elaborazione del messaggio. Riprova più tardi.");
                     }
-                    // Converti in markdown se necessario
-                    const formattedResponse = convertToMarkdown(finalResponse.content);
-                    // Invia la risposta finale
-                    await sendWhatsAppMessage(message.from, formattedResponse);
-                    logMessage("SENT", "Risposta inviata", {
-                        response: formattedResponse.substring(0, 50) + "...",
-                    });
                 }
                 // Gestione risposte dai bottoni
                 if (message.interactive) {
@@ -184,26 +196,39 @@ export const receiveMessage = async (req, res) => {
                         from: message.from,
                         buttonId: buttonResponse.id,
                     });
-                    // Crea history con il messaggio del bottone
-                    const history = [
-                        { role: "user", content: `Ho cliccato ${buttonResponse.title}` },
-                    ];
-                    // Anche qui, possiamo usare lo stesso approccio di routing
-                    const routingResult = await processWithMainChatbot(buttonResponse.title, mainPromptData);
-                    // Routing al sub-chatbot appropriato
-                    let finalResponse;
-                    if (routingResult.target) {
-                        finalResponse = await routeToSubChatbot(routingResult.target, buttonResponse.title, userId);
+                    try {
+                        const startTime = new Date();
+                        // Semplice array di messaggi per il contesto
+                        const history = [
+                            { role: "user", content: `Ho cliccato ${buttonResponse.title}` },
+                        ];
+                        // Processa con il chatbot principale
+                        const routingResult = await processWithMainChatbot(buttonResponse.title, mainPromptData, history);
+                        // Routing al sub-chatbot appropriato
+                        let finalResponse;
+                        if (routingResult.target) {
+                            finalResponse = await routeToSubChatbot(routingResult.target, buttonResponse.title, phoneNumber, history);
+                        }
+                        else {
+                            finalResponse = { content: routingResult.content };
+                        }
+                        // Converti in markdown e invia
+                        const formattedResponse = convertToMarkdown(finalResponse.content);
+                        // Aggiungiamo la risposta alla history locale
+                        history.push({
+                            role: "assistant",
+                            content: formattedResponse,
+                        });
+                        await sendWhatsAppMessage(message.from, formattedResponse);
+                        logMessage("SENT", "Risposta inviata", {
+                            response: formattedResponse.substring(0, 50) + "...",
+                            processingTime: `${(new Date().getTime() - startTime.getTime()) / 1000} sec`,
+                        });
                     }
-                    else {
-                        finalResponse = { content: routingResult.content };
+                    catch (error) {
+                        logMessage("ERROR", "Errore nell'elaborazione del messaggio bottone", error);
+                        await sendWhatsAppMessage(message.from, "Mi dispiace, si è verificato un errore nell'elaborazione della tua richiesta. Riprova più tardi.");
                     }
-                    // Converti in markdown e invia
-                    const formattedResponse = convertToMarkdown(finalResponse.content);
-                    await sendWhatsAppMessage(message.from, formattedResponse);
-                    logMessage("SENT", "Risposta inviata", {
-                        response: formattedResponse.substring(0, 50) + "...",
-                    });
                 }
             }
         }
@@ -215,15 +240,16 @@ export const receiveMessage = async (req, res) => {
     }
 };
 // Funzione per processare il messaggio con il chatbot principale e determinare il routing
-async function processWithMainChatbot(message, promptData) {
+async function processWithMainChatbot(message, promptData, history) {
     try {
         logMessage("INFO", "Processando con il chatbot principale");
-        // Ottieni la risposta dal modello
-        const response = await getLLMResponse(message, promptData);
+        // Ottieni direttamente la risposta dal modello LLM
+        const mainResponse = await getLLMResponse(message, promptData, history);
         // Determina il target dal contenuto della risposta
-        const target = determineTarget(response.content);
+        const target = determineTarget(mainResponse.content);
+        logMessage("INFO", `Target determinato: ${target || "nessun target"}`);
         return {
-            content: response.content,
+            content: mainResponse.content,
             target: target,
         };
     }
@@ -247,7 +273,7 @@ function determineTarget(content) {
     }
 }
 // Funzione per inviare il messaggio al sub-chatbot appropriato
-async function routeToSubChatbot(target, message, userId) {
+async function routeToSubChatbot(target, message, phoneNumber, history) {
     try {
         logMessage("INFO", `Routing al sub-chatbot: ${target}`);
         // Ottieni la configurazione del target
@@ -260,10 +286,23 @@ async function routeToSubChatbot(target, message, userId) {
         if (!promptData) {
             throw new Error(`Prompt non trovato per il target ${target}`);
         }
-        // Ottieni la risposta dal modello
-        const response = await getLLMResponse(message, promptData);
+        // Ottieni la risposta dal modello LLM specializzato
+        const targetResponse = await getLLMResponse(message, promptData, history);
+        logMessage("INFO", `Risposta ricevuta dal sub-chatbot ${target}`);
+        // IMPORTANTE: Riprocessa la risposta attraverso il chatbot principale per formattazione
+        const mainPromptData = await getPrompt(MAIN_PROMPT_ID);
+        if (!mainPromptData) {
+            // Se non riusciamo a ottenere il prompt principale, restituisci direttamente la risposta del target
+            return {
+                content: targetResponse.content,
+                target: target,
+            };
+        }
+        // Invia la risposta del target al Main per il formatting finale
+        logMessage("INFO", "Formattando risposta finale con Main chatbot");
+        const finalResponse = await getLLMResponse(`Formatta questa risposta in markdown: ${targetResponse.content}`, mainPromptData, history);
         return {
-            content: response.content,
+            content: finalResponse.content,
             target: target,
         };
     }
