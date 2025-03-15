@@ -104,6 +104,18 @@ export const receiveMessage = async (req: Request, res: Response) => {
       if (value.messages && value.messages[0]) {
         const message = value.messages[0]
 
+        // Log specifico per numeri spagnoli (+34)
+        if (message.from.startsWith("34")) {
+          logMessage(
+            "SPAIN",
+            `Messaggio ricevuto dal numero +${message.from}`,
+            {
+              timestamp: new Date().toISOString(),
+              messageType: message.type,
+            }
+          )
+        }
+
         // Ottieni il prompt predefinito
         let promptData = await getPrompt(DEFAULT_PROMPT_ID)
         if (!promptData) {
