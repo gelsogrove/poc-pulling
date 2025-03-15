@@ -320,55 +320,37 @@ function determineTarget(content) {
 async function routeToSubChatbot(target, message, phoneNumber, history) {
     try {
         logMessage("INFO", `Routing al sub-chatbot: ${target}`);
-        // Se il target è general, usa direttamente la risposta del chatbot principale
+        // Se il target è general, usa un messaggio di benvenuto diretto
         if (target === "general") {
-            // Ottieni il prompt principale
-            const mainPromptData = await getPrompt(MAIN_PROMPT_ID);
-            if (!mainPromptData) {
-                throw new Error("Prompt principale non trovato");
+            const lowerMessage = message.toLowerCase();
+            // Risposte predefinite per messaggi comuni
+            if (lowerMessage.includes("ciao") ||
+                lowerMessage.includes("salve") ||
+                lowerMessage.includes("buongiorno") ||
+                lowerMessage.includes("buonasera")) {
+                return {
+                    content: "Ciao! Sono l'assistente virtuale di Poulin. Come posso aiutarti oggi?",
+                    target: target,
+                };
             }
-            // Ottieni risposta direttamente dal chatbot principale
-            const mainResponse = await getLLMResponse(message, mainPromptData, history);
-            // Estrai il contenuto dal JSON se possibile
-            let responseContent = mainResponse.content;
-            // Prima prova a fare il parsing del JSON
-            try {
-                const parsedResponse = JSON.parse(mainResponse.content);
-                if (parsedResponse.content) {
-                    responseContent = parsedResponse.content;
-                }
-                else if (parsedResponse.message) {
-                    responseContent = parsedResponse.message;
-                }
-                else if (parsedResponse.response) {
-                    responseContent = parsedResponse.response;
-                }
-                else if (parsedResponse.text) {
-                    responseContent = parsedResponse.text;
-                }
+            else if (lowerMessage.includes("grazie")) {
+                return {
+                    content: "Di nulla! Sono qui per aiutarti. C'è altro di cui hai bisogno?",
+                    target: target,
+                };
             }
-            catch {
-                // Se non è JSON valido, prova altre strategie
-                if (mainResponse.content.includes("```json")) {
-                    // Se contiene un blocco JSON in markdown, prova a estrarre il testo dopo il blocco JSON
-                    const parts = mainResponse.content.split("```");
-                    if (parts.length >= 3) {
-                        const textAfterJson = parts.slice(2).join("```").trim();
-                        if (textAfterJson.length > 0) {
-                            responseContent = textAfterJson;
-                        }
-                    }
+            else {
+                // Ottieni il prompt principale
+                const mainPromptData = await getPrompt(MAIN_PROMPT_ID);
+                if (!mainPromptData) {
+                    throw new Error("Prompt principale non trovato");
                 }
+                // Per messaggi generici, usa un messaggio standard
+                return {
+                    content: "Posso aiutarti con informazioni sui nostri prodotti, servizi, o rispondere alle tue domande. Di cosa vorresti parlare?",
+                    target: target,
+                };
             }
-            // Se la risposta è ancora in JSON, prova a estrarre un messaggio generico
-            if (responseContent.trim().startsWith("{") &&
-                responseContent.includes('"target":')) {
-                responseContent = "Ciao! Come posso aiutarti oggi?";
-            }
-            return {
-                content: responseContent,
-                target: target,
-            };
         }
         // Per altri target, continua con il comportamento normale
         // Ottieni la configurazione del target
