@@ -3,7 +3,6 @@ import dotenv from "dotenv"
 import { Request, Response } from "express"
 import { getLLMResponse } from "./chatbots/main/getLLMresponse.js"
 import { getPrompt } from "./utility/chatbots_utility.js"
-import { logMessage } from "./utility/logger.js"
 
 dotenv.config()
 

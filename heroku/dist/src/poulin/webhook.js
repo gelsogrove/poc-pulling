@@ -1,6 +1,5 @@
 import axios from "axios";
 import dotenv from "dotenv";
-import { Router } from "express";
 import { getLLMResponse } from "./chatbots/main/getLLMresponse.js";
 import { getPrompt } from "./utility/chatbots_utility.js";
 dotenv.config();
@@ -10,7 +9,6 @@ dotenv.config();
  da aggionrnare il pagamento ma ler prime 1000 messaaggi al mese sono gratis
 
 */
-const modelWebooksRouter = Router();
 // Leggi il token di verifica dalla variabile d'ambiente
 const VERIFY_TOKEN = process.env.CHATBOT_WEBHOOK_VERIFY_TOKEN || "manfredonia77";
 /*
@@ -36,12 +34,15 @@ Salvalo in modo sicuro
 Questo token non scade
 */
 // Leggi il token e l'URL dell'API dalle variabili d'ambiente
-const WHATSAPP_TOKEN = process.env.CHATBOT_WEBHOOK_BEARER_TOKEN || "";
-const WHATSAPP_API = process.env.CHATBOT_WEBHOOK_API_URL || "https://graph.facebook.com/v17.0";
-// Leggi l'ID del numero di telefono dalla variabile d'ambiente
-const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID || process.env.CHATBOT_WEBHOOK_SENDER_ID || "";
+const WHATSAPP_TOKEN = process.env.CHATBOT_WEBHOOK_BEARER_TOKEN;
+const WHATSAPP_API_VERSION = process.env.CHATBOT_WEBHOOK_API_VERSION || "v17.0";
+const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
 // Prompt predefinito per la chatbot
-const DEFAULT_PROMPT_ID = "default-chatbot-prompt";
+const DEFAULT_PROMPT_ID = "default";
+// Determine the base URL based on environment
+const BASE_URL = process.env.NODE_ENV === "production"
+    ? process.env.HEROKU_APP_URL || "https://poulin-chatbot.herokuapp.com"
+    : "http://localhost:3001";
 // Funzione helper per i log
 function logMessage(type, message, details) {
     const timestamp = new Date().toISOString();
@@ -51,39 +52,54 @@ function logMessage(type, message, details) {
     }
 }
 // Funzione per la verifica del webhook (GET)
-const verifyWebhook = async (req, res, next) => {
+export const verifyWebhook = (req, res) => {
+    logMessage("INFO", "Webhook verification request received");
+    logMessage("INFO", `Environment: ${process.env.NODE_ENV}`);
+    logMessage("INFO", `Using base URL: ${BASE_URL}`);
     const mode = req.query["hub.mode"];
     const token = req.query["hub.verify_token"];
     const challenge = req.query["hub.challenge"];
+    logMessage("INFO", `Verification params - Mode: ${mode}, Token: ${token}, Challenge: ${challenge}`);
     if (mode && token) {
         if (mode === "subscribe" && token === VERIFY_TOKEN) {
-            console.log("Webhook verificato con successo!");
+            logMessage("SUCCESS", "Webhook verified successfully!");
             res.status(200).send(challenge);
-            return;
         }
-        res.sendStatus(403);
-        return;
+        else {
+            logMessage("ERROR", "Verification failed: invalid token or mode");
+            res.sendStatus(403);
+        }
     }
-    res.sendStatus(400);
+    else {
+        logMessage("ERROR", "Verification failed: missing parameters");
+        res.sendStatus(403);
+    }
 };
 // Funzione per ricevere i messaggi (POST)
-const receiveMessage = async (req, res, next) => {
+export const receiveMessage = async (req, res) => {
     try {
         const data = req.body;
+        logMessage("RECEIVE", "Messaggio ricevuto", data);
         if (data.entry && data.entry[0].changes) {
             const change = data.entry[0].changes[0];
             const value = change.value;
             if (value.messages && value.messages[0]) {
                 const message = value.messages[0];
                 // Ottieni il prompt predefinito
-                const promptData = await getPrompt(DEFAULT_PROMPT_ID);
+                let promptData = await getPrompt(DEFAULT_PROMPT_ID);
                 if (!promptData) {
-                    throw new Error("Prompt predefinito non trovato");
+                    logMessage("ERROR", "Prompt predefinito non trovato");
+                    // Usa un prompt di fallback
+                    promptData = {
+                        prompt: "Sei un assistente virtuale italiano. Rispondi in modo cortese e professionale.",
+                        model: "openai/gpt-3.5-turbo",
+                        temperature: 0.7,
+                    };
                 }
                 // Gestione messaggi di testo
                 if (message.text) {
                     const userMessage = message.text.body.trim();
-                    logMessage("RECEIVED", `Nuovo utente: ${userMessage}`, {
+                    logMessage("RECEIVED", `Messaggio: ${userMessage}`, {
                         from: message.from,
                         timestamp: new Date().toISOString(),
                     });
@@ -93,6 +109,9 @@ const receiveMessage = async (req, res, next) => {
                     const llmResponse = await getLLMResponse(userMessage, promptData, history);
                     // Invia la risposta generata dall'IA
                     await sendWhatsAppMessage(message.from, llmResponse.content);
+                    logMessage("SENT", "Risposta inviata", {
+                        response: llmResponse.content,
+                    });
                 }
                 // Gestione risposte dai bottoni
                 if (message.interactive) {
@@ -109,6 +128,9 @@ const receiveMessage = async (req, res, next) => {
                     const llmResponse = await getLLMResponse(buttonResponse.title, promptData, history);
                     // Invia la risposta generata dall'IA
                     await sendWhatsAppMessage(message.from, llmResponse.content);
+                    logMessage("SENT", "Risposta inviata", {
+                        response: llmResponse.content,
+                    });
                 }
             }
         }
@@ -119,26 +141,37 @@ const receiveMessage = async (req, res, next) => {
         res.status(500).json({ error: "Errore del server" });
     }
 };
-//test
 async function sendWhatsAppMessage(to, message) {
     try {
-        await axios.post(`${WHATSAPP_API}/${PHONE_NUMBER_ID}/messages`, {
+        logMessage("SENDING", `Invio messaggio a ${to}`, { message });
+        const response = await axios.post(`https://graph.facebook.com/${WHATSAPP_API_VERSION}/${PHONE_NUMBER_ID}/messages`, {
             messaging_product: "whatsapp",
-            to: to,
+            to,
             text: { body: message },
         }, {
             headers: {
-                Authorization: `Bearer ${WHATSAPP_TOKEN}`,
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${WHATSAPP_TOKEN}`,
             },
         });
+        logMessage("SUCCESS", "Messaggio inviato con successo", response.data);
+        return response.data;
     }
     catch (error) {
-        console.error("Errore nell'invio del messaggio:", error);
+        logMessage("ERROR", "Errore nell'invio del messaggio", {
+            message: error.message,
+            response: error.response?.data,
+            config: {
+                url: error.config?.url,
+                headers: error.config?.headers,
+                data: error.config?.data,
+            },
+        });
+        throw error;
     }
 }
-// Funzione per inviare il messaggio di benvenuto (ora usa bottoni per interazione iniziale)
-async function sendWelcomeMessage(to, name) {
+// Funzione per inviare il messaggio di benvenuto
+export async function sendWelcomeMessage(to, name) {
     try {
         logMessage("SENDING", `Invio messaggio di benvenuto a ${name}`, { to });
         // Ottieni il prompt predefinito
@@ -156,7 +189,7 @@ async function sendWelcomeMessage(to, name) {
         // Ottieni risposta dal modello LLM
         const llmResponse = await getLLMResponse("Benvenuto", promptData, history);
         // Invia un messaggio interattivo con la risposta del modello
-        await axios.post(`${WHATSAPP_API}/${PHONE_NUMBER_ID}/messages`, {
+        await axios.post(`https://graph.facebook.com/${WHATSAPP_API_VERSION}/${PHONE_NUMBER_ID}/messages`, {
             messaging_product: "whatsapp",
             recipient_type: "individual",
             to: to,
@@ -194,10 +227,7 @@ async function sendWelcomeMessage(to, name) {
         logMessage("SENT", "Messaggio di benvenuto inviato");
     }
     catch (error) {
-        console.error("Errore nell'invio del messaggio di benvenuto:", error);
+        logMessage("ERROR", "Errore nell'invio del messaggio di benvenuto", error);
+        throw error;
     }
 }
-// Registra gli handler per le richieste
-modelWebooksRouter.get("/webhook", verifyWebhook);
-modelWebooksRouter.post("/webhook", receiveMessage);
-export default modelWebooksRouter;

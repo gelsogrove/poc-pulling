@@ -20,7 +20,7 @@ import modelsRouter from "./src/poulin/utility/models.js";
 import monthlyUsageRouter from "./src/poulin/utility/monthlyUsage.js";
 import promptsManagerRouter from "./src/poulin/utility/promptsManager.js";
 import modelrolesRouter from "./src/poulin/utility/roles.js";
-import modelWebooksRouter from "./src/poulin/webhook.js";
+import { receiveMessage, verifyWebhook } from "./src/poulin/webhook.js";
 import welcomeRouter from "./welcome.js";
 const { Pool } = pkg;
 dotenv.config();
@@ -35,9 +35,8 @@ export const pool = new Pool({
 });
 // Limiter to prevent abuse
 const limiter = rateLimit({
-    windowMs: 24 * 60 * 60 * 1000, // 24 ore
-    max: 400,
-    message: "Troppe richieste da questo IP, riprova più tardi.",
+    windowMs: 15 * 60 * 1000, // 15 minuti
+    max: 100, // limite di 100 richieste per windowMs
 });
 const app = express();
 // Configura Express per fidarsi del proxy di Heroku
@@ -60,21 +59,20 @@ app.use((error, req, res, next) => {
 app.use("/", welcomeRouter);
 app.use("/auth", limiter, authRouter);
 app.use("/users", limiter, usersRouter);
-app.use("/invoices", limiter, monthlyUsageRouter);
+app.use("/usage", limiter, usageRouter);
+app.use("/monthly-usage", limiter, monthlyUsageRouter);
 app.use("/models", limiter, modelsRouter);
-app.use("/webhook", limiter, modelWebooksRouter);
+app.get("/webhook/receive", verifyWebhook);
+app.post("/webhook/receive", receiveMessage);
 app.use("/roles", limiter, modelrolesRouter);
 app.use("/prompts", limiter, promptsManagerRouter);
-app.use("/prompt", limiter, promptRouter);
-app.use("/history", limiter, historyRouter);
-app.use("/poulin/main/usage", limiter, usageRouter);
+app.use("/poulin/main/history", limiter, historyRouter);
 app.use("/poulin/main/prompt", limiter, promptRouter);
 app.use("/poulin/main/chatbot", limiter, chatbotMainRouter);
 app.use("/poulin/main/chatbot-webhook", limiter, chatbotWebhookRouter);
 app.use("/poulin/main/unlike", limiter, unlikeRouter);
 app.use("/poulin/main/backup", limiter, backupRouter);
-app.use("/poulin/main/history", limiter, historyRouter);
-const PORT = process.env.PORT || 4999;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

@@ -4,7 +4,7 @@ import { pool } from "../../../../server.js"
 import { saveMessageHistory } from "../../api/history_api.js"
 import { getPrompt } from "../../api/promptmanager_api.js"
 import { getUserIdByPhoneNumber } from "../../services/userService.js"
-import { Logger, logMessage } from "../../utility/logger.js"
+import { logMessage } from "../../utility/logger.js"
 import { convertToMarkdown } from "../../utils/markdownConverter.js"
 import { getLLMResponse } from "./getLLMresponse.js"
 import webhookConfig from "./webhook-config.js"
@@ -74,8 +74,7 @@ class Logger {
  * Servizio webhook per la chatbot
  */
 export class ChatbotWebhookService {
-  private static readonly MAIN_PROMPT_ID =
-    "d0866b7d-8aaa-4dba-abce-45c75e3e730f"
+  private static readonly MAIN_PROMPT_ID: number = 1 // Explicitly typed as number
 
   /**
    * Verifica la richiesta di webhooks in arrivo
