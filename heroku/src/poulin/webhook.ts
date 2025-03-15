@@ -41,13 +41,9 @@ Questo token non scade
 */
 
 // Leggi il token e l'URL dell'API dalle variabili d'ambiente
-const WHATSAPP_TOKEN = process.env.CHATBOT_WEBHOOK_BEARER_TOKEN || ""
-const WHATSAPP_API =
-  process.env.CHATBOT_WEBHOOK_API_URL || "https://graph.facebook.com/v17.0"
-
-// Leggi l'ID del numero di telefono dalla variabile d'ambiente
-const PHONE_NUMBER_ID =
-  process.env.PHONE_NUMBER_ID || process.env.CHATBOT_WEBHOOK_SENDER_ID || ""
+const WHATSAPP_TOKEN = process.env.CHATBOT_WEBHOOK_BEARER_TOKEN
+const WHATSAPP_API_VERSION = process.env.CHATBOT_WEBHOOK_API_VERSION || "v17.0"
+const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID
 
 // Prompt predefinito per la chatbot
 const DEFAULT_PROMPT_ID = "default"
@@ -187,24 +183,33 @@ async function sendWhatsAppMessage(to: string, message: string) {
   try {
     logMessage("SENDING", `Invio messaggio a ${to}`, { message })
 
-    await axios.post(
-      `${WHATSAPP_API}/${PHONE_NUMBER_ID}/messages`,
+    const response = await axios.post(
+      `https://graph.facebook.com/${WHATSAPP_API_VERSION}/${PHONE_NUMBER_ID}/messages`,
       {
         messaging_product: "whatsapp",
-        to: to,
+        to,
         text: { body: message },
       },
       {
         headers: {
-          Authorization: `Bearer ${WHATSAPP_TOKEN}`,
           "Content-Type": "application/json",
+          Authorization: `Bearer ${WHATSAPP_TOKEN}`,
         },
       }
     )
 
-    logMessage("SENT", `Messaggio inviato con successo a ${to}`)
-  } catch (error) {
-    logMessage("ERROR", "Errore nell'invio del messaggio", error)
+    logMessage("SUCCESS", "Messaggio inviato con successo", response.data)
+    return response.data
+  } catch (error: any) {
+    logMessage("ERROR", "Errore nell'invio del messaggio", {
+      message: error.message,
+      response: error.response?.data,
+      config: {
+        url: error.config?.url,
+        headers: error.config?.headers,
+        data: error.config?.data,
+      },
+    })
     throw error
   }
 }
@@ -234,7 +239,7 @@ export async function sendWelcomeMessage(to: string, name: string) {
 
     // Invia un messaggio interattivo con la risposta del modello
     await axios.post(
-      `${WHATSAPP_API}/${PHONE_NUMBER_ID}/messages`,
+      `https://graph.facebook.com/${WHATSAPP_API_VERSION}/${PHONE_NUMBER_ID}/messages`,
       {
         messaging_product: "whatsapp",
         recipient_type: "individual",

@@ -1,8 +1,10 @@
 import axios from "axios"
 import { Request, Response } from "express"
+import { pool } from "../../../../server.js"
 import { saveMessageHistory } from "../../api/history_api.js"
 import { getPrompt } from "../../api/promptmanager_api.js"
 import { getUserIdByPhoneNumber } from "../../services/userService.js"
+import { Logger, logMessage } from "../../utility/logger.js"
 import { convertToMarkdown } from "../../utils/markdownConverter.js"
 import { getLLMResponse } from "./getLLMresponse.js"
 import webhookConfig from "./webhook-config.js"
@@ -36,7 +38,7 @@ interface TargetConfig {
 }
 
 // Mappa dei target validi
-type ValidTarget = "sales" | "support" | "general"
+type ValidTarget = "sales" | "support" | "general" | "products" | string
 
 // Mappa delle configurazioni dei target
 const targetConfigs: Record<ValidTarget, TargetConfig> = {
@@ -72,6 +74,9 @@ class Logger {
  * Servizio webhook per la chatbot
  */
 export class ChatbotWebhookService {
+  private static readonly MAIN_PROMPT_ID =
+    "d0866b7d-8aaa-4dba-abce-45c75e3e730f"
+
   /**
    * Verifica la richiesta di webhooks in arrivo
    */
@@ -148,32 +153,80 @@ export class ChatbotWebhookService {
     message: string
   ): Promise<ChatbotResponse> {
     try {
-      // Usa il prompt principale per determinare il routing
-      const mainPromptId = 1 // ID del prompt principale
-      const promptData = await getPrompt(mainPromptId)
+      logMessage("INFO", "Iniziando il processing con il chatbot principale")
 
-      if (!promptData) {
-        throw new Error("Prompt principale non trovato")
+      // 1. Ottieni il prompt Main
+      const mainPromptData = await getPrompt(this.MAIN_PROMPT_ID)
+      if (!mainPromptData) {
+        throw new Error("Prompt Main non trovato")
       }
 
-      // Ottieni la risposta dal modello
-      const response = await getLLMResponse(message, promptData)
+      // 2. Ottieni la prima risposta dal Main chatbot
+      logMessage("INFO", "Ottenendo risposta dal Main chatbot")
+      const mainResponse = await getLLMResponse(message, mainPromptData)
+
+      // 3. Determina il target chatbot dalla risposta
+      const target = this.determineTarget(mainResponse.content)
+      logMessage("INFO", `Target determinato: ${target}`)
+
+      if (!target) {
+        // Se non c'è un target, restituisci direttamente la risposta del Main
+        return {
+          content: mainResponse.content,
+        }
+      }
+
+      // 4. Ottieni il prompt del target
+      const targetPromptData = await this.getTargetPrompt(target)
+      if (!targetPromptData) {
+        throw new Error(`Prompt ${target} non trovato`)
+      }
+
+      // 5. Processa il messaggio con il target chatbot
+      logMessage("INFO", `Processando messaggio con ${target} chatbot`)
+      const targetResponse = await getLLMResponse(message, targetPromptData)
+
+      // 6. Invia la risposta del target al Main per il formatting finale
+      logMessage("INFO", "Formattando risposta finale con Main chatbot")
+      const finalResponse = await getLLMResponse(
+        `Formatta questa risposta in markdown: ${targetResponse.content}`,
+        mainPromptData
+      )
 
       return {
-        content: response.content,
-        target: this.determineTarget(response.content),
+        content: finalResponse.content,
+        target,
       }
     } catch (error) {
-      Logger.log("ERROR", "Errore nel processing del chatbot principale", error)
+      logMessage("ERROR", "Errore nel processing del chatbot principale", error)
       throw error
     }
   }
 
-  private static determineTarget(content: string): ValidTarget {
-    // Implementa la logica per determinare il target basandoti sul contenuto
-    if (content.toLowerCase().includes("vendite")) return "sales"
-    if (content.toLowerCase().includes("supporto")) return "support"
-    return "general"
+  private static async getTargetPrompt(target: ValidTarget): Promise<any> {
+    try {
+      const result = await pool.query(
+        "SELECT idprompt FROM prompts WHERE path = $1",
+        [target]
+      )
+      if (result.rows.length === 0) {
+        return null
+      }
+      const promptId = result.rows[0].idprompt
+      return await getPrompt(promptId)
+    } catch (error) {
+      logMessage("ERROR", `Errore nel recupero del prompt ${target}`, error)
+      return null
+    }
+  }
+
+  private static determineTarget(content: string): ValidTarget | undefined {
+    try {
+      const response = JSON.parse(content)
+      return response.target as ValidTarget
+    } catch {
+      return undefined
+    }
   }
 
   private static async routeToSubChatbot(
