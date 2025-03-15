@@ -120,7 +120,7 @@ export class ChatbotWebhookService {
       // Recupera il contenuto del messaggio
       const messageContent = message.text?.body || ""
 
-      // Processa con il chatbot principale per determinare il routing
+      // Processa con il chatbot principale per determinare il routing.
       const routingResult = await this.processWithMainChatbot(messageContent)
 
       // Routing al sub-chatbot appropriato basato sulla risposta del chatbot principale
