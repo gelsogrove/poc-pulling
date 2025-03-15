@@ -74,8 +74,7 @@ class Logger {
  * Servizio webhook per la chatbot
  */
 export class ChatbotWebhookService {
-  private static readonly MAIN_PROMPT_ID =
-    "d0866b7d-8aaa-4dba-abce-45c75e3e730f" // Ripristino come UUID
+  private static readonly MAIN_PROMPT_ID: number = 1 // Main prompt ID come numero
 
   /**
    * Verifica la richiesta di webhooks in arrivo
@@ -155,10 +154,8 @@ export class ChatbotWebhookService {
     try {
       logMessage("INFO", "Iniziando il processing con il chatbot principale")
 
-      // 1. Ottieni il prompt Main
-      const mainPromptData = await getPrompt(
-        this.MAIN_PROMPT_ID as unknown as string
-      )
+      // 1. Ottieni il prompt Main - convertendo l'ID in numero
+      const mainPromptData = await getPrompt(this.MAIN_PROMPT_ID)
       if (!mainPromptData) {
         throw new Error("Prompt Main non trovato")
       }
@@ -214,7 +211,7 @@ export class ChatbotWebhookService {
       if (result.rows.length === 0) {
         return null
       }
-      const promptId = result.rows[0].idprompt
+      const promptId = parseInt(result.rows[0].idprompt, 10)
       return await getPrompt(promptId)
     } catch (error) {
       logMessage("ERROR", `Errore nel recupero del prompt ${target}`, error)

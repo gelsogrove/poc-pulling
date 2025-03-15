@@ -10,7 +10,7 @@ dotenv.config();
 
 */
 // Leggi il token di verifica dalla variabile d'ambiente
-const VERIFY_TOKEN = process.env.CHATBOT_WEBHOOK_VERIFY_TOKEN || "manfredonia77";
+const VERIFY_TOKEN = process.env.WEBHOOK_VERIFY_TOKEN || "manfredonia77";
 /*
 
 Vai su business.facebook.com
@@ -34,11 +34,13 @@ Salvalo in modo sicuro
 Questo token non scade
 */
 // Leggi il token e l'URL dell'API dalle variabili d'ambiente
-const WHATSAPP_TOKEN = process.env.CHATBOT_WEBHOOK_BEARER_TOKEN;
+const WHATSAPP_TOKEN = process.env.WEBHOOK_BEARER_TOKEN ||
+    "EAAQRb5SzSQUBO0KUwJykgKgpx9AYy1PRZBPXhgWmEyyQnWjWsE2mw9c4Eg2ysPDvajXHXfAUQzCIKN3aEhoCFe0ZBtVYqAzdcwDp0w8hGpwQc8EiViYZCO37q4oEDWRplYzoQZBb0yXfBxKp3Y4k3qN8c0tfMwKkUwnznFfCiwe2NqNXY9DZCyZCUiTNuOXDRlS4pbYmZBP2CiGeKgbqglXBdxP";
 const WHATSAPP_API_VERSION = process.env.CHATBOT_WEBHOOK_API_VERSION || "v17.0";
 const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
-// Prompt predefinito per la chatbot
-const DEFAULT_PROMPT_ID = "default";
+// ID del prompt predefinito (deve essere un UUID valido)
+const DEFAULT_PROMPT_ID = "d0866b7d-8aaa-4dba-abce-45c75e3e730f";
+// NOTA: Il token WHATSAPP_TOKEN è scaduto e deve essere aggiornato tramite variabile d'ambiente
 // Determine the base URL based on environment
 const BASE_URL = process.env.NODE_ENV === "production"
     ? process.env.HEROKU_APP_URL || "https://poulin-chatbot.herokuapp.com"
@@ -85,6 +87,13 @@ export const receiveMessage = async (req, res) => {
             const value = change.value;
             if (value.messages && value.messages[0]) {
                 const message = value.messages[0];
+                // Log specifico per numeri spagnoli (+34)
+                if (message.from.startsWith("34")) {
+                    logMessage("SPAIN", `Messaggio ricevuto dal numero +${message.from}`, {
+                        timestamp: new Date().toISOString(),
+                        messageType: message.type,
+                    });
+                }
                 // Ottieni il prompt predefinito
                 let promptData = await getPrompt(DEFAULT_PROMPT_ID);
                 if (!promptData) {
