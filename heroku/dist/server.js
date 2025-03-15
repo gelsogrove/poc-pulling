@@ -34,7 +34,7 @@ export const pool = new Pool({
 });
 // Limiter to prevent abuse
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minuti
+    windowMs: 15 * 60 * 1000,
     max: 100, // limite di 100 richieste per windowMs
 });
 const app = express();

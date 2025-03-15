@@ -248,8 +248,25 @@ async function processWithMainChatbot(message, promptData, history) {
         // Determina il target dal contenuto della risposta
         const target = determineTarget(mainResponse.content);
         logMessage("INFO", `Target determinato: ${target || "nessun target"}`);
+        // Estrai il contenuto effettivo dal JSON se possibile
+        let responseContent = mainResponse.content;
+        try {
+            const parsedResponse = JSON.parse(mainResponse.content);
+            if (parsedResponse.content) {
+                responseContent = parsedResponse.content;
+            }
+            else if (parsedResponse.message) {
+                responseContent = parsedResponse.message;
+            }
+            else if (parsedResponse.response) {
+                responseContent = parsedResponse.response;
+            }
+        }
+        catch {
+            // Se non è JSON valido, usa il contenuto originale
+        }
         return {
-            content: mainResponse.content,
+            content: responseContent,
             target: target,
         };
     }
@@ -268,7 +285,15 @@ function determineTarget(content) {
         return response.target;
     }
     catch {
-        // Se non può essere interpretato come JSON, restituisce undefined
+        // Se non può essere interpretato come JSON o se il target è Generic, restituisci "general" come fallback
+        try {
+            // Verifica se contiene la stringa "target": "Generic"
+            if (content.includes('"target": "Generic"')) {
+                return "general";
+            }
+        }
+        catch { }
+        // Se non può essere interpretato, restituisce undefined
         return undefined;
     }
 }
