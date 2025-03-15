@@ -301,6 +301,38 @@ function determineTarget(content) {
 async function routeToSubChatbot(target, message, phoneNumber, history) {
     try {
         logMessage("INFO", `Routing al sub-chatbot: ${target}`);
+        // Se il target è general, usa direttamente la risposta del chatbot principale
+        if (target === "general") {
+            // Ottieni il prompt principale
+            const mainPromptData = await getPrompt(MAIN_PROMPT_ID);
+            if (!mainPromptData) {
+                throw new Error("Prompt principale non trovato");
+            }
+            // Ottieni risposta direttamente dal chatbot principale
+            const mainResponse = await getLLMResponse(message, mainPromptData, history);
+            // Estrai il contenuto dal JSON se possibile
+            let responseContent = mainResponse.content;
+            try {
+                const parsedResponse = JSON.parse(mainResponse.content);
+                if (parsedResponse.content) {
+                    responseContent = parsedResponse.content;
+                }
+                else if (parsedResponse.message) {
+                    responseContent = parsedResponse.message;
+                }
+                else if (parsedResponse.response) {
+                    responseContent = parsedResponse.response;
+                }
+            }
+            catch {
+                // Se non è JSON valido, usa il contenuto originale
+            }
+            return {
+                content: responseContent,
+                target: target,
+            };
+        }
+        // Per altri target, continua con il comportamento normale
         // Ottieni la configurazione del target
         const targetConfig = targetConfigs[target];
         if (!targetConfig) {
@@ -314,20 +346,49 @@ async function routeToSubChatbot(target, message, phoneNumber, history) {
         // Ottieni la risposta dal modello LLM specializzato
         const targetResponse = await getLLMResponse(message, promptData, history);
         logMessage("INFO", `Risposta ricevuta dal sub-chatbot ${target}`);
+        /* FORMATTAZIONE COMMENTATA COME RICHIESTO
         // IMPORTANTE: Riprocessa la risposta attraverso il chatbot principale per formattazione
-        const mainPromptData = await getPrompt(MAIN_PROMPT_ID);
+        const mainPromptData = await getPrompt(MAIN_PROMPT_ID)
         if (!mainPromptData) {
-            // Se non riusciamo a ottenere il prompt principale, restituisci direttamente la risposta del target
-            return {
-                content: targetResponse.content,
-                target: target,
-            };
+          // Se non riusciamo a ottenere il prompt principale, restituisci direttamente la risposta del target
+          return {
+            content: targetResponse.content,
+            target: target,
+          }
         }
+    
         // Invia la risposta del target al Main per il formatting finale
-        logMessage("INFO", "Formattando risposta finale con Main chatbot");
-        const finalResponse = await getLLMResponse(`Formatta questa risposta in markdown: ${targetResponse.content}`, mainPromptData, history);
+        logMessage("INFO", "Formattando risposta finale con Main chatbot")
+        const finalResponse = await getLLMResponse(
+          `Formatta questa risposta in markdown: ${targetResponse.content}`,
+          mainPromptData,
+          history
+        )
+    
         return {
-            content: finalResponse.content,
+          content: finalResponse.content,
+          target: target,
+        }
+        */
+        // Estrai il contenuto dal JSON anche qui se possibile
+        let responseContent = targetResponse.content;
+        try {
+            const parsedResponse = JSON.parse(targetResponse.content);
+            if (parsedResponse.content) {
+                responseContent = parsedResponse.content;
+            }
+            else if (parsedResponse.message) {
+                responseContent = parsedResponse.message;
+            }
+            else if (parsedResponse.response) {
+                responseContent = parsedResponse.response;
+            }
+        }
+        catch {
+            // Se non è JSON valido, usa il contenuto originale
+        }
+        return {
+            content: responseContent,
             target: target,
         };
     }
