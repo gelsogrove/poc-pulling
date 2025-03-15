@@ -1,7 +1,9 @@
 import axios from "axios";
 import dotenv from "dotenv";
 import { getLLMResponse } from "./chatbots/main/getLLMresponse.js";
+import { getUserIdByPhoneNumber } from "./services/userService.js";
 import { getPrompt } from "./utility/chatbots_utility.js";
+import { convertToMarkdown } from "./utils/markdownConverter.js";
 dotenv.config();
 /* REMEMBER
  telefono dura 90 giorni
@@ -38,9 +40,13 @@ const WHATSAPP_TOKEN = process.env.WEBHOOK_BEARER_TOKEN ||
     "EAAQRb5SzSQUBO0KUwJykgKgpx9AYy1PRZBPXhgWmEyyQnWjWsE2mw9c4Eg2ysPDvajXHXfAUQzCIKN3aEhoCFe0ZBtVYqAzdcwDp0w8hGpwQc8EiViYZCO37q4oEDWRplYzoQZBb0yXfBxKp3Y4k3qN8c0tfMwKkUwnznFfCiwe2NqNXY9DZCyZCUiTNuOXDRlS4pbYmZBP2CiGeKgbqglXBdxP";
 const WHATSAPP_API_VERSION = process.env.CHATBOT_WEBHOOK_API_VERSION || "v17.0";
 const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
-// ID del prompt predefinito (deve essere un UUID valido)
-const DEFAULT_PROMPT_ID = "d0866b7d-8aaa-4dba-abce-45c75e3e730f";
-// NOTA: Il token WHATSAPP_TOKEN è scaduto e deve essere aggiornato tramite variabile d'ambiente
+// ID del prompt principale per il routing
+const MAIN_PROMPT_ID = "d0866b7d-8aaa-4dba-abce-45c75e3e730f";
+const targetConfigs = {
+    sales: { promptId: "prompt-sales-id" },
+    support: { promptId: "prompt-support-id" },
+    general: { promptId: "prompt-general-id" },
+};
 // Determine the base URL based on environment
 const BASE_URL = process.env.NODE_ENV === "production"
     ? process.env.HEROKU_APP_URL || "https://poulin-chatbot.herokuapp.com"
@@ -50,7 +56,36 @@ function logMessage(type, message, details) {
     const timestamp = new Date().toISOString();
     console.log(`[${timestamp}] ${type}: ${message}`);
     if (details) {
-        console.log(JSON.stringify(details, null, 2));
+        // Per messaggi RECEIVE con payload WhatsApp, mostra solo un riassunto
+        if (type === "RECEIVE" && details.entry && details.entry[0]?.changes) {
+            const change = details.entry[0].changes[0];
+            const messages = change?.value?.messages;
+            if (messages && messages.length > 0) {
+                console.log(JSON.stringify({
+                    summary: `${messages.length} messaggi ricevuti`,
+                    sender: messages[0].from,
+                    type: messages[0].type,
+                    id: messages[0].id.substring(0, 8) + "...",
+                }, null, 2));
+                return;
+            }
+        }
+        // Per altri oggetti, se sono grandi mostra solo proprietà principali
+        const detailsStr = JSON.stringify(details);
+        if (detailsStr.length < 200) {
+            console.log(detailsStr);
+        }
+        else {
+            // Mostra solo alcune proprietà chiave per oggetti grandi
+            const summary = {
+                message: details.message || "(non disponibile)",
+                from: details.from || "(non disponibile)",
+                response: details.response
+                    ? details.response.substring(0, 100) + "..."
+                    : "(non disponibile)",
+            };
+            console.log(JSON.stringify(summary, null, 2));
+        }
     }
 }
 // Funzione per la verifica del webhook (GET)
@@ -94,17 +129,21 @@ export const receiveMessage = async (req, res) => {
                         messageType: message.type,
                     });
                 }
-                // Ottieni il prompt predefinito
-                let promptData = await getPrompt(DEFAULT_PROMPT_ID);
-                if (!promptData) {
-                    logMessage("ERROR", "Prompt predefinito non trovato");
+                // Ottieni il prompt principale per il routing
+                let mainPromptData = await getPrompt(MAIN_PROMPT_ID);
+                if (!mainPromptData) {
+                    logMessage("ERROR", "Prompt principale non trovato");
                     // Usa un prompt di fallback
-                    promptData = {
+                    mainPromptData = {
                         prompt: "Sei un assistente virtuale italiano. Rispondi in modo cortese e professionale.",
                         model: "openai/gpt-3.5-turbo",
                         temperature: 0.7,
                     };
                 }
+                // Ottieni l'ID utente dal numero di telefono o crea nuovo utente se necessario
+                const phoneNumber = message.from;
+                const userId = await getUserIdByPhoneNumber(phoneNumber);
+                logMessage("INFO", `UserId ricevuto: ${userId} per telefono: ${phoneNumber}`);
                 // Gestione messaggi di testo
                 if (message.text) {
                     const userMessage = message.text.body.trim();
@@ -114,12 +153,28 @@ export const receiveMessage = async (req, res) => {
                     });
                     // Crea history con il messaggio dell'utente
                     const history = [{ role: "user", content: userMessage }];
-                    // Ottieni risposta dal modello LLM
-                    const llmResponse = await getLLMResponse(userMessage, promptData, history);
-                    // Invia la risposta generata dall'IA
-                    await sendWhatsAppMessage(message.from, llmResponse.content);
+                    // NUOVA FUNZIONALITÀ: Prima processa con il chatbot principale per determinare il routing
+                    const routingResult = await processWithMainChatbot(userMessage, mainPromptData);
+                    logMessage("ROUTING", `Target determinato: ${routingResult.target || "nessun target"}`);
+                    // Routing al sub-chatbot appropriato
+                    let finalResponse;
+                    if (routingResult.target) {
+                        // Se è stato determinato un target, usa il sub-chatbot
+                        finalResponse = await routeToSubChatbot(routingResult.target, userMessage, userId);
+                        logMessage("INFO", `Risposta dal sub-chatbot ${routingResult.target}`, {
+                            responsePreview: finalResponse.content.substring(0, 50) + "...",
+                        });
+                    }
+                    else {
+                        // Altrimenti usa direttamente la risposta del chatbot principale
+                        finalResponse = { content: routingResult.content };
+                    }
+                    // Converti in markdown se necessario
+                    const formattedResponse = convertToMarkdown(finalResponse.content);
+                    // Invia la risposta finale
+                    await sendWhatsAppMessage(message.from, formattedResponse);
                     logMessage("SENT", "Risposta inviata", {
-                        response: llmResponse.content,
+                        response: formattedResponse.substring(0, 50) + "...",
                     });
                 }
                 // Gestione risposte dai bottoni
@@ -133,12 +188,21 @@ export const receiveMessage = async (req, res) => {
                     const history = [
                         { role: "user", content: `Ho cliccato ${buttonResponse.title}` },
                     ];
-                    // Ottieni risposta dal modello LLM
-                    const llmResponse = await getLLMResponse(buttonResponse.title, promptData, history);
-                    // Invia la risposta generata dall'IA
-                    await sendWhatsAppMessage(message.from, llmResponse.content);
+                    // Anche qui, possiamo usare lo stesso approccio di routing
+                    const routingResult = await processWithMainChatbot(buttonResponse.title, mainPromptData);
+                    // Routing al sub-chatbot appropriato
+                    let finalResponse;
+                    if (routingResult.target) {
+                        finalResponse = await routeToSubChatbot(routingResult.target, buttonResponse.title, userId);
+                    }
+                    else {
+                        finalResponse = { content: routingResult.content };
+                    }
+                    // Converti in markdown e invia
+                    const formattedResponse = convertToMarkdown(finalResponse.content);
+                    await sendWhatsAppMessage(message.from, formattedResponse);
                     logMessage("SENT", "Risposta inviata", {
-                        response: llmResponse.content,
+                        response: formattedResponse.substring(0, 50) + "...",
                     });
                 }
             }
@@ -150,9 +214,74 @@ export const receiveMessage = async (req, res) => {
         res.status(500).json({ error: "Errore del server" });
     }
 };
+// Funzione per processare il messaggio con il chatbot principale e determinare il routing
+async function processWithMainChatbot(message, promptData) {
+    try {
+        logMessage("INFO", "Processando con il chatbot principale");
+        // Ottieni la risposta dal modello
+        const response = await getLLMResponse(message, promptData);
+        // Determina il target dal contenuto della risposta
+        const target = determineTarget(response.content);
+        return {
+            content: response.content,
+            target: target,
+        };
+    }
+    catch (error) {
+        logMessage("ERROR", "Errore nel processing principale", error);
+        return {
+            content: "Mi dispiace, si è verificato un errore. Riprova più tardi.",
+        };
+    }
+}
+// Determina il target dal contenuto della risposta
+function determineTarget(content) {
+    try {
+        // Prova a interpretare la risposta come JSON che contiene un campo "target"
+        const response = JSON.parse(content);
+        return response.target;
+    }
+    catch {
+        // Se non può essere interpretato come JSON, restituisce undefined
+        return undefined;
+    }
+}
+// Funzione per inviare il messaggio al sub-chatbot appropriato
+async function routeToSubChatbot(target, message, userId) {
+    try {
+        logMessage("INFO", `Routing al sub-chatbot: ${target}`);
+        // Ottieni la configurazione del target
+        const targetConfig = targetConfigs[target];
+        if (!targetConfig) {
+            throw new Error(`Configurazione non trovata per il target ${target}`);
+        }
+        // Ottieni il prompt specifico per il target
+        const promptData = await getPrompt(targetConfig.promptId);
+        if (!promptData) {
+            throw new Error(`Prompt non trovato per il target ${target}`);
+        }
+        // Ottieni la risposta dal modello
+        const response = await getLLMResponse(message, promptData);
+        return {
+            content: response.content,
+            target: target,
+        };
+    }
+    catch (error) {
+        logMessage("ERROR", `Errore nel routing al sub-chatbot ${target}`, error);
+        // In caso di errore, restituisci un messaggio generico
+        return {
+            content: "Mi dispiace, ma al momento non posso elaborare questa richiesta. Riprova più tardi.",
+            target: "general",
+        };
+    }
+}
+// Funzione per inviare messaggi WhatsApp
 async function sendWhatsAppMessage(to, message) {
     try {
-        logMessage("SENDING", `Invio messaggio a ${to}`, { message });
+        logMessage("SENDING", `Invio messaggio a ${to}`, {
+            messagePreview: message.substring(0, 50) + (message.length > 50 ? "..." : ""),
+        });
         const response = await axios.post(`https://graph.facebook.com/${WHATSAPP_API_VERSION}/${PHONE_NUMBER_ID}/messages`, {
             messaging_product: "whatsapp",
             to,
@@ -163,18 +292,16 @@ async function sendWhatsAppMessage(to, message) {
                 Authorization: `Bearer ${WHATSAPP_TOKEN}`,
             },
         });
-        logMessage("SUCCESS", "Messaggio inviato con successo", response.data);
+        logMessage("SUCCESS", "Messaggio inviato con successo", {
+            wamid: response.data.messages?.[0]?.id,
+        });
         return response.data;
     }
     catch (error) {
         logMessage("ERROR", "Errore nell'invio del messaggio", {
             message: error.message,
-            response: error.response?.data,
-            config: {
-                url: error.config?.url,
-                headers: error.config?.headers,
-                data: error.config?.data,
-            },
+            status: error.response?.status,
+            errorData: error.response?.data,
         });
         throw error;
     }
@@ -184,7 +311,7 @@ export async function sendWelcomeMessage(to, name) {
     try {
         logMessage("SENDING", `Invio messaggio di benvenuto a ${name}`, { to });
         // Ottieni il prompt predefinito
-        const promptData = await getPrompt(DEFAULT_PROMPT_ID);
+        const promptData = await getPrompt(MAIN_PROMPT_ID);
         if (!promptData) {
             throw new Error("Prompt predefinito non trovato");
         }
