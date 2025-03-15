@@ -11,7 +11,6 @@ import unlikeRouter from "./src/poulin/share/unlike.js"
 import usageRouter from "./src/poulin/share/usage.js"
 
 import chatbotMainRouter from "./src/poulin/chatbots/main/chatbots.js"
-import { chatbotWebhookRouter } from "./src/poulin/chatbots/main/index.js"
 import historyRouter from "./src/poulin/share/history.js"
 import promptRouter from "./src/poulin/share/prompts.js"
 import usersRouter from "./src/poulin/users.js"
@@ -75,14 +74,18 @@ app.use("/users", limiter, usersRouter)
 app.use("/usage", limiter, usageRouter)
 app.use("/monthly-usage", limiter, monthlyUsageRouter)
 app.use("/models", limiter, modelsRouter)
-app.get("/webhook/receive", verifyWebhook)
-app.post("/webhook/receive", receiveMessage)
+
 app.use("/roles", limiter, modelrolesRouter)
 app.use("/prompts", limiter, promptsManagerRouter)
 app.use("/poulin/main/history", limiter, historyRouter)
 app.use("/poulin/main/prompt", limiter, promptRouter)
 app.use("/poulin/main/chatbot", limiter, chatbotMainRouter)
-app.use("/poulin/main/chatbot-webhook", limiter, chatbotWebhookRouter)
+
+// === WEBHOOK CONFIGURATION ===
+// Webhook principale per WhatsApp
+app.get("/webhook/receive", verifyWebhook)
+app.post("/webhook/receive", receiveMessage)
+
 app.use("/poulin/main/unlike", limiter, unlikeRouter)
 app.use("/poulin/main/backup", limiter, backupRouter)
 

@@ -2,7 +2,9 @@ import axios from "axios"
 import dotenv from "dotenv"
 import { Request, Response } from "express"
 import { getLLMResponse } from "./chatbots/main/getLLMresponse.js"
+import { getUserIdByPhoneNumber } from "./services/userService.js"
 import { getPrompt } from "./utility/chatbots_utility.js"
+import { convertToMarkdown } from "./utils/markdownConverter.js"
 
 dotenv.config()
 
@@ -46,10 +48,22 @@ const WHATSAPP_TOKEN =
 const WHATSAPP_API_VERSION = process.env.CHATBOT_WEBHOOK_API_VERSION || "v17.0"
 const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID
 
-// ID del prompt predefinito (deve essere un UUID valido)
-const DEFAULT_PROMPT_ID = "d0866b7d-8aaa-4dba-abce-45c75e3e730f"
+// ID del prompt principale per il routing
+const MAIN_PROMPT_ID = "d0866b7d-8aaa-4dba-abce-45c75e3e730f"
 
-// NOTA: Il token WHATSAPP_TOKEN è scaduto e deve essere aggiornato tramite variabile d'ambiente
+// Mappa dei target validi e loro configurazioni
+type ValidTarget = "sales" | "support" | "general" | "products" | string
+
+// Mappa delle configurazioni dei target
+interface TargetConfig {
+  promptId: string
+}
+
+const targetConfigs: Record<ValidTarget, TargetConfig> = {
+  sales: { promptId: "prompt-sales-id" },
+  support: { promptId: "prompt-support-id" },
+  general: { promptId: "prompt-general-id" },
+}
 
 // Determine the base URL based on environment
 const BASE_URL =
@@ -62,7 +76,42 @@ function logMessage(type: string, message: string, details?: any) {
   const timestamp = new Date().toISOString()
   console.log(`[${timestamp}] ${type}: ${message}`)
   if (details) {
-    console.log(JSON.stringify(details, null, 2))
+    // Per messaggi RECEIVE con payload WhatsApp, mostra solo un riassunto
+    if (type === "RECEIVE" && details.entry && details.entry[0]?.changes) {
+      const change = details.entry[0].changes[0]
+      const messages = change?.value?.messages
+      if (messages && messages.length > 0) {
+        console.log(
+          JSON.stringify(
+            {
+              summary: `${messages.length} messaggi ricevuti`,
+              sender: messages[0].from,
+              type: messages[0].type,
+              id: messages[0].id.substring(0, 8) + "...",
+            },
+            null,
+            2
+          )
+        )
+        return
+      }
+    }
+
+    // Per altri oggetti, se sono grandi mostra solo proprietà principali
+    const detailsStr = JSON.stringify(details)
+    if (detailsStr.length < 200) {
+      console.log(detailsStr)
+    } else {
+      // Mostra solo alcune proprietà chiave per oggetti grandi
+      const summary = {
+        message: details.message || "(non disponibile)",
+        from: details.from || "(non disponibile)",
+        response: details.response
+          ? details.response.substring(0, 100) + "..."
+          : "(non disponibile)",
+      }
+      console.log(JSON.stringify(summary, null, 2))
+    }
   }
 }
 
@@ -120,18 +169,26 @@ export const receiveMessage = async (req: Request, res: Response) => {
           )
         }
 
-        // Ottieni il prompt predefinito
-        let promptData = await getPrompt(DEFAULT_PROMPT_ID)
-        if (!promptData) {
-          logMessage("ERROR", "Prompt predefinito non trovato")
+        // Ottieni il prompt principale per il routing
+        let mainPromptData = await getPrompt(MAIN_PROMPT_ID)
+        if (!mainPromptData) {
+          logMessage("ERROR", "Prompt principale non trovato")
           // Usa un prompt di fallback
-          promptData = {
+          mainPromptData = {
             prompt:
               "Sei un assistente virtuale italiano. Rispondi in modo cortese e professionale.",
             model: "openai/gpt-3.5-turbo",
             temperature: 0.7,
           }
         }
+
+        // Ottieni l'ID utente dal numero di telefono o crea nuovo utente se necessario
+        const phoneNumber = message.from
+        const userId = await getUserIdByPhoneNumber(phoneNumber)
+        logMessage(
+          "INFO",
+          `UserId ricevuto: ${userId} per telefono: ${phoneNumber}`
+        )
 
         // Gestione messaggi di testo
         if (message.text) {
@@ -144,17 +201,44 @@ export const receiveMessage = async (req: Request, res: Response) => {
           // Crea history con il messaggio dell'utente
           const history = [{ role: "user", content: userMessage }]
 
-          // Ottieni risposta dal modello LLM
-          const llmResponse = await getLLMResponse(
+          // NUOVA FUNZIONALITÀ: Prima processa con il chatbot principale per determinare il routing
+          const routingResult = await processWithMainChatbot(
             userMessage,
-            promptData,
-            history
+            mainPromptData
+          )
+          logMessage(
+            "ROUTING",
+            `Target determinato: ${routingResult.target || "nessun target"}`
           )
 
-          // Invia la risposta generata dall'IA
-          await sendWhatsAppMessage(message.from, llmResponse.content)
+          // Routing al sub-chatbot appropriato
+          let finalResponse
+          if (routingResult.target) {
+            // Se è stato determinato un target, usa il sub-chatbot
+            finalResponse = await routeToSubChatbot(
+              routingResult.target,
+              userMessage,
+              userId
+            )
+            logMessage(
+              "INFO",
+              `Risposta dal sub-chatbot ${routingResult.target}`,
+              {
+                responsePreview: finalResponse.content.substring(0, 50) + "...",
+              }
+            )
+          } else {
+            // Altrimenti usa direttamente la risposta del chatbot principale
+            finalResponse = { content: routingResult.content }
+          }
+
+          // Converti in markdown se necessario
+          const formattedResponse = convertToMarkdown(finalResponse.content)
+
+          // Invia la risposta finale
+          await sendWhatsAppMessage(message.from, formattedResponse)
           logMessage("SENT", "Risposta inviata", {
-            response: llmResponse.content,
+            response: formattedResponse.substring(0, 50) + "...",
           })
         }
 
@@ -171,17 +255,29 @@ export const receiveMessage = async (req: Request, res: Response) => {
             { role: "user", content: `Ho cliccato ${buttonResponse.title}` },
           ]
 
-          // Ottieni risposta dal modello LLM
-          const llmResponse = await getLLMResponse(
+          // Anche qui, possiamo usare lo stesso approccio di routing
+          const routingResult = await processWithMainChatbot(
             buttonResponse.title,
-            promptData,
-            history
+            mainPromptData
           )
 
-          // Invia la risposta generata dall'IA
-          await sendWhatsAppMessage(message.from, llmResponse.content)
+          // Routing al sub-chatbot appropriato
+          let finalResponse
+          if (routingResult.target) {
+            finalResponse = await routeToSubChatbot(
+              routingResult.target,
+              buttonResponse.title,
+              userId
+            )
+          } else {
+            finalResponse = { content: routingResult.content }
+          }
+
+          // Converti in markdown e invia
+          const formattedResponse = convertToMarkdown(finalResponse.content)
+          await sendWhatsAppMessage(message.from, formattedResponse)
           logMessage("SENT", "Risposta inviata", {
-            response: llmResponse.content,
+            response: formattedResponse.substring(0, 50) + "...",
           })
         }
       }
@@ -194,9 +290,87 @@ export const receiveMessage = async (req: Request, res: Response) => {
   }
 }
 
+// Funzione per processare il messaggio con il chatbot principale e determinare il routing
+async function processWithMainChatbot(message: string, promptData: any) {
+  try {
+    logMessage("INFO", "Processando con il chatbot principale")
+
+    // Ottieni la risposta dal modello
+    const response = await getLLMResponse(message, promptData)
+
+    // Determina il target dal contenuto della risposta
+    const target = determineTarget(response.content)
+
+    return {
+      content: response.content,
+      target: target,
+    }
+  } catch (error) {
+    logMessage("ERROR", "Errore nel processing principale", error)
+    return {
+      content: "Mi dispiace, si è verificato un errore. Riprova più tardi.",
+    }
+  }
+}
+
+// Determina il target dal contenuto della risposta
+function determineTarget(content: string): ValidTarget | undefined {
+  try {
+    // Prova a interpretare la risposta come JSON che contiene un campo "target"
+    const response = JSON.parse(content)
+    return response.target as ValidTarget
+  } catch {
+    // Se non può essere interpretato come JSON, restituisce undefined
+    return undefined
+  }
+}
+
+// Funzione per inviare il messaggio al sub-chatbot appropriato
+async function routeToSubChatbot(
+  target: ValidTarget,
+  message: string,
+  userId: string
+) {
+  try {
+    logMessage("INFO", `Routing al sub-chatbot: ${target}`)
+
+    // Ottieni la configurazione del target
+    const targetConfig = targetConfigs[target]
+    if (!targetConfig) {
+      throw new Error(`Configurazione non trovata per il target ${target}`)
+    }
+
+    // Ottieni il prompt specifico per il target
+    const promptData = await getPrompt(targetConfig.promptId)
+    if (!promptData) {
+      throw new Error(`Prompt non trovato per il target ${target}`)
+    }
+
+    // Ottieni la risposta dal modello
+    const response = await getLLMResponse(message, promptData)
+
+    return {
+      content: response.content,
+      target: target,
+    }
+  } catch (error) {
+    logMessage("ERROR", `Errore nel routing al sub-chatbot ${target}`, error)
+    // In caso di errore, restituisci un messaggio generico
+    return {
+      content:
+        "Mi dispiace, ma al momento non posso elaborare questa richiesta. Riprova più tardi.",
+      target: "general",
+    }
+  }
+}
+
+// Funzione per inviare messaggi WhatsApp
 async function sendWhatsAppMessage(to: string, message: string) {
   try {
-    logMessage("SENDING", `Invio messaggio a ${to}`, { message })
+    logMessage("SENDING", `Invio messaggio a ${to}`, {
+      messagePreview:
+        message.substring(0, 50) + (message.length > 50 ? "..." : ""),
+    })
 
     const response = await axios.post(
       `https://graph.facebook.com/${WHATSAPP_API_VERSION}/${PHONE_NUMBER_ID}/messages`,
@@ -213,17 +387,15 @@ async function sendWhatsAppMessage(to: string, message: string) {
       }
     )
 
-    logMessage("SUCCESS", "Messaggio inviato con successo", response.data)
+    logMessage("SUCCESS", "Messaggio inviato con successo", {
+      wamid: response.data.messages?.[0]?.id,
+    })
     return response.data
   } catch (error: any) {
     logMessage("ERROR", "Errore nell'invio del messaggio", {
       message: error.message,
-      response: error.response?.data,
-      config: {
-        url: error.config?.url,
-        headers: error.config?.headers,
-        data: error.config?.data,
-      },
+      status: error.response?.status,
+      errorData: error.response?.data,
     })
     throw error
   }
@@ -235,7 +407,7 @@ export async function sendWelcomeMessage(to: string, name: string) {
     logMessage("SENDING", `Invio messaggio di benvenuto a ${name}`, { to })
 
     // Ottieni il prompt predefinito
-    const promptData = await getPrompt(DEFAULT_PROMPT_ID)
+    const promptData = await getPrompt(MAIN_PROMPT_ID)
     if (!promptData) {
       throw new Error("Prompt predefinito non trovato")
     }
