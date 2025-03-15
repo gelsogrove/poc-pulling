@@ -1,6 +1,6 @@
 import axios from "axios"
 import dotenv from "dotenv"
-import { RequestHandler, Router } from "express"
+import { RequestHandler } from "express"
 import { getLLMResponse } from "./chatbots/main/getLLMresponse.js"
 import { getPrompt } from "./utility/chatbots_utility.js"
 
@@ -12,8 +12,6 @@ dotenv.config()
  da aggionrnare il pagamento ma ler prime 1000 messaaggi al mese sono gratis
 
 */
-
-const modelWebooksRouter = Router()
 
 // Leggi il token di verifica dalla variabile d'ambiente
 const VERIFY_TOKEN = process.env.CHATBOT_WEBHOOK_VERIFY_TOKEN || "manfredonia77"
@@ -63,27 +61,36 @@ function logMessage(type: string, message: string, details?: any) {
 }
 
 // Funzione per la verifica del webhook (GET)
-const verifyWebhook: RequestHandler = async (req, res, next) => {
+export const verifyWebhook: RequestHandler = async (req, res) => {
   const mode = req.query["hub.mode"]
   const token = req.query["hub.verify_token"]
   const challenge = req.query["hub.challenge"]
 
+  logMessage("VERIFY", "Richiesta di verifica webhook ricevuta", {
+    mode,
+    token,
+    challenge,
+  })
+
   if (mode && token) {
     if (mode === "subscribe" && token === VERIFY_TOKEN) {
-      console.log("Webhook verificato con successo!")
+      logMessage("VERIFY", "Webhook verificato con successo!")
       res.status(200).send(challenge)
       return
     }
+    logMessage("VERIFY", "Verifica fallita: token non valido")
     res.sendStatus(403)
     return
   }
+  logMessage("VERIFY", "Verifica fallita: parametri mancanti")
   res.sendStatus(400)
 }
 
 // Funzione per ricevere i messaggi (POST)
-const receiveMessage: RequestHandler = async (req, res, next) => {
+export const receiveMessage: RequestHandler = async (req, res) => {
   try {
     const data = req.body
+    logMessage("RECEIVE", "Messaggio ricevuto", data)
 
     if (data.entry && data.entry[0].changes) {
       const change = data.entry[0].changes[0]
@@ -93,15 +100,22 @@ const receiveMessage: RequestHandler = async (req, res, next) => {
         const message = value.messages[0]
 
         // Ottieni il prompt predefinito
-        const promptData = await getPrompt(DEFAULT_PROMPT_ID)
+        let promptData = await getPrompt(DEFAULT_PROMPT_ID)
         if (!promptData) {
-          throw new Error("Prompt predefinito non trovato")
+          logMessage("ERROR", "Prompt predefinito non trovato")
+          // Usa un prompt di fallback
+          promptData = {
+            prompt:
+              "Sei un assistente virtuale italiano. Rispondi in modo cortese e professionale.",
+            model: "openai/gpt-3.5-turbo",
+            temperature: 0.7,
+          }
         }
 
         // Gestione messaggi di testo
         if (message.text) {
           const userMessage = message.text.body.trim()
-          logMessage("RECEIVED", `Nuovo utente: ${userMessage}`, {
+          logMessage("RECEIVED", `Messaggio: ${userMessage}`, {
             from: message.from,
             timestamp: new Date().toISOString(),
           })
@@ -118,6 +132,9 @@ const receiveMessage: RequestHandler = async (req, res, next) => {
 
           // Invia la risposta generata dall'IA
           await sendWhatsAppMessage(message.from, llmResponse.content)
+          logMessage("SENT", "Risposta inviata", {
+            response: llmResponse.content,
+          })
         }
 
         // Gestione risposte dai bottoni
@@ -142,6 +159,9 @@ const receiveMessage: RequestHandler = async (req, res, next) => {
 
           // Invia la risposta generata dall'IA
           await sendWhatsAppMessage(message.from, llmResponse.content)
+          logMessage("SENT", "Risposta inviata", {
+            response: llmResponse.content,
+          })
         }
       }
     }
@@ -153,9 +173,10 @@ const receiveMessage: RequestHandler = async (req, res, next) => {
   }
 }
 
-//test
 async function sendWhatsAppMessage(to: string, message: string) {
   try {
+    logMessage("SENDING", `Invio messaggio a ${to}`, { message })
+
     await axios.post(
       `${WHATSAPP_API}/${PHONE_NUMBER_ID}/messages`,
       {
@@ -170,13 +191,16 @@ async function sendWhatsAppMessage(to: string, message: string) {
         },
       }
     )
+
+    logMessage("SENT", `Messaggio inviato con successo a ${to}`)
   } catch (error) {
-    console.error("Errore nell'invio del messaggio:", error)
+    logMessage("ERROR", "Errore nell'invio del messaggio", error)
+    throw error
   }
 }
 
-// Funzione per inviare il messaggio di benvenuto (ora usa bottoni per interazione iniziale)
-async function sendWelcomeMessage(to: string, name: string) {
+// Funzione per inviare il messaggio di benvenuto
+export async function sendWelcomeMessage(to: string, name: string) {
   try {
     logMessage("SENDING", `Invio messaggio di benvenuto a ${name}`, { to })
 
@@ -241,12 +265,7 @@ async function sendWelcomeMessage(to: string, name: string) {
 
     logMessage("SENT", "Messaggio di benvenuto inviato")
   } catch (error) {
-    console.error("Errore nell'invio del messaggio di benvenuto:", error)
+    logMessage("ERROR", "Errore nell'invio del messaggio di benvenuto", error)
+    throw error
   }
 }
-
-// Registra gli handler per le richieste
-modelWebooksRouter.get("/webhook", verifyWebhook)
-modelWebooksRouter.post("/webhook", receiveMessage)
-
-export default modelWebooksRouter
