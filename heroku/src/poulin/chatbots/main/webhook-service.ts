@@ -74,7 +74,8 @@ class Logger {
  * Servizio webhook per la chatbot
  */
 export class ChatbotWebhookService {
-  private static readonly MAIN_PROMPT_ID: number = 1 // Explicitly typed as number
+  private static readonly MAIN_PROMPT_ID =
+    "d0866b7d-8aaa-4dba-abce-45c75e3e730f" // Ripristino come UUID
 
   /**
    * Verifica la richiesta di webhooks in arrivo
@@ -155,7 +156,9 @@ export class ChatbotWebhookService {
       logMessage("INFO", "Iniziando il processing con il chatbot principale")
 
       // 1. Ottieni il prompt Main
-      const mainPromptData = await getPrompt(this.MAIN_PROMPT_ID)
+      const mainPromptData = await getPrompt(
+        this.MAIN_PROMPT_ID as unknown as string
+      )
       if (!mainPromptData) {
         throw new Error("Prompt Main non trovato")
       }
