@@ -250,6 +250,7 @@ async function processWithMainChatbot(message, promptData, history) {
         logMessage("INFO", `Target determinato: ${target || "nessun target"}`);
         // Estrai il contenuto effettivo dal JSON se possibile
         let responseContent = mainResponse.content;
+        // Prima prova a fare il parsing del JSON
         try {
             const parsedResponse = JSON.parse(mainResponse.content);
             if (parsedResponse.content) {
@@ -261,9 +262,27 @@ async function processWithMainChatbot(message, promptData, history) {
             else if (parsedResponse.response) {
                 responseContent = parsedResponse.response;
             }
+            else if (parsedResponse.text) {
+                responseContent = parsedResponse.text;
+            }
         }
         catch {
-            // Se non è JSON valido, usa il contenuto originale
+            // Se non è JSON valido, prova altre strategie
+            if (mainResponse.content.includes("```json")) {
+                // Se contiene un blocco JSON in markdown, prova a estrarre il testo dopo il blocco JSON
+                const parts = mainResponse.content.split("```");
+                if (parts.length >= 3) {
+                    const textAfterJson = parts.slice(2).join("```").trim();
+                    if (textAfterJson.length > 0) {
+                        responseContent = textAfterJson;
+                    }
+                }
+            }
+        }
+        // Se la risposta è ancora in JSON, prova a estrarre un messaggio generico
+        if (responseContent.trim().startsWith("{") &&
+            responseContent.includes('"target":')) {
+            responseContent = "Ciao! Come posso aiutarti oggi?";
         }
         return {
             content: responseContent,
@@ -312,6 +331,7 @@ async function routeToSubChatbot(target, message, phoneNumber, history) {
             const mainResponse = await getLLMResponse(message, mainPromptData, history);
             // Estrai il contenuto dal JSON se possibile
             let responseContent = mainResponse.content;
+            // Prima prova a fare il parsing del JSON
             try {
                 const parsedResponse = JSON.parse(mainResponse.content);
                 if (parsedResponse.content) {
@@ -323,9 +343,27 @@ async function routeToSubChatbot(target, message, phoneNumber, history) {
                 else if (parsedResponse.response) {
                     responseContent = parsedResponse.response;
                 }
+                else if (parsedResponse.text) {
+                    responseContent = parsedResponse.text;
+                }
             }
             catch {
-                // Se non è JSON valido, usa il contenuto originale
+                // Se non è JSON valido, prova altre strategie
+                if (mainResponse.content.includes("```json")) {
+                    // Se contiene un blocco JSON in markdown, prova a estrarre il testo dopo il blocco JSON
+                    const parts = mainResponse.content.split("```");
+                    if (parts.length >= 3) {
+                        const textAfterJson = parts.slice(2).join("```").trim();
+                        if (textAfterJson.length > 0) {
+                            responseContent = textAfterJson;
+                        }
+                    }
+                }
+            }
+            // Se la risposta è ancora in JSON, prova a estrarre un messaggio generico
+            if (responseContent.trim().startsWith("{") &&
+                responseContent.includes('"target":')) {
+                responseContent = "Ciao! Come posso aiutarti oggi?";
             }
             return {
                 content: responseContent,
