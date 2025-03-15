@@ -1,6 +1,7 @@
-import { Pool } from "pg"
+import pkg from "pg"
 import { v4 as uuidv4 } from "uuid"
 import { validatePhoneNumber } from "../utils/phoneValidator.js"
+const { Pool } = pkg
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,

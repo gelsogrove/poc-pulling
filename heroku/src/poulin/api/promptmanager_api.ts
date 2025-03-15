@@ -1,4 +1,5 @@
-import { Pool } from "pg"
+import pkg from "pg"
+const { Pool } = pkg
 
 // Configurazione del pool di connessione
 const pool = new Pool({
