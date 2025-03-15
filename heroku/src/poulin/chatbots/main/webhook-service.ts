@@ -1,7 +1,6 @@
 import axios from "axios"
 import { Request, Response } from "express"
 import { pool } from "../../../../server.js"
-import { saveMessageHistory } from "../../api/history_api.js"
 import { getPrompt } from "../../api/promptmanager_api.js"
 import { getUserIdByPhoneNumber } from "../../services/userService.js"
 import { logMessage } from "../../utility/logger.js"
@@ -109,19 +108,23 @@ export class ChatbotWebhookService {
     message: WhatsAppMessage
   ): Promise<ChatbotResponse> {
     try {
-      Logger.log("RECEIVE", "Messaggio ricevuto", message)
-
       // Estrai il numero di telefono dal messaggio WhatsApp
       const phoneNumber = message.from
 
+      Logger.log("RECEIVE", "Messaggio ricevuto from " + phoneNumber)
+
       // Verifica se l'utente esiste e ottieni userId o crea nuovo utente
       const userId = await getUserIdByPhoneNumber(phoneNumber)
+
+      Logger.log("RECEIVE", "userId ricevuto  " + phoneNumber)
 
       // Recupera il contenuto del messaggio
       const messageContent = message.text?.body || ""
 
       // Processa con il chatbot principale per determinare il routing.
       const routingResult = await this.processWithMainChatbot(messageContent)
+
+      Logger.log("RECEIVE", "routingResult   " + routingResult)
 
       // Routing al sub-chatbot appropriato basato sulla risposta del chatbot principale
       const finalResponse = await this.routeToSubChatbot(
@@ -130,8 +133,9 @@ export class ChatbotWebhookService {
         userId
       )
 
+      Logger.log("FINAL RESPONSE", "finalResponse   " + finalResponse)
+
       // Salva nella cronologia
-      await saveMessageHistory(userId, messageContent, finalResponse.content)
 
       // Restituisci la risposta in formato markdown
       return {
